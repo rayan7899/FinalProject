@@ -23,16 +23,19 @@ class ImportExcelController extends Controller
         return view('excel.form');
     }
 
+    //Import Excel file to DB
     function import(Request $request){
-
         $this->validate($request, [
-            "excel_file" => "required|mimes:xls"
+            "excel_file" => "required|mimes:xls,xlsx"
         ]);
         
         // Extaract users from Excel file and add them to the DB
-        Excel::import(new UsersImport, request()->file('excel_file'));
+        if(Excel::import(new UsersImport, request()->file('excel_file')))
+        {
+            return back()->with('success', 'تم أضافة المستخدمين بنجاح');
+        }
 
-        return back()->with('success', 'تم أضافة المستخدمين بنجاح');
+      
         
 
     }

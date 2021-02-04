@@ -75,7 +75,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-4"  style="text-align: right !important" dir="rtl">
             @yield('content')
         </main>
     </div>

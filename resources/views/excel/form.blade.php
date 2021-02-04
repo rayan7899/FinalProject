@@ -10,11 +10,16 @@
             </ul>
         </div>
     @endif
-            @if(session()->has('success'))
+            @if(session()->has('success') && !session()->has('error'))
                 <div class="alert alert-success">
                     {{ session()->get('success') }}
                 </div>
             @endif
+            @if(session()->has('error'))
+            <div class="alert alert-danger">
+                {{ session()->get('error') }}
+            </div>
+        @endif
 
 <form class="border rounded p-3 bg-white" method="POST" action="/excel/import" enctype="multipart/form-data">
     @csrf

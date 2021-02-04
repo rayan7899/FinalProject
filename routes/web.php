@@ -22,6 +22,6 @@ Route::get('/', function () {
 Route::post('/excel/import',[ImportExcelController::class,'import'])->name('importExcel');
 Route::get('/excel/add',[ImportExcelController::class,'add'])->name('importExcel');
 
-Auth::routes();
-
+//Auth::routes();
+Auth::routes(['register'=> false]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
