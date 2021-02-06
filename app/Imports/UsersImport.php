@@ -32,11 +32,13 @@ class UsersImport implements ToCollection
     }
     public function collection(Collection $rows)
     {
-      
+
         Validator::make($rows->toArray(), [
-             '*.0' => 'required|numeric',
-             '*.1' => 'required|string',
-             '*.2' => 'required|numeric',
+             '*.0' => 'required|digits:10',      //national_id
+             '*.1' => 'required|string|max:100',            //name
+             '*.2' => 'required|digits:4',        //birthdate
+             '*.3' => 'required|digits:10',      //phone
+
          ])->validate();
 
         foreach ($rows as $row) {
@@ -44,8 +46,9 @@ class UsersImport implements ToCollection
             User::create([
             'national_id'   => $row[0],
             'name'          => $row[1],
-            'email'         => $row[0]."@tvtc.edu.sa",
-            'phone'         => $row[2],
+            'birthdate'     => $row[2],
+            'email'         => NULL,
+            'phone'         => $row[3],
             'password' => Hash::make("bct12345")
             ]);
             }
