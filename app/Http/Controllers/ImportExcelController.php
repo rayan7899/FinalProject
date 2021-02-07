@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
-use app\Models\User;
+use App\Models\User;
 use App\Imports\UsersImport;
 use Illuminate\Support\Facades\Redirect;
 
@@ -29,6 +29,7 @@ class ImportExcelController extends Controller
             "excel_file" => "required|mimes:xls,xlsx"
         ]);
         
+
         // Extaract users from Excel file and add them to the DB
         if(Excel::import(new UsersImport, request()->file('excel_file')))
         {
