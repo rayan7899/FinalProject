@@ -19,14 +19,17 @@ class CreateUsersTable extends Migration
             $table->string('national_id')->unique();
             $table->string('name');
             $table->integer('birthdate');
-            $table->integer('department')->default(0);
-            $table->integer('major')->default(0);
+            $table->unsignedBigInteger('department_id');
+            $table->unsignedBigInteger('major_id');
             $table->string('phone');
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('department_id')->references('id')->on('departments');
+            $table->foreign('major_id')->references('id')->on('majors');
         });
     }
 
