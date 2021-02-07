@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -13,7 +13,8 @@ class UserController extends Controller
      */
     public function index()
     {
-       $users = User::all();
+       $users = User::with(['department','major'])->get();
+      
     }
 
     /**
@@ -43,9 +44,17 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        /*
+         @Rayan you can access $user varebal from view for Ex:
+             to print user name: 
+         {{$user->name}}
+            to print department:
+        {{$user->department->name}}
+        */
+
+        return view('user.show')->with(compact('user'));
     }
 
     /**
@@ -54,7 +63,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
         //
     }
@@ -77,7 +86,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
         //
     }

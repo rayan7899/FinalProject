@@ -39,7 +39,7 @@ class UsersImport implements ToCollection
         if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
             return back()->with('error', 'خطأ, يوجد تكرار في البيانات, واحد او اكثر من المستخدمين تم اضافته مسبقاً');
         }
-        return back()->with('error', ' حدث خطأ غير معروف ' . $e->errorInfo[1]);
+        return back()->with('error', ' حدث خطأ غير معروف ' . $e->getMessage());
     }
     public function collection(Collection $rows)
     {
@@ -60,8 +60,8 @@ class UsersImport implements ToCollection
                     'national_id'   => $row[$this::$national_id],
                     'name'          => $row[$this::$name],
                     'birthdate'     => $row[$this::$birthdate],
-                    'department'    => $this::$deptMjr['department'],
-                    'major'         => $this::$deptMjr['major'],
+                    'department_id'    => $this::$deptMjr['department'],
+                    'major_id'         => $this::$deptMjr['major'],
                     'email'         => NULL,
                     'phone'         => $row[$this::$phone],
                     'password' => Hash::make("bct12345")
@@ -71,7 +71,7 @@ class UsersImport implements ToCollection
                 if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
                     return back()->with('error', 'خطأ, يوجد تكرار في البيانات, واحد او اكثر من المستخدمين تم اضافته مسبقاً');
                 }
-                return back()->with('error', ' حدث خطأ غير معروف ' . $e->errorInfo[1]);
+                return back()->with('error', ' حدث خطأ غير معروف ' . $e->getMessage());
             }
         }
     }

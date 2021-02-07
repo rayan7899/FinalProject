@@ -9,7 +9,8 @@ class Major extends Model
 {
     use HasFactory;
 
-    public function deparments(){
+    public function deparment(){
         return $this->belongsTo(Department::class);
     }
+    
 }
