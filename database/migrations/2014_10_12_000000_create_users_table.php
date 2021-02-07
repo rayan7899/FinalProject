@@ -19,8 +19,8 @@ class CreateUsersTable extends Migration
             $table->string('national_id')->unique();
             $table->string('name');
             $table->integer('birthdate');
-            $table->string('department')->nullable();
-            $table->string('major')->nullable();
+            $table->integer('department')->default(0);
+            $table->integer('major')->default(0);
             $table->string('phone');
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
