@@ -35,6 +35,8 @@ class UsersImport implements ToCollection
     public function collection(Collection $rows)
     {
 
+
+
         $major = $rows[4][2];
         $rows = $rows->slice(7);
 
@@ -42,7 +44,7 @@ class UsersImport implements ToCollection
             '*.' . $this::$national_id => 'required|digits:10',      //national_id
             '*.' . $this::$name => 'required|string|max:100',  //name
             '*.' . $this::$birthdate => 'required|digits:4',        //birthdate
-            '*.' . $this::$phone => 'required|digits:10',      //phone 
+            '*.' . $this::$phone => 'required|digits:10',      //phone
 
         ])->validate();
 
