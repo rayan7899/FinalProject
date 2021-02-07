@@ -16,7 +16,7 @@ class CreateMajorsTable extends Migration
         Schema::create('majors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->bigInteger("department_id");
+            $table->unsignedBigInteger("department_id");
             $table->timestamps();
 
             $table->foreign('department_id')->references('id')->on('departments');
