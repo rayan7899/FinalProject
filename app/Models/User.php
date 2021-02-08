@@ -21,8 +21,8 @@ class User extends Authenticatable
         'name',
         'birthdate',
         'phone',
-        'department',
-        'major',
+        'department_id',
+        'major_id',
         'email',
         'password',
     ];
@@ -45,4 +45,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function department(){
+        return $this->belongsTo(Department::class);
+    }
+
+    public function major(){
+        return $this->belongsTo(Major::class);
+    }
 }

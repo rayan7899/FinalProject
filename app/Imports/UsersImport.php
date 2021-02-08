@@ -18,10 +18,19 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 
 class UsersImport implements ToCollection
 {
+
     static $national_id = 18;
     static $name = 19;
     static $birthdate = 17;
     static $phone = 7;
+
+    static $deptMjr = null;
+    public function __construct($deptMjr)
+    {
+        $this::$deptMjr = $deptMjr;
+    }
+
+
 
     use Importable;
     public function onError(\Throwable $e)
@@ -30,15 +39,13 @@ class UsersImport implements ToCollection
         if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
             return back()->with('error', 'خطأ, يوجد تكرار في البيانات, واحد او اكثر من المستخدمين تم اضافته مسبقاً');
         }
-        return back()->with('error', ' حدث خطأ غير معروف ' . $e->errorInfo[1]);
+        return back()->with('error', ' حدث خطأ غير معروف ' . $e->getMessage());
     }
     public function collection(Collection $rows)
     {
 
-
-
-        $major = $rows[4][2];
         $rows = $rows->slice(7);
+
         Validator::make($rows->toArray(), [
             '*.' . $this::$national_id => 'required|digits:10',      //national_id
             '*.' . $this::$name => 'required|string|max:100',  //name
@@ -53,8 +60,8 @@ class UsersImport implements ToCollection
                     'national_id'   => $row[$this::$national_id],
                     'name'          => $row[$this::$name],
                     'birthdate'     => $row[$this::$birthdate],
-                    'department'    => NULL,
-                    'major'         => $major,
+                    'department_id'    => $this::$deptMjr['department'],
+                    'major_id'         => $this::$deptMjr['major'],
                     'email'         => NULL,
                     'phone'         => $row[$this::$phone],
                     'password' => Hash::make("bct12345")
@@ -64,7 +71,7 @@ class UsersImport implements ToCollection
                 if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
                     return back()->with('error', 'خطأ, يوجد تكرار في البيانات, واحد او اكثر من المستخدمين تم اضافته مسبقاً');
                 }
-                return back()->with('error', ' حدث خطأ غير معروف ' . $e->errorInfo[1]);
+                return back()->with('error', ' حدث خطأ غير معروف ' . $e->getMessage());
             }
         }
     }

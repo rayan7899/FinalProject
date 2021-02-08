@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ImportExcelController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,8 +20,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//ImportExcelController
 Route::post('/excel/import',[ImportExcelController::class,'import'])->name('importExcel');
-Route::get('/excel/add',[ImportExcelController::class,'add'])->name('importExcel');
+Route::get('/excel/add',[ImportExcelController::class,'add'])->name('AddExcelForm');
+
+//UserController
+// Route::get('/users',[UserController::class,'index'])->name('ShowAllUsers');
+// Route::get('/user/{user}',[UserController::class,'show'])->name('ShowOneUser');
 
 //Auth::routes();
 Auth::routes(['register'=> false]);
