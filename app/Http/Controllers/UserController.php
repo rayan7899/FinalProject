@@ -87,6 +87,7 @@ class UserController extends Controller
             "phone" => "required|digits:10",
             "email" => "required|email",
         ]);
+
         try {
 
             Auth::user()->update($userData);
