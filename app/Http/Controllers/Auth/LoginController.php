@@ -37,9 +37,4 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-
-    public function national_id()
-    {
-       return 'national_id';
-    }
 }

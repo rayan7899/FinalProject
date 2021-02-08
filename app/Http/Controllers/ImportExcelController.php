@@ -37,6 +37,7 @@ class ImportExcelController extends Controller
             "department" => "required|numeric|min:1",
             "major" => "required|numeric|min:1"
         ]);
+       
 
         // Extaract users from Excel file and add them to the DB
         if (Excel::import(new UsersImport($deptMjr), request()->file('excel_file'))) {

@@ -41,6 +41,9 @@ class UsersImport implements ToCollection
         }
         return back()->with('error', ' حدث خطأ غير معروف ' . $e->getMessage());
     }
+
+
+    
     public function collection(Collection $rows)
     {
 
