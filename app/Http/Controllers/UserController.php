@@ -68,7 +68,7 @@ class UserController extends Controller
     {
         //
         $user = Auth::user();
-        
+
         return view('user.form')->with(compact('user'));
     }
 
@@ -81,16 +81,16 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
+
+
         $userData = $this->validate($request, [
             "phone" => "required|digits:10",
             "email" => "required|email",
-            "cost" => "required|numeric"
         ]);
-
-
         try {
 
             Auth::user()->update($userData);
+            return redirect('/home');
 
         } catch (\Throwable $e) {
 
