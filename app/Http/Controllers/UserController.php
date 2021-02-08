@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -14,7 +16,7 @@ class UserController extends Controller
     public function index()
     {
        $users = User::with(['department','major'])->get();
-      
+
     }
 
     /**
@@ -44,17 +46,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show()
     {
         /*
          @Rayan you can access $user varebal from view for Ex:
-             to print user name: 
+             to print user name:
          {{$user->name}}
             to print department:
         {{$user->department->name}}
         */
 
-        return view('user.show')->with(compact('user'));
     }
 
     /**
@@ -63,9 +64,12 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit()
     {
         //
+        $user = Auth::user();
+
+        return view('user.form')->with(compact('user'));
     }
 
     /**
@@ -75,9 +79,25 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+
+
+        $userData = $this->validate($request, [
+            "phone" => "required|digits:10",
+            "email" => "required|email",
+        ]);
+        try {
+
+            Auth::user()->update($userData);
+            return redirect('/home');
+
+        } catch (\Throwable $e) {
+
+            echo $e;
+
+        }
+
     }
 
     /**

@@ -24,6 +24,7 @@ class User extends Authenticatable
         'department_id',
         'major_id',
         'email',
+        'cost',
         'password',
     ];
 
@@ -45,6 +46,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
 
     public function department(){
         return $this->belongsTo(Department::class);

@@ -25,8 +25,9 @@ Route::post('/excel/import',[ImportExcelController::class,'import'])->name('impo
 Route::get('/excel/add',[ImportExcelController::class,'add'])->name('AddExcelForm');
 
 //UserController
-// Route::get('/users',[UserController::class,'index'])->name('ShowAllUsers');
-// Route::get('/user/{user}',[UserController::class,'show'])->name('ShowOneUser');
+Route::get('/users',[UserController::class,'index'])->name('ShowAllUsers');
+Route::get('/user/edit',[UserController::class,'edit'])->name('EditOneUser');
+Route::post('/user/update',[UserController::class,'update'])->name('UpdateOneUser');
 
 //Auth::routes();
 Auth::routes(['register'=> false]);
