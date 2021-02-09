@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        <form action="/user/update" method="post" accept-charset="utf-8">
+        <form id="updateUserForm" action="/user/update" method="post" accept-charset="utf-8">
             @csrf
             <div class="form-group">
                 <label for="national_id">رقم الهوية</label>
@@ -19,7 +19,7 @@
 				<div class="input-group mb-3">
                 <input required disabled="true" type="phone" class="form-control p-1 m-1" id="phone" name="phone"
                     value="{{ $user->phone }} ">
-					<button onclick="return document.getElementById('phone').disabled=false" class="btn btn-sm px-2 m-1 btn-primary font-weight-bold">تعديل</button>
+					<button type="button" onclick="EditPhoneClicked()" id="editPhoneBtn" class="btn btn-sm px-2 m-1 btn-primary font-weight-bold">تعديل</button>
 				</div>
             </div>
 
@@ -72,6 +72,30 @@
             </div>
         </form>
     </div>
+    <script>
+      function  EditPhoneClicked()
+      {
+        var updateUserForm = document.getElementById('updateUserForm');
+        var isEditDisabled = document.getElementById('phone');
+        var editPhoneBtn = document.getElementById('editPhoneBtn');
+      
+
+        if(document.getElementById('phone').disabled == true)
+        {
+            document.getElementById('phone').disabled = false;
+            editPhoneBtn.classList.remove('btn-primary');
+            editPhoneBtn.classList.add('btn-success');
+            editPhoneBtn.innerHTML = " تـم " ;
+        }else
+        {
+            document.getElementById('phone').disabled = true;
+            editPhoneBtn.classList.remove('btn-success');
+            editPhoneBtn.classList.add('btn-primary');
+            editPhoneBtn.innerHTML = "تعديل";
+        }
+       
+      }
+    </script>
     </div>
 
 @stop
