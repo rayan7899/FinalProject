@@ -64,7 +64,6 @@
         </form>
         <script>
             var departments = [@php echo $departments; @endphp]
-            console.log(departments)
             function departmentChanged() {
                 var dept = document.getElementById('department').value;
                 var mjr = document.getElementById('major');

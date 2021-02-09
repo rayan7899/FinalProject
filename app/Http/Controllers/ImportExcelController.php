@@ -4,12 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use App\Imports\UsersImport;
 use App\Models\Department;
-use App\Models\Major;
-use Illuminate\Support\Facades\Redirect;
 
 class ImportExcelController extends Controller
 {

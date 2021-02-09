@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -88,19 +90,31 @@ class UserController extends Controller
 
 
         $userData = $this->validate($request, [
-            "phone" => "required|digits:10",
-            "email" => "required|email",
+            "phone"             => "required|digits:10",
+            "email"             => "required|email",
+            "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
+            "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
+            "payment_receipt"   => "required|mimes:pdf,png,jpg,jpeg|max:4000",
         ]);
+        $user = Auth::user();
+        $national_id = Auth::user()->national_id;
+
+        $img_name = 'identity.' . $userData['identity']->getClientOriginalExtension();
+        Storage::disk('userDocuments')->put('/'.$national_id.'/'.$img_name, File::get($userData['identity']));
+
+        $img_name = 'degree.' . $userData['degree']->getClientOriginalExtension();
+        Storage::disk('userDocuments')->put('/'.$national_id.'/'.$img_name, File::get($userData['degree']));
+
+        $img_name = 'payment_receipt.' . $userData['payment_receipt']->getClientOriginalExtension();
+        Storage::disk('userDocuments')->put('/'.$national_id.'/'.$img_name, File::get($userData['payment_receipt']));
 
         try {
-
             Auth::user()->update($userData);
-            return redirect('/home');
+            //return redirect('/home');
+            return back()->with('success', ' تم تحديث المعلومات بنجاح');    
 
         } catch (\Throwable $e) {
-
-            echo $e;
-
+            return back()->with('error', ' تعذر تحديث بيانات المستخدم حدث خطأ غير معروف ');    
         }
 
     }
