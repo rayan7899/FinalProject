@@ -10,17 +10,17 @@
             </ul>
         </div>
     @endif
-        <form id="updateUserForm" action="/user/update" method="post" accept-charset="utf-8">
+        <form id="updateUserForm" action="/user/update" method="post" accept-charset="utf-8" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
                 <label for="national_id">رقم الهوية</label>
-                <label type="text" class="form-control p-1 m-1 bg-light"  id="national_id" name="national_id"
-                    >{{ $user->national_id }}</label>
+                <input disabled type="text" class="form-control p-1 m-1 "  id="national_id" name="national_id"
+                    value="{{$user->national_id }}">
             </div>
 
             <div class="form-group">
                 <label for="name">الاسم</label>
-                <label type="text" class="form-control p-1 m-1  bg-light"  id="name" name="name">{{ $user->name }}</label>
+                <input disabled type="text" class="form-control p-1 m-1  "  id="name" name="name" value=" {{$user->name }}">
             </div>
 
             <div class="form-group">
@@ -42,18 +42,18 @@
 
                 <div class="col-sm-4">
                     <label for="department"> القسم </label>
-                    <label required  type="text" class="form-control  bg-light" id="department" name="department">{{ $user->department->name }}</label>
+                    <input disabled required  type="text" class="form-control  " id="department" name="department" value="{{ $user->department->name }}">
                 </div>
 
                 <div class="col-sm-4">
                     <label for="major" > التخصص </label>
-                    <label required  type="text" class="form-control  bg-light" id="major" name="major">{{ $user->major->name }}</label>
+                    <input disabled required  type="text" class="form-control  " id="major" name="major" value="{{ $user->major->name }}">
                 </div>
 
                 <div class="col-sm-4">
 					<label for="cost"> المبلغ المراد سداده</label>
 					<div class="input-group mb-3">
-						<label required  type="text" class="form-control  bg-light" id="cost" name="cost">{{ $user->major->cost }}</label>
+						<input disabled required  type="text" class="form-control  " id="cost" name="cost" value="{{ $user->major->cost }}">
 						<span class="input-group-text">SR</span>
 					  </div>
                 </div>
