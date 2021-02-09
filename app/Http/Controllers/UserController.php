@@ -120,7 +120,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         if ($user->agreement == 1) {
-            return redirect(route('home'));
+            return redirect(route('EditOneUser'));
         } else {
             $error =  'يجب الموافقة لإكمال التسجيل';
             return view("user.agreement_from")->with(compact('error'));
@@ -138,7 +138,7 @@ class UserController extends Controller
            } catch(Throwable $ex) {
                return back()->with('error', 'خطأ أثناء اعتماد الموافقة');
            }
-           return redirect(route('home'));
+           return redirect(route('EditOneUser'));
        } else {
            return redirect(route('AgreementForm'));
        }
