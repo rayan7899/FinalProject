@@ -5,9 +5,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -110,5 +114,33 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    public function agreement_form()
+    {
+        $user = Auth::user();
+        if ($user->agreement == 1) {
+            return redirect(route('home'));
+        } else {
+            $error =  'يجب الموافقة لإكمال التسجيل';
+            return view("user.agreement_from")->with(compact('error'));
+        }
+    }
+
+    public function agreement_submit(Request $request)
+    {
+       // dd($request);
+       if ($request->input('agree') == 1) {
+
+           $user = Auth::user();
+           try {
+               $user->update(['agreement' => true]);
+           } catch(Throwable $ex) {
+               return back()->with('error', 'خطأ أثناء اعتماد الموافقة');
+           }
+           return redirect(route('home'));
+       } else {
+           return redirect(route('AgreementForm'));
+       }
     }
 }
