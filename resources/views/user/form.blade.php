@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $message)
+                    <li>{{ $message }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
         <form id="updateUserForm" action="/user/update" method="post" accept-charset="utf-8">
             @csrf
             <div class="form-group">
@@ -32,12 +41,12 @@
             <div class="form-row">
 
                 <div class="col-sm-4">
-                    <label for="department" class=""> القسم </label>
+                    <label for="department"> القسم </label>
                     <label required  type="text" class="form-control  bg-light" id="department" name="department">{{ $user->department->name }}</label>
                 </div>
 
                 <div class="col-sm-4">
-                    <label for="major" class=""> التخصص </label>
+                    <label for="major" > التخصص </label>
                     <label required  type="text" class="form-control  bg-light" id="major" name="major">{{ $user->major->name }}</label>
                 </div>
 
@@ -54,29 +63,27 @@
 
             <div class="form-group">
                 <label for="">صورة الهوية الوطنية </label>
-                <input type="file" name="" class="form-control" value="">
+                <input type="file" name="identity" class="form-control" value="">
             </div>
 
             <div class="form-group">
                 <label for="">صورة من المؤهل </label>
-                <input type="file" name="" class="form-control" value="">
+                <input type="file" name="degree" class="form-control" value="">
             </div>
 
             <div class="form-group">
-                <label for=""> صورة الايصال </label>
-                <input type="file" name="" class="form-control" value="">
+                <label for=""> صورة إيصال السداد</label>
+                <input type="file" name="payment_receipt" class="form-control" value="">
             </div>
 
             <div class="form-group my-3">
-                <input type="submit" name="form_submit" id="excel_submit" value="أرسال" class="btn btn-primary">
+                <input type="button" onclick="formSubmit()" name="form_submit" id="form_submit" value="أرسال" class="btn btn-primary">
             </div>
         </form>
     </div>
     <script>
       function  EditPhoneClicked()
       {
-        var updateUserForm = document.getElementById('updateUserForm');
-        var isEditDisabled = document.getElementById('phone');
         var editPhoneBtn = document.getElementById('editPhoneBtn');
       
 
@@ -94,6 +101,11 @@
             editPhoneBtn.innerHTML = "تعديل";
         }
        
+      }
+
+      function formSubmit(){
+        document.getElementById('phone').disabled = false;
+        document.getElementById('updateUserForm').submit();
       }
     </script>
     </div>
