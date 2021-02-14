@@ -132,7 +132,7 @@
         <section>
             <img class="mySlides" src="/images/G20.jpg" style="width:100%;  height:758px;">
             <img class="mySlides" src="/images/25.png" style="width:100%; height:758px;">
-            <img class="mySlides" src="/images/31.png" style="width:100% ">
+            <img class="mySlides" src="/images/31.png" style="width:100%; height:758px;">
         </section>
 
         <main class="py-4" style="text-align: right !important" dir="rtl">
