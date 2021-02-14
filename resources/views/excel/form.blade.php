@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        <form class="border rounded p-3 bg-white" method="POST" action="/excel/import" enctype="multipart/form-data">
+        <form class="border rounded p-3 bg-white" method="POST" action="{{route('AddExcelForm')}}" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
                 <label for="excel_file">أختر الملف</label>

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
@@ -133,6 +135,10 @@ class UserController extends Controller
     public function agreement_form()
     {
         $user = Auth::user();
+        if(Hash::check("bct12345",$user['password']))
+        {
+            return redirect(route('UpdatePasswordForm'))->with('info','يرجى تغيير كلمة المرور الافتراضية');
+        }
         if ($user->agreement == 1) {
             return redirect(route('EditOneUser'));
         } else {
@@ -149,12 +155,41 @@ class UserController extends Controller
            $user = Auth::user();
            try {
                $user->update(['agreement' => true]);
-           } catch(Throwable $ex) {
+           } catch(\Throwable $ex) {
                return back()->with('error', 'خطأ أثناء اعتماد الموافقة');
            }
            return redirect(route('EditOneUser'));
        } else {
            return redirect(route('AgreementForm'));
        }
+    }
+
+
+
+    public function UpdatePasswordForm()
+    {
+        return view('user.update_password');
+    }
+
+
+    public function UpdatePassword(Request $request)
+    {
+        $newpass = $this->validate($request,[
+            'password' =>'required|string|min:8|confirmed',
+        ]);
+       if($newpass['password'] != "bct12345")
+       {
+            Auth::user()->update([
+                'password' => Hash::make($newpass['password']),
+            ]);
+
+            return redirect(route('AgreementForm'))->with('succuss', 'تم تغيير كلمة المرور بنجاح');
+
+        }else
+        {
+            return back()->with('error', 'خطأ يجب تغيير كلمة المرور الفتراضية');
+        }
+        
+            return back()->with('error', 'تعذر تغيير كلمة المرور حدث خطأ غير معروف');
     }
 }
