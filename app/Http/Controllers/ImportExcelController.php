@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\Models\Department;
+use App\Models\Program;
 
 class ImportExcelController extends Controller
 {
@@ -21,8 +22,9 @@ class ImportExcelController extends Controller
     function add()
     {
 
-        $departments =  Department::with('majors')->get();
-        return view('excel.form')->with(compact('departments'));
+        $programs =  json_encode(Program::with('departments.majors')->orderBy('name','asc')->get());
+
+        return view('excel.form')->with(compact('programs'));
     }
 
     //Import Excel file to DB
@@ -30,8 +32,10 @@ class ImportExcelController extends Controller
     {
        $deptMjr = $this->validate($request, [
             "excel_file" => "required|mimes:xls,xlsx",
+            "program" => "required|numeric|min:1",
             "department" => "required|numeric|min:1",
-            "major" => "required|numeric|min:1"
+            "major" => "required|numeric|min:1",
+            
         ]);
        
 

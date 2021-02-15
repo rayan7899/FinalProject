@@ -22,6 +22,7 @@ class User extends Authenticatable
         'birthdate',
         'phone',
         'department_id',
+        'program_id',
         'major_id',
         'email',
         'cost',
@@ -48,6 +49,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     
+    public function program(){
+        return $this->belongsTo(Program::class);
+    }
 
     public function department(){
         return $this->belongsTo(Department::class);
