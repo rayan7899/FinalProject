@@ -41,36 +41,36 @@ class MajorSeeder extends Seeder
     "تقنية الحاسب الالي"  =>  [
       [
         'name' => "برمجيات",
-        'cost' => 8800
+        'hours' => 16
       ],
       [
         'name' => "دعم نظم الشبكات",
-        'cost' => 8800
+        'hours' => 16
       ],
     ],
 
     "تقنية كهربائية"  =>  [
       [
         'name' => "قوى والات كهربائية",
-        'cost' => 9350
+        'hours' => 17
       ],
     ],
 
     "تقنية ميكانيكية"  =>  [
       [
         'name' => "ميكانيكا سيارات",
-        'cost' => 9900
+        'hours' => 18
       ],
     ],
 
     "تقنية ادارية"  =>  [
       [
         'name' => "الإدارة العامة",
-        'cost' => 8800
+        'hours' => 16
       ],
       [
         'name' => "محاسبة",
-        'cost' => 8800
+        'hours' => 16
       ],
     ]
   ];
@@ -81,63 +81,51 @@ class MajorSeeder extends Seeder
     "تقنية الحاسب الالي"  =>  [
       [
         'name' => "برمجيات",
-        'cost' => 8800
+        'hours' => 16
       ],
       [
         'name' => "دعم نظم الشبكات",
-        'cost' => 8800
+        'hours' => 16
       ],
       [
         'name' => "دعم فني",
-        'cost' => 8800
+        'hours' => 16
       ],
     ],
+
 
     "تقنية كهربائية"  =>  [
       [
         'name' => "قوى كهربائية",
-        'cost' => 9350
+        'hours' => 19
       ],
     ],
 
-    "تقنية ميكانيكية"  =>  [
-      [
-        'name' => "ميكانيكا سيارات - مرنة",
-        'cost' => 9900
-      ],
-      [
-        'name' => "إنتاج",
-        'cost' => 9900
-      ],
-      [
-        'name' => "تبريد و تكييف",
-        'cost' => 9900
-      ],
-    ],
 
     "تقنية ادارية"  =>  [
       [
         'name' => "إدارة مكتبية",
-        'cost' => 8800
+        'hours' => 16
       ],
       [
         'name' => "تسويق",
-        'cost' => 8800
+        'hours' => 16
       ],
       [
         'name' => "محاسبة",
-        'cost' => 8800
+        'hours' => 16
       ],
     ],
 
+    
     "التقنية الالكترونية"  =>  [
       [
-        'name' => "الإلكترونيات الصناعية والتحكم",
-        'cost' => 8800
+        'name' => "صناعية وتحكم",
+        'hours' => 20
       ],
       [
-        'name' => "تقنية الأجهزة الطبية",
-        'cost' => 8800
+        'name' => "أجهزة طبية",
+        'hours' => 20
       ],
     ]
   ];
@@ -160,7 +148,7 @@ class MajorSeeder extends Seeder
       foreach ($department as $major) {
         Major::create([
           'name'          => $major['name'],
-          'cost'          => $major['cost'],
+          'hours'          => $major['hours'],
           'department_id' => $id,
 
         ]);
@@ -173,7 +161,7 @@ class MajorSeeder extends Seeder
       foreach ($department as $major) {
         Major::create([
           'name'          => $major['name'],
-          'cost'          => $major['cost'],
+          'hours'          => $major['hours'],
           'department_id' => $id,
 
         ]);
