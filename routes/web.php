@@ -21,15 +21,22 @@ Route::get('/', function () {
 });
 
 //ImportExcelController
-Route::post('/excel/import',[ImportExcelController::class,'import'])->name('importExcel');
 Route::get('/excel/add',[ImportExcelController::class,'add'])->name('AddExcelForm');
+Route::post('/excel/import',[ImportExcelController::class,'import'])->name('importExcel');
 
-//UserController
-Route::get('/users',[UserController::class,'index'])->name('ShowAllUsers');
+//UserController - Edit user form
+//Route::get('/users',[UserController::class,'index'])->name('ShowAllUsers');
 Route::get('/user/edit',[UserController::class,'edit'])->name('EditOneUser');
 Route::post('/user/update',[UserController::class,'update'])->name('UpdateOneUser');
+
+//UserController - Agreement
 Route::get('/user/agreement', [UserController::class, 'agreement_form'])->name('AgreementForm');
 Route::post('/user/agreement', [UserController::class, 'agreement_submit'])->name('AgreementSubmit');
+
+//UserControllaer New passwprd
+Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
+Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
+
 
 //Auth::routes();
 Auth::routes(['register'=> false]);

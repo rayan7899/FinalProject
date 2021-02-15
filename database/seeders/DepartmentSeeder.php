@@ -7,35 +7,43 @@ use Illuminate\Database\Seeder;
 
 class DepartmentSeeder extends Seeder
 {
-    // static $departments = [
-    //     "التقنية الميكانيكية",
-    //     "التقنية الادارية",
-    //     "التقنية الالكترونية",
-    //     "التقنية الكهربائية",
-    //     "التقنية الكيميائية",
-    //     "التقنية المدنية والمعمارية",
-    //     "تقنية السياحة والفندقة",
-    //     "انتاج غذائي",
-    //     "تقنية الاتصالات",
-    //     "تقنية البيئة",
-    //     "تقنية الحاسب الآلي"
-    // ];
-    static $departments = [
+
+    static $baccDepts = [
         "تقنية الحاسب الآلي",
         "التقنية الكهربائية",
         "التقنية الميكانيكية",
         "التقنية الادارية",
     ];
+
+    static $diplomDepts = [
+        "تقنية الحاسب الآلي",
+        "التقنية الكهربائية",
+        "التقنية الميكانيكية",
+        "التقنية الادارية",
+        "التقنية الالكترونية"
+    ];
+
+
     /**
      * Run the database seeds.
      *
      * @return void
      */
+
+
     public function run()
     {
-        foreach($this::$departments as $department){
+        foreach ($this::$baccDepts as $deptName) {
             Department::create([
-                'name' => $department,
+                'name' => $deptName,
+                'program_id' => 1
+            ]);
+        }
+
+        foreach ($this::$diplomDepts as $diplomDeptName) {
+            Department::create([
+                'name' => $diplomDeptName,
+                'program_id' => 2
             ]);
         }
     }
