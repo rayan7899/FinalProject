@@ -4,6 +4,11 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            @if (session()->has('success'))
+                <div class="alert alert-success">
+                    {{ session()->get('success') }}
+                </div>
+            @endif
             <div class="card">
                 <div class="card-header">تعليمات للتسجيل والقبول بالفترة المسائية</div>
 
@@ -17,11 +22,11 @@
                             </ul>
                         </div>
                     @endif
-                    @if (isset($error))
-                        <div class="alert alert-danger">
-                            {{ $error }}
-                        </div>
-                    @endif
+                @if (session()->has('error'))
+                    <div class="alert alert-danger">
+                        {{ session()->get('error') }}
+                    </div>
+                @endif
 
                     <p dir="rtl" text-align="right">
 

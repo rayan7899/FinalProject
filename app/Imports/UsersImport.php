@@ -63,6 +63,7 @@ class UsersImport implements ToCollection
                     'national_id'   => $row[$this::$national_id],
                     'name'          => $row[$this::$name],
                     'birthdate'     => $row[$this::$birthdate],
+                    'program_id'    => $this::$deptMjr['program'],
                     'department_id'    => $this::$deptMjr['department'],
                     'major_id'         => $this::$deptMjr['major'],
                     'email'         => NULL,
