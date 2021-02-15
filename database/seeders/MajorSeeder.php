@@ -117,7 +117,7 @@ class MajorSeeder extends Seeder
       ],
     ],
 
-    
+
     "التقنية الالكترونية"  =>  [
       [
         'name' => "صناعية وتحكم",
