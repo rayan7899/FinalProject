@@ -30,10 +30,6 @@ class DepartmentSeeder extends Seeder
      * @return void
      */
 
-    public function bacc()
-    {
-    }
-
 
     public function run()
     {
