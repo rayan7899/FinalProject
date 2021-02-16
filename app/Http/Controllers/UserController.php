@@ -96,8 +96,10 @@ class UserController extends Controller
             "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
             "traineeState"      => "required",
+        ],[
+            'payment_receipt.required_if' => 'إيصال السداد مطلوب'
         ]);
-        $user = Auth::user();
+
         $national_id = Auth::user()->national_id;
 
         $img_name = 'identity.' . $userData['identity']->getClientOriginalExtension();

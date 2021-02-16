@@ -45,7 +45,7 @@
                                     @guest
                                     @if (Route::has('login'))
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                        <a class="nav-link" href="{{ route('login') }}">{{ __('تسجيل الدخول') }}</a>
                                     </li>
                                     @endif
 
@@ -92,7 +92,7 @@
             <img class="mySlides" src="/images/31.png" style="width:100%; height:758px;">
         </section> -->
 
-        <main class="py-4" style="text-align: right !important" dir="rtl">
+        <main class="py-4 my-5" style="text-align: right !important" dir="rtl">
             @yield('content')
         </main>
 
@@ -100,15 +100,11 @@
         <footer class="justify-content-end" dir="rtl">
 
             <div class="card bg-dark text-white">
-                <img src="/images/background.jpg" style="height: 250px;" class="card-img" alt="...">
+                <img src="/images/background.jpg" style="height: 200px;" class="card-img" alt="...">
                 <div class="card-img-overlay">
-
-                    <div class="">
-
-                        <p class="footer-copy-rights text-center">
+                       <p class="text-center mt-5 pt-5">
                             © جميع الحقوق محفوظة - المؤسسة العامة للتدريب التقني والمهني 2020 ( TVTC )
                         </p>
-                    </div>
                 </div>
             </div>
         </footer>
