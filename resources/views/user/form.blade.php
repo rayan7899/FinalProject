@@ -10,6 +10,11 @@
         </ul>
     </div>
     @endif
+    @if (session()->has('error'))
+    <div class="alert alert-danger">
+        {{ session()->get('error') }}
+    </div>
+    @endif
     <form id="updateUserForm" action="/user/update" method="post" accept-charset="utf-8" enctype="multipart/form-data">
         @csrf
         <!-- national ID -->
@@ -27,7 +32,7 @@
         <!-- phone number -->
         <div class="form-group">
             <label for="phone">رقم الجوال</label>
-                <input required disabled="true" type="phone" class="form-control p-1 m-1" id="phone" name="phone" value="{{ $user->phone }} ">
+            <input required disabled="true" type="phone" class="form-control p-1 m-1" id="phone" name="phone" value="{{ $user->phone }} ">
             <!-- <div class="input-group mb-3">
                 <button type="button" onclick="EditPhoneClicked()" id="editPhoneBtn" class="btn btn-sm px-2 m-1 btn-primary font-weight-bold">تعديل</button>
             </div> -->
@@ -62,7 +67,7 @@
                 <label class="custom-control-label" for="trainee">متدرب</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                <input value="employee" type="radio" onclick="changeTraineeState('employee')"id="employee" name="traineeState" class="custom-control-input">
+                <input value="employee" type="radio" onclick="changeTraineeState('employee')" id="employee" name="traineeState" class="custom-control-input">
                 <label class="custom-control-label" for="employee">أحد منسوبي المؤسسة</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
@@ -71,7 +76,14 @@
             </div>
             <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
                 <input value="privateState" type="radio" onclick="changeTraineeState('privateState')" id="privateState" name="traineeState" class="custom-control-input">
-                <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
+                <label class="custom-control-label" for="privateState">الظروف الخاصة
+                    <a data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة" class="h5 text-right" data-content="
+١- اذا كان المتدرب من ابناء شهداء الواجب(استشهاد والده) 
+٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
+٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
+٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
+٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)">( ! )</a>
+                </label>
             </div>
         </div>
 
@@ -86,7 +98,7 @@
             </div>
             <div class="col-sm-8" style="display: none;" id="pledgeSection">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="pledge" id="pledge" required>
+                    <input type="checkbox" class="form-check-input" name="pledge" id="pledge" checked>
                     <label class="form-check-label mr-1"> اتعهد بدفع كامل المبلغ في حالة عدم موافقة المؤسسة
                     </label>
                 </div>
@@ -118,6 +130,8 @@
     </form>
 </div>
 <script>
+    var user = [@php echo $user;@endphp];
+
     // function EditPhoneClicked() {
     //     var editPhoneBtn = document.getElementById('editPhoneBtn');
 
@@ -137,15 +151,21 @@
     // }
 
     function formSubmit() {
-        document.getElementById('phone').disabled = false;
-        document.getElementById('updateUserForm').submit();
+        if (document.getElementById('pledge').checked) {
+            document.getElementById('updateUserForm').submit();
+        }
     }
 
     function changeTraineeState(state) {
-        var user = [@php echo $user;@endphp];
+
         var hours = user[0].major.hours;
-        var hourCost = 550;
+        var hourCost;
         var costGroup = document.getElementById('costGroup');
+        if (user[0].program_id == 1) {
+            hourCost = 550;
+        } else {
+            hourCost = 400;
+        }
         switch (state) {
             case 'trainee':
                 document.getElementById('cost').value = hours * hourCost;
@@ -180,6 +200,11 @@
             default:
                 break;
         }
+    }
+
+
+    function popup() {
+        $('[data-toggle="popover"]').popover();
     }
 </script>
 </div>

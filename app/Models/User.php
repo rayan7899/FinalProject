@@ -25,9 +25,9 @@ class User extends Authenticatable
         'program_id',
         'major_id',
         'email',
-        'cost',
         'password',
-        'agreement'
+        'agreement',
+        'traineeState'
     ];
 
     /**

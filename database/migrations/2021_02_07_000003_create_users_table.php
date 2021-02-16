@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->boolean('agreement')->default(false);
+            $table->string('traineeState')->nullable();
             $table->foreign('program_id')->references('id')->on('programs');
             $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('major_id')->references('id')->on('majors');

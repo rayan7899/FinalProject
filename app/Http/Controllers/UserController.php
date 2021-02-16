@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        // $this->middleware('agreement')->except(['agreement_form', 'agreement_submit']);
     }
 
     /**
@@ -23,7 +25,7 @@ class UserController extends Controller
      */
     public function index()
     {
-       //$users = User::with(['department','major'])->get();
+        //$users = User::with(['department','major'])->get();
 
     }
 
@@ -63,7 +65,6 @@ class UserController extends Controller
             to print department:
         {{$user->department->name}}
         */
-
     }
 
     /**
@@ -89,10 +90,7 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-
-
         $userData = $this->validate($request, [
-            "phone"             => "required|digits:10",
             "email"             => "required|email",
             "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
@@ -103,23 +101,24 @@ class UserController extends Controller
         $national_id = Auth::user()->national_id;
 
         $img_name = 'identity.' . $userData['identity']->getClientOriginalExtension();
-        Storage::disk('userDocuments')->put('/'.$national_id.'/'.$img_name, File::get($userData['identity']));
+        Storage::disk('userDocuments')->put('/' . $national_id . '/' . $img_name, File::get($userData['identity']));
 
         $img_name = 'degree.' . $userData['degree']->getClientOriginalExtension();
-        Storage::disk('userDocuments')->put('/'.$national_id.'/'.$img_name, File::get($userData['degree']));
+        Storage::disk('userDocuments')->put('/' . $national_id . '/' . $img_name, File::get($userData['degree']));
 
-        $img_name = 'payment_receipt.' . $userData['payment_receipt']->getClientOriginalExtension();
-        Storage::disk('userDocuments')->put('/'.$national_id.'/'.$img_name, File::get($userData['payment_receipt']));
+        if ($userData['traineeState'] != 'privateState') {
+            $img_name = 'payment_receipt.' . $userData['payment_receipt']->getClientOriginalExtension();
+            Storage::disk('userDocuments')->put('/' . $national_id . '/' . $img_name, File::get($userData['payment_receipt']));
+        }
 
         try {
             Auth::user()->update($userData);
-            //return redirect('/home');
-            return back()->with('success', ' تم تحديث المعلومات بنجاح');    
+            return redirect('/home');
+            // return back()->with('success', ' تم تحديث المعلومات بنجاح');    
 
         } catch (\Throwable $e) {
-            return back()->with('error', ' تعذر تحديث بيانات المستخدم حدث خطأ غير معروف ');    
+            return back()->with('error', ' تعذر تحديث بيانات المستخدم حدث خطأ غير معروف '.$e->getMessage());
         }
-
     }
 
     /**
@@ -136,10 +135,9 @@ class UserController extends Controller
     public function agreement_form()
     {
         $user = Auth::user();
-        if(Hash::check("bct12345",$user['password']))
-        {
-            return redirect(route('UpdatePasswordForm'))->with('info','يرجى تغيير كلمة المرور الافتراضية');
-        }
+        // if (Hash::check("bct12345", $user['password'])) {
+        //     return redirect(route('UpdatePasswordForm'))->with('info', 'يرجى تغيير كلمة المرور الافتراضية');
+        // }
         if ($user->agreement == 1) {
             return redirect(route('EditOneUser'));
         } else {
@@ -150,19 +148,19 @@ class UserController extends Controller
 
     public function agreement_submit(Request $request)
     {
-       // dd($request);
-       if ($request->input('agree') == 1) {
+        // dd($request);
+        if ($request->input('agree') == 1) {
 
-           $user = Auth::user();
-           try {
-               $user->update(['agreement' => true]);
-           } catch(\Throwable $ex) {
-               return back()->with('error', 'خطأ أثناء اعتماد الموافقة');
-           }
-           return redirect(route('EditOneUser'));
-       } else {
-           return redirect(route('AgreementForm'));
-       }
+            $user = Auth::user();
+            try {
+                $user->update(['agreement' => true]);
+            } catch (\Throwable $ex) {
+                return back()->with('error', 'خطأ أثناء اعتماد الموافقة');
+            }
+            return redirect(route('EditOneUser'));
+        } else {
+            return redirect(route('AgreementForm'))->with('error', 'يجب الموافقة على الشروط اولا');
+        }
     }
 
 
@@ -175,22 +173,19 @@ class UserController extends Controller
 
     public function UpdatePassword(Request $request)
     {
-        $newpass = $this->validate($request,[
-            'password' =>'required|string|min:8|confirmed',
+        $newpass = $this->validate($request, [
+            'password' => 'required|string|min:8|confirmed',
         ]);
-       if($newpass['password'] != "bct12345")
-       {
+        if ($newpass['password'] != "bct12345") {
             Auth::user()->update([
                 'password' => Hash::make($newpass['password']),
             ]);
 
             return redirect(route('AgreementForm'))->with('succuss', 'تم تغيير كلمة المرور بنجاح');
-
-        }else
-        {
+        } else {
             return back()->with('error', 'خطأ يجب تغيير كلمة المرور الفتراضية');
         }
-        
-            return back()->with('error', 'تعذر تغيير كلمة المرور حدث خطأ غير معروف');
+
+        return back()->with('error', 'تعذر تغيير كلمة المرور حدث خطأ غير معروف');
     }
 }
