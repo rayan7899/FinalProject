@@ -26,8 +26,8 @@ Route::post('/excel/import',[ImportExcelController::class,'import'])->name('impo
 
 //UserController - Edit user form
 //Route::get('/users',[UserController::class,'index'])->name('ShowAllUsers');
-Route::get('/user/edit',[UserController::class,'edit'])->name('EditOneUser');
-Route::post('/user/update',[UserController::class,'update'])->name('UpdateOneUser');
+Route::get('/user/edit',[UserController::class,'edit'])->name('EditOneUser')->middleware('agreement');
+Route::post('/user/update',[UserController::class,'update'])->name('UpdateOneUser')->middleware('agreement');
 
 //UserController - Agreement
 Route::get('/user/agreement', [UserController::class, 'agreement_form'])->name('AgreementForm');
