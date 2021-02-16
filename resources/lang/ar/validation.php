@@ -176,5 +176,10 @@ return [
         'time'                  => 'الوقت',
         'available'             => 'مُتاح',
         'size'                  => 'الحجم',
+        'national_id'           => 'رقم الهوية',
+        'traineeState'          => 'حالة المتدرب',
+        'identity'              => 'صورة الهوية الوطنية',
+        'degree'                => 'صورة المؤهل',
+        'payment_receipt'       => 'ايصال السداد',
     ],
 ];
