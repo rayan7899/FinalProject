@@ -35,9 +35,9 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'userDocuments' => [
+        'studentDocuments' => [
             'driver' => 'local',
-            'root' => storage_path('app/userDocuments'),
+            'root' => storage_path('app/studentDocuments'),
         ],
 
         'public' => [

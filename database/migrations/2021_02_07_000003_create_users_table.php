@@ -18,21 +18,13 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('national_id')->unique();
             $table->string('name');
-            $table->integer('birthdate');
-            $table->unsignedBigInteger('program_id');
-            $table->unsignedBigInteger('department_id');
-            $table->unsignedBigInteger('major_id');
             $table->string('phone');
             $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->boolean('agreement')->default(false);
-            $table->string('traineeState')->nullable();
-            $table->foreign('program_id')->references('id')->on('programs');
-            $table->foreign('department_id')->references('id')->on('departments');
-            $table->foreign('major_id')->references('id')->on('majors');
+       
         });
     }
 

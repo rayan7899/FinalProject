@@ -19,15 +19,9 @@ class User extends Authenticatable
     protected $fillable = [
         'national_id',
         'name',
-        'birthdate',
         'phone',
-        'department_id',
-        'program_id',
-        'major_id',
         'email',
         'password',
-        'agreement',
-        'traineeState'
     ];
 
     /**
@@ -49,15 +43,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     
-    public function program(){
-        return $this->belongsTo(Program::class);
+    public function student(){
+        return $this->hasOne(Student::class);
     }
 
-    public function department(){
-        return $this->belongsTo(Department::class);
+    public function manager(){
+        return $this->hasOne(Manager::class);
     }
 
-    public function major(){
-        return $this->belongsTo(Major::class);
-    }
+  
+
+
 }
