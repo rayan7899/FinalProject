@@ -15,7 +15,7 @@
         {{ session()->get('error') }}
     </div>
     @endif
-    <form id="updateUserForm" action="/user/update" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <form id="updateUserForm" action="{{route('UpdateOneStudent')}}" method="post" accept-charset="utf-8" enctype="multipart/form-data">
         @csrf
         <!-- national ID -->
         <div class="form-group">
@@ -50,13 +50,13 @@
             <!-- department -->
             <div class="col-sm-6">
                 <label for="department"> القسم </label>
-                <input disabled required type="text" class="form-control  " id="department" name="department" value="{{ $user->department->name }}">
+                <input disabled required type="text" class="form-control  " id="department" name="department" value="{{ $user->student->department->name }}">
             </div>
 
             <!-- major -->
             <div class="col-sm-6">
                 <label for="major"> التخصص </label>
-                <input disabled required type="text" class="form-control  " id="major" name="major" value="{{ $user->major->name }}">
+                <input disabled required type="text" class="form-control  " id="major" name="major" value="{{ $user->student->major->name }}">
             </div>
         </div>
 
@@ -92,7 +92,7 @@
             <div class="col-sm-4">
                 <label for="cost"> المبلغ المراد سداده</label>
                 <div class="input-group mb-3">
-                    <input disabled required type="text" class="form-control  " id="cost" name="cost" value="{{ $user->major->hours * 550 }}">
+                    <input disabled required type="text" class="form-control  " id="cost" name="cost" value="{{ $user->student->major->hours * 550 }}">
                     <span class="input-group-text">SR</span>
                 </div>
             </div>
@@ -130,7 +130,7 @@
     </form>
 </div>
 <script>
-    var user = [@php echo $user;@endphp];
+    var student = [@php echo $user->student;@endphp];
 
     // function EditPhoneClicked() {
     //     var editPhoneBtn = document.getElementById('editPhoneBtn');
@@ -158,10 +158,10 @@
 
     function changeTraineeState(state) {
 
-        var hours = user[0].major.hours;
+        var hours = student[0].major.hours;
         var hourCost;
         var costGroup = document.getElementById('costGroup');
-        if (user[0].program_id == 1) {
+        if (student[0].program_id == 1) {
             hourCost = 550;
         } else {
             hourCost = 400;

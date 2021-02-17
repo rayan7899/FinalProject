@@ -2,10 +2,13 @@
 
 namespace App\Imports;
 
+use App\Models\Student;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\Importable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 // use Maatwebsite\Excel\Concerns\SkipsErrors;
@@ -43,7 +46,7 @@ class UsersImport implements ToCollection
     }
 
 
-    
+
     public function collection(Collection $rows)
     {
 
@@ -58,24 +61,32 @@ class UsersImport implements ToCollection
         ])->validate();
 
         foreach ($rows as $row) {
+
             try {
-                User::create([
+                DB::beginTransaction();
+                $user = User::create([
                     'national_id'   => $row[$this::$national_id],
                     'name'          => $row[$this::$name],
-                    'birthdate'     => $row[$this::$birthdate],
-                    'program_id'    => $this::$deptMjr['program'],
-                    'department_id'    => $this::$deptMjr['department'],
-                    'major_id'         => $this::$deptMjr['major'],
                     'email'         => NULL,
                     'phone'         => $row[$this::$phone],
                     'password' => Hash::make("bct12345")
                 ]);
-            } catch (\Throwable $e) {
+                $user->student()->create([
+                    'user_id'          => $user->id,
+                    'birthdate'        => $row[$this::$birthdate],
+                    'program_id'       => $this::$deptMjr['program'],
+                    'department_id'    => $this::$deptMjr['department'],
+                    'major_id'         => $this::$deptMjr['major'],
+                ]);
 
-                if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
-                    return back()->with('error', 'خطأ, يوجد تكرار في البيانات, واحد او اكثر من المستخدمين تم اضافته مسبقاً');
-                }
-                return back()->with('error', ' حدث خطأ غير معروف ' . $e->getMessage());
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollback();
+                dd($e);
+                // if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
+                //     return back()->with('error', 'خطأ, يوجد تكرار في البيانات, واحد او اكثر من المستخدمين تم اضافته مسبقاً');
+                // }
+                // return back()->with('error', ' حدث خطأ غير معروف ' . $e->getMessage());
             }
         }
     }

@@ -15,6 +15,6 @@ class Department extends Model
     }
     
     public function program(){
-        return $this->belongsTo(Program::class);
+        return $this->hasOne(Program::class);
     }
 }

@@ -18,7 +18,7 @@ class Agreement
     public function handle(Request $request, Closure $next)
     {
         // dd(Auth::user()->agreement);
-        if(Auth::user()->agreement != 0){
+        if(Auth::user()->student->agreement != 0){
             return $next($request);
         }
         else{

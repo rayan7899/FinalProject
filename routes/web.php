@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ImportExcelController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -24,14 +25,14 @@ Route::get('/', function () {
 Route::get('/excel/add',[ImportExcelController::class,'add'])->name('AddExcelForm');
 Route::post('/excel/import',[ImportExcelController::class,'import'])->name('importExcel');
 
-//UserController - Edit user form
-//Route::get('/users',[UserController::class,'index'])->name('ShowAllUsers');
-Route::get('/user/edit',[UserController::class,'edit'])->name('EditOneUser')->middleware('agreement');
-Route::post('/user/update',[UserController::class,'update'])->name('UpdateOneUser')->middleware('agreement');
+//StudentController - Edit student form
+//Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
+Route::get('/student/edit',[StudentController::class,'edit'])->name('EditOneStudent')->middleware('agreement');
+Route::post('/student/update',[StudentController::class,'update'])->name('UpdateOneStudent')->middleware('agreement');
 
-//UserController - Agreement
-Route::get('/user/agreement', [UserController::class, 'agreement_form'])->name('AgreementForm');
-Route::post('/user/agreement', [UserController::class, 'agreement_submit'])->name('AgreementSubmit');
+//StudentController - Agreement
+Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
+Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
 
 //UserControllaer New passwprd
 Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
