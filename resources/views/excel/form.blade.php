@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+{{-- @dd(session()->get('duplicate')) --}}
     <div style="text-align: right !important" dir="rtl" lang="ar" class="container">
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -16,12 +17,44 @@
             </div>
         @endif
         @if (session()->has('error'))
-            <div class="alert alert-danger">
+            <div class="alert alert-warning">
                 {{ session()->get('error') }}
             </div>
         @endif
-
-        <form class="border rounded p-3 bg-white" method="POST" action="{{ route('importExcel') }}"
+        @if (session()->has('duplicate'))
+        <table class="table table-sm table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">الاسم</th>
+                    <th scope="col">رقم الهوية</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+                @forelse (session()->get('duplicate') as $user)
+                <tr>
+                    <td scope="row">{{$loop->index+1}}</td>
+                  <td>{{$user['name'] ?? 'null'}}</td>
+                  <td>{{$user['national_id'] ?? 'null'}}</td>
+                </tr>
+                 @empty
+                 @endforelse 
+               
+              </tbody>
+          </table>
+          @endif
+        <div class="card">
+            <div class="position-absolute w-100 h-100 p-0 m-0"  id="loading" style="background-color: #0002;z-index: 10; display: none;" >
+                    <div class="spinner-border text-success position-absolute h3" style="width: 3rem; height: 3rem; top: 50%; left: 50%; z-index: 10;" role="status">
+                    <span class="sr-only">Loading...</span>
+                    </div>
+            </div>
+            <div class="card-header">
+                <h6>اضافة المتدربين من ملف Excel</h6>
+            </div>
+            <div class="card-body">
+        <form id="excel_form" class="form" method="POST" action="{{ route('importExcel') }}"
             enctype="multipart/form-data">
             @csrf
             <div class="form-row mb-3">
@@ -80,6 +113,7 @@
                 @enderror
             </div>
         </form>
+            </div>
         <script>
 
             var programs = @php echo $programs; @endphp;    
@@ -134,6 +168,16 @@
                     mjr.appendChild(option);
                 }
 
+            }
+
+
+
+
+            window.onload = function() {
+                $("#excel_form").submit(function(e) 
+                {
+                    $('#loading').css('display','block');
+                });
             }
 
         </script>

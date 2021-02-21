@@ -118,11 +118,11 @@ class StudentController extends Controller
         try {
             Auth::user()->update(
                 array(
-                    'traineeState' => $studentData['email']
+                    'email' => $studentData['email']
                     )
             );
 
-            Auth::user()->student()->update(
+            Auth::user()->student->update(
                 array('traineeState' => $studentData['traineeState']
             ));
 
