@@ -40,8 +40,9 @@ class ImportExcelController extends Controller
        
 
         // Extaract users from Excel file and add them to the DB
-        if (Excel::import(new UsersImport($deptMjr), request()->file('excel_file'))) {
-            return back()->with('success', 'تم أضافة المستخدمين بنجاح');
-        }
+        Excel::import(new UsersImport($deptMjr), request()->file('excel_file'));
+        return back();
+            //return back()->with('success', 'تم أضافة المتدربين بنجاح');
+
     }
 }

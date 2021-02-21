@@ -181,5 +181,10 @@ return [
         'identity'              => 'صورة الهوية الوطنية',
         'degree'                => 'صورة المؤهل',
         'payment_receipt'       => 'ايصال السداد',
+        'major'                 => 'التخصص',
+        'department'            => 'القسم',
+        'program'               => 'البرنامج',
+        'excel_file'               => 'ملف excel',
+        
     ],
 ];
