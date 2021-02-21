@@ -24,6 +24,7 @@ class CreateStudentsTable extends Migration
             $table->boolean('documents_verified')->default(false);
             $table->double('wallet')->default(0);
             $table->string('traineeState')->default('trainee');
+            $table->text('note')->nullable();
             $table->timestamps();
             $table->foreign('program_id')->references('id')->on('programs');
             $table->foreign('department_id')->references('id')->on('departments');
