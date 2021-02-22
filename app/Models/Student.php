@@ -16,8 +16,9 @@ class Student extends Model
         'department_id',
         'major_id',
         'agreement',
-        'traineeState',
+        'traineeState', 
     ];
+
 
 
     public function program(){

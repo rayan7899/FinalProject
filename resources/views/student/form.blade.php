@@ -98,7 +98,7 @@
             </div>
             <div class="col-sm-8" style="display: none;" id="pledgeSection">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="pledge" id="pledge" checked>
+                    <input type="checkbox" class="form-check-input" name="pledge" id="pledge">
                     <label class="form-check-label mr-1"> اتعهد بدفع كامل المبلغ في حالة عدم موافقة المؤسسة
                     </label>
                 </div>
@@ -151,9 +151,8 @@
     // }
 
     function formSubmit() {
-        if (document.getElementById('pledge').checked) {
+            document.getElementById('cost').disabled=false;
             document.getElementById('updateUserForm').submit();
-        }
     }
 
     function changeTraineeState(state) {

@@ -172,5 +172,10 @@
     "You may delete any of your existing tokens if they are no longer needed.": "يمكنك حذف أي من الرموز المميزة الموجودة لديك إذا لم تعد هناك حاجة إليها.",
     "You may not delete your personal team.": "لا يمكنك حذف فريقك الشخصي.",
     "You may not leave a team that you created.": "لا يمكنك مغادرة الفريق الذي أنشأته.",
-    "Your email address is not verified.": "بريدك الإلكتروني غير موثّق."
+    "Your email address is not verified.": "بريدك الإلكتروني غير موثّق.",
+    "trainee":"متدرب" ,
+    "privateState":"ظروف خاصة" ,
+    "employeeSon":"ابن منسوبي المؤسسة" ,
+    "employee":"منسوب المؤسسة" 
+
 }

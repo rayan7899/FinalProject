@@ -21,6 +21,7 @@ class CreateStudentsTable extends Migration
             $table->unsignedBigInteger('department_id');
             $table->unsignedBigInteger('major_id');
             $table->boolean('agreement')->default(false);
+            $table->boolean('data_updated')->default(false);
             $table->boolean('documents_verified')->default(false);
             $table->double('wallet')->default(0);
             $table->string('traineeState')->default('trainee');
