@@ -7,6 +7,10 @@ sudo apt install composer
 composer install
 
 npm install && npm run dev
+
+cp .env.example .env
+
+php artisan key:generate
 ```
 
 Change username function in ./vendor/laravel/ui/auth-backend/AuthenticatesUsers.php
