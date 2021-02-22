@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -78,9 +79,14 @@ class StudentController extends Controller
     public function edit()
     {
         //
-       
         $user = Auth::user();
-        return view('student.form')->with(compact('user'));
+      
+        if(!$user->student->data_updated){
+            return view('student.form')->with(compact('user'));
+        }else{
+            return view('home')->with('error','تم تقديم الطلب مسبقاً')->with(compact('user'));
+        }
+        
     }
 
     /**
@@ -92,45 +98,51 @@ class StudentController extends Controller
      */
     public function update(Request $request)
     {
+        $user = Auth::user();
         $studentData = $this->validate($request, [
-            "email"             => "required|email",
+            "email"             => "required|email|unique:users,email,".$user->id,
             "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
-            "traineeState"      => "required",
-        ],[
+            "traineeState"      => "required|string",
+            "cost"              => "required|numeric",
+        ], [
             'payment_receipt.required_if' => 'إيصال السداد مطلوب'
         ]);
 
         $national_id = Auth::user()->national_id;
 
-        $img_name = 'identity.' . $studentData['identity']->getClientOriginalExtension();
-        Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $img_name, File::get($studentData['identity']));
+        $doc_name = 'identity.' . $studentData['identity']->getClientOriginalExtension();
+        Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['identity']));
 
-        $img_name = 'degree.' . $studentData['degree']->getClientOriginalExtension();
-        Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $img_name, File::get($studentData['degree']));
+        $doc_name = 'degree.' . $studentData['degree']->getClientOriginalExtension();
+        Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['degree']));
 
         if ($studentData['traineeState'] != 'privateState') {
-            $img_name =  date('Y-m-d-H-i').'_payment_receipt.' . $studentData['payment_receipt']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $img_name, File::get($studentData['payment_receipt']));
+            $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $studentData['payment_receipt']->getClientOriginalExtension();
+            Storage::disk('studentDocuments')->put('/' . $national_id . '/receipts/' . $doc_name, File::get($studentData['payment_receipt']));
         }
 
         try {
-            Auth::user()->update(
+
+            $user->update(
                 array(
                     'email' => $studentData['email']
-                    )
+                )
             );
 
-            Auth::user()->student->update(
-                array('traineeState' => $studentData['traineeState']
-            ));
+            $user->student()->update(
+                array(
+                    'traineeState' => $studentData['traineeState'],
+                    'wallet'       => $studentData['cost'],
+                    'data_updated' => true,
+                )
+            );
 
-            return redirect('/home');
-            // return back()->with('success', ' تم تحديث المعلومات بنجاح');    
+            return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
 
         } catch (\Throwable $e) {
-            return back()->with('error', ' تعذر تحديث بيانات المستخدم حدث خطأ غير معروف '.$e->getMessage());
+            return back()->with('error', ' تعذر تحديث بيانات تقديم الطلب حدث خطأ غير معروف ' . $e->getCode());
         }
     }
 
@@ -140,16 +152,37 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Student $student)
+    
+    
+     // Route: type GET | URL: /student/delete | route name DeleteOneStudent
+    public function destroy()
     {
-        //
+        $user = Auth::user();
+        $user->student()->update([
+            'wallet'                => 0,
+            'documents_verified'    => false,
+            'traineeState'          => 'trainee',
+            'note'                  => null,
+            'data_updated'          => false
+        ]);
+        $dir = Storage::disk('studentDocuments')->exists($user->national_id);
+        if ($dir) {
+            $result = Storage::disk('studentDocuments')->deleteDirectory($user->national_id);
+            if ($result) {
+                return back()->with('success', 'تم حذف الطلب بنجاح');
+            } else {
+                return back()->with('error', 'تعذر حذف الطلب حدث خطأ غير معروف');
+            }
+        } else {
+            return back()->with('error', 'لا يجود طلب لحذفة');
+        }
     }
 
     public function agreement_form()
     {
         $user = Auth::user();
         $student = $user->student;
-        
+
         // if (Hash::check("bct12345", $user['password'])) {
         //     return redirect(route('UpdatePasswordForm'))->with('info', 'يرجى تغيير كلمة المرور الافتراضية');
         // }
@@ -167,9 +200,9 @@ class StudentController extends Controller
         if ($request->input('agree') == 1) {
 
             $user = Auth::user();
-            $student = $user->student;
+
             try {
-                $student->update(['agreement' => true]);
+                $user->student()->update(['agreement' => true]);
             } catch (\Throwable $ex) {
                 return back()->with('error', 'خطأ أثناء اعتماد الموافقة');
             }
