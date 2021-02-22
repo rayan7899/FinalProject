@@ -1,4 +1,4 @@
-مشروع التخرج - مجموعة B
+Group B FinalProject
 
 Installation
 ```sh
