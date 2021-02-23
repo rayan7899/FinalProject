@@ -124,9 +124,9 @@
         </div>
 
         <!-- requiered documents -->
-        <div class="form-group" id="requiredDocumentsGroup">
-            <label for="requiredDocuments"> صور المستندات المطلوبة</label>
-            <input type="file" name="required_documents" class="form-control" id="requiredDocuments" multiple>
+        <div class="form-group" id="privateStateDocGroup" style="display: none;">
+            <label for="privateStateDoc"> صور المستندات المطلوبة</label>
+            <input type="file" name="privateStateDoc" class="form-control" id="privateStateDoc" multiple disabled>
         </div>
 
         <!-- submet button -->
@@ -178,8 +178,8 @@
                 $('#receiptImg').prop('disabled', false);
                 $('#costGroup').show();
                 $('#receipt').show();
-                $('#requiredDocuments').hide();
-                $('#requiredDocuments').prop('disabled', true);
+                $('#privateStateDocGroup').hide();
+                $('#privateStateDoc').prop('disabled', true);
                 break;
 
             case 'employee':
@@ -188,8 +188,8 @@
                 $('#receiptImg').prop('disabled', false);
                 $('#costGroup').show();
                 $('#receipt').show();
-                $('#requiredDocuments').hide();
-                $('#requiredDocuments').prop('disabled', true);
+                $('#privateStateDocGroup').hide();
+                $('#privateStateDoc').prop('disabled', true);
                 break;
 
             case 'employeeSon':
@@ -198,16 +198,16 @@
                 $('#receiptImg').prop('disabled', false);
                 $('#costGroup').show();
                 $('#receipt').show();
-                $('#requiredDocuments').hide();
-                $('#requiredDocuments').prop('disabled', true);
+                $('#privateStateDocGroup').hide();
+                $('#privateStateDoc').prop('disabled', true);
                 break;
 
             case 'privateState':
                 $('#costGroup').hide();
                 $('#receipt').hide();
                 $('#receiptImg').prop('disabled', true);
-                $('#requiredDocuments').prop('disabled', false);
-                $('#requiredDocuments').show();
+                $('#privateStateDoc').prop('disabled', false);
+                $('#privateStateDocGroup').show();
                 break;
 
             default:

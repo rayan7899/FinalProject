@@ -104,4 +104,14 @@ class ManagerController extends Controller
     {
         //
     }
+
+
+    public function checkedStudentsTable()
+    {
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('documents_verified', true);
+        })->get();
+        return view('manager.community.finalCheckerForm')
+            ->with('users', $users);
+    }
 }

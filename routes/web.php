@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\FinalCheckerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,3 +55,4 @@ Route::get('documents/show/{path?}',[FileController::class,'get_student_document
 Auth::routes(['register'=> false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+Route::get('/students/checked',[ManagerController::class, 'checkedStudentsTable'])->name('CheckedStudents');

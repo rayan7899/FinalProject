@@ -106,6 +106,7 @@ class StudentController extends Controller
             "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
             "traineeState"      => "required|string",
             "cost"              => "required|numeric",
+            "privateStateDoc"   => "required_if:traineeState,privateState",
         ], [
             'payment_receipt.required_if' => 'إيصال السداد مطلوب'
         ]);
@@ -121,6 +122,9 @@ class StudentController extends Controller
         if ($studentData['traineeState'] != 'privateState') {
             $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $studentData['payment_receipt']->getClientOriginalExtension();
             Storage::disk('studentDocuments')->put('/' . $national_id . '/receipts/' . $doc_name, File::get($studentData['payment_receipt']));
+        }else{
+            $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $studentData['privateStateDoc']->getClientOriginalExtension();
+            Storage::disk('studentDocuments')->put('/' . $national_id . '/privateStateDoc/' . $doc_name, File::get($studentData['privateStateDoc']));
         }
 
         try {
