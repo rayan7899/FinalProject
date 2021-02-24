@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StudentAjaxController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +22,7 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index']);
 
 //ImportExcelController
 Route::get('/excel/add',[ImportExcelController::class,'add'])->name('AddExcelForm');
@@ -34,6 +33,9 @@ Route::post('/excel/import',[ImportExcelController::class,'import'])->name('impo
 Route::get('/student/edit',[StudentController::class,'edit'])->name('EditOneStudent')->middleware('agreement');
 Route::post('/student/update',[StudentController::class,'update'])->name('UpdateOneStudent')->middleware('agreement');
 Route::get('/student/delete',[StudentController::class,'destroy'])->name('DeleteOneStudent')->middleware('agreement');
+
+Route::post('/student/ajax/update',[StudentAjaxController::class,'update'])->name('StudentAjaxUpdate')->middleware('agreement');
+Route::post('/student/ajax/updateDocsVerified',[StudentAjaxController::class,'updateDocsVerified'])->name('StudentUpdateDocsVerified')->middleware('agreement');
 
 
 

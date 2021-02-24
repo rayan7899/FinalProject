@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -92,7 +92,7 @@
             <img class="mySlides" src="/images/31.png" style="width:100%; height:758px;">
         </section> -->
 
-        <main class="py-4 my-5" style="text-align: right !important" dir="rtl">
+        <main class="py-4 my-4" style="text-align: right !important" dir="rtl">
             @yield('content')
         </main>
 
