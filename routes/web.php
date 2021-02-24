@@ -9,12 +9,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
-<<<<<<< HEAD
 use App\Http\Controllers\StudentAjaxController;
-=======
-use App\Http\Controllers\FinalCheckerController;
->>>>>>> a5d77d52144cede739fa25c57fa4d35fa93c2889
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
