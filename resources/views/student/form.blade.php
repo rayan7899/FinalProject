@@ -119,8 +119,14 @@
 
         <!-- payment receipt image -->
         <div class="form-group" id="receipt">
-            <label for=""> صورة إيصال السداد</label>
+            <label for="receiptImg"> صورة إيصال السداد</label>
             <input type="file" name="payment_receipt" class="form-control" id="receiptImg">
+        </div>
+
+        <!-- requiered documents -->
+        <div class="form-group" id="privateStateDocGroup" style="display: none;">
+            <label for="privateStateDoc"> صور المستندات المطلوبة</label>
+            <input type="file" name="privateStateDoc" class="form-control" id="privateStateDoc" multiple disabled>
         </div>
 
         <!-- submet button -->
@@ -172,6 +178,8 @@
                 $('#receiptImg').prop('disabled', false);
                 $('#costGroup').show();
                 $('#receipt').show();
+                $('#privateStateDocGroup').hide();
+                $('#privateStateDoc').prop('disabled', true);
                 break;
 
             case 'employee':
@@ -180,6 +188,8 @@
                 $('#receiptImg').prop('disabled', false);
                 $('#costGroup').show();
                 $('#receipt').show();
+                $('#privateStateDocGroup').hide();
+                $('#privateStateDoc').prop('disabled', true);
                 break;
 
             case 'employeeSon':
@@ -188,12 +198,16 @@
                 $('#receiptImg').prop('disabled', false);
                 $('#costGroup').show();
                 $('#receipt').show();
+                $('#privateStateDocGroup').hide();
+                $('#privateStateDoc').prop('disabled', true);
                 break;
 
             case 'privateState':
                 $('#costGroup').hide();
                 $('#receipt').hide();
                 $('#receiptImg').prop('disabled', true);
+                $('#privateStateDoc').prop('disabled', false);
+                $('#privateStateDocGroup').show();
                 break;
 
             default:

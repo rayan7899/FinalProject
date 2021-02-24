@@ -1,4 +1,4 @@
-مشروع التخرج - مجموعة B
+Group B FinalProject
 
 Installation
 ```sh
@@ -7,7 +7,14 @@ sudo apt install composer
 composer install
 
 npm install && npm run dev
+
+cp .env.example .env
+
+php artisan key:generate
 ```
+Create DB For this project.
+
+Add your DB name and your mysql user & password to .env file.
 
 Change username function in ./vendor/laravel/ui/auth-backend/AuthenticatesUsers.php
 
