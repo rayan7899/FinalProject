@@ -29,6 +29,19 @@ class ManagerController extends Controller
        return view('manager.community.all_student')->with(compact('users'));
     }
 
+    public function private_all_student_form()
+    {
+       $users = User::with('student')->whereHas('student',function($result){
+           $result->where('traineeState','==','privateState');
+       })->get();
+
+       for($i=0; $i<count($users); $i++) {
+           $users[$i]['docs'] = Storage::disk('studentDocuments')->files($users[$i]->national_id.'/privateStateDoc');
+       }
+
+       return view('manager.private.private_student')->with(compact('users'));
+    }
+
     /**
      * Display a listing of the resource.
      *

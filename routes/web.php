@@ -47,6 +47,7 @@ Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm']
 Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
 
 Route::get('/community/all',[ManagerController::class, 'community_all_student_form'])->name('CommunityAllStudentsForm');
+Route::get('/private/all',[ManagerController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
 
 Route::get('documents/{national_id}',[FileController::class,'student_documents'])->name('GetStudentDocuments');
 Route::get('documents/show/{path?}',[FileController::class,'get_student_document'])->where('path', '(.*)')->name('GetStudentDocument');
