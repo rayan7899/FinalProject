@@ -13,7 +13,6 @@
             <th scope="col">القسم</th>
             <th scope="col">التخصص</th>
             <th scope="col">الحالة</th>
-            <th scope="col">تدقيق</th>
             <th scope="col">ملاحظات المدقق</th>
           </tr>
         </thead>
@@ -29,8 +28,7 @@
             <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
             <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
             <td>{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-            <td><input type="checkbox" checked disabled></td>
-            <td>{{ $user->note ?? 'لا يوجد' }} </td>
+            <td>{{ $user->student->note ?? 'لا يوجد' }} </td>
           </tr>
           @empty
           <p>لا يوجد بيانات</p>

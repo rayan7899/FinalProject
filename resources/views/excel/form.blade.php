@@ -45,11 +45,6 @@
           </table>
           @endif
         <div class="card">
-            <div class="position-absolute w-100 h-100 p-0 m-0"  id="loading" style="background-color: #0002;z-index: 10; display: none;" >
-                    <div class="spinner-border text-success position-absolute h3" style="width: 3rem; height: 3rem; top: 50%; left: 50%; z-index: 10;" role="status">
-                    <span class="sr-only">Loading...</span>
-                    </div>
-            </div>
             <div class="card-header">
                 <h6>اضافة المتدربين من ملف Excel</h6>
             </div>
