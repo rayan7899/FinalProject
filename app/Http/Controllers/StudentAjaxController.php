@@ -17,7 +17,7 @@ class StudentAjaxController extends Controller
             "national_id"        => "required|numeric",
             "wallet"             => "required|numeric",
             "documents_verified" => "required|boolean",
-            "note"               => "string"
+            "note"               => "string|nullable"
         ]);
         try{
             $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
