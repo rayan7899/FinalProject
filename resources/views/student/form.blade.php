@@ -92,7 +92,7 @@
             <div class="col-sm-4">
                 <label for="cost"> المبلغ المراد سداده</label>
                 <div class="input-group mb-3">
-                    <input disabled required type="text" class="form-control  " id="cost" name="cost" value="{{ $user->student->major->hours * 550 }}">
+                    <input disabled required type="text" class="form-control  " id="cost" name="cost" value="{{ $user->student->program->id==1 ? $user->student->major->hours * 550 : $user->student->major->hours * 400}}">
                     <span class="input-group-text">SR</span>
                 </div>
             </div>
