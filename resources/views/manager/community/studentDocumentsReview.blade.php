@@ -41,13 +41,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
-                        <button onclick="sendStudentUpdate()" class="btn btn-primary">حفظ</button>
+                        <button onclick="window.sendStudentUpdate()" class="btn btn-primary">حفظ</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="table-responsive-lg">
-            <table class="table table-sm table-bordered table-striped table-hover w-100">
+        <div class="table-responsive">
+            <table class="row-border compact" id="mainTable">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
@@ -79,7 +79,7 @@
                                 <td>{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
 
                                 {{-- <td>
-                    <a data-toggle="popover"  onclick="popup()" title="الايصالات" class="link p-0 m-0"
+                    <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
                         data-content='
                                 @foreach ($user['receipts'] as $receipt)
                                     <a class="d-block" href="{{ route('GetStudentDocument',['path' => $receipt ]) }}">{{ substr($receipt, 20, 10) }}</a>
@@ -99,7 +99,7 @@
                                             </a>
                                         @else
                                             <a class="d-block" target="_blank"
-                                                onclick=" Swal.fire({ imageUrl: '{{ route('GetStudentDocument', ['path' => $receipt]) }}',confirmButtonText:'اغلاق', imageAlt: ''})">
+                                                onclick=" window.Swal.fire({ imageUrl: '{{ route('GetStudentDocument', ['path' => $receipt]) }}',confirmButtonText:'اغلاق', imageAlt: ''})">
                                                 <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
                                                     alt="Image File">
                                             </a>
@@ -113,7 +113,7 @@
                             {{ $user->student->wallet ?? 'لا يوجد' }} </td>
                         <td class="text-center">
                             <input id="check_{{ $user->national_id }}" type="checkbox"
-                                onchange="checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
+                                onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
                                 style="width: 16px; height: 16px;"
                                 {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
                                 value="{{ $user->student->documents_verified }}">
@@ -121,7 +121,7 @@
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
                         <td>
                             <a data-toggle="modal" data-target="#editModal" href="#"
-                                onclick="showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
+                                onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
                                 <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                             </a>
                         </td>
@@ -132,159 +132,10 @@
                     @endif
                 </tbody>
             </table>
-
-            <div class="text-right">
-                <input type="submit" value="ارسال" class="btn btn-primary px-5">
-            </div>
         </div>
-        <script>
-            var national_id = document.getElementById('national_id');
-            var sname = document.getElementById('sname');
-            var wallet = document.getElementById('wallet');
-            var documents_verified = document.getElementById('documents_verified');
-            var note = document.getElementById('note');
-
-            function popup() {
-                $('[data-toggle="popover"]').popover({
-                    html: true
-                });
-            }
-
-            function showModal(national_id, name, wallet, note) {
-                this.documents_verified.checked = document.getElementById('check_' + national_id).checked;
-                this.national_id.value = national_id;
-                this.sname.value = name;
-                this.wallet.value = wallet;
-                this.note.innerHTML = note;
-
-            }
-
-
-
-
-
-
-            function sendStudentUpdate() {
-                console.log("ok")
-                let national_id = this.national_id.value;
-                let documents_verified = this.documents_verified.checked;
-                let wallet = this.wallet.value;
-                let note = this.note.value;
-                if (wallet == '') {
-                    wallet = 0;
-                }
-                let token = "{{ csrf_token() }}";
-                if (documents_verified) {
-                    documents_verified = 1;
-                } else {
-                    documents_verified = 0;
-                }
-                let form = {
-                    "_token": token,
-                    "national_id": national_id,
-                    "documents_verified": documents_verified,
-                    "wallet": wallet,
-                    "note": note,
-                };
-                Swal.fire({
-                    html: '<h4>جاري تحديث البيانات</h4>',
-                    timerProgressBar: true,
-                    didOpen: () => {
-                        Swal.showLoading()
-                    }
-                });
-                $.ajax({
-                    type: "post",
-                    url: "{{ route('StudentAjaxUpdate') }}",
-                    data: form,
-                    headers: {
-                        Accept: "application/json",
-                        ContentType: "application/json"
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        document.getElementById('wallet_' + national_id).innerHTML = wallet;
-                        document.getElementById('note_' + national_id).innerHTML = note;
-                        document.getElementById('check_' + national_id).checked = documents_verified;
-
-                        const message = response.message
-                        Swal.fire({
-                            position: 'center',
-                            html: '<h4> تم تحديث البيانات بنجاح</h4>',
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 1700
-                        })
-                        $('#editModal').modal('hide');
-                    },
-                    error: function(response) {
-                        const message = response.responseJSON.message
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'error',
-                            title: message,
-                            showConfirmButton: true,
-                        })
-                    }
-                });
-                Swal.close()
-            }
-
-
-
-
-
-
-            function checkChanged(national_id, event) {
-                let documents_verified = 0;
-                if (event.target.checked) {
-                    documents_verified = 1;
-                } else {
-                    documents_verified = 0;
-                }
-
-                Swal.fire({
-                    html: '<h4>جاري تحديث البيانات</h4>',
-                    timerProgressBar: true,
-                    didOpen: () => {
-                        Swal.showLoading()
-                    }
-                })
-                $.ajax({
-                    type: "post",
-                    url: "{{ route('StudentUpdateDocsVerified') }}",
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                        "national_id": national_id,
-                        "documents_verified": documents_verified,
-                    },
-                    headers: {
-                        Accept: "application/json",
-                        ContentType: "application/json"
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        const message = response.message
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            showConfirmButton: false,
-                            timer: 1000
-                        })
-                    },
-                    error: function(response) {
-                        const message = response.responseJSON.message
-                        Swal.fire({
-                            position: 'center',
-                            icon: 'error',
-                            title: message,
-                            showConfirmButton: true,
-                        })
-                    }
-                });
-                Swal.close()
-            }
-
+        <script defer>
+            var docsVerified = "{{ route('studentDocumentsReviewVerifiyDocs') }}";
+            var studentUpdate = "{{route('studentDocumentsReviewUpdate')}}";
         </script>
     </div>
 @stop
