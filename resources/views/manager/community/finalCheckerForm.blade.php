@@ -18,23 +18,23 @@
         </thead>
         <tbody>
           @if(isset($users))
-          @forelse($users as $user)
-          <tr>
-            <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
-            <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
-            <td>{{ $user->name ?? 'لا يوجد' }} </td>
-            <td>{{ $user->phone ?? 'لا يوجد' }} </td>
-            <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-            <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
-            <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-            <td>{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-            <td>{{ $user->student->note ?? 'لا يوجد' }} </td>
-          </tr>
-          @empty
-          <p>لا يوجد بيانات</p>
-          @endforelse
+            @forelse($users as $user)
+              <tr>
+                <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
+                <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
+                <td>{{ $user->name ?? 'لا يوجد' }} </td>
+                <td>{{ $user->phone ?? 'لا يوجد' }} </td>
+                <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
+                <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
+                <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                <td>{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
+                <td>{{ $user->student->note ?? 'لا يوجد' }} </td>
+              </tr>
+            @empty
+              <td colspan="9"> لا يوجد بيانات</td>
+            @endforelse
           @else
-          <p>لا يوجد بيانات</p>
+            <p>لا يوجد بيانات</p>
           @endif
 
         </tbody>
