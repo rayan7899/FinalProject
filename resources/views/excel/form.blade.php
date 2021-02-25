@@ -113,67 +113,6 @@
 
             var programs = @php echo $programs; @endphp;    
 
-            function findMajor(programs, program_id, department_id) {
-                for (var i = 0; i < programs.length; i++) {
-                    for (var j = 0; j < programs[i].departments.length; j++) {
-                        if (programs[i].id == program_id && programs[i].departments[j].id == department_id) {
-                            return programs[i].departments[j];
-                        }
-                    }
-                }
-            }
-
-
-            function findDepartment(programs, program_id) {
-
-                for (var i = 0; i < programs.length; i++) {
-                    if (programs[i].id == program_id) {
-                        return programs[i].departments;
-                    }
-                }
-            }
-
-            function fillDepartments() {
-                var prog = document.getElementById('program').value;
-                console.log(prog);
-                var dept = document.getElementById('department');
-                dept.innerHTML = null;
-                var departments = findDepartment(programs, prog);
-                console.log(departments);
-                for (var i = 0; i < departments.length; i++) {
-                    var option = document.createElement('option');
-                    option.innerHTML = departments[i].name;
-                    option.value = departments[i].id;
-                    dept.appendChild(option);
-                }
-                fillMajors();
-            }
-
-
-            function fillMajors() {
-                var prog = document.getElementById('program').value;
-                var dept = document.getElementById('department').value;
-                var mjr = document.getElementById('major');
-                mjr.innerHTML = null;
-                var majors = findMajor(programs, prog, dept).majors;
-                for (var i = 0; i < majors.length; i++) {
-                    var option = document.createElement('option');
-                    option.innerHTML = majors[i].name;
-                    option.value = majors[i].id;
-                    mjr.appendChild(option);
-                }
-
-            }
-
-
-
-
-            window.onload = function() {
-                $("#excel_form").submit(function(e) 
-                {
-                    $('#loading').css('display','block');
-                });
-            }
 
         </script>
     </div>

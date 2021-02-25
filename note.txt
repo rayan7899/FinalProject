@@ -1,3 +1,42 @@
+//Search script by Abdullah Ali Emjoy :)
+function find(text){
+console.log(text)
+var findit = new Array();
+let sptext = text.split(" ")
+ for(let td of all)
+ {
+  let sp = td.innerText.split(" ")
+      for(let word of sp)
+      {
+            for(let txt of sptext)
+            {
+                if(word == txt)
+                {
+                    let parent = td.parentNode
+                        if(findit[findit.length - 1] != parent)
+                        {
+                          findit.push(parent)
+                        }  
+                }           
+            }
+  
+      }
+}   
+    console.log(findit)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 static  = [
     تقنية الحاسب الالي  =>  [
       [
