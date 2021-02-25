@@ -32,7 +32,7 @@ class ManagerController extends Controller
     public function private_all_student_form()
     {
        $users = User::with('student')->whereHas('student',function($result){
-           $result->where('traineeState','==','privateState');
+           $result->where('traineeState', 'privateState');
        })->get();
 
        for($i=0; $i<count($users); $i++) {
