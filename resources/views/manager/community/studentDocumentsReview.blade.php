@@ -46,6 +46,25 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 75%" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pdfName"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
+                        <div class="text-center">
+                        <img id="modalImage" src="" alt="image" class="img-fluid"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive p-2 bg-white rounded border">
             <table class="table nowrap display cell-border" id="mainTable">
                 <thead class="text-center">
@@ -108,14 +127,20 @@
                                             $fileExtantion = end($splitByDot);
                                         @endphp
                                         @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                                            <a class="d-block" target="_blank"
+                                            {{-- <a class="d-block" target="_blank"
                                                 href="{{ route('GetStudentDocument', ['path' => $receipt]) }}">
                                                 <img src=" {{ asset('/images/pdf.png') }}" style="width:25px;" alt="PDF File">
+                                            </a> --}}
+                                            <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','pdf')">
+                                                <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                                             </a>
                                         @else
-                                            <a class="d-block" target="_blank"
-                                                onclick=" window.Swal.fire({ imageUrl: '{{ route('GetStudentDocument', ['path' => $receipt]) }}',confirmButtonText:'اغلاق', imageAlt: ''})">
-                                                <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
+                                        {{-- <a class="d-block" target="_blank"
+                                        onclick=" window.Swal.fire({ imageUrl: '{{ route('GetStudentDocument', ['path' => $receipt]) }}',confirmButtonText:'اغلاق', imageAlt: ''})"> --}}
+                                        <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','img')">        
+                                        <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
                                                     alt="Image File">
                                             </a>
                                         @endif
@@ -145,14 +170,14 @@
 
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
 
-                      <td class="text-center">
+                        <td class="text-center">
                             @if ($user->student->final_accepted == 1)
-                            
-                        @else
-                            <a data-toggle="modal" data-target="#editModal" href="#"
-                                onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
-                                <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
-                            </a>
+
+                            @else
+                                <a data-toggle="modal" data-target="#editModal" href="#"
+                                    onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
+                                    <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
+                                </a>
                             @endif
                         </td>
 
@@ -183,6 +208,21 @@
         <script defer>
             var docsVerified = "{{ route('studentDocumentsReviewVerifiyDocs') }}";
             var studentUpdate = "{{ route('studentDocumentsReviewUpdate') }}";
+
+            function showPdf(url,type) {
+             
+                if(type == "pdf"){
+                    $("#modalImage").hide();
+                    $("#pdfIfreme").show();
+                    $("#pdfIfreme").attr("src","");
+                    $("#pdfIfreme").attr("src",url);
+                }else{
+                    $("#pdfIfreme").hide();
+                    $("#modalImage").show();
+                    $("#modalImage").attr("src","");
+                    $("#modalImage").attr("src",url);
+                }
+            }
 
         </script>
     </div>
