@@ -77,7 +77,7 @@
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
-                         <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,22 +124,34 @@
                                         لايوجد
                         @endforelse
                         </td>
-                        <td  class="text-center" id="wallet_{{ $user->national_id }}">
-                            {{ $user->student->wallet ?? 'لا يوجد' }} </td>
-                        <td class="text-center">
-                            <input id="check_{{ $user->national_id }}" type="checkbox"
-                                onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
-                                style="width: 16px; height: 16px;"
-                                {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
-                                value="{{ $user->student->documents_verified }}">
+
+                        <td class="text-center" id="wallet_{{ $user->national_id }}">
+                            {{ $user->student->wallet ?? 'لا يوجد' }}
                         </td>
+
+
+                        <td class="text-center">
+                            @if ($user->student->final_accepted == 1)
+                                مقبول نهائي
+                            @else
+                                <input id="check_{{ $user->national_id }}" type="checkbox"
+                                    onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
+                                    style="width: 16px; height: 16px;"
+                                    {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
+                                    value="{{ $user->student->documents_verified }}">
+                            @endif
+                        </td>
+
+
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
-                        <td  class="text-center">
+
+                        <td class="text-center">
                             <a data-toggle="modal" data-target="#editModal" href="#"
                                 onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
                                 <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                             </a>
                         </td>
+
                         </tr>
                     @empty
                         <td colspan="12">لا يوجد بيانات</td>
@@ -166,7 +178,8 @@
         </div>
         <script defer>
             var docsVerified = "{{ route('studentDocumentsReviewVerifiyDocs') }}";
-            var studentUpdate = "{{route('studentDocumentsReviewUpdate')}}";
+            var studentUpdate = "{{ route('studentDocumentsReviewUpdate') }}";
+
         </script>
     </div>
 @stop

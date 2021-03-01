@@ -1,8 +1,7 @@
 @extends('layouts.app')
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="table-responsive p-2 bg-white rounded border">
-           
             <h6 class="text-center" style="position: relative; top:10px"> القبول النهائي-شؤون المتدربين</h6>
             <table class="table nowrap display cell-border" id="mainTable">
                 <thead class="text-center">
@@ -31,8 +30,8 @@
                     @if (isset($users))
                         @forelse ($users as $user)
                             <tr>
-                                <th  class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
-                                <td  class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
+                                <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
+                                <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->phone ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>

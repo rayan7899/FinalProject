@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 
 class StudentAffairsController extends Controller
@@ -61,9 +62,9 @@ class StudentAffairsController extends Controller
     public function newStudents()
     {
         $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('wallet', '>', 0)->where('documents_verified', true);
+            $result->where('wallet', '>', 0)->where('final_accepted', true);
         })->get();
-        return view('manager.studentsaAffairs.newStudents')
+        return view('manager.studentsAffairs.newStudents')
             ->with('users', $users);
     }
 }
