@@ -22,6 +22,8 @@
         "sass-loader": "^8.0.0"
     },
     "dependencies": {
+        "datatables.net": "^1.10.23",
+        "datatables.net-dt": "^1.10.23",
         "sweetalert2": "^10.15.5"
     }
 }

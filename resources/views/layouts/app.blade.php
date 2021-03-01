@@ -20,9 +20,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <!-- <link rel="stylesheet" href="https://www.tvtc.gov.sa/css/rayat.css"> -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
-  
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js" defer></script>
+
 
 </head>
 
@@ -84,8 +82,11 @@
                                 <ul class="navbar-nav ml-auto py-4 py-md-0">
                                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
                                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق المستندات </a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li>
+                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
+                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('AddExcelForm')}}"> رفع ملف اكسل </a></li>
+
+                                    {{-- <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
+                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li> --}}
                                 </ul>
                             </div>
                         </nav>

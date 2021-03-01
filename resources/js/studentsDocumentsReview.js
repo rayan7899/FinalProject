@@ -1,5 +1,8 @@
-$(document).ready(function () {
-    $("#mainTable").DataTable({
+jQuery(function () {
+    if($("#mainTable")){
+    var table = $("#mainTable").DataTable({
+        orderCellsTop: true,
+        deferLoading:true,
         language: {
             emptyTable: "ليست هناك بيانات متاحة في الجدول",
             loadingRecords: "جارٍ التحميل...",
@@ -126,7 +129,32 @@ $(document).ready(function () {
             },
             searchPlaceholder: "ابحث ...",
         },
+        initComplete: function () {
+            var api = this.api();
+              $('.filterhead', api.table().header()).each( function (i) {
+                  if(i > 3 && i < 7){
+                var column = api.column(i);
+                  var select = $('<select><option value="">الكل</option></select>')
+                      .appendTo( $(this).empty() )
+                      .on( 'change', function () {
+                          var val = $.fn.dataTable.util.escapeRegex(
+                              $(this).val()
+                          );
+   
+                          column
+                              .search( val ? '^'+val+'$' : '', true, false )
+                              .draw();
+                      } );
+   
+                  column.data().unique().sort().each( function ( d, j ) {
+                      select.append( '<option value="'+d+'">'+d+'</option>' );
+                  } );
+                }
+              } );
+              
+          }
     });
+}
     $.ajaxSetup({
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
