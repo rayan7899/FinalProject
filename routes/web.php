@@ -33,8 +33,8 @@ Route::get('/student/edit',[StudentController::class,'edit'])->name('EditOneStud
 Route::post('/student/update',[StudentController::class,'update'])->name('UpdateOneStudent')->middleware('agreement');
 Route::get('/student/delete',[StudentController::class,'destroy'])->name('DeleteOneStudent')->middleware('agreement');
 
-Route::post('/community/student/verified-update',[CommunityController::class,'studentDocumentsReviewUpdate'])->name('studentDocumentsReviewUpdate')->middleware('agreement');
-Route::post('/community/student/verified-docs',[CommunityController::class,'studentDocumentsReviewVerifiyDocs'])->name('studentDocumentsReviewVerifiyDocs')->middleware('agreement');
+Route::post('/community/student/verified-update',[CommunityController::class,'studentDocumentsReviewUpdate'])->name('studentDocumentsReviewUpdate');
+Route::post('/community/student/verified-docs',[CommunityController::class,'studentDocumentsReviewVerifiyDocs'])->name('studentDocumentsReviewVerifiyDocs');
 
 
 
@@ -57,4 +57,6 @@ Route::get('documents/show/{path?}',[FileController::class,'get_student_document
 Auth::routes(['register'=> false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/sffairs/checked',[StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
+Route::get('/affairs/checked',[StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
+Route::get('/affairs/new',[StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
+
