@@ -80,8 +80,9 @@
                                     @endguest
                                 </ul>
                                 <ul class="navbar-nav ml-auto py-4 py-md-0">
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول
-                                        </a></li>
+                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
+                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق المستندات </a></li>
+                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
                                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li>
                                 </ul>
                             </div>
