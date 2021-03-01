@@ -30,8 +30,28 @@ class CommunityController extends Controller
         return view('manager.community.studentDocumentsReview')->with(compact('users'));
     }
 
+    
+    public function studentDocumentsReviewJson()
+    {
 
-    public function studentDocumentsReviewUpdate(Request $request){
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('traineeState', '!=', 'privateState');
+        })->get();
+
+        for ($i = 0; $i < count($users); $i++) {
+            // $documents = Storage::disk('studentDocuments')->files($user->national_id);
+            $users[$i]['receipts'] = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/receipts');
+            $users[$i]->progname = $users[$i]->student->program->name;
+            $users[$i]->deptname = $users[$i]->student->department->name;
+            $users[$i]->mjrname = $users[$i]->student->major->name;
+        }
+        //return view('manager.community.studentDocumentsReview')->with(compact('users'));
+        return response(\json_encode(['data' => $users]), 200);
+    }
+
+
+    public function studentDocumentsReviewUpdate(Request $request)
+    {
         $studentData = $this->validate($request, [
             "national_id"        => "required|numeric",
             "wallet"             => "required|numeric",
@@ -39,7 +59,7 @@ class CommunityController extends Controller
             "note"               => "string|nullable"
         ]);
 
-        try{
+        try {
             $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
             $user->student()->update([
                 "wallet"             => $studentData['wallet'],
@@ -47,44 +67,45 @@ class CommunityController extends Controller
                 "note"               => $studentData['note'],
             ]);
 
-            return response(json_encode(['message' => 'تم تحديث البيانات بنجاح']),200);
-        }catch(Exception $e){
-            return response(json_encode(['message' => 'حدث خطأ غير معروف'. $e->getCode()]),422);
-        }   
+            return response(json_encode(['message' => 'تم تحديث البيانات بنجاح']), 200);
+        } catch (Exception $e) {
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
+        }
     }
 
-    public function studentDocumentsReviewVerifiyDocs(Request $request){
+    public function studentDocumentsReviewVerifiyDocs(Request $request)
+    {
 
         $studentData = $this->validate($request, [
             "national_id"        => "required|numeric",
             "documents_verified" => "required|boolean"
         ]);
 
-        try{
+        try {
             $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
             $user->student()->update([
                 "documents_verified" => $studentData['documents_verified'],
             ]);
 
-            return response(json_encode(['message' => 'تم تغيير الحالة بنجاح']),200);
-        }catch(Exception $e){
-            return response(json_encode(['message' => 'حدث خطأ غير معروف'. $e->getCode()]),422);
-        }      
+            return response(json_encode(['message' => 'تم تغيير الحالة بنجاح']), 200);
+        } catch (Exception $e) {
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
+        }
     }
-    
+
 
 
     public function private_all_student_form()
     {
-       $users = User::with('student')->whereHas('student',function($result){
-           $result->where('traineeState', 'privateState');
-       })->get();
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('traineeState', 'privateState');
+        })->get();
 
-       for($i=0; $i<count($users); $i++) {
-           $users[$i]['docs'] = Storage::disk('studentDocuments')->files($users[$i]->national_id.'/privateStateDoc');
-       }
+        for ($i = 0; $i < count($users); $i++) {
+            $users[$i]['docs'] = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/privateStateDoc');
+        }
 
-       return view('manager.private.private_student')->with(compact('users'));
+        return view('manager.private.private_student')->with(compact('users'));
     }
 
 
@@ -163,5 +184,4 @@ class CommunityController extends Controller
     {
         //
     }
-
 }

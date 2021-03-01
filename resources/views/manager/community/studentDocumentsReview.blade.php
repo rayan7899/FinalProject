@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="mx-5">
+    <div class="container-fluid">
         <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
             aria-hidden="true">
             <div class="modal-dialog " role="document">
@@ -46,8 +46,8 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="row-border compact" id="mainTable">
+        <div class="table-responsive p-2 bg-white rounded border">
+            <table class="table nowrap display cell-border" id="mainTable">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
@@ -64,19 +64,34 @@
                         <th scope="col">ملاحظات المدقق</th>
                         <th scope="col"> </th>
                     </tr>
+                    <tr>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                         <th class="filterhead" scope="col"></th>
+                    </tr>
                 </thead>
                 <tbody>
                     @if (isset($users))
                         @forelse ($users as $user)
                             <tr>
-                                <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
-                                <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
+                                <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
+                                <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->phone ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                                <td>{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->phone ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
 
                                 {{-- <td>
                     <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
@@ -109,7 +124,7 @@
                                         لايوجد
                         @endforelse
                         </td>
-                        <td id="wallet_{{ $user->national_id }}" class="text-center">
+                        <td  class="text-center" id="wallet_{{ $user->national_id }}">
                             {{ $user->student->wallet ?? 'لا يوجد' }} </td>
                         <td class="text-center">
                             <input id="check_{{ $user->national_id }}" type="checkbox"
@@ -119,7 +134,7 @@
                                 value="{{ $user->student->documents_verified }}">
                         </td>
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
-                        <td>
+                        <td  class="text-center">
                             <a data-toggle="modal" data-target="#editModal" href="#"
                                 onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
                                 <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
@@ -131,6 +146,22 @@
                     @endforelse
                     @endif
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
         <script defer>

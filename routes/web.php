@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\FileController;
-use App\Http\Controllers\ImportExcelController;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
@@ -23,9 +23,11 @@ use App\Http\Controllers\StudentAffairsController;
 
 Route::get('/', [HomeController::class, 'index']);
 
-//ImportExcelController
-Route::get('/excel/add',[ImportExcelController::class,'add'])->name('AddExcelForm');
-Route::post('/excel/import',[ImportExcelController::class,'import'])->name('importExcel');
+//ExcelController
+Route::get('/excel/add',[ExcelController::class,'add'])->name('AddExcelForm');
+Route::post('/excel/import',[ExcelController::class,'import'])->name('importExcel');
+Route::get('/excel/export',[ExcelController::class,'export'])->name('ExportExcel');
+
 
 //StudentController - Edit student form
 //Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
@@ -33,8 +35,8 @@ Route::get('/student/edit',[StudentController::class,'edit'])->name('EditOneStud
 Route::post('/student/update',[StudentController::class,'update'])->name('UpdateOneStudent')->middleware('agreement');
 Route::get('/student/delete',[StudentController::class,'destroy'])->name('DeleteOneStudent')->middleware('agreement');
 
-Route::post('/community/student/verified-update',[CommunityController::class,'studentDocumentsReviewUpdate'])->name('studentDocumentsReviewUpdate')->middleware('agreement');
-Route::post('/community/student/verified-docs',[CommunityController::class,'studentDocumentsReviewVerifiyDocs'])->name('studentDocumentsReviewVerifiyDocs')->middleware('agreement');
+Route::post('/community/student/verified-update',[CommunityController::class,'studentDocumentsReviewUpdate'])->name('studentDocumentsReviewUpdate');
+Route::post('/community/student/verified-docs',[CommunityController::class,'studentDocumentsReviewVerifiyDocs'])->name('studentDocumentsReviewVerifiyDocs');
 
 
 
@@ -49,6 +51,8 @@ Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->
 
 Route::get('/privatestate/student/docs/review',[CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
 Route::get('/community/student/docs/review',[CommunityController::class, 'studentDocumentsReviewForm'])->name('studentDocumentsReviewForm');
+//Route::get('/community/student/docs/review/data',[CommunityController::class, 'studentDocumentsReviewJson'])->name('studentDocumentsReviewJson');
+
 
 Route::get('documents/{national_id}',[FileController::class,'student_documents'])->name('GetStudentDocuments');
 Route::get('documents/show/{path?}',[FileController::class,'get_student_document'])->where('path', '(.*)')->name('GetStudentDocument');
@@ -57,4 +61,6 @@ Route::get('documents/show/{path?}',[FileController::class,'get_student_document
 Auth::routes(['register'=> false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+Route::get('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
+Route::post('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
 Route::get('/sffairs/checked',[StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
