@@ -17,4 +17,13 @@ class StudentAffairsController extends Controller
         return view('manager.studentsaAffairs.CheckedStudents')
             ->with('users', $users);
     }
+
+    public function newStudents()
+    {
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('wallet', '>', 0)->where('documents_verified', true);
+        })->get();
+        return view('manager.studentsaAffairs.newStudents')
+            ->with('users', $users);
+    }
 }
