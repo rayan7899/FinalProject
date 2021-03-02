@@ -41,7 +41,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
-                        <button onclick="window.sendStudentUpdate()" class="btn btn-primary">حفظ</button>
+                        <button onclick="window.sendStudentUpdate('privateState')" class="btn btn-primary">حفظ</button>
                     </div>
                 </div>
             </div>
