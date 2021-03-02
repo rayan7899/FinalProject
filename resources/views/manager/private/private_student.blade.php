@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="mx-5">
+    <div class="container-fluid">
         <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
             aria-hidden="true">
             <div class="modal-dialog " role="document">
@@ -23,10 +23,10 @@
                                 <label for="name">الاسم</label>
                                 <input type="text" class="form-control" id="sname" aria-describedby="name" disabled="true">
                             </div>
-                            <div class="form-group">
-                                <label for="wallet">المبلغ المدفوع</label>
-                                <input required type="number" class="form-control" id="wallet" aria-describedby="wallet">
-                            </div>
+                            <!-- <div class="form-group">
+                                 <label for="wallet">المبلغ المدفوع</label>
+                                 <input required type="number" class="form-control" id="wallet" aria-describedby="wallet">
+                                 </div> -->
                             <div class="form-group">
                                 <label for="verified">حالة التدقيق</label>
                                 <input type="checkbox" id="documents_verified"
@@ -41,13 +41,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
-                        <button onclick="sendStudentUpdate()" class="btn btn-primary">حفظ</button>
+                        <button onclick="window.sendStudentUpdate()" class="btn btn-primary">حفظ</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="table-responsive-lg">
-            <table class="table table-sm table-bordered table-striped table-hover w-100">
+        <div class="table-responsive p-2 bg-white rounded border">
+            <table class="table nowrap display cell-border" id="mainTable">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
@@ -63,20 +63,42 @@
                         <th scope="col">ملاحظات المدقق</th>
                         <th scope="col"> </th>
                     </tr>
+                    <tr>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                    </tr>
                 </thead>
                 <tbody>
                     @if (isset($users))
                         @forelse ($users as $user)
                             <tr>
-                                <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
-                                <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
+                                <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
+                                <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->phone ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                                <td>{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->phone ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
 
+                                {{-- <td>
+                    <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
+                        data-content='
+                                @foreach ($user['receipts'] as $receipt)
+                                    <a class="d-block" href="{{ route('GetStudentDocument',['path' => $receipt ]) }}">{{ substr($receipt, 20, 10) }}</a>
+                                @endforeach
+                            '>عرض الايصالات</a>
+                </td> --}}
                                 <td class="text-center">
                                     @forelse ($user['docs'] as $doc)
                                         @php
@@ -90,7 +112,7 @@
                                             </a>
                                         @else
                                             <a class="d-block" target="_blank"
-                                                onclick=" Swal.fire({ imageUrl: '{{ route('GetStudentDocument', ['path' => $doc]) }}',confirmButtonText:'اغلاق', imageAlt: ''})">
+                                                onclick=" window.Swal.fire({ imageUrl: '{{ route('GetStudentDocument', ['path' => $doc]) }}',confirmButtonText:'اغلاق', imageAlt: ''})">
                                                 <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
                                                     alt="Image File">
                                             </a>
@@ -100,33 +122,59 @@
                                         لايوجد
                         @endforelse
                         </td>
+
+
                         <td class="text-center">
-                            <input id="check_{{ $user->national_id }}" type="checkbox"
-                                onchange="checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
-                                style="width: 16px; height: 16px;"
-                                {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
-                                value="{{ $user->student->documents_verified }}">
+                            @if ($user->student->final_accepted == 1)
+                                مقبول نهائي
+                            @else
+                                <input id="check_{{ $user->national_id }}" type="checkbox"
+                                    onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
+                                    style="width: 16px; height: 16px;"
+                                    {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
+                                    value="{{ $user->student->documents_verified }}">
+                            @endif
                         </td>
+
+
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
-                        <td>
+
+                      <td class="text-center">
+                            @if ($user->student->final_accepted == 1)
+                            
+                        @else
                             <a data-toggle="modal" data-target="#editModal" href="#"
-                                onclick="showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
+                                onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
                                 <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                             </a>
+                            @endif
                         </td>
+
                         </tr>
                     @empty
                         <td colspan="12">لا يوجد بيانات</td>
                     @endforelse
                     @endif
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </tfoot>
             </table>
-
-            <div class="text-right">
-                <input type="submit" value="ارسال" class="btn btn-primary px-5">
-            </div>
         </div>
-        <script>
+        <script defer>
             var docsVerified = "{{ route('studentDocumentsReviewVerifiyDocs') }}";
             var studentUpdate = "{{ route('studentDocumentsReviewUpdate') }}";
 

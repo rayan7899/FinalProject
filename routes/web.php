@@ -63,6 +63,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
 Route::post('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
+Route::get('/affairs/finalaccepted/list',[StudentAffairsController::class, 'finalAcceptedList'])->name('finalAcceptedList');
 Route::get('/affairs/checked',[StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
 Route::get('/affairs/new',[StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
 
