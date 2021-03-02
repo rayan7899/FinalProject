@@ -23,8 +23,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('student')->get();
-        return view('excel.exportAllStudent');
 
     }
 

@@ -37,8 +37,6 @@
                                 <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-
-
                                 <td class="text-center">
                                     <input id="check_{{ $user->national_id }}" type="checkbox"
                                         onchange="window.finalAcceptChanged('{{ $user->national_id }}',event)"
@@ -46,7 +44,6 @@
                                         {{ $user->student->final_accepted == true ? 'checked' : '' ?? '' }}
                                         value="{{ $user->student->final_accepted }}" />
                                 </td>
-
                             </tr>
                         @empty
                             <td colspan="12">لا يوجد بيانات</td>
