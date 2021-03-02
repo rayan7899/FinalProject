@@ -131,7 +131,7 @@ jQuery(function () {
         },
         initComplete: function () {
             var api = this.api();
-              $('.filterhead', api.table().header()).each( function (i) {
+              $('.filterhead' ).each( function (i) {
                   if(i > 3 && i < 7){
                 var column = api.column(i);
                   var select = $('<select><option value="">الكل</option></select>')
