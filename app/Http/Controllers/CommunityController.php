@@ -20,7 +20,7 @@ class CommunityController extends Controller
     {
 
         $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('traineeState', '!=', 'privateState');
+            $result->where('traineeState', '!=', 'privateState')->where("data_updated",true);
         })->get();
 
         for ($i = 0; $i < count($users); $i++) {
@@ -59,13 +59,23 @@ class CommunityController extends Controller
             "note"               => "string|nullable"
         ]);
 
+       
+
         try {
             $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
-            $user->student()->update([
-                "wallet"             => $studentData['wallet'],
-                "documents_verified" => $studentData['documents_verified'],
-                "note"               => $studentData['note'],
-            ]);
+            if($user->student->traineeState != 'privateState'){
+                $user->student()->update([
+                    "wallet"             => $studentData['wallet'],
+                    "documents_verified" => $studentData['documents_verified'],
+                    "note"               => $studentData['note'],
+                ]);
+            }else{
+                $user->student()->update([
+                    "documents_verified" => $studentData['documents_verified'],
+                    "note"               => $studentData['note'],
+                ]);
+            }
+           
 
             return response(json_encode(['message' => 'تم تحديث البيانات بنجاح']), 200);
         } catch (Exception $e) {
