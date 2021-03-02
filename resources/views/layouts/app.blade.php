@@ -80,6 +80,7 @@
                                     @endguest
                                 </ul>
                                 <ul class="navbar-nav ml-auto py-4 py-md-0">
+                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a></li>
                                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
                                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
                                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a></li>

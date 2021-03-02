@@ -67,4 +67,13 @@ class StudentAffairsController extends Controller
         return view('manager.studentsAffairs.newStudents')
             ->with('users', $users);
     }
+
+    public function finalAcceptedList()
+    {
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('final_accepted',true);
+        })->get();
+
+        return view('manager.studentsAffairs.studentFinalAcceptedList')->with(compact('users'));
+    }
 }
