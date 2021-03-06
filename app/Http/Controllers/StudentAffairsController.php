@@ -62,7 +62,7 @@ class StudentAffairsController extends Controller
     public function newStudents()
     {
         $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('wallet', '>', 0)->where('final_accepted', true);
+            $result->where('final_accepted', true);
         })->get();
         return view('manager.studentsAffairs.newStudents')
             ->with('users', $users);
