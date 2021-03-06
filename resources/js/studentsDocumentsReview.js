@@ -217,7 +217,7 @@ window.sendStudentUpdate = function (requestType) {
         documents_verified = 0;
     }
     if (requestType != "privateState") {
-        walet = window.wallet.value;
+        wallet = window.wallet.value;
         form = {
             national_id: national_id,
             documents_verified: documents_verified,
