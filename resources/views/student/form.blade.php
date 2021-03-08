@@ -41,7 +41,7 @@
         <!-- email -->
         <div class="form-group">
             <label for="email">البريد الالكتروني</label>
-            <input required type="email" class="form-control p-1 m-1" id="email" name="email" value="{{ $user->email }} ">
+            <input required type="email" class="form-control p-1 m-1" id="email" name="email" value="{{ $user->email ?? old('email') }} ">
         </div>
 
         <!-- department and major -->

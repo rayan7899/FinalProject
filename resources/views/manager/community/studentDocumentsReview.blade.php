@@ -171,13 +171,11 @@
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
 
                         <td class="text-center">
-                            @if ($user->student->final_accepted == 1)
-
-                            @else
-                                <a data-toggle="modal" data-target="#editModal" href="#"
-                                    onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
-                                    <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
-                                </a>
+                            @if ($user->student->final_accepted != 1)
+                            <a data-toggle="modal" data-target="#editModal" href="#"
+                            onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
+                            <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
+                        </a>
                             @endif
                         </td>
 

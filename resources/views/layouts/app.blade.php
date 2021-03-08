@@ -20,6 +20,10 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <!-- <link rel="stylesheet" href="https://www.tvtc.gov.sa/css/rayat.css"> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js" defer></script>
+
 
 
 </head>
@@ -41,10 +45,7 @@
                 <div class="row">
                     <div class="col-12">
                         <nav class="navbar navbar-expand-md navbar-light ">
-                            <a class="navbar-brand" href="https://www.tvtc.gov.sa/" target="_blank"><img src="/images/tvtclogo1.jpg" alt="" /></a>
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
+                    
                             <div class="collapse navbar-collapse " id="navbarSupportedContent">
                                 <ul class="navbar-nav mr-auto">
                                     <!-- Authentication Links -->
@@ -80,16 +81,22 @@
                                     @endguest
                                 </ul>
                                 <ul class="navbar-nav ml-auto py-4 py-md-0">
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق المستندات</a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="{{route('AddExcelForm')}}"> رفع ملف اكسل </a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق المستندات</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('AddExcelForm')}}"> رفع ملف اكسل </a></li>
 
-                                    {{-- <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
-                                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li> --}}
+                                    {{-- <li class="nav-item"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li> --}}
                                 </ul>
+                                <a class="navbar-brand" href="https://www.tvtc.gov.sa/" target="_blank">
+                                    <img style="width: 250px;" class="navbar-brand"  src="{{asset('images/tvtclogo1.svg')}}" alt="" />
+                                </a>
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
                             </div>
                         </nav>
                     </div>
