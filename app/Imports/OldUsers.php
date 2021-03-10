@@ -215,6 +215,7 @@ class OldUsers implements ToCollection
                 'countOfUsers' => $countOfUsers
             ]);
         }
+        return redirect(route('AddExcelForm'))->with('success', 'تم اضافة ' . $addedCount . ' متدرب بنجاح ');
 
 
 
