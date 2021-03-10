@@ -24,9 +24,14 @@ use App\Http\Controllers\StudentAffairsController;
 Route::get('/', [HomeController::class, 'index']);
 
 //ExcelController
-Route::get('/excel/add',[ExcelController::class,'add'])->name('AddExcelForm');
-Route::post('/excel/import',[ExcelController::class,'import'])->name('importExcel');
-Route::get('/excel/export',[ExcelController::class,'export'])->name('ExportExcel');
+Route::get('/excel/new/add',[ExcelController::class,'importNewForm'])->name('AddExcelForm');
+Route::post('/excel/new/import',[ExcelController::class,'importNewUsers'])->name('importExcel');
+//Route::get('/excel/new/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
+
+ //Old users
+Route::get('/excel/old/add',[ExcelController::class,'importOldForm'])->name('OldForm');
+Route::post('/excel/old/import',[ExcelController::class,'importOldUsers'])->name('OldImport');
+//Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
 
 
 //StudentController - Edit student form

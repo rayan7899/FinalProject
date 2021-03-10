@@ -86,14 +86,15 @@
                                     <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق المستندات</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('AddExcelForm')}}"> رفع ملف اكسل </a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('AddExcelForm')}}">اضافة اكسل مستجدين</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('OldForm')}}"> اضافة اكسل مستمرين </a></li>
 
                                     {{-- <li class="nav-item"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
                                     <li class="nav-item"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li> --}}
                                 </ul>
-                                <a class="navbar-brand" href="https://www.tvtc.gov.sa/" target="_blank">
+                                {{-- <a class="navbar-brand" href="https://www.tvtc.gov.sa/" target="_blank">
                                     <img style="width: 250px;" class="navbar-brand"  src="{{asset('images/tvtclogo1.svg')}}" alt="" />
-                                </a>
+                                </a> --}}
                                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>

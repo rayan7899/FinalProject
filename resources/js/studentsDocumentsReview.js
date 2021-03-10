@@ -332,6 +332,20 @@ window.checkChanged = function (national_id, event) {
     Swal.close();
 };
 
+window.showPdf = function (url, type) {
+    if (type == "pdf") {
+        $("#modalImage").hide();
+        $("#pdfIfreme").show();
+        $("#pdfIfreme").attr("src", "");
+        $("#pdfIfreme").attr("src", url);
+    } else {
+        $("#pdfIfreme").hide();
+        $("#modalImage").show();
+        $("#modalImage").attr("src", "");
+        $("#modalImage").attr("src", url);
+    }
+};
+
 // window.find = function (text) {
 //     console.log(text)
 //     window.findit = new Array();
