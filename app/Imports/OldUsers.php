@@ -221,10 +221,10 @@ class OldUsers implements ToCollection
 
                 ]);
                 DB::commit();
-            } catch (Exception $e) {
+            } catch (QueryException $e) {
                 DB::rollback();
                 //   dump($e);
-                if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
+                if ($e->errorInfo[0] == "23000" || $e->errorInfo[1] == "1062") {
                     array_push($duplicate, $userinfo);
                 } else {
                     array_push($errorsArr, ['message' => $e->getCode(), 'userinfo' => $userinfo]);
