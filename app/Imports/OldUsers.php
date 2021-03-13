@@ -12,63 +12,75 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Validators\ValidationException;
-use Illuminate\Validation\ValidationException as Vali;
+// use Maatwebsite\Excel\Validators\ValidationException;
+// use Illuminate\Validation\ValidationException as Vali;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+
+define('PROGRAM', 0);
+define('DEPARTMENT', 1);
+define('MAJOR', 2);
+define('NATIONAL_ID', 3);
+define('NAME', 4);
+define('RAYAT_ID', 5);
+define('TRAINEE_STATE', 6);
+define('WALLET', 10);
+define('DOCUMENTS_VERIFIED', 11);
+define('PHONE', 17);
+define('NOTE', 19);
+define('RECEIPT_URL', 20);
 
 class OldUsers implements ToCollection
 {
     use Importable;
 
-    static $program = 0;
-    static $department = 1;
-    static $major = 2;
-    static $national_id = 3;
-    static $name = 4;
-    static $rayat_id = 5;
-    static $traineeState = 6;
-    static $wallet = 10;
-    static $documents_verified = 11;
-    static $phone = 17;
-    static $note = 19;
-    static $receipt_url = 20;
+    /**
+     * @param string $url
+     *
+     * @return "url"
+     */
+
+    public static function getImgUrl($url)
+    {
+        $url = trim($url);
+        $url = htmlspecialchars($url);
+        $baseurl = "https://drive.google.com/uc?id=";
+        $suff = "&export=download";
+        $parseUrl = parse_url($url);
+        $query = $parseUrl['query'];
+        parse_str($query, $queryParams);
+        $newUrl = $baseurl . $queryParams['id'] . $suff;
+        return $newUrl;
+    }
+
     /**
      * @param array $row
      *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-
     public function collection(Collection $rows)
     {
-        // // $baseurl = "https://drive.google.com/uc?id=";
-        // // $suff = "&export=download";
-        // // $url = $users[10][20];
-        // //  $parseUrl = parse_url($url);
-        // //  $query = $parseUrl['query'];
-        // //  parse_str($query, $queryParams); 
-        // // need $queryParams['id']
-        // //$newUrl = $baseurl . queryParams['id'] . $suff;
 
-        // Validator::make($rows->toArray(), [
-        //     '*.' . $this::$national_id  => 'required|digits:10',
-        //     '*.' . $this::$name         => 'required|string|max:100',
-        //     '*.' . $this::$program      => 'required|string|max:100',
-        //     '*.' . $this::$department   => 'required|string|max:100',
-        //     '*.' . $this::$major        => 'required|string|max:100',
-        //     '*.' . $this::$rayat_id     => 'required|digits_between:9,10',
-        //     '*.' . $this::$traineeState => 'nullable|string|max:20',
-        //     '*.' . $this::$wallet       => 'required|numeric',
-        //     '*.' . $this::$documents_verified => "required|boolean",
-        //     "*." . $this::$note         => "nullable|string",
-        //     '*.' . $this::$phone        => 'required|digits_between:9,14',
-        //     '*.' . $this::$receipt_url  => 'nullable|string',
+     
+        Validator::make($rows->slice(1)->toArray(), [
+            '*.' . NATIONAL_ID  => 'required|digits:10',
+            '*.' . NAME         => 'required|string|max:100',
+            '*.' . PROGRAM      => 'required|string|max:100',
+            '*.' . DEPARTMENT   => 'required|string|max:100',
+            '*.' . MAJOR        => 'required|string|max:100',
+            '*.' . RAYAT_ID    => 'required|digits_between:9,10',
+            '*.' . TRAINEE_STATE => 'nullable|string|max:20',
+            '*.' . WALLET       => 'required|numeric',
+            '*.' . DOCUMENTS_VERIFIED => "required|in:TRUE,FALSE",
+            "*." . NOTE         => "nullable|string",
+            '*.' . PHONE        => 'required|digits_between:9,14',
+            '*.' . RECEIPT_URL => 'nullable|string',
 
-
-
-        // ], [
-        //     '*.' . $this::$national_id . '.digits'  => ' يجب ان يكون رقم الهوية 10 ارقام',
-        //     '*.' . $this::$name . '.max' => 'يجب ان لا يتجاوز الاسم 255 حرف',
-        //     '*.' . $this::$phone . '.digits_between' => 'يجب ان يكون رقم الجوال بين 10 و 14 رقماَ',
-        // ])->validate();
+        ], [
+            '*.' . NATIONAL_ID . '.digits'  => ' يجب ان يكون رقم الهوية 10 ارقام',
+            '*.' . NAME . '.max' => 'يجب ان لا يتجاوز الاسم 255 حرف',
+            '*.' . PHONE . '.digits_between' => 'يجب ان يكون رقم الجوال بين 10 و 14 رقماَ',
+        ])->validate();
 
         $programs =  Program::with('departments.majors')->get(['id', 'name']);
         $rows = $rows->slice(1)->toArray();
@@ -76,41 +88,76 @@ class OldUsers implements ToCollection
         $errorsArr = [];
 
         foreach ($rows as $row) {
+
             $progId = 0;
             $deptId = 0;
             $mjrId = 0;
             $messages = [];
             $userinfo = [
-                'national_id'   => $row[$this::$national_id],
-                'name'          => $row[$this::$name],
+                'national_id'   => $row[NATIONAL_ID],
+                'name'          => $row[NAME],
                 'email'         => NULL,
-                'phone'         => $row[$this::$phone],
+                'phone'         => $row[PHONE],
                 'password' => Hash::make("bct12345")
             ];
-            if ($row[$this::$documents_verified] === "TRUE" || $row[$this::$documents_verified] === "true" || $row[$this::$documents_verified] === "1") {
-                $row[$this::$documents_verified] = true;
-            } else {
-                $row[$this::$documents_verified] = false;
+            if (Storage::disk('studentDocuments')->exists($row[NATIONAL_ID])) {
+                array_push($duplicate, $userinfo);
+                continue;
             }
-           
-
-            switch ($row[$this::$traineeState]) {
+            switch ($row[TRAINEE_STATE]) {
                 case "منسوب":
-                    $row[$this::$traineeState] = "employee";
+                    $row[TRAINEE_STATE] = "employee";
                     break;
                 case "ابن منسوب":
-                    $row[$this::$traineeState]  = "employeeSon";
+                    $row[TRAINEE_STATE]  = "employeeSon";
                     break;
                 case "لديه اعفاء":
-                    $row[$this::$traineeState]  = "privateState";
+                    $row[TRAINEE_STATE]  = "privateState";
                     break;
                 default:
-                    $row[$this::$traineeState]  = "trainee";
+                    $row[TRAINEE_STATE]  = "trainee";
+            }
+
+            if ($row[DOCUMENTS_VERIFIED] === "TRUE" || $row[DOCUMENTS_VERIFIED] === "true" || $row[DOCUMENTS_VERIFIED] === "1") {
+                $row[DOCUMENTS_VERIFIED] = true;
+            } else {
+                $row[DOCUMENTS_VERIFIED] = false;
             }
 
 
 
-            $progSplit = trim($row[$this::$program]);
+            // try {
+            //     $success = false;
+            //     if (filter_var($row[RECEIPT_URL], FILTER_VALIDATE_URL)) {
+            //         $file = file_get_contents($this::getImgUrl($row[RECEIPT_URL]));
+            //         $fileInfo  = getimagesizefromstring($file);
+            //         if ($fileInfo !== false) {
+            //             $fileExt = explode('/', $fileInfo['mime'])[1];
+            //             if ($fileExt == 'jpeg' || $fileExt == 'png') {
+            //                 if ($row[TRAINEE_STATE] != 'privateState') {
+            //                     $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $fileExt;
+            //                     Storage::disk('studentDocuments')->put('/' . $row[NATIONAL_ID] . '/receipts/' . $doc_name, $file);
+            //                     $success = true;
+            //                 } else {
+            //                     $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $fileExt;
+            //                     Storage::disk('studentDocuments')->put('/' . $row[NATIONAL_ID] . '/privateStateDoc/' . $doc_name, $file);
+            //                     $success = true;
+            //                 }
+            //             }
+            //         }
+            //     }else{
+            //         $success = true;
+            //     }
+            //     if (!$success) {
+            //         array_push($errorsArr, ['message' => "تعذر تحميل صورة الايصال", 'userinfo' => $userinfo]);
+            //         continue;
+            //     }
+            // } catch (Exception $e) {
+            //     array_push($errorsArr, ['message' => "تعذر تحميل صورة الايصال", 'userinfo' => $userinfo]);
+            //     continue;
+            // }
+
+            $progSplit = trim($row[PROGRAM]);
             foreach ($programs as $key => $prog) {
 
                 if (stristr($prog['name'], $progSplit) === false) {
@@ -121,7 +168,7 @@ class OldUsers implements ToCollection
                 }
             }
             if ($progId != 0) {
-                $deptSplit = trim($row[$this::$department]);
+                $deptSplit = trim($row[DEPARTMENT]);
                 foreach ($programs[$progKey]->departments as $key => $dept) {
 
                     if (stristr($dept['name'], $deptSplit) === false) {
@@ -136,7 +183,7 @@ class OldUsers implements ToCollection
             }
 
             if ($deptId != 0) {
-                $mjrExplodeDash = explode("-", $row[$this::$major]);
+                $mjrExplodeDash = explode("-", $row[MAJOR]);
                 $mjrExplode = explode(" ", $mjrExplodeDash[0]);
                 $mjrSplit = trim($mjrExplode[0]);
                 foreach ($programs[$progKey]->departments[$deptKey]->majors as $key => $mjr) {
@@ -160,15 +207,15 @@ class OldUsers implements ToCollection
                 // dump($userinfo);
                 DB::beginTransaction();
                 $user = User::create($userinfo);
-                $student = $user->student()->create([
+                $user->student()->create([
                     'user_id'               => $user->id,
                     'program_id'            => $progId,
                     'department_id'         => $deptId,
                     'major_id'              => $mjrId,
-                    'documents_verified'    => $row[$this::$documents_verified],
-                    'traineeState'          => $row[$this::$traineeState],
-                    'wallet'                => $row[$this::$wallet],
-                    'note'                  => $row[$this::$note],
+                    'documents_verified'    => $row[DOCUMENTS_VERIFIED],
+                    'traineeState'          => $row[TRAINEE_STATE],
+                    'wallet'                => $row[WALLET],
+                    'note'                  => $row[NOTE],
                     'data_updated'          => true,
                     'agreement'             => true
 
@@ -186,8 +233,6 @@ class OldUsers implements ToCollection
                 continue;
             }
         }
-
-
         $countOfUsers = count($rows);
         $addedCount = count($rows) - (count($duplicate) + count($errorsArr));
         if (count($duplicate) > 0  && count($errorsArr) > 0) {
@@ -215,12 +260,7 @@ class OldUsers implements ToCollection
                 'countOfUsers' => $countOfUsers
             ]);
         }
-
-
-
-
-
-
+        return redirect(route('OldForm'))->with('success', 'تم اضافة ' . $addedCount . ' متدرب بنجاح ');
 
 
 

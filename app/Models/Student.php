@@ -19,7 +19,8 @@ class Student extends Model
         'agreement',
         'traineeState', 
         'data_updated',
-        'wallet'
+        'wallet',
+        'note'
     ];
 
 
