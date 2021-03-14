@@ -15,8 +15,12 @@ class Student extends Model
         'program_id',
         'department_id',
         'major_id',
+        'documents_verified',
         'agreement',
         'traineeState', 
+        'data_updated',
+        'wallet',
+        'note'
     ];
 
 

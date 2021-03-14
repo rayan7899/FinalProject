@@ -127,28 +127,20 @@
                                             $fileExtantion = end($splitByDot);
                                         @endphp
                                         @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                                            {{-- <a class="d-block" target="_blank"
-                                                href="{{ route('GetStudentDocument', ['path' => $receipt]) }}">
-                                                <img src=" {{ asset('/images/pdf.png') }}" style="width:25px;" alt="PDF File">
-                                            </a> --}}
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
                                                 onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','pdf')">
                                                 <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                                             </a>
                                         @else
-                                        {{-- <a class="d-block" target="_blank"
-                                        onclick=" window.Swal.fire({ imageUrl: '{{ route('GetStudentDocument', ['path' => $receipt]) }}',confirmButtonText:'اغلاق', imageAlt: ''})"> --}}
                                         <a data-toggle="modal" data-target="#pdfModal" href="#"
                                         onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','img')">        
-                                        <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
-                                                    alt="Image File">
-                                            </a>
+                                        <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;" alt="Image File">
+                                        </a>
                                         @endif
-
-                                    @empty
+                                      @empty
                                         لايوجد
-                        @endforelse
-                        </td>
+                                    @endforelse
+                                </td>
 
                         <td class="text-center" id="wallet_{{ $user->national_id }}">
                             {{ $user->student->wallet ?? 'لا يوجد' }}
@@ -206,22 +198,6 @@
         <script defer>
             var docsVerified = "{{ route('studentDocumentsReviewVerifiyDocs') }}";
             var studentUpdate = "{{ route('studentDocumentsReviewUpdate') }}";
-
-            function showPdf(url,type) {
-             
-                if(type == "pdf"){
-                    $("#modalImage").hide();
-                    $("#pdfIfreme").show();
-                    $("#pdfIfreme").attr("src","");
-                    $("#pdfIfreme").attr("src",url);
-                }else{
-                    $("#pdfIfreme").hide();
-                    $("#modalImage").show();
-                    $("#modalImage").attr("src","");
-                    $("#modalImage").attr("src",url);
-                }
-            }
-
         </script>
     </div>
 @stop
