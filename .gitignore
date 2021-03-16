@@ -14,4 +14,5 @@ npm-debug.log
 yarn-error.log
 public/js/app.js
 public/css/app.css
+public/css/app.css.map
 service-account-key.json
