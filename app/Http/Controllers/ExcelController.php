@@ -69,12 +69,13 @@ class ExcelController extends Controller
             $coll =  Excel::import(new OldUsersImport, $request->file('excel_file'));
             return back();
         } catch (Exception $e) {
-          dd($e);
-            $js = json_decode($e->getMessage(), true);
-            $duplicate = $js['duplicate'] ?? null;
-            $errorsArr = $js['errorsArr'] ?? null;
-            $addedCount = $js['addedCount'] ?? null;
-            $countOfUsers = $js['countOfUsers'] ?? null;
+            return redirect(route('OldForm'))->with('error',$e->getMessage());
+         // dd($e);
+            // $js = json_decode($e->getMessage(), true);
+            // $duplicate = $js['duplicate'] ?? null;
+            // $errorsArr = $js['errorsArr'] ?? null;
+            // $addedCount = $js['addedCount'] ?? null;
+            // $countOfUsers = $js['countOfUsers'] ?? null;
             // return redirect(route('OldForm'))->with([
             //     'duplicate' => $duplicate,
             //     'addedCount' => $addedCount,
