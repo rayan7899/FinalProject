@@ -80,7 +80,7 @@ class OldUsers implements ToCollection
         $client->useApplicationDefaultCredentials();
         $client->addScope(Google_Service_Drive::DRIVE);
         $service = new Google_Service_Drive($client);
-        $rows = $rows->slice(97);
+        $rows = $rows->slice(1);
         Validator::make($rows->toArray(), [
             '*.' . NATIONAL_ID  => 'required|digits:10',
             '*.' . NAME         => 'required|string|max:100',
@@ -264,7 +264,7 @@ class OldUsers implements ToCollection
 
                 continue;
             }
-            Log::debug($userinfo['name']);
+            // Log::debug($userinfo['name']);
         }
 
         $countOfUsers = count($rows);
