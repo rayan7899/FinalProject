@@ -12,7 +12,11 @@ class Major extends Model
     public function deparment(){
         return $this->hasOne(Department::class);
     }
-    
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
 
 
     static function findMajor($programs, $program_id, $department_id) {

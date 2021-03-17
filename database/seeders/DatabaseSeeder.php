@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Course;
 use App\Models\Department;
 use App\Models\Program;
 use Illuminate\Database\Seeder;
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ProgramSeeder::class,
             DepartmentSeeder::class,
             MajorSeeder::class,
+            CourseSeeder::class,
             //StudentSeeder::class,
             ]);
     }
