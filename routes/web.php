@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StudentAffairsController;
+use App\Http\Controllers\DepartmentBossController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -75,3 +76,5 @@ Route::get('/affairs/finalaccepted/list',[StudentAffairsController::class, 'fina
 Route::get('/affairs/checked',[StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
 Route::get('/affairs/new',[StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
 
+//departmentBoss
+Route::get('/deptBoss/manage-courses',[DepartmentBossController::class, 'index'])->name('manageCourses');
