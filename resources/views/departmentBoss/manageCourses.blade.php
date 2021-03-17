@@ -53,11 +53,12 @@
                 <div class="col-5">
                     <div class="card">
                         <div class="card-body p-0">
-                            <table class="table">
+                            <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>اسم المقرر</th>
-                                        <th>عدد الساعات</th>
+                                        <th class="text-center">رمز المقرر</th>
+                                        <th class="text-center">اسم المقرر</th>
+                                        <th class="text-center">عدد الساعات</th>
                                     </tr>
                                 </thead>
                                 <tbody id="courses">
@@ -68,7 +69,16 @@
                 </div>
 
                 <div class="col-2">
-
+                    <div class="row justify-content-center mt-2">
+                        <a href="#" onclick="window.addCourses(event)" class="border border-dark rounded px-2 my-2" style="padding-bottom: 2px">
+                            <img style="width: 14px; height: 14px;" src="{{asset('images/left-arrow.png')}}" alt="left-arrow-icon">
+                        </a>
+                    </div>
+                    <div class="row justify-content-center">
+                        <a href="#" onclick="window.removeCourses(event)" class="border border-dark rounded px-2 my-2"  style="padding-bottom: 2px">
+                            <img style="width: 14px; height: 14px;" src="{{asset('images/right-arrow.png')}}" alt="left-arrow-icon">
+                        </a>
+                    </div>
                 </div>
 
                 <div class="col-5">
@@ -86,10 +96,13 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th>رمز المقرر</th>
                                         <th>اسم المقرر</th>
                                         <th>عدد الساعات</th>
                                     </tr>
                                 </thead>
+                                <tbody id="levelCourses">
+                                </tbody>
                             </table>
                         </div>
                     </div>

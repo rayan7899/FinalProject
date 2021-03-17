@@ -22,7 +22,7 @@ window.fillDepartments = function() {
     var prog = document.getElementById('program').value;
     
     var dept = document.getElementById('department');
-    dept.innerHTML = null;
+    dept.innerHTML = null //'<option value="" disabled selected>أختر</option>';
     var departments = findDepartment(window.programs, prog);
     
     for (var i = 0; i < departments.length; i++) {
@@ -39,7 +39,7 @@ window.fillMajors = function() {
     var prog = document.getElementById('program').value;
     var dept = document.getElementById('department').value;
     var mjr = document.getElementById('major');
-    mjr.innerHTML = null;
+    mjr.innerHTML = null //'<option value="" disabled selected>أختر</option>';
     var majors = findMajor(window.programs, prog, dept).majors;
     for (var i = 0; i < majors.length; i++) {
         var option = document.createElement('option');
