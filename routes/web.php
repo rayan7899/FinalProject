@@ -24,6 +24,9 @@ use App\Http\Controllers\DepartmentBossController;
 
 Route::get('/', [HomeController::class, 'index']);
 
+//Logs Viewer
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
 //ExcelController
 Route::get('/excel/new/add',[ExcelController::class,'importNewForm'])->name('AddExcelForm');
 Route::post('/excel/new/import',[ExcelController::class,'importNewUsers'])->name('importExcel');

@@ -15,7 +15,9 @@ use Maatwebsite\Excel\Concerns\Importable;
 // use Maatwebsite\Excel\Validators\ValidationException;
 // use Illuminate\Validation\ValidationException as Vali;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
+use Google_Service_Drive;
+use Google_Client;
+use Illuminate\Support\Facades\Log;
 
 define('PROGRAM', 0);
 define('DEPARTMENT', 1);
@@ -44,13 +46,24 @@ class OldUsers implements ToCollection
     {
         $url = trim($url);
         $url = htmlspecialchars($url);
-        $baseurl = "https://drive.google.com/uc?id=";
-        $suff = "&export=download";
+        $baseurl = "https://www.googleapis.com/drive/v3/files/";
+        $suff = "?alt=media&key=" . env("GOOGLE_DRIVE_API");
         $parseUrl = parse_url($url);
         $query = $parseUrl['query'];
         parse_str($query, $queryParams);
         $newUrl = $baseurl . $queryParams['id'] . $suff;
+        $newUrl = htmlspecialchars($newUrl);
         return $newUrl;
+    }
+
+    public static function getGDriveId($url)
+    {
+        $url = trim($url);
+        $url = htmlspecialchars($url);
+        $parseUrl = parse_url($url);
+        $query = $parseUrl['query'];
+        parse_str($query, $queryParams);
+        return $queryParams['id'];
     }
 
     /**
@@ -60,9 +73,15 @@ class OldUsers implements ToCollection
      */
     public function collection(Collection $rows)
     {
-
-     
-        Validator::make($rows->slice(1)->toArray(), [
+        $programs =  Program::with('departments.majors')->get(['id', 'name']);
+        $duplicate = [];
+        $errorsArr = [];
+        $client = new Google_Client();
+        $client->useApplicationDefaultCredentials();
+        $client->addScope(Google_Service_Drive::DRIVE);
+        $service = new Google_Service_Drive($client);
+        $rows = $rows->slice(1);
+        Validator::make($rows->toArray(), [
             '*.' . NATIONAL_ID  => 'required|digits:10',
             '*.' . NAME         => 'required|string|max:100',
             '*.' . PROGRAM      => 'required|string|max:100',
@@ -82,11 +101,6 @@ class OldUsers implements ToCollection
             '*.' . PHONE . '.digits_between' => 'يجب ان يكون رقم الجوال بين 10 و 14 رقماَ',
         ])->validate();
 
-        $programs =  Program::with('departments.majors')->get(['id', 'name']);
-        $rows = $rows->slice(1)->toArray();
-        $duplicate = [];
-        $errorsArr = [];
-
         foreach ($rows as $row) {
 
             $progId = 0;
@@ -100,10 +114,17 @@ class OldUsers implements ToCollection
                 'phone'         => $row[PHONE],
                 'password' => Hash::make("bct12345")
             ];
-            if (Storage::disk('studentDocuments')->exists($row[NATIONAL_ID])) {
-                array_push($duplicate, $userinfo);
+            try {
+                $user = User::where('national_id', $row[NATIONAL_ID])->exists();
+                if ($user) {
+                    array_push($duplicate, $userinfo);
+                    continue;
+                }
+            } catch (Exception $e) {
+                array_push($errorsArr, ['message' => ' خطأ غير معروف ' . $e->getCode(), 'userinfo' => $userinfo]);
                 continue;
             }
+
             switch ($row[TRAINEE_STATE]) {
                 case "منسوب":
                     $row[TRAINEE_STATE] = "employee";
@@ -123,39 +144,50 @@ class OldUsers implements ToCollection
             } else {
                 $row[DOCUMENTS_VERIFIED] = false;
             }
+            try {
+                $success = false;
+                if (filter_var($row[RECEIPT_URL], FILTER_VALIDATE_URL) != false) {
+                    $fileId = $this::getGDriveId($row[RECEIPT_URL]);
+                    $response = (object) $service->files->get($fileId, array("alt" => "media"));
+                    if ($response->hasHeader('Content-Type')) {
+                        $fileInfo  = $response->getHeader('Content-Type')[0];
+                        $fileExt = explode('/', $fileInfo)[1];
+                        if ($fileExt == 'jpeg' || $fileExt == 'png') {
+                            $content = $response->getBody();
+                            if ($row[TRAINEE_STATE] != 'privateState') {
+                                $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $fileExt;
+                                Storage::disk('studentDocuments')->put('/' . $row[NATIONAL_ID] . '/receipts/' . $doc_name, $content);
+                                $success = true;
+                            } else {
+                                $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $fileExt;
+                                Storage::disk('studentDocuments')->put('/' . $row[NATIONAL_ID] . '/privateStateDoc/' . $doc_name, $content);
+                                $success = true;
+                            }
+                        } else {
+                            array_push($errorsArr, ['message' => " ملف غير مدعوم لصورة الايصال " . $fileExt, 'userinfo' => $userinfo]);
+                        }
+                    }
+                } elseif ($row[TRAINEE_STATE] == 'privateState') {
+                    $success = true;
+                }
+                if (!$success) {
+                    if ($row[TRAINEE_STATE] != 'privateState') {
+                        array_push($errorsArr, ['message' => "تعذر تحميل صورة الايصال", 'userinfo' => $userinfo]);
+                    } else {
+                        array_push($errorsArr, ['message' => "تعذر تحميل اثبات الاعفاء ", 'userinfo' => $userinfo]);
+                    }
 
-
-
-            // try {
-            //     $success = false;
-            //     if (filter_var($row[RECEIPT_URL], FILTER_VALIDATE_URL)) {
-            //         $file = file_get_contents($this::getImgUrl($row[RECEIPT_URL]));
-            //         $fileInfo  = getimagesizefromstring($file);
-            //         if ($fileInfo !== false) {
-            //             $fileExt = explode('/', $fileInfo['mime'])[1];
-            //             if ($fileExt == 'jpeg' || $fileExt == 'png') {
-            //                 if ($row[TRAINEE_STATE] != 'privateState') {
-            //                     $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $fileExt;
-            //                     Storage::disk('studentDocuments')->put('/' . $row[NATIONAL_ID] . '/receipts/' . $doc_name, $file);
-            //                     $success = true;
-            //                 } else {
-            //                     $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $fileExt;
-            //                     Storage::disk('studentDocuments')->put('/' . $row[NATIONAL_ID] . '/privateStateDoc/' . $doc_name, $file);
-            //                     $success = true;
-            //                 }
-            //             }
-            //         }
-            //     }else{
-            //         $success = true;
-            //     }
-            //     if (!$success) {
-            //         array_push($errorsArr, ['message' => "تعذر تحميل صورة الايصال", 'userinfo' => $userinfo]);
-            //         continue;
-            //     }
-            // } catch (Exception $e) {
-            //     array_push($errorsArr, ['message' => "تعذر تحميل صورة الايصال", 'userinfo' => $userinfo]);
-            //     continue;
-            // }
+                    continue;
+                }
+            } catch (Exception $e) {
+                dd($e);
+                if ($row[TRAINEE_STATE] != 'privateState') {
+                    array_push($errorsArr, ['message' => " تعذر تحميل صورة الايصال " . $e->getCode(), 'userinfo' => $userinfo]);
+                } else {
+                    array_push($errorsArr, ['message' => " تعذر تحميل اثبات الاعفاء " . $e->getCode(), 'userinfo' => $userinfo]);
+                }
+                continue;
+            }
 
             $progSplit = trim($row[PROGRAM]);
             foreach ($programs as $key => $prog) {
@@ -217,7 +249,7 @@ class OldUsers implements ToCollection
                     'wallet'                => $row[WALLET],
                     'note'                  => $row[NOTE],
                     'data_updated'          => true,
-                    'agreement'             => true
+                    'agreement'             => false
 
                 ]);
                 DB::commit();
@@ -232,7 +264,9 @@ class OldUsers implements ToCollection
 
                 continue;
             }
+            // Log::debug($userinfo['name']);
         }
+
         $countOfUsers = count($rows);
         $addedCount = count($rows) - (count($duplicate) + count($errorsArr));
         if (count($duplicate) > 0  && count($errorsArr) > 0) {
@@ -254,7 +288,7 @@ class OldUsers implements ToCollection
 
         if (count($errorsArr) > 0) {
             return redirect(route('OldForm'))->with([
-                'error' => ' حدثت الاخطاء التالية اثناء اضافة المتدربين ',
+                'error' => '  تعذر اضافة المتدربين التالية بياناتهم',
                 'errorsArr' => $errorsArr,
                 'addedCount' => $addedCount,
                 'countOfUsers' => $countOfUsers
