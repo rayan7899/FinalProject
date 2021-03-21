@@ -78,3 +78,5 @@ Route::get('/affairs/new',[StudentAffairsController::class, 'NewStudents'])->nam
 
 //departmentBoss
 Route::get('/deptBoss/manage-courses',[DepartmentBossController::class, 'index'])->name('manageCourses');
+Route::get('/deptBoss/courses-data',[DepartmentBossController::class, 'getCoursesData'])->name('getCoursesData');
+Route::post('/deptBoss/courses/update-level',[DepartmentBossController::class, 'updateCoursesLevel'])->name('updateCoursesLevel');

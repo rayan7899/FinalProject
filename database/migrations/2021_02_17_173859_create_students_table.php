@@ -17,11 +17,12 @@ class CreateStudentsTable extends Migration
             $table->id();
 
             $table->integer('birthdate')->nullable();
-            $table->unsignedBigInteger('rayat_id')->default(0);
+            $table->string('rayat_id')->unique();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('program_id');
             $table->unsignedBigInteger('department_id');
             $table->unsignedBigInteger('major_id');
+            $table->integer('level')->default(1);
             $table->boolean('agreement')->default(false);
             $table->boolean('data_updated')->default(false);
             $table->boolean('documents_verified')->default(false);
