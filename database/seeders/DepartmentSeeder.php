@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 
 class DepartmentSeeder extends Seeder
@@ -33,16 +34,27 @@ class DepartmentSeeder extends Seeder
     public function run()
     {
         foreach ($this::$baccDepts as $deptName) {
+            $role = Role::create([
+                'name' => $deptName . ' - بكالوريوس ',
+
+            ]);
             Department::create([
                 'name' => $deptName,
-                'program_id' => 1
+                'program_id' => 1,
+                'role_id' => $role->id
             ]);
         }
 
         foreach ($this::$diplomDepts as $diplomDeptName) {
+            $role = Role::create([
+                    'name' => $deptName . ' - دبلوم ',
+                ]);
+                
             Department::create([
                 'name' => $diplomDeptName,
-                'program_id' => 2
+                'program_id' => 2,
+                'role_id' => $role->id
+
             ]);
         }
     }

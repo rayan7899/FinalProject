@@ -69,38 +69,49 @@ class CourseSeeder extends Seeder
         "الحاسب وتقنية المعلومات"  =>  [
             [
                 'name' => "برمجات",
-                'hours' => 16,
                 'courses' => [
                     [
                         'name' => "Mathematics -1",
                         'code' => "MATH 301",
-                        'hours' => 3
+                        'level' => 1,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+
                     ],
                     [
                         'name' => "Physics",
                         'code' => "PHYS 301",
-                        'hours' => 3
+                        'level' => 1,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
                     ],
                     [
                         'name' => "English Language -1",
                         'code' => "ENGL 301",
-                        'hours' => 3
+                        'level' => 1,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
                     ],
                     [
                         'name' => "Principles Of Accounting",
                         'code' => "UACC 301",
-                        'hours' => 3
+                        'level' => 1,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
                     ],
                     [
                         'name' => "Advanced computer Programming",
                         'code' => "IPRG 313",
-                        'hours' => 4
+                        'level' => 1,
+                        'credit_hours' => 4,
+                        'contact_hours' => 5
                     ],
                 ]
             ],
             // [
             //     'name' => "دعم أنظمة شبكات",
-            //     'hours' => 16
+            //    'courses' => [
+          //     ]
             // ],
         ],
 
@@ -217,7 +228,10 @@ class CourseSeeder extends Seeder
                     Course::create([
                         'name'     => $course['name'],
                         'code'     => $course['code'],
-                        'hours'    => $course['hours'],
+                        'level'    => $course['level'],
+                        'suggested_level' => 0,
+                        'credit_hours' => $course['credit_hours'],
+                        'contact_hours' => $course['contact_hours'],
                         'major_id' => $id,
                     ]);
                 }

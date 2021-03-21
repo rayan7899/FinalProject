@@ -18,10 +18,14 @@ class CreateCoursesTable extends Migration
             $table->timestamps();
             $table->string('name');
             $table->string('code');
-            $table->integer('hours')->default(0);
+            $table->integer('level');
+            $table->integer('suggested_level')->nullable();
+            $table->integer('credit_hours');
+            $table->integer('contact_hours');
             $table->unsignedBigInteger("major_id");
 
             $table->foreign('major_id')->references('id')->on('majors');
+            
         });
     }
 

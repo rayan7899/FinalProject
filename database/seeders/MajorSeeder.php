@@ -100,7 +100,7 @@ class MajorSeeder extends Seeder
 
     "تقنية كهربائية"  =>  [
       [
-        'name' => "قوى كهربائية",
+        'name' => "قوى كهربية",
         'hours' => 19
       ],
     ],
