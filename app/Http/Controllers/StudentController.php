@@ -91,6 +91,9 @@ class StudentController extends Controller
             ->where('major_id', $user->student->major_id)
             ->get();
 
+        if ($user->student->studentState == false) {
+            return view('home')->with(compact('user'));
+        }
         if (!$user->student->data_updated) {
             return view('student.form')->with(compact('user', 'courses'));
         } else {
@@ -299,19 +302,19 @@ class StudentController extends Controller
         ]);
         try {
             $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
-            if(isset($user)){
+            if (isset($user)) {
                 $result = $user->student()->update([
                     'studentState' => $studentData['studentState']
                 ]);
                 return response('ok', 200);
-            }else{
-                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+            } else {
+                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
             }
         } catch (QueryException $e) {
-            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
         }
     }
-    
+
 
     public function getStudentInfo($id)
     {
@@ -321,16 +324,16 @@ class StudentController extends Controller
         //     return response('', 422);
 
         try {
-            $userInfo = User::with('student.courses')->whereHas('student', function ($result) use ($id){
-                $result->where('national_id',$id)->orWhere('rayat_id', $id);
+            $userInfo = User::with('student.courses')->whereHas('student', function ($result) use ($id) {
+                $result->where('national_id', $id)->orWhere('rayat_id', $id);
             })->first();
-            if(isset($userInfo)){
+            if (isset($userInfo)) {
                 return response()->json($userInfo, 200);
-            }else{
-                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+            } else {
+                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
             }
         } catch (QueryException $e) {
-            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
         }
     }
 }
