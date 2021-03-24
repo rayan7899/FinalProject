@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Major;
+use App\Models\Program;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MajorController extends Controller
 {
@@ -82,4 +85,19 @@ class MajorController extends Controller
     {
         //
     }
+
+    public function getmajorsByProgramId($programId)
+    {
+        $depts = Department::with('majors')->whereHas('majors', function($result) use ($programId){
+            $result->where('program_id', $programId);
+        })->get();
+        $majors = [];
+        foreach ($depts as $dept) {
+            foreach ($dept->majors as  $major) {
+                array_push($majors, $major);
+            }
+        }
+        return response(['majors' => $majors], 200);
+    }
+
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\App;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StudentAffairsController;
 use App\Http\Controllers\DepartmentBossController;
+use App\Http\Controllers\FalteringStudentsController;
+use App\Http\Controllers\MajorController;
+use App\Http\Controllers\StudentCoursesController;
+use App\Models\Student;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -84,3 +90,12 @@ Route::get('/affairs/new',[StudentAffairsController::class, 'NewStudents'])->nam
 Route::get('/deptBoss/manage-courses',[DepartmentBossController::class, 'index'])->name('manageCourses');
 Route::get('/deptBoss/courses-data',[DepartmentBossController::class, 'getCoursesData'])->name('getCoursesData');
 Route::post('/deptBoss/courses/update-level',[DepartmentBossController::class, 'updateCoursesLevel'])->name('updateCoursesLevel');
+Route::get('/deptBoss/faltering-students',[falteringStudentsController::class, 'index'])->name('falteringStudents');
+Route::get('/deptBoss/student-info/{id}',[StudentController::class, 'getStudentInfo'])->name('studentInfo');
+Route::get('/major/{majorId}/courses',[CourseController::class, 'getCoursesByMajorId']);
+
+Route::post('/student-courses/add',[StudentCoursesController::class, 'addCourseToStudent']);
+
+
+Route::get('/majorsByProgramId/{id}',[MajorController::class, 'getmajorsByProgramId']);
+
