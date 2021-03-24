@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentCourse extends Model
 {
+    protected $fillable = [
+        // 'student_id'
+        'course_id'
+    ];
+
+
     use HasFactory;
     protected $fillable = [
         // 'student_id',
@@ -15,11 +21,13 @@ class StudentCourse extends Model
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class);
+        // return $this->hasMany(Course::class);
+        // return $this->hasManyThrough(Course::class, Student::class);
+        return $this->hasMany(Course::class);
     }
 
     public function student()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsToMany(Student::class);
     }
 }

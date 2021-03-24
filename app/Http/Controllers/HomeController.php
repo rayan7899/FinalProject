@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -25,12 +26,12 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-        if($user->student->data_updated){
-            
+        if ($user->student->data_updated) {
+            // $courses = $user->student->courses;
+            // dd($courses);
             return view('home')->with(compact('user'));
-        }else{
+        } else {
             return view('student.form')->with(compact('user'));
         }
-       
     }
 }

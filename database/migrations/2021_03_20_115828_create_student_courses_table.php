@@ -21,7 +21,6 @@ class CreateStudentCoursesTable extends Migration
 
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('course_id')->references('id')->on('courses');
-
         });
     }
 

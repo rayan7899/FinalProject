@@ -17,7 +17,7 @@ class Student extends Model
         'major_id',
         'documents_verified',
         'agreement',
-        'traineeState', 
+        'traineeState',
         'data_updated',
         'wallet',
         'note'
@@ -25,15 +25,18 @@ class Student extends Model
 
 
 
-    public function program(){
+    public function program()
+    {
         return $this->belongsTo(Program::class);
     }
 
-    public function department(){
+    public function department()
+    {
         return $this->belongsTo(Department::class);
     }
 
-    public function major(){
+    public function major()
+    {
         return $this->belongsTo(Major::class);
     }
 
@@ -41,13 +44,14 @@ class Student extends Model
     {
         return $this->hasMany(StudentCourse::class);
     }
-    
-    public function user(){
+
+    public function user()
+    {
         return $this->hasOne(User::class);
     }
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'student_courses');
+        return $this->belongsToMany(Course::class, "student_courses");
     }
 }

@@ -45,7 +45,7 @@
         </div>
 
         <!-- department and major -->
-        <div class="form-row">
+        <div class="form-row form-group">
 
             <!-- department -->
             <div class="col-sm-6">
@@ -60,50 +60,99 @@
             </div>
         </div>
 
-        <!-- trainee state -->
-        <div class="form-row my-4">
-            <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                <input value="trainee" type="radio" onclick="changeTraineeState('trainee')" id="trainee" name="traineeState" class="custom-control-input" checked>
-                <label class="custom-control-label" for="trainee">متدرب</label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                <input value="employee" type="radio" onclick="changeTraineeState('employee')" id="employee" name="traineeState" class="custom-control-input">
-                <label class="custom-control-label" for="employee">أحد منسوبي المؤسسة</label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                <input value="employeeSon" type="radio" onclick="changeTraineeState('employeeSon')" id="employeeSon" name="traineeState" class="custom-control-input">
-                <label class="custom-control-label" for="employeeSon">من ابناء منسوبي المؤسسة</label>
-            </div>
-            <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                <input value="privateState" type="radio" onclick="changeTraineeState('privateState')" id="privateState" name="traineeState" class="custom-control-input">
-                <label class="custom-control-label" for="privateState">الظروف الخاصة
-                    <a data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة" class="h5 text-right" data-content="
-١- اذا كان المتدرب من ابناء شهداء الواجب(استشهاد والده) 
-٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
-٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
-٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
-٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)">( ! )</a>
-                </label>
-            </div>
+        <!-- suggested courses -->
+        <div class="from-group">
+            <label>المواد المقترحة</label>
+            <table class="table table-hover table-bordered bg-white">
+                <thead>
+                    <tr>
+                        <th class="text-center">رمز المقرر</th>
+                        <th class="text-center">اسم المقرر</th>
+                        <th class="text-center">المستوى</th>
+                        <th class="text-center">الساعات</th>
+                        <th class="text-center">المبلغ</th>
+                        <th class="text-center @if ($user->student->level < 2) d-none @endif"></th>
+                    </tr>
+                </thead>
+                <tbody id="courses">
+                    @php
+                    $default_cost = 0;
+                    @endphp
+                    @foreach ($courses as $course)
+                        @php
+                        $default_cost += $course->credit_hours * 550;
+                        @endphp
+                        <tr>
+                            <td class="text-center">{{ $course->code }}</td>
+                            <td class="text-center">{{ $course->name }}</td>
+                            <td class="text-center">{{ $course->level }}</td>
+                            <td class="text-center">{{ $course->credit_hours }}</td>
+                            <td class="text-center">{{ $course->credit_hours * 550 }}</td>
+                            <td class="text-center @if ($user->student->level < 2) d-none @endif">
+                                <input id="course_{{ $course->id }}"
+                                       type="checkbox"
+                                       name="courses[]"
+                                       value="{{ $course->id }}"
+                                       onclick="changeTraineeState();"
+                                       checked/>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
-        <!-- cost -->
-        <div class="form-inline" id="costGroup">
-            <div class="col-sm-4">
-                <label for="cost"> المبلغ المراد سداده</label>
-                <div class="input-group mb-3">
-                    <input disabled required type="text" class="form-control  " id="cost" name="cost" value="{{ $user->student->program->id==1 ? $user->student->major->hours * 550 : $user->student->major->hours * 400}}">
-                    <span class="input-group-text">SR</span>
+        <!-- trainee state -->
+        <label>فئة المتدرب</label>
+        <div class="form-group bg-white border px-4 py-3">
+            <div class="form-row">
+                <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                    <input value="trainee" type="radio" onclick="changeTraineeState()" id="trainee" name="traineeState" class="custom-control-input" checked>
+                    <label class="custom-control-label" for="trainee">متدرب</label>
                 </div>
-            </div>
-            <div class="col-sm-8" style="display: none;" id="pledgeSection">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="pledge" id="pledge">
-                    <label class="form-check-label mr-1"> اتعهد بدفع كامل المبلغ في حالة عدم موافقة المؤسسة
-                    </label>
+                <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                    <input value="employee" type="radio" onclick="changeTraineeState()" id="employee" name="traineeState" class="custom-control-input">
+                    <label class="custom-control-label" for="employee">أحد منسوبي المؤسسة</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                    <input value="employeeSon" type="radio" onclick="changeTraineeState()" id="employeeSon" name="traineeState" class="custom-control-input">
+                    <label class="custom-control-label" for="employeeSon">من ابناء منسوبي المؤسسة</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                    <a id="info-popup" data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة" class="h5 text-right mx-2" data-content="
+                           <div class='text-right' dir='rtl' style='width: 30%;'>
+                           ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
+                           <br>
+                           ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
+                           <br>
+                           ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
+                           <br>
+                           ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
+                           <br>
+                           ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
+                           </div>
+                           ">( ! )</a>
+                    <input value="privateState" type="radio" onclick="changeTraineeState()" id="privateState" name="traineeState" class="custom-control-input">
+                    <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
                 </div>
             </div>
         </div>
+        <!-- cost -->
+        <div id="costGroup" class="form-row mb-3">
+            <label class="col-2 align-self-center m-0" for="cost">المبلغ المراد سداده</label>
+            <div class="col-2 input-group" dir="ltr">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">SR</span>
+                </div>
+                <input dir="rtl" disabled required type="text" class="form-control text-center" id="cost" name="cost" value="{{ $default_cost }}">
+            </div>
+
+            <div class="form-check align-self-center d-none">
+                <input type="checkbox" class="form-check-input" name="pledge" id="pledge">
+                <label class="form-check-label mr-3">اتعهد بدفع كامل المبلغ في حالة عدم موافقة المؤسسة</label>
+            </div>
+        </div>
+        
 
         <!-- national id image -->
         <div class="form-group">
@@ -136,8 +185,7 @@
     </form>
 </div>
 <script>
-    var student = [@php echo $user->student;@endphp];
-
+    var courses = @php echo json_encode($courses); @endphp;
 
 </script>
 </div>
