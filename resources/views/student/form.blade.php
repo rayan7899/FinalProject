@@ -78,7 +78,7 @@
                     @php
                     $default_cost = 0;
                     @endphp
-                    @foreach ($courses as $course)
+                    @foreach ($user->student->courses as $course)
                         @php
                         $default_cost += $course->credit_hours * 550;
                         @endphp
