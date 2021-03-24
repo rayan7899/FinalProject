@@ -21,29 +21,27 @@
         document.getElementById('updateUserForm').submit();
 }
 
-window.changeTraineeState = function(state) {
-
-    var hours = student[0].major.hours;
-    var hourCost;
-    var costGroup = document.getElementById('costGroup');
-    if (student[0].program_id == 1) {
-        hourCost = 550;
-    } else {
-        hourCost = 400;
+window.changeTraineeState = function() {
+    let new_cost = courses.map(course => {
+        console.log(course.id);
+        if (document.getElementById("course_" + course.id).checked == true) {
+            return course.credit_hours * 550;
+        } else {
+            return 0;
+        }
+    }).reduce((total, cost) => total + cost);
+    
+    let state = 'trainee';
+    if (document.getElementById("employee").checked) {
+        state = 'employee';
+    } else if (document.getElementById("employeeSon").checked) {
+        state = 'employeeSon';
+    } else if (document.getElementById("privateState").checked) {
+        state = 'privateState';
     }
     switch (state) {
-        case 'trainee':
-            document.getElementById('cost').value = hours * hourCost;
-            $('#pledgeSection').hide();
-            $('#receiptImg').prop('disabled', false);
-            $('#costGroup').show();
-            $('#receipt').show();
-            $('#privateStateDocGroup').hide();
-            $('#privateStateDoc').prop('disabled', true);
-            break;
-
         case 'employee':
-            document.getElementById('cost').value = hours * hourCost - (hours * hourCost * 0.75);
+            document.getElementById('cost').value = new_cost * 0.25;
             $('#pledgeSection').show();
             $('#receiptImg').prop('disabled', false);
             $('#costGroup').show();
@@ -53,7 +51,7 @@ window.changeTraineeState = function(state) {
             break;
 
         case 'employeeSon':
-            document.getElementById('cost').value = hours * hourCost - (hours * hourCost * 0.5);
+            document.getElementById('cost').value = new_cost * 0.5;
             $('#pledgeSection').show();
             $('#receiptImg').prop('disabled', false);
             $('#costGroup').show();
@@ -63,6 +61,7 @@ window.changeTraineeState = function(state) {
             break;
 
         case 'privateState':
+            document.getElementById('cost').value = 0;
             $('#costGroup').hide();
             $('#receipt').hide();
             $('#receiptImg').prop('disabled', true);
@@ -70,12 +69,23 @@ window.changeTraineeState = function(state) {
             $('#privateStateDocGroup').show();
             break;
 
+        // case 'trainee':
         default:
+            document.getElementById('cost').value = new_cost;
+            $('#pledgeSection').hide();
+            $('#receiptImg').prop('disabled', false);
+            $('#costGroup').show();
+            $('#receipt').show();
+            $('#privateStateDocGroup').hide();
+            $('#privateStateDoc').prop('disabled', true);
             break;
     }
 }
 
 
 window.popup = function() {
-    $('[data-toggle="popover"]').popover();
+    $('#info-popup').popover({
+        html: true,
+    });
+    // $('[data-toggle="popover"]').popover();
 }

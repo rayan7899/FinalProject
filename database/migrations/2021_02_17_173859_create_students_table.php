@@ -36,7 +36,6 @@ class CreateStudentsTable extends Migration
             $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('major_id')->references('id')->on('majors');
             $table->foreign('user_id')->references('id')->on('users');
-
         });
     }
 
