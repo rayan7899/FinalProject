@@ -245,8 +245,7 @@ function updateCoursesRequset(coursesData) {
 }
 
 function getCoursesData() {
-    axios
-        .get(window.getCoursesDataUrl)
+    axios.get(window.getCoursesDataUrl)
         .then((response) => {
             window.programs = response.data;
         })

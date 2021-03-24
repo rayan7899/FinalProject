@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -81,5 +82,12 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         //
+    }
+
+    public function getCoursesByMajorId($majorId)
+    {
+        $courses = DB::table('courses')
+            ->where('major_id', $majorId)->get();
+        return response(['courses' => $courses], 200);
     }
 }

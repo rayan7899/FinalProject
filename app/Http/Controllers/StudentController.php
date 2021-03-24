@@ -22,7 +22,7 @@ class StudentController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
         // $this->middleware('agreement')->except(['agreement_form', 'agreement_submit']);
     }
 
@@ -270,5 +270,26 @@ class StudentController extends Controller
         }
 
         return back()->with('error', 'تعذر تغيير كلمة المرور حدث خطأ غير معروف');
+    }
+
+    public function getStudentInfo($id)
+    {
+        // if(isset($userInfo))
+        //     return response($userInfo, 200);
+        // else
+        //     return response('', 422);
+
+        try {
+            $userInfo = User::with('student.courses')->whereHas('student', function ($result) use ($id){
+                $result->where('national_id',$id)->orWhere('rayat_id', $id);
+            })->first();
+            if(isset($userInfo)){
+                return response()->json($userInfo, 200);
+            }else{
+                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+            }
+        } catch (QueryException $e) {
+            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+        }
     }
 }
