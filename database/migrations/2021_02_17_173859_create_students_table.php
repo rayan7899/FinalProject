@@ -17,7 +17,7 @@ class CreateStudentsTable extends Migration
             $table->id();
 
             $table->integer('birthdate')->nullable();
-            $table->string('rayat_id')->unique();
+            $table->string('rayat_id')->unique()->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('program_id');
             $table->unsignedBigInteger('department_id');
@@ -35,7 +35,6 @@ class CreateStudentsTable extends Migration
             $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('major_id')->references('id')->on('majors');
             $table->foreign('user_id')->references('id')->on('users');
-
         });
     }
 

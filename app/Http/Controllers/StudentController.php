@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Models\User;
+use App\Models\Course;
+use App\Models\Major;
+use App\Models\StudentCourse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +14,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
@@ -78,15 +83,17 @@ class StudentController extends Controller
      */
     public function edit()
     {
-        //
         $user = Auth::user();
-      
-        if(!$user->student->data_updated){
-            return view('student.form')->with(compact('user'));
-        }else{
-            return view('home')->with('error','تم تقديم الطلب مسبقاً')->with(compact('user'));
+
+        $courses = Course::where('suggested_level', $user->student->level)
+            ->where('major_id', $user->student->major_id)
+            ->get();
+
+        if (!$user->student->data_updated) {
+            return view('student.form')->with(compact('user', 'courses'));
+        } else {
+            return view('home')->with('error', 'تم تقديم الطلب مسبقاً')->with(compact('user'));
         }
-        
     }
 
     /**
@@ -100,35 +107,22 @@ class StudentController extends Controller
     {
         $user = Auth::user();
         $studentData = $this->validate($request, [
-            "email"             => "required|email|unique:users,email,".$user->id,
+            "email"             => "required|email|unique:users,email," . $user->id,
             "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
             "traineeState"      => "required|string",
             "cost"              => "required|numeric",
             "privateStateDoc"   => "required_if:traineeState,privateState",
+            "courses"           => "required|array|min:1",
+            "courses.*"         => "required|numeric|distinct|exists:courses,id",
         ], [
-            'payment_receipt.required_if' => 'إيصال السداد مطلوب'
+            'payment_receipt.required_if' => 'إيصال السداد مطلوب',
+            'courses.required' => 'لم تقم باختيار المواد',
         ]);
 
-        $national_id = Auth::user()->national_id;
-
-        $doc_name = 'identity.' . $studentData['identity']->getClientOriginalExtension();
-        Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['identity']));
-
-        $doc_name = 'degree.' . $studentData['degree']->getClientOriginalExtension();
-        Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['degree']));
-
-        if ($studentData['traineeState'] != 'privateState') {
-            $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $studentData['payment_receipt']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $national_id . '/receipts/' . $doc_name, File::get($studentData['payment_receipt']));
-        }else{
-            $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $studentData['privateStateDoc']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $national_id . '/privateStateDoc/' . $doc_name, File::get($studentData['privateStateDoc']));
-        }
-
         try {
-
+            DB::beginTransaction();
             $user->update(
                 array(
                     'email' => $studentData['email']
@@ -143,9 +137,45 @@ class StudentController extends Controller
                 )
             );
 
-            return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
+            $courses = $studentData['courses'];
+            if ($user->student->level < 2) {
+                $courses = [];
+                foreach (Course::where('suggested_level', $user->student->level)
+                    ->where('major_id', $user->student->major_id)
+                    ->get()
+                    as $course) {
+                    $courses[] = $course->id;
+                }
+            }
+            // FIXME: check if $courses is empty, retern error if so
+            foreach ($courses as $course) {
+                $user->student->studentCourses()->create([
+                    'course_id' => $course,
+                ]);
+            }
 
+            $national_id = Auth::user()->national_id;
+
+            $doc_name = 'identity.' . $studentData['identity']->getClientOriginalExtension();
+            Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['identity']));
+
+            $doc_name = 'degree.' . $studentData['degree']->getClientOriginalExtension();
+            Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['degree']));
+
+            if ($studentData['traineeState'] != 'privateState') {
+                $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $studentData['payment_receipt']->getClientOriginalExtension();
+                Storage::disk('studentDocuments')->put('/' . $national_id . '/receipts/' . $doc_name, File::get($studentData['payment_receipt']));
+            } else {
+                $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $studentData['privateStateDoc']->getClientOriginalExtension();
+                Storage::disk('studentDocuments')->put('/' . $national_id . '/privateStateDoc/' . $doc_name, File::get($studentData['privateStateDoc']));
+            }
+
+            DB::commit();
+
+            return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
         } catch (\Throwable $e) {
+            DB::rollback();
+            Log::error($e);
             return back()->with('error', ' تعذر تحديث بيانات تقديم الطلب حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -156,9 +186,9 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
-    
-     // Route: type GET | URL: /student/delete | route name DeleteOneStudent
+
+
+    // Route: type GET | URL: /student/delete | route name DeleteOneStudent
     public function destroy()
     {
         $user = Auth::user();
