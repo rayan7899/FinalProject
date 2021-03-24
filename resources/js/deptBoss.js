@@ -9,19 +9,19 @@
 
 window.getStringLevel = function (level) {
     switch (level) {
-        case 1:
+        case "1":
             return "الاول";
             break;
-        case 2:
+        case "2":
             return "الثاني";
             break;
-        case 3:
+        case "3":
             return "الثالث";
             break;
-        case 4:
+        case "4":
             return "الرابع";
             break;
-        case 5:
+        case "5":
             return "الخامس";
             break;
     }
