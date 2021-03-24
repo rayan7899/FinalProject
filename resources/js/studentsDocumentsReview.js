@@ -1,5 +1,5 @@
 jQuery(function () {
-    if ($("#mainTable")) {
+    if ($("#mainTable tr").length > 0) {
         var table = $("#mainTable").DataTable({
             orderCellsTop: true,
             deferLoading: true,

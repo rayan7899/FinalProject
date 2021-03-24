@@ -17,8 +17,7 @@ class DepartmentBossController extends Controller
     }
 
     public function getCoursesData()
-    {
-      
+    { 
         try{
             $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
             return response($programs,200);

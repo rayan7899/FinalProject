@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Models\User;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+
+use function PHPUnit\Framework\isEmpty;
 
 class StudentController extends Controller
 {
@@ -80,13 +85,12 @@ class StudentController extends Controller
     {
         //
         $user = Auth::user();
-      
-        if(!$user->student->data_updated){
+
+        if (!$user->student->data_updated) {
             return view('student.form')->with(compact('user'));
-        }else{
-            return view('home')->with('error','تم تقديم الطلب مسبقاً')->with(compact('user'));
+        } else {
+            return view('home')->with('error', 'تم تقديم الطلب مسبقاً')->with(compact('user'));
         }
-        
     }
 
     /**
@@ -100,7 +104,7 @@ class StudentController extends Controller
     {
         $user = Auth::user();
         $studentData = $this->validate($request, [
-            "email"             => "required|email|unique:users,email,".$user->id,
+            "email"             => "required|email|unique:users,email," . $user->id,
             "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
@@ -122,7 +126,7 @@ class StudentController extends Controller
         if ($studentData['traineeState'] != 'privateState') {
             $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $studentData['payment_receipt']->getClientOriginalExtension();
             Storage::disk('studentDocuments')->put('/' . $national_id . '/receipts/' . $doc_name, File::get($studentData['payment_receipt']));
-        }else{
+        } else {
             $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $studentData['privateStateDoc']->getClientOriginalExtension();
             Storage::disk('studentDocuments')->put('/' . $national_id . '/privateStateDoc/' . $doc_name, File::get($studentData['privateStateDoc']));
         }
@@ -144,7 +148,6 @@ class StudentController extends Controller
             );
 
             return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
-
         } catch (\Throwable $e) {
             return back()->with('error', ' تعذر تحديث بيانات تقديم الطلب حدث خطأ غير معروف ' . $e->getCode());
         }
@@ -156,9 +159,9 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
-    
-     // Route: type GET | URL: /student/delete | route name DeleteOneStudent
+
+
+    // Route: type GET | URL: /student/delete | route name DeleteOneStudent
     public function destroy()
     {
         $user = Auth::user();
@@ -240,5 +243,43 @@ class StudentController extends Controller
         }
 
         return back()->with('error', 'تعذر تغيير كلمة المرور حدث خطأ غير معروف');
+    }
+
+    public function getStudentOnLevel(Request $request, $level)
+    {
+        $validator = validator(array('level' => $level), ['level' => 'numeric']);
+        if ($validator->fails()) {
+            return response()->json(['message' => 'خطا في رقم المقرر'], 422);
+        }
+        try {
+            $students = User::with('student')->whereHas('student', function ($result) use ($level) {
+                $result->where('level', $level);
+            })->get();
+            return response()->json(['message' => 'تم جلب البيانات بنجاح', 'students' => $students], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json(['message' => ' حدث خطأ غير معروف, تعذر جلب بيانات المتدربين ' . "<p>" . $e->getCode() . "</p>"], 422);
+        }
+    }
+
+    public function updateStudentState(Request $request)
+    {
+        $studentData = $this->validate($request, [
+            'national_id' => 'required|string|max:10|min:10',
+            'studentState' => 'required|boolean',
+        ]);
+        try {
+            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
+            if(isset($user)){
+                $result = $user->student()->update([
+                    'studentState' => $studentData['studentState']
+                ]);
+                return response('ok', 200);
+            }else{
+                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+            }
+        } catch (QueryException $e) {
+            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+        }
     }
 }
