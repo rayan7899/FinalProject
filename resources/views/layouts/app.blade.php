@@ -81,6 +81,7 @@
                                     @endguest
                                 </ul>
                                 <ul class="navbar-nav ml-auto py-4 py-md-0">
+                                    <li class="nav-item"><a class="nav-link" href="{{route('falteringStudents')}}">الطلاب المتعثرين</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('manageCourses')}}">الجداول المقترحة</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>

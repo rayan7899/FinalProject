@@ -38,7 +38,7 @@ class DepartmentBossController extends Controller
             $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
             return response(['message' => 'تم تحديث الجدول المقترح بنجاح', 'programs' => $programs],200);
         }catch(QueryException $e){
-            return response(['message' => 'حدث خطأ غير معروف اثناء تحديث الجدول المقترح'],512);
+            return response(['message' => 'حدث خطأ غير معروف اثناء تحديث الجدول المقترح'],422);
         }
     }
     

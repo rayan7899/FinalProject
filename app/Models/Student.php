@@ -42,7 +42,12 @@ class Student extends Model
         return $this->hasMany(StudentCourse::class);
     }
     
-    // public function user(){
-    //     return $this->hasOne(User::class);
-    // }
+    public function user(){
+        return $this->hasOne(User::class);
+    }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'student_courses');
+    }
 }
