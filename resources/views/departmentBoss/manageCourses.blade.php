@@ -1,7 +1,33 @@
 @extends('layouts.app')
 @section('content')
     <div class="container-fluid">
-
+        <div class="modal fade" id="studentsModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" style="max-width: 75%" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table id="studentsTbl" class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">رقم الهوية</th>
+                                    <th class="text-center">الرقم التدريبي</th>
+                                    <th class="text-center">الاسم</th>
+                                    <th class="text-center">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTblBody">
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-header">
                 <h5>الجداول المقترحة</h5>
@@ -62,8 +88,18 @@
                 <div class="row justify-content-center">
                     <div class="col-sm-5 p-0">
                         <div class="card">
+                            <div class="card-header">
+                                <h6 class="d-inline">مقررات التخصص</h6>
+                                <select id="originalLevel" onchange="fillCourses()" class="ml-0 d-inline mx-3">
+                                    <option value="1"> المستوى الاول</option>
+                                    <option value="2"> المستوى الثاني</option>
+                                    <option value="3"> المستوى الثالث</option>
+                                    <option value="4"> المستوى الرابع</option>
+                                    <option value="5"> المستوى الخامس</option>
+                                </select>
+                            </div>
                             <div class="card-body p-0">
-                                <table class="table table-hover">
+                                <table id="originalCoursesTbl" class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th class="text-center">رمز المقرر</th>
@@ -82,31 +118,35 @@
 
                     <div class="col-2 d-none d-md-block p-0">
                         <div class="row justify-content-center mt-2">
-                            <a href="#" onclick="window.addCourses(event)" class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
+                            <a href="#" onclick="window.addCourses(event)"
+                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
                                 style="padding-bottom: 2px">
-                                <img style="width: 16px; height: 14px;  margin-bottom: 3px;" src="{{ asset('images/left-arrow.png') }}"
-                                    alt="left-arrow-icon">
+                                <img style="width: 16px; height: 14px;  margin-bottom: 3px;"
+                                    src="{{ asset('images/left-arrow.png') }}" alt="left-arrow-icon">
                             </a>
                         </div>
                         <div class="row justify-content-center">
-                            <a href="#" onclick="window.removeCourses(event)" class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
+                            <a href="#" onclick="window.removeCourses(event)"
+                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
                                 style="padding-bottom: 2px">
-                                <img style="width: 16px; height: 14px; margin-bottom: 3px;" src="{{ asset('images/right-arrow.png') }}"
-                                    alt="left-arrow-icon">
+                                <img style="width: 16px; height: 14px; margin-bottom: 3px;"
+                                    src="{{ asset('images/right-arrow.png') }}" alt="left-arrow-icon">
                             </a>
                         </div>
                     </div>
 
                     <div class="row d-flex justify-content-center justify-items-center d-sm-none p-3">
                         <div class="col justify-content-center">
-                            <a href="#" onclick="window.addCourses(event)" class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
+                            <a href="#" onclick="window.addCourses(event)"
+                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
                                 style="padding-bottom: 2px">
                                 <img style="width: 16px; height: 14px; transform: rotate(-90deg);"
                                     src="{{ asset('images/left-arrow.png') }}" alt="left-arrow-icon">
                             </a>
                         </div>
                         <div class="col justify-content-center">
-                            <a href="#" onclick="window.removeCourses(event)" class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
+                            <a href="#" onclick="window.removeCourses(event)"
+                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
                                 style="padding-bottom: 2px">
                                 <img style="width: 16px; height: 14px; transform: rotate(-90deg);"
                                     src="{{ asset('images/right-arrow.png') }}" alt="left-arrow-icon">
@@ -116,17 +156,24 @@
                     <div class="col-sm-5 p-0">
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="d-inline">الجداول المقترح</h6>
-                                <select id="suggestedLevel" onchange="suggestedLevelChanged(event)" class="ml-0 d-inline mx-3" >
-                                    <option value="1"> المستوى الاول</option>
-                                    <option value="2"> المستوى الثاني</option>
-                                    <option value="3"> المستوى الثالث</option>
-                                    <option value="4"> المستوى الرابع</option>
-                                    <option value="5"> المستوى الخامس</option>
-                                </select>
+                                <div class="d-inline">
+                                    <h6 class="d-inline">الجداول المقترح</h6>
+                                    <select id="suggestedLevel" onchange="fillSuggestedCourses()"
+                                        class="ml-0 d-inline mx-3 d-inline">
+                                        <option value="1"> المستوى الاول</option>
+                                        <option value="2"> المستوى الثاني</option>
+                                        <option value="3"> المستوى الثالث</option>
+                                        <option value="4"> المستوى الرابع</option>
+                                        <option value="5"> المستوى الخامس</option>
+                                    </select>
+                                </div>
+                                <div class="d-inline float-left">
+                                    <a onclick="window.showStudent()" class="btn btn-sm btn-primary" href="#"
+                                        role="button">عرض بيانات الطلاب</a>
+                                </div>
                             </div>
                             <div class="card-body p-0">
-                                <table class="table">
+                                <table id="suggestedLevelTbl" class="table">
                                     <thead>
                                         <tr>
                                             <th class="text-center">رمز المقرر</th>
@@ -136,7 +183,7 @@
                                             <th class="text-center">ساعات الإتصال</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="suggestedLevelTbl">
+                                    <tbody id="suggestedLevelBody">
                                     </tbody>
                                 </table>
                             </div>
@@ -146,11 +193,16 @@
             </div>
         </div>
 
-{{-- @php dd(json_decode($programs)); @endphp --}}
+        {{-- @php dd(json_decode($programs)); @endphp --}}
         <script>
-                 var programs = @php echo $programs; @endphp;
-                 var updateCoursesLevelUrl ="{{route('updateCoursesLevel')}}";
-                 var getCoursesDataUrl ="{{route('getCoursesData')}}";
+            // var programs = @php echo $programs; @endphp;    
+            var programs = @php echo $programs; @endphp;    
+            var updateCoursesLevelUrl = "{{ route('updateCoursesLevel') }}";
+            var showStudentOnLevelUrl = "{{ route('showStudentOnLevel','') }}";
+            var getCoursesDataUrl = "{{ route('getCoursesData') }}";
+            var updateStudentState = "{{ route('updateStudentState') }}";
+
+
         </script>
     </div>
 @stop

@@ -1,20 +1,27 @@
-// const { default: axios } = require("axios");
+// const { data } = require("jquery");
+// jQuery(function(){
+//     window.studentsTbl =  $("#studentsTbl").DataTable({
+//         orderCellsTop: true,
+//         deferLoading: true,       
+//         bDestroy: true,
+//     })
+// });
 
 window.getStringLevel = function (level) {
     switch (level) {
-        case 1:
+        case "1":
             return "الاول";
             break;
-        case 2:
+        case "2":
             return "الثاني";
             break;
-        case 3:
+        case "3":
             return "الثالث";
             break;
-        case 4:
+        case "4":
             return "الرابع";
             break;
-        case 5:
+        case "5":
             return "الخامس";
             break;
     }
@@ -48,9 +55,14 @@ window.findCourses = function (major) {
 };
 
 window.fillCourses = function () {
-    getCoursesData();
+    let dataState = getCoursesData();
+    if (!dataState) {
+        return;
+    }
+
     var tblCourses = document.getElementById("courses");
-    tblCourses.innerHTML = null;
+    let originalLevel = document.getElementById("originalLevel");
+    tblCourses.innerHTML = "<tr><td></td></tr>";
     let major = document.getElementById("major").value;
     if (major !== "") {
         var courses = findCourses(major);
@@ -59,9 +71,13 @@ window.fillCourses = function () {
     }
     for (var i = 0; i < courses.length; i++) {
         let tblIndex = 0;
-        if (courses[i].suggested_level == 0) {
+        if (
+            courses[i].suggested_level == 0 &&
+            courses[i].level == parseInt(originalLevel.value)
+        ) {
             let row = tblCourses.insertRow(tblIndex);
             row.setAttribute("data-id", courses[i].id);
+            row.setAttribute("data-level", courses[i].level);
             row.setAttribute("data-selected", false);
             row.addEventListener("click", (event) =>
                 window.courseClicked(event)
@@ -83,13 +99,20 @@ window.fillCourses = function () {
             tblIndex++;
         }
     }
-    suggestedLevelChanged();
+    // $('#originalCoursesTbl').??????????????();
+    fillSuggestedCourses(false);
 };
 
-window.suggestedLevelChanged = function (event = null) {
-    getCoursesData();
-    var suggestedLevelTbl = document.getElementById("suggestedLevelTbl");
-    suggestedLevelTbl.innerHTML = null;
+window.fillSuggestedCourses = function (shouldUpdateData = true) {
+    if (shouldUpdateData) {
+        let dataState = getCoursesData();
+        if (!dataState) {
+            return;
+        }
+    }
+
+    var suggestedLevelBody = document.getElementById("suggestedLevelBody");
+    suggestedLevelBody.innerHTML = null;
     let suggLevel = document.getElementById("suggestedLevel");
     let major = document.getElementById("major").value;
     if (major !== "") {
@@ -100,9 +123,10 @@ window.suggestedLevelChanged = function (event = null) {
     for (let i = 0; i < courses.length; i++) {
         let suggLevelIndex = 0;
         if (courses[i].suggested_level == parseInt(suggLevel.value)) {
-            let suggLevelRow = suggestedLevelTbl.insertRow(suggLevelIndex);
+            let suggLevelRow = suggestedLevelBody.insertRow(suggLevelIndex);
             suggLevelRow.setAttribute("data-id", courses[i].id);
             suggLevelRow.setAttribute("data-selected", false);
+            suggLevelRow.setAttribute("data-level", courses[i].level);
             suggLevelRow.addEventListener("click", (event) =>
                 window.courseClicked(event)
             );
@@ -124,8 +148,7 @@ window.suggestedLevelChanged = function (event = null) {
             suggLevelIndex++;
         }
     }
- 
-}
+};
 
 window.courseClicked = function (event) {
     let courseRow = event.currentTarget;
@@ -152,7 +175,7 @@ window.addCourses = function (event) {
     };
     event.preventDefault();
     let tblCourses = document.getElementById("courses");
-    let suggestedLevelTbl = document.getElementById("suggestedLevelTbl");
+    let suggestedLevelBody = document.getElementById("suggestedLevelBody");
     let selectedCourses = tblCourses.querySelectorAll("[data-selected='true']");
     if (selectedCourses.length < 1) {
         Swal.fire({
@@ -171,20 +194,21 @@ window.addCourses = function (event) {
         row.classList.add("text-dark");
         row.classList.remove("bg-info");
         row.classList.remove("text-white");
-        suggestedLevelTbl.appendChild(row);
+        suggestedLevelBody.appendChild(row);
     });
     updateCoursesRequset(coursesData);
 };
 
 window.removeCourses = function (event) {
+    event.preventDefault();
     let coursesData = {
         suggested_level: 0,
         courses: [],
     };
-    event.preventDefault();
     let tblCourses = document.getElementById("courses");
-    let suggestedLevelTbl = document.getElementById("suggestedLevelTbl");
-    let selectedCourses = suggestedLevelTbl.querySelectorAll(
+    let suggestedLevelBody = document.getElementById("suggestedLevelBody");
+    let originalLevel = document.getElementById("originalLevel");
+    let selectedCourses = suggestedLevelBody.querySelectorAll(
         "[data-selected='true']"
     );
     if (selectedCourses.length < 1) {
@@ -204,12 +228,18 @@ window.removeCourses = function (event) {
         row.classList.add("text-dark");
         row.classList.remove("bg-info");
         row.classList.remove("text-white");
-        tblCourses.appendChild(row);
+
+        if (row.dataset.level == parseInt(originalLevel.value)) {
+            tblCourses.appendChild(row);
+        } else {
+            row.parentElement.removeChild(row);
+        }
     });
     updateCoursesRequset(coursesData);
+    //fillCourses();
 };
 
-function updateCoursesRequset(coursesData) {
+async function updateCoursesRequset(coursesData) {
     if (coursesData == "" || coursesData == undefined || coursesData == null) {
         return false;
     }
@@ -240,14 +270,61 @@ function updateCoursesRequset(coursesData) {
                 showConfirmButton: true,
             });
         });
-  
-        
 }
 
-function getCoursesData() {
-    axios.get(window.getCoursesDataUrl)
+async function getCoursesData() {
+    let state = false;
+    Swal.fire({
+        html: "<h4>جاري تحديث البيانات</h4>",
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen() {
+            Swal.showLoading();
+        },
+        willOpen() {
+            Swal.hideLoading();
+        },
+    });
+    await axios
+        .get(window.getCoursesDataUrl)
         .then((response) => {
             window.programs = response.data;
+            state = true;
+            Swal.close();
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+            state = false;
+        });
+    return state;
+}
+
+async function getStudentOnLevel() {
+    var studentsData = null;
+    let suggLevel = document.getElementById("suggestedLevel");
+    Swal.fire({
+        html: "<h4>جاري تحديث البيانات</h4>",
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen() {
+            Swal.showLoading();
+        },
+        willOpen() {
+            Swal.hideLoading();
+        },
+    });
+    await axios
+        .get(window.showStudentOnLevelUrl + "/" + suggLevel.value)
+        .then((response) => {
+            studentsData = response.data.students;
+            Swal.close();
         })
         .catch((error) => {
             Swal.fire({
@@ -257,4 +334,95 @@ function getCoursesData() {
                 showConfirmButton: true,
             });
         });
+    return studentsData;
 }
+
+window.showStudent = async function () {
+    let studentsTbl = document.getElementById("studentsTblBody");
+    studentsTbl.innerHTML = null;
+    var studentsData = await getStudentOnLevel();
+    if (studentsData === null) {
+        return;
+    }
+    if (studentsData.length < 1) {
+        Swal.fire({
+            position: "center",
+            html: "<h4>لا يوجد متدربين في هذا المستوى</h4>",
+            icon: "warning",
+            showConfirmButton: true,
+        });
+        return;
+    }
+    $("#studentsModal").modal("show")
+    for (var i = 0; i < studentsData.length; i++) {
+        let row = studentsTbl.insertRow(i);
+
+        let national_id = row.insertCell(0);
+        national_id.className = "text-center";
+        national_id.innerHTML = studentsData[i].national_id;
+
+        let rayat_id = row.insertCell(1);
+        rayat_id.className = "text-center";
+        rayat_id.innerHTML = studentsData[i].student.rayat_id != null ? studentsData[i].student.rayat_id : 'لا يوجد';
+
+        let name = row.insertCell(2);
+        name.className = "text-center";
+        name.innerHTML = studentsData[i].name;
+
+        let checkBoxCell = row.insertCell(3);
+        checkBoxCell.className = "text-center";
+        let checkBox = document.createElement("input");
+        checkBox.setAttribute("type", "checkbox");
+        if(studentsData[i].student.studentState == 1){
+            checkBox.setAttribute("checked", "true");
+        }
+        checkBox.setAttribute("value", "1");
+        checkBox.setAttribute("data-national_id", studentsData[i].national_id);
+        checkBox.setAttribute("data-level", studentsData[i].student.level);
+        checkBox.addEventListener("click", (event) =>
+            window.studentCheckBoxChanged(event)
+        );
+        checkBoxCell.appendChild(checkBox);
+    }
+};
+
+window.studentCheckBoxChanged = function (event) {
+    let student = event.target;
+    let formData = {
+      'national_id':  student.dataset.national_id,
+      'studentState': student.checked,
+    }; 
+    Swal.fire({
+        html: "<h4>جاري تحديث البيانات</h4>",
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen() {
+            Swal.showLoading();
+        },
+        willOpen() {
+            Swal.hideLoading();
+        },
+    });
+     axios
+        .post(window.updateStudentState,formData)
+        .then((response) => {
+            Swal.fire({
+                position: "center",
+                // html: "<h4>"+response.data.message+"</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1000,
+            });
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" +error.response.data.message+ "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+
+
+};

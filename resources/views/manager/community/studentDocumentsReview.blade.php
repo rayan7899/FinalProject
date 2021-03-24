@@ -112,14 +112,14 @@
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
 
-                                {{-- <td>
-                    <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
-                        data-content='
-                                @foreach ($user['receipts'] as $receipt)
-                                    <a class="d-block" href="{{ route('GetStudentDocument',['path' => $receipt ]) }}">{{ substr($receipt, 20, 10) }}</a>
-                                @endforeach
-                            '>عرض الايصالات</a>
-                </td> --}}
+                                      {{-- <td>
+                                      <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
+                                    data-content='
+                                        @foreach ($user['receipts'] as $receipt)
+                                        <a class="d-block" href="{{ route('GetStudentDocument',['path' => $receipt ]) }}">{{ substr($receipt, 20, 10) }}</a>
+                                           @endforeach
+                                       '>عرض الايصالات</a>
+                                      </td> --}}
                                 <td class="text-center">
                                     @forelse ($user['receipts'] as $receipt)
                                         @php
@@ -173,9 +173,12 @@
 
                         </tr>
                     @empty
-                        <td colspan="12">لا يوجد بيانات</td>
+                    <tr>
+                         <td colspan="13">لا يوجد بيانات</td>
+                    </tr>
                     @endforelse
                     @endif
+                    
                 </tbody>
                 <tfoot>
                     <tr>
@@ -191,6 +194,8 @@
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
+                        <th scope="col"></th>
+
                     </tr>
                 </tfoot>
             </table>

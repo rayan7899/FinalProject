@@ -40,18 +40,30 @@
                             <span class="input-group-text text-center" style="width: 100px;" >الاسم</span>
                         </div>
                     </div>
+                    @if($user->student->studentState)
                     <div dir="ltr"  class="input-group mb-1">
                         <input readonly type="text" class="form-control text-right bg-white" placeholder="" aria-label="Recipient's username" aria-describedby="basic-addon2" 
-                               value="{{$user->documents_verified == true ? 'تم مراجعة الطلب' : 'قيد المراجعة'}}">
+                               value="{{$user->student->documents_verified == true ? 'تم مراجعة الطلب' : 'قيد المراجعة'}}">
                         <div class="input-group-append">
                             <span class="input-group-text text-center" style="width: 100px;" >حالة الطلب</span>
                         </div>
                     </div>
+                    @else
+                    <div dir="ltr"  class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white" placeholder="" aria-label="Recipient's username" aria-describedby="basic-addon2" 
+                               value="الحساب موقوف يرجى مراجعة الادارة">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 100px;" >حالة الطلب</span>
+                        </div>
+                    </div>
+                    @endif
+                    
 
                 </div>
 
 
                 <!-- suggested courses -->
+                @if($user->student->studentState)
                 <div class="from-group">
                     <label>المواد المسجلة</label>
                     <table class="table table-hover table-bordered bg-white">
@@ -81,6 +93,7 @@
                         </tbody>
                     </table>
                 </div>
+                @endif
 
             </div>
         </div>
