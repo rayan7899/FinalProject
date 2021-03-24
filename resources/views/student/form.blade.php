@@ -185,8 +185,7 @@
     </form>
 </div>
 <script>
-    var courses = @php echo json_encode($courses); @endphp;
-
+ var courses = @php echo json_encode($user->student->courses); @endphp;
 </script>
 </div>
 
