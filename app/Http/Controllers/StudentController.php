@@ -13,9 +13,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+
+use function PHPUnit\Framework\isEmpty;
 
 class StudentController extends Controller
 {
@@ -271,6 +273,45 @@ class StudentController extends Controller
 
         return back()->with('error', 'تعذر تغيير كلمة المرور حدث خطأ غير معروف');
     }
+
+    public function getStudentOnLevel(Request $request, $level)
+    {
+        $validator = validator(array('level' => $level), ['level' => 'numeric']);
+        if ($validator->fails()) {
+            return response()->json(['message' => 'خطا في رقم المقرر'], 422);
+        }
+        try {
+            $students = User::with('student')->whereHas('student', function ($result) use ($level) {
+                $result->where('level', $level);
+            })->get();
+            return response()->json(['message' => 'تم جلب البيانات بنجاح', 'students' => $students], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json(['message' => ' حدث خطأ غير معروف, تعذر جلب بيانات المتدربين ' . "<p>" . $e->getCode() . "</p>"], 422);
+        }
+    }
+
+    public function updateStudentState(Request $request)
+    {
+        $studentData = $this->validate($request, [
+            'national_id' => 'required|string|max:10|min:10',
+            'studentState' => 'required|boolean',
+        ]);
+        try {
+            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
+            if(isset($user)){
+                $result = $user->student()->update([
+                    'studentState' => $studentData['studentState']
+                ]);
+                return response('ok', 200);
+            }else{
+                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+            }
+        } catch (QueryException $e) {
+            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"],422);
+        }
+    }
+    
 
     public function getStudentInfo($id)
     {

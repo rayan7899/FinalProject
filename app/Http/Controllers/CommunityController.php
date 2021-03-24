@@ -6,8 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
-use Storage;
-
+use Illuminate\Support\Facades\Storage;
 class CommunityController extends Controller
 {
     public function __construct()
