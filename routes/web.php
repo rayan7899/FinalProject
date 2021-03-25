@@ -49,7 +49,7 @@ Route::post('/excel/old/import',[ExcelController::class,'importOldUsers'])->name
 Route::get('/student/edit',[StudentController::class,'edit'])->name('EditOneStudent')->middleware('agreement');
 Route::post('/student/update',[StudentController::class,'update'])->name('UpdateOneStudent')->middleware('agreement');
 Route::get('/student/delete',[StudentController::class,'destroy'])->name('DeleteOneStudent');
-Route::get('/student/level/{level}',[StudentController::class,'getStudentOnLevel'])->name('showStudentOnLevel');
+Route::post('/student/level',[StudentController::class,'getStudentOnLevel'])->name('getStudentOnLevel');
 Route::post('/student/update-state/',[StudentController::class,'updateStudentState'])->name('updateStudentState');
 
 

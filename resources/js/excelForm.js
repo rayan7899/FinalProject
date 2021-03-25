@@ -25,14 +25,14 @@ window.fillDepartments = function () {
     var prog = document.getElementById("program").value;
 
     var dept = document.getElementById("department");
-    dept.innerHTML = '<option value="" disabled selected>أختر</option>';
+    dept.innerHTML = '<option value="0" disabled selected>أختر</option>';
     var departments = findDepartment(window.programs, prog);
 
     for (var i = 0; i < departments.length; i++) {
         var option = document.createElement("option");
         option.innerHTML = departments[i].name;
         option.value = departments[i].id;
-        dept.appendChild(option);
+        dept.appendChild(option);   
     }
     fillMajors();
 };
@@ -41,8 +41,8 @@ window.fillMajors = function () {
     var prog = document.getElementById("program").value;
     var dept = document.getElementById("department").value;
     var mjr = document.getElementById("major");
-    mjr.innerHTML = '<option value="" disabled selected>أختر</option>';
-    if (dept !== "" && prog !== "") {
+    mjr.innerHTML = '<option value="0" disabled selected>أختر</option>';
+    if (dept !== "0" && prog !== "0") {
         var majors = findMajor(window.programs, prog, dept).majors;
 
         for (var i = 0; i < majors.length; i++) {
