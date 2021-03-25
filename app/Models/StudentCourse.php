@@ -7,12 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentCourse extends Model
 {
-    protected $fillable = [
-        // 'student_id'
-        'course_id'
-    ];
-
-
     use HasFactory;
     protected $fillable = [
         // 'student_id',

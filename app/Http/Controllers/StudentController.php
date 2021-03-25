@@ -89,6 +89,9 @@ class StudentController extends Controller
             ->where('major_id', $user->student->major_id)
             ->get();
 
+        if ($user->student->studentState == false) {
+            return view('home')->with(compact('user'));
+        }
         if (!$user->student->data_updated) {
             return view('student.form')->with(compact('user', 'courses'));
         } else {

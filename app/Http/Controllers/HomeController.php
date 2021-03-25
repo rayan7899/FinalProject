@@ -26,7 +26,7 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-        if ($user->student->data_updated) {
+        if ($user->student->data_updated || $user->student->studentState == false) {
             // $courses = $user->student->courses;
             // dd($courses);
             return view('home')->with(compact('user'));
