@@ -180,7 +180,7 @@ class OldUsers implements ToCollection
                     continue;
                 }
             } catch (Exception $e) {
-                dd($e);
+                Log::error($e);
                 if ($row[TRAINEE_STATE] != 'privateState') {
                     array_push($errorsArr, ['message' => " تعذر تحميل صورة الايصال " . $e->getCode(), 'userinfo' => $userinfo]);
                 } else {
@@ -241,6 +241,7 @@ class OldUsers implements ToCollection
                 $user = User::create($userinfo);
                 $user->student()->create([
                     'user_id'               => $user->id,
+                    'rayat_id'              => $row[RAYAT_ID],
                     'program_id'            => $progId,
                     'department_id'         => $deptId,
                     'major_id'              => $mjrId,
