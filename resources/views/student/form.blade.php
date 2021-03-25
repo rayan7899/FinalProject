@@ -78,7 +78,7 @@
                     @php
                     $default_cost = 0;
                     @endphp
-                    @foreach ($courses as $course)
+                    @foreach ($user->student->courses as $course)
                         @php
                         $default_cost += $course->credit_hours * 550;
                         @endphp
@@ -185,8 +185,7 @@
     </form>
 </div>
 <script>
-    var courses = @php echo json_encode($courses); @endphp;
-
+ var courses = @php echo json_encode($user->student->courses); @endphp;
 </script>
 </div>
 
