@@ -148,27 +148,21 @@
 
 
                         <td class="text-center">
-                            @if ($user->student->final_accepted == 1)
-                                مقبول نهائي
-                            @else
-                                <input id="check_{{ $user->national_id }}" type="checkbox"
-                                    onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
-                                    style="width: 16px; height: 16px;"
-                                    {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
-                                    value="{{ $user->student->documents_verified }}">
-                            @endif
+                            <input id="check_{{ $user->national_id }}" type="checkbox"
+                                onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
+                                style="width: 16px; height: 16px;"
+                                {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
+                                value="{{ $user->student->documents_verified }}">
                         </td>
 
 
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
 
                         <td class="text-center">
-                            @if ($user->student->final_accepted != 1)
                             <a data-toggle="modal" data-target="#editModal" href="#"
                             onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
                             <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                         </a>
-                            @endif
                         </td>
 
                         </tr>

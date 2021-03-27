@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
+
 use App\Models\User;
 use App\Models\Course;
-use App\Models\Major;
-use App\Models\StudentCourse;
+use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
+
 use Illuminate\Support\Facades\DB;
 
-use function PHPUnit\Framework\isEmpty;
 
 class StudentController extends Controller
 {
@@ -87,19 +84,19 @@ class StudentController extends Controller
     public function edit()
     {
         $user = Auth::user();
-
+        if ($user->student->studentState != false) {
         $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
             ->get();
-
-        if ($user->student->studentState == false) {
-            return view('home')->with(compact('user'));
-        }
-        if (!$user->student->data_updated) {
             return view('student.form')->with(compact('user', 'courses'));
-        } else {
-            return view('home')->with('error', 'تم تقديم الطلب مسبقاً')->with(compact('user'));
+        }else{
+            return view('student.form')->with(compact('user'));
         }
+        // if (!$user->student->data_updated) {
+        //     return view('student.form')->with(compact('user', 'courses'));
+        // } else {
+        //     return view('home')->with('error', 'تم تقديم الطلب مسبقاً')->with(compact('user'));
+        // }
     }
 
     /**
@@ -278,17 +275,27 @@ class StudentController extends Controller
         return back()->with('error', 'تعذر تغيير كلمة المرور حدث خطأ غير معروف');
     }
 
-    public function getStudentOnLevel(Request $request, $level)
+    public function getStudentOnLevel(Request $request)
     {
-        $validator = validator(array('level' => $level), ['level' => 'numeric']);
-        if ($validator->fails()) {
-            return response()->json(['message' => 'خطا في رقم المقرر'], 422);
-        }
+        $formData = $this->validate($request, [
+            'level' => 'required|numeric|max:5|min:1',
+            'program' => 'required|numeric|max:10|min:1',
+            'department' => 'required|numeric|max:100|min:1',
+            'major' => 'required|numeric|max:200|min:1',
+        ]);
+
         try {
-            $students = User::with('student')->whereHas('student', function ($result) use ($level) {
-                $result->where('level', $level);
+            $students = User::with('student')->whereHas('student', function ($result) use ($formData) {
+                $result->where('level', $formData['level'])
+                    ->where('program_id', $formData['program'])
+                    ->where('department_id', $formData['department'])
+                    ->where('major_id', $formData['major']);
             })->get();
-            return response()->json(['message' => 'تم جلب البيانات بنجاح', 'students' => $students], 200);
+            if (count($students) > 0) {
+                return response()->json(['message' => 'تم جلب البيانات بنجاح', 'students' => $students], 200);
+            }else{
+                return response()->json(['message' => 'لا يوجد متدربين', 'students' => $students], 480);
+            }
         } catch (Exception $e) {
             Log::error($e);
             return response()->json(['message' => ' حدث خطأ غير معروف, تعذر جلب بيانات المتدربين ' . "<p>" . $e->getCode() . "</p>"], 422);
@@ -319,11 +326,6 @@ class StudentController extends Controller
 
     public function getStudentInfo($id)
     {
-        // if(isset($userInfo))
-        //     return response($userInfo, 200);
-        // else
-        //     return response('', 422);
-
         try {
             $userInfo = User::with('student.courses')->whereHas('student', function ($result) use ($id) {
                 $result->where('national_id', $id)->orWhere('rayat_id', $id);

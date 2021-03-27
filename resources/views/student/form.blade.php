@@ -62,7 +62,7 @@
 
         <!-- suggested courses -->
         <div class="from-group">
-            <label>المواد المقترحة</label>
+            <label>المقررات المقترحة</label>
             <table class="table table-hover table-bordered bg-white">
                 <thead>
                     <tr>
@@ -78,30 +78,35 @@
                     @php
                     $default_cost = 0;
                     @endphp
-                    @foreach ($user->student->courses as $course)
-                        @php
-                        $default_cost += $course->credit_hours * 550;
-                        @endphp
-                        <tr>
-                            <td class="text-center">{{ $course->code }}</td>
-                            <td class="text-center">{{ $course->name }}</td>
-                            <td class="text-center">{{ $course->level }}</td>
-                            <td class="text-center">{{ $course->credit_hours }}</td>
-                            <td class="text-center">{{ $course->credit_hours * 550 }}</td>
-                            <td class="text-center @if ($user->student->level < 2) d-none @endif">
-                                <input id="course_{{ $course->id }}"
-                                       type="checkbox"
-                                       name="courses[]"
-                                       value="{{ $course->id }}"
-                                       onclick="changeTraineeState();"
-                                       checked/>
-                            </td>
-                        </tr>
-                    @endforeach
+                    @if(isset($courses))
+                        @forelse ($courses as $course)
+                            @php
+                                $default_cost += $course->credit_hours * 550;
+                            @endphp
+                            <tr>
+                                <td class="text-center">{{ $course->code }}</td>
+                                <td class="text-center">{{ $course->name }}</td>
+                                <td class="text-center">{{ $course->level }}</td>
+                                <td class="text-center">{{ $course->credit_hours }}</td>
+                                <td class="text-center">{{ $course->credit_hours * 550 }}</td>
+                                <td class="text-center @if ($user->student->level < 2) d-none @endif">
+                                    <input id="course_{{ $course->id }}"
+                                        type="checkbox"
+                                        name="courses[]"
+                                        value="{{ $course->id }}"
+                                        onclick="changeTraineeState();"
+                                        checked/>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="6">لا يوجد مقررات مقترحة</td></tr>
+                        @endforelse
+                    @else
+                        <tr><td colspan="6">لا يوجد مقررات مقترحة</td></tr>
+                    @endif
                 </tbody>
             </table>
         </div>
-
         <!-- trainee state -->
         <label>فئة المتدرب</label>
         <div class="form-group bg-white border px-4 py-3">
@@ -185,7 +190,11 @@
     </form>
 </div>
 <script>
- var courses = @php echo json_encode($user->student->courses); @endphp;
+ var courses = @php 
+ if(isset($courses)){
+    echo json_encode($user->student->courses);
+ }
+ @endphp;
 </script>
 </div>
 

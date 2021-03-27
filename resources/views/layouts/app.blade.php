@@ -87,7 +87,7 @@
                                     <li class="nav-item"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق المستندات</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق الايصالات</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('AddExcelForm')}}">اضافة اكسل مستجدين</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('OldForm')}}"> اضافة اكسل مستمرين </a></li>
 

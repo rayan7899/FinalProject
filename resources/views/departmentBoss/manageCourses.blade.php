@@ -43,7 +43,7 @@
                                     <label for="program" class="pl-1"> البرنامج </label>
                                     <select required name="program" id="program" class="form-controller w-100"
                                         onchange="fillDepartments()">
-                                        <option value="" disabled selected>أختر</option>
+                                        <option value="0" disabled selected>أختر</option>
                                         @forelse (json_decode($programs) as $program)
                                             <option value="{{ $program->id }}">{{ $program->name }}</option>
                                         @empty
@@ -61,7 +61,7 @@
                                     <label for="department" class="pl-1"> القسم </label>
                                     <select required name="department" id="department" class="form-controller w-100 "
                                         onchange="fillMajors()">
-                                        <option value="" disabled selected>أختر</option>
+                                        <option value="0" disabled selected>أختر</option>
                                     </select>
                                     @error('department')
                                         <span class="invalid-feedback" role="alert">
@@ -73,7 +73,7 @@
                                     <label for="major" class="pl-1"> التخصص </label>
                                     <select required name="major" id="major" class="form-controller w-100"
                                         onchange="fillCourses()">
-                                        <option value="" disabled selected>أختر</option>
+                                        <option value="0" disabled selected>أختر</option>
                                     </select>
                                     @error('major')
                                         <span class="invalid-feedback" role="alert">
@@ -195,10 +195,9 @@
 
         {{-- @php dd(json_decode($programs)); @endphp --}}
         <script>
-            // var programs = @php echo $programs; @endphp;    
             var programs = @php echo $programs; @endphp;    
             var updateCoursesLevelUrl = "{{ route('updateCoursesLevel') }}";
-            var showStudentOnLevelUrl = "{{ route('showStudentOnLevel','') }}";
+            var getStudentOnLevelUrl = "{{ route('getStudentOnLevel') }}";
             var getCoursesDataUrl = "{{ route('getCoursesData') }}";
             var updateStudentState = "{{ route('updateStudentState') }}";
 

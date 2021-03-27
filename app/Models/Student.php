@@ -11,10 +11,12 @@ class Student extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
+        'rayat_id',
         'birthdate',
         'program_id',
         'department_id',
         'major_id',
+        'final_accepted',
         'documents_verified',
         'agreement',
         'traineeState',

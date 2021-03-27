@@ -8,20 +8,21 @@
 // });
 
 window.getStringLevel = function (level) {
+    level = parseInt(level);
     switch (level) {
-        case "1":
+        case 1:
             return "الاول";
             break;
-        case "2":
+        case 2:
             return "الثاني";
             break;
-        case "3":
+        case 3:
             return "الثالث";
             break;
-        case "4":
+        case 4:
             return "الرابع";
             break;
-        case "5":
+        case 5:
             return "الخامس";
             break;
     }
@@ -99,7 +100,7 @@ window.fillCourses = function () {
             tblIndex++;
         }
     }
-    // $('#originalCoursesTbl').??????????????();
+
     fillSuggestedCourses(false);
 };
 
@@ -308,6 +309,45 @@ async function getCoursesData() {
 async function getStudentOnLevel() {
     var studentsData = null;
     let suggLevel = document.getElementById("suggestedLevel");
+    let program = document.getElementById("program");
+    let department = document.getElementById("department");
+    let major = document.getElementById("major");
+    if(program.value == "0")
+    {
+        Swal.fire({
+            position: "center",
+            html: "<h4>يرجى اختيار البرنامج</h4>",
+            icon: "warning",
+            showConfirmButton: true,
+        });
+        return;
+    }
+    if(department.value == "0")
+    {
+        Swal.fire({
+            position: "center",
+            html: "<h4>يرجى اختيار القسم</h4>",
+            icon: "warning",
+            showConfirmButton: true,
+        });
+        return;
+    }
+    if(major.value == "0")
+    {
+        Swal.fire({
+            position: "center",
+            html: "<h4>يرجى اختيار التخصص</h4>",
+            icon: "warning",
+            showConfirmButton: true,
+        });
+        return;
+    }
+    let formData = {
+        'level':suggLevel.value,
+        'program':program.value,
+        'department':department.value,
+        'major':major.value
+    }
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
         timerProgressBar: true,
@@ -321,7 +361,7 @@ async function getStudentOnLevel() {
         },
     });
     await axios
-        .get(window.showStudentOnLevelUrl + "/" + suggLevel.value)
+        .post(window.getStudentOnLevelUrl,formData)
         .then((response) => {
             studentsData = response.data.students;
             Swal.close();
@@ -330,7 +370,7 @@ async function getStudentOnLevel() {
             Swal.fire({
                 position: "center",
                 html: "<h4>" + error.response.data.message + "</h4>",
-                icon: "error",
+                icon: error.response.status == 480 ? "warning" : "error",
                 showConfirmButton: true,
             });
         });
@@ -363,7 +403,7 @@ window.showStudent = async function () {
 
         let rayat_id = row.insertCell(1);
         rayat_id.className = "text-center";
-        rayat_id.innerHTML = studentsData[i].student.rayat_id != null ? studentsData[i].student.rayat_id : 'لا يوجد';
+        rayat_id.innerHTML = studentsData[i].student.rayat_id;
 
         let name = row.insertCell(2);
         name.className = "text-center";
