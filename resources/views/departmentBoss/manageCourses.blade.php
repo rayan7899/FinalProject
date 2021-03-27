@@ -195,7 +195,6 @@
 
         {{-- @php dd(json_decode($programs)); @endphp --}}
         <script>
-            // var programs = @php echo $programs; @endphp;    
             var programs = @php echo $programs; @endphp;    
             var updateCoursesLevelUrl = "{{ route('updateCoursesLevel') }}";
             var getStudentOnLevelUrl = "{{ route('getStudentOnLevel') }}";

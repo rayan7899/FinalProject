@@ -13,15 +13,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
+define('NATIONAL_ID', 18);
+define('NAME', 19);;
+define('PHONE', 7);
+define('BIRTHDATE', 17);
+define('HAS_DOCUMENTS', 14);
+
 
 class UsersImport implements ToCollection
 {
     use Importable;
 
-    static $national_id = 18;
-    static $name = 19;
-    static $birthdate = 17;
-    static $phone = 7;
     static $deptMjr = null;
 
 
@@ -43,42 +45,47 @@ class UsersImport implements ToCollection
 
     public function collection(Collection $rows)
     {
-
         $rows = $rows->slice(7);
         $duplicate = [];
         $errorsArr = [];
 
         Validator::make($rows->toArray(), [
-            '*.' . $this::$national_id => 'required|digits:10',      //national_id
-            '*.' . $this::$name => 'required|string|max:100',  //name
-            '*.' . $this::$birthdate => 'required|digits:4',        //birthdate
-            '*.' . $this::$phone => 'required|digits_between:9,14',      //phone
+            '*.' . NATIONAL_ID => 'required|digits:10',
+            '*.' . NAME => 'required|string|max:100', 
+            '*.' . BIRTHDATE => 'required|digits:4', 
+            '*.' . PHONE => 'required|digits_between:9,14',
+            '*.' . HAS_DOCUMENTS => 'required|string|max:255',
 
         ], [
-            '*.17.digits'           => 'يجب ان ان يكون تاريخ الميلاد 4 ارقام',
-            '*.18.digits'           => ' يجب ان يكون رقم الهوية 10 ارقام',
-            '*.19.max'              => 'يجب ان لا يتجاوز الاسم 255 حرف',
-            '*.7.digits_between'    => 'يجب ان يكون رقم الجوال بين 10 و 14 رقماَ',
+            '*.' . BIRTHDATE . '.digits'           => 'يجب ان ان يكون تاريخ الميلاد 4 ارقام',
+            '*.' . NATIONAL_ID . '.digits'           => ' يجب ان يكون رقم الهوية 10 ارقام',
+            '*.' . NAME . '.max'              => 'يجب ان لا يتجاوز الاسم 255 حرف',
+            '*.' . PHONE . '.digits_between'    => 'يجب ان يكون رقم الجوال بين 10 و 14 رقماَ',
         ])->validate();
-
         foreach ($rows as $row) {
-            $userinfo = [
-                'national_id'   => $row[$this::$national_id],
-                'name'          => $row[$this::$name],
-                'email'         => NULL,
-                'phone'         => $row[$this::$phone],
-                'password' => Hash::make("bct12345")
-            ];
-
+            $hasDocuments = false;
+            $row[HAS_DOCUMENTS] = trim($row[HAS_DOCUMENTS]);
+            if($row[HAS_DOCUMENTS] == "نعم")
+            {
+                $hasDocuments = true;
+            }
             try {
+                $userinfo = [
+                    'national_id'   => $row[NATIONAL_ID],
+                    'name'          => $row[NAME],
+                    'email'         => NULL,
+                    'phone'         => $row[PHONE],
+                    'password' => Hash::make("bct12345")
+                ];
                 DB::beginTransaction();
                 $user = User::create($userinfo);
                 $user->student()->create([
                     'user_id'          => $user->id,
-                    'birthdate'        => $row[$this::$birthdate],
+                    'birthdate'        => $row[BIRTHDATE],
                     'program_id'       => $this::$deptMjr['program'],
                     'department_id'    => $this::$deptMjr['department'],
                     'major_id'         => $this::$deptMjr['major'],
+                    'final_accepted'   => $hasDocuments,
                 ]);
                 DB::commit();
             } catch (QueryException $e) {

@@ -1,6 +1,26 @@
 @extends('layouts.app')
+{{-- @extends('layouts.errors') --}}
 @section('content')
+
     <div class="container-fluid">
+        {{-- @section('error', $error)
+        @section('errorsAny', $errors->any())
+        @section('errorsAll', $errors->all())
+        @yield('errors-box') --}}
+        @if ($errors->any() || isset($error))
+            <div class="alert alert-danger">
+                @if ($errors->any())
+                    <ul>
+                        @foreach ($errors->all() as $message)
+                            <li>{{ $message }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+                @if (isset($error))
+                    {{ $error }}
+                @endif
+            </div>
+        @endif
         <div class="table-responsive p-2 bg-white rounded border">
             <h6 class="text-center" style="position: relative; top:10px">القبول النهائي - خدمة المجتمع</h6>
             <table class="table nowrap display cell-border" id="mainTable">
