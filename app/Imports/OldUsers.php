@@ -250,7 +250,8 @@ class OldUsers implements ToCollection
                     'wallet'                => $row[WALLET],
                     'note'                  => $row[NOTE],
                     'data_updated'          => true,
-                    'agreement'             => false
+                    'agreement'             => false,
+                    'final_accepted'        => true,
 
                 ]);
                 DB::commit();

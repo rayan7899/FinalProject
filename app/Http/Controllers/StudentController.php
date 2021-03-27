@@ -84,19 +84,19 @@ class StudentController extends Controller
     public function edit()
     {
         $user = Auth::user();
-
+        if ($user->student->studentState != false) {
         $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
             ->get();
-
-        if ($user->student->studentState == false) {
-            return view('home')->with(compact('user'));
-        }
-        if (!$user->student->data_updated) {
             return view('student.form')->with(compact('user', 'courses'));
-        } else {
-            return view('home')->with('error', 'تم تقديم الطلب مسبقاً')->with(compact('user'));
+        }else{
+            return view('student.form')->with(compact('user'));
         }
+        // if (!$user->student->data_updated) {
+        //     return view('student.form')->with(compact('user', 'courses'));
+        // } else {
+        //     return view('home')->with('error', 'تم تقديم الطلب مسبقاً')->with(compact('user'));
+        // }
     }
 
     /**

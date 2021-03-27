@@ -109,7 +109,6 @@
                                 <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-
                                 {{-- <td>
                     <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
                         data-content='
@@ -140,34 +139,21 @@
                                         لايوجد
                         @endforelse
                         </td>
-
-
                         <td class="text-center">
-                            @if ($user->student->final_accepted == 1)
-                                مقبول نهائي
-                            @else
-                                <input id="check_{{ $user->national_id }}" type="checkbox"
-                                    onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
-                                    style="width: 16px; height: 16px;"
-                                    {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
-                                    value="{{ $user->student->documents_verified }}">
-                            @endif
+                            <input id="check_{{ $user->national_id }}" type="checkbox"
+                                onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
+                                style="width: 16px; height: 16px;"
+                                {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
+                                value="{{ $user->student->documents_verified }}">
                         </td>
-
-
                         <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
 
                       <td class="text-center">
-                            @if ($user->student->final_accepted == 1)
-                            
-                        @else
                             <a data-toggle="modal" data-target="#editModal" href="#"
                                 onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
                                 <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                             </a>
-                            @endif
                         </td>
-
                         </tr>
                     @empty
                         <td colspan="12">لا يوجد بيانات</td>
