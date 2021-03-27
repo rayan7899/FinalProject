@@ -20,15 +20,19 @@ window.getStudentCourses = function () {
         },
         dataType: "json",
         success: function (response) {
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1700,
-            });
-                section2.style.display = "flex";
-                studentNationalId = response.national_id;
-                fillStudentTable(response.student.courses);
+            // Swal.fire({
+            //     position: "center",
+            //     icon: "success",
+            //     showConfirmButton: false,
+            //     timer: 1700,
+            // });
+            console.log(response);
+            section2.style.display = "block";
+            studentNationalId = response.national_id;
+            document.getElementById('studentName').value = response.name;
+            document.getElementById('national_id').value = response.national_id;
+            document.getElementById('wallet').value = response.student.wallet;
+            fillStudentTable(response.student.courses);
         },
         error: function (response) {
             const message = response.responseJSON.message;
@@ -46,18 +50,19 @@ function fillStudentTable(courses) {
     var tblAllCourses = document.getElementById('studentCourses');
     tblAllCourses.innerHTML = null;
     courses.forEach(course => {
-        console.log(course);
         var row = tblAllCourses.insertRow(0);
         var code = row.insertCell(0);
         var name = row.insertCell(1);
         var level = row.insertCell(2);
         var CreditHours = row.insertCell(3);
         var ContactHours = row.insertCell(4);
+        var remove = row.insertCell(5);
         code.innerHTML = course.code;
         name.innerHTML = course.name;
         level.innerHTML = course.level;
         CreditHours.innerHTML = course.credit_hours;
         ContactHours.innerHTML = course.contact_hours;
+        remove.innerHTML = '<i class="btn fa fa-trash fa-lg text-danger" aria-hidden="true" onclick="deleteCourse('+course.id+')"></i>';
     });
 }
 
@@ -128,18 +133,16 @@ function fillAllCoursesTable(courses) {
         var level = row.insertCell(2);
         var CreditHours = row.insertCell(3);
         var ContactHours = row.insertCell(4);
-        // var remove = row.insertCell(5);
         code.innerHTML = course.code;
         name.innerHTML = course.name;
         level.innerHTML = course.level;
         CreditHours.innerHTML = course.credit_hours;
         ContactHours.innerHTML = course.contact_hours;
-        // remove.innerHTML = '<p class="btn">حذف</p>';
     });
 }
 
 
-window.addCourseToStudentTable = function () {
+window.addCourseToStudentTable = function (event) {
     let tblAllCourses = document.getElementById("allCourses");
     let tblStudentCourses = document.getElementById("studentCourses");
     let selectedCourses = tblAllCourses.querySelectorAll("[data-selected='true']");
@@ -147,6 +150,7 @@ window.addCourseToStudentTable = function () {
         studentNationalId: studentNationalId,
         courses: [],
     };
+    event.preventDefault();
     if (selectedCourses.length < 1) {
         Swal.fire({
             position: "center",
@@ -158,7 +162,7 @@ window.addCourseToStudentTable = function () {
     }
 
     selectedCourses.forEach((row) => {
-        // // row = row.cloneNode(true);
+        // row = row.cloneNode(true);
         coursesData.courses.push(row.dataset.id);
         row.setAttribute("data-selected", false);
         row.classList.add("bg-light");
@@ -185,6 +189,13 @@ function addCoursesRequset(coursesData) {
     axios
         .post('/student-courses/add', coursesData)
         .then((response) => {
+            Swal.fire({
+                position: "center",
+                // html: "<h4>"+response.data.message+"</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1000,
+            });
             getStudentCourses();
         })
         .catch((error) => {
@@ -197,4 +208,29 @@ function addCoursesRequset(coursesData) {
         });
   
         
+}
+
+window.deleteCourse = function (studentCourseId) {
+    axios
+        .post('/student-courses/delete', {
+            studentCourseId: studentCourseId,
+        })
+        .then((response) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + response.data.message + "</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1200
+            });
+            getStudentCourses();
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
 }

@@ -99,3 +99,5 @@ Route::post('/student-courses/add',[StudentCoursesController::class, 'addCourseT
 
 Route::get('/majorsByProgramId/{id}',[MajorController::class, 'getmajorsByProgramId']);
 
+Route::post('/student-courses/delete', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('deleteCourse');
+
