@@ -132,20 +132,25 @@ window.fillSuggestedCourses = function (shouldUpdateData = true) {
                 window.courseClicked(event)
             );
             let code = suggLevelRow.insertCell(0);
-            let name = suggLevelRow.insertCell(1);
-            let level = suggLevelRow.insertCell(2);
-            let credit_hours = suggLevelRow.insertCell(3);
-            let contact_hours = suggLevelRow.insertCell(4);
             code.className = "text-center";
-            name.className = "text-center";
-            level.className = "text-center";
-            credit_hours.className = "text-center";
-            contact_hours.className = "text-center";
             code.innerHTML = courses[i].code;
+
+            let name = suggLevelRow.insertCell(1);
+            name.className = "text-center";
             name.innerHTML = courses[i].name;
+
+            let level = suggLevelRow.insertCell(2);
+            level.className = "text-center";
             level.innerHTML = getStringLevel(courses[i].level);
+
+            let credit_hours = suggLevelRow.insertCell(3);
+            credit_hours.className = "text-center";
             credit_hours.innerHTML = courses[i].credit_hours;
+            
+            let contact_hours = suggLevelRow.insertCell(4);
+            contact_hours.className = "text-center";
             contact_hours.innerHTML = courses[i].contact_hours;
+
             suggLevelIndex++;
         }
     }
