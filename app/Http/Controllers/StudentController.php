@@ -84,13 +84,33 @@ class StudentController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        if ($user->student->studentState != false) {
         $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
             ->get();
-            return view('student.form')->with(compact('user', 'courses'));
-        }else{
-            return view('student.form')->with(compact('user'));
+        $major_courses = null;
+
+        if ($user->student->studentState != false) {
+            $courses_id = array_map(
+                function ($c) {
+                    return $c['id'];
+                },
+                $courses->toArray()
+            );
+            if ($user->student->level > 1) {
+                $major_courses = Course::where('major_id', $user->student->major_id)
+                    ->whereNotIn('id', $courses_id)
+                    ->get();
+            }
+
+            return view('student.form')->with(compact('user', 'courses', 'major_courses'));
+        } else {
+            if ($user->student->level > 1) {
+                $major_courses = Course::where('major_id', $user->student->major_id)
+                    ->get();
+            }
+            $courses = [];
+
+            return view('student.form')->with(compact('user', 'courses', 'major_courses'));
         }
         // if (!$user->student->data_updated) {
         //     return view('student.form')->with(compact('user', 'courses'));
@@ -124,6 +144,16 @@ class StudentController extends Controller
             'courses.required' => 'لم تقم باختيار المواد',
         ]);
 
+        $total_hours = array_sum(array_map(
+            function ($c) {
+                return $c['credit_hours'];
+            },
+            Course::whereIn('id', $studentData['courses'])->get()->toArray()
+        ));
+        if ($total_hours < 11 || $total_hours > 21) {
+            return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 11 و 21');
+        }
+
         try {
             DB::beginTransaction();
             $user->update(
@@ -150,7 +180,6 @@ class StudentController extends Controller
                     $courses[] = $course->id;
                 }
             }
-            // FIXME: check if $courses is empty, retern error if so
             foreach ($courses as $course) {
                 $user->student->studentCourses()->create([
                     'course_id' => $course,
@@ -293,7 +322,7 @@ class StudentController extends Controller
             })->get();
             if (count($students) > 0) {
                 return response()->json(['message' => 'تم جلب البيانات بنجاح', 'students' => $students], 200);
-            }else{
+            } else {
                 return response()->json(['message' => 'لا يوجد متدربين', 'students' => $students], 480);
             }
         } catch (Exception $e) {
