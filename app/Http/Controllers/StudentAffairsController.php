@@ -11,7 +11,7 @@ class StudentAffairsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth','errors']);
+        $this->middleware(['auth', 'errors']);
     }
 
     public function checkedStudents()
@@ -23,15 +23,15 @@ class StudentAffairsController extends Controller
             ->with('users', $users);
     }
 
-    
-    
-    
-    
+
+
+
+
     public function finalAcceptedForm()
     {
 
         $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('documents_verified',true);
+            $result->where('documents_verified', true);
         })->get();
 
         return view('manager.studentsAffairs.studentFinalAccepted')->with(compact('users'));
@@ -59,40 +59,89 @@ class StudentAffairsController extends Controller
         }
     }
 
-    public function getFinalAcceptedStudents() 
+    public function getFinalAcceptedStudents()
     {
-        try{
+        try {
             $users = User::with('student')->whereHas('student', function ($result) {
                 $result->where('final_accepted', true)->where('documents_verified', true);
             })->get();
             return $users;
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Log::error($e);
             return null;
         }
     }
-    
+
     public function newStudents()
     {
         $users = $this->getFinalAcceptedStudents();
-        if(isset($users)){
+        if (isset($users)) {
             return view('manager.studentsAffairs.newStudents')
-            ->with('users', $users);
-        }else{
-            return view('manager.studentsAffairs.newStudents')->with('error',"تعذر جلب المتدربين");
+                ->with('users', $users);
+        } else {
+            return view('manager.studentsAffairs.newStudents')->with('error', "تعذر جلب المتدربين");
         }
-        
     }
 
     public function finalAcceptedList()
     {
         $users = $this->getFinalAcceptedStudents();
-        if(isset($users)){
+        if (isset($users)) {
             return view('manager.studentsAffairs.studentFinalAcceptedList')
-            ->with(compact('users'));
-        }else{
-            return view('manager.studentsAffairs.studentFinalAcceptedList')->with('error',"تعذر جلب المتدربين");;
+                ->with(compact('users'));
+        } else {
+            return view('manager.studentsAffairs.studentFinalAcceptedList')->with('error', "تعذر جلب المتدربين");;
         }
-        
+    }
+
+    public function publishToRayatForm()
+    {
+        $users = [];
+        foreach ($this->getFinalAcceptedStudents() as $user) {
+            if(!$user->student->published){
+                array_push($users, $user);
+            }
+        }
+        if (isset($users)) {
+            return view('manager.studentsAffairs.publishHoursToRayat')
+                ->with(compact('users'));
+        } else {
+            return view('manager.studentsAffairs.publishHoursToRayat')
+                ->with('error', "تعذر جلب المتدربين");
+        }
+    }
+
+    public function publishToRayat(Request $request)
+    {
+        $studentData = $this->validate($request, [
+            "national_id"        => "required|numeric",
+            'state'              => 'required',
+        ]);
+        try {
+            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
+            $user->student()->update([
+                "published" => $studentData['state'],
+            ]);
+            return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
+        } catch (Exception $e) {
+            return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
+        }
+    }
+
+    public function rayatReportForm()
+    {
+        $users = [];
+        foreach ($this->getFinalAcceptedStudents() as $user) {
+            if($user->student->published){
+                array_push($users, $user);
+            }
+        }
+        if (isset($users)) {
+            return view('manager.studentsAffairs.rayatReport')
+                ->with(compact('users'));
+        } else {
+            return view('manager.studentsAffairs.rayatReport')
+                ->with('error', "تعذر جلب المتدربين");
+        }
     }
 }

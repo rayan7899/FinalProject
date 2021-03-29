@@ -30,7 +30,8 @@
                         <input readonly type="text" class="form-control text-right bg-white" placeholder=""
                             aria-label="Recipient's username" aria-describedby="basic-addon2" id="national_id">
                         <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 100px;">رقم الهوية</span>
+                            <span class="input-group-text text-center" style="width: 100px;"><label
+                                class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
                         </div>
                     </div>
                     <div dir="ltr" class="input-group col-md-4 mb-1">

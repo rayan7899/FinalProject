@@ -5,5 +5,6 @@ require("./studentForm");
 require("./excelForm");
 require("./deptBoss");
 require("./falteringStudents");
+require("./publishToRayat");
 import Swal from "sweetalert2";
 window.Swal = Swal;

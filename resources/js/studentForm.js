@@ -23,7 +23,6 @@
 
 window.changeTraineeState = function() {
     let new_cost = courses.map(course => {
-        console.log(course.id);
         if (document.getElementById("course_" + course.id).checked == true) {
             return course.credit_hours * 550;
         } else {
