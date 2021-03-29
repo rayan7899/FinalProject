@@ -85,6 +85,10 @@ Route::post('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcc
 Route::get('/affairs/finalaccepted/list',[StudentAffairsController::class, 'finalAcceptedList'])->name('finalAcceptedList');
 Route::get('/affairs/checked',[StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
 Route::get('/affairs/new',[StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
+Route::get('/affairs/publish-to-rayat',[StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
+Route::post('/affairs/publish-to-rayat',[StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
+Route::get('/affairs/rayat-report',[StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
+
 
 //departmentBoss
 Route::get('/deptBoss/manage-courses',[DepartmentBossController::class, 'index'])->name('manageCourses');
@@ -98,4 +102,6 @@ Route::post('/student-courses/add',[StudentCoursesController::class, 'addCourseT
 
 
 Route::get('/majorsByProgramId/{id}',[MajorController::class, 'getmajorsByProgramId']);
+
+Route::post('/student-courses/delete', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('deleteCourse');
 

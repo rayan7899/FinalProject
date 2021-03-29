@@ -20,7 +20,7 @@ class CreateStudentCoursesTable extends Migration
             $table->timestamps();
 
             $table->foreign('student_id')->references('id')->on('students');
-            $table->foreign('course_id')->references('id')->on('courses');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('no action');
         });
     }
 

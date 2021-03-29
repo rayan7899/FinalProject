@@ -50,49 +50,60 @@
                                 <ul class="navbar-nav mr-auto">
                                     <!-- Authentication Links -->
                                     @guest
-                                    @if (Route::has('login'))
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('login') }}">{{ __('تسجيل الدخول') }}</a>
-                                    </li>
-                                    @endif
+                                        @if (Route::has('login'))
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('login') }}">{{ __('تسجيل الدخول') }}</a>
+                                            </li>
+                                        @endif
 
-                                    @if (Route::has('register'))
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                    </li>
-                                    @endif
-                                    @else
-                                    <li class="nav-item dropdown">
-                                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                            {{ Auth::user()->name }}
-                                        </a>
+                                        @if (Route::has('register'))
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                            </li>
+                                        @endif
+                                        @else
+                                            <li class="nav-item dropdown">
+                                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                                    {{ Auth::user()->name }}
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                                    <a class="dropdown-item" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                            document.getElementById('logout-form').submit();">
+                                                        {{ __('Logout') }}
+                                                    </a>
 
-                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                            <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                                {{ __('Logout') }}
-                                            </a>
-
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                                @csrf
-                                            </form>
-                                        </div>
-                                    </li>
+                                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                                        @csrf
+                                                    </form>
+                                                </div>
+                                            </li>
                                     @endguest
                                 </ul>
                                 <ul class="navbar-nav ml-auto py-4 py-md-0">
                                     <li class="nav-item"><a class="nav-link" href="{{route('falteringStudents')}}">الطلاب المتعثرين</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('manageCourses')}}">الجداول المقترحة</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('rayatReportForm')}}">تقرير رايات</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('publishToRayatForm')}}">الرفع لرايات</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('studentDocumentsReviewForm')}}">تدقيق الايصالات</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('AddExcelForm')}}">اضافة اكسل مستجدين</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('OldForm')}}"> اضافة اكسل مستمرين </a></li>
+                                    {{-- <li class="nav-item"><a class="nav-link" href="{{route('AddExcelForm')}}">اضافة اكسل مستجدين</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('OldForm')}}"> اضافة اكسل مستمرين </a></li> --}}
 
                                     {{-- <li class="nav-item"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
                                     <li class="nav-item"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li> --}}
+                                </ul>
+                                <ul class="navbar-nav">
+                                    <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>اضافة اكسل</li>
+                                    <li class="nav-item dropdown">
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="{{route('AddExcelForm')}}">اضافة اكسل مستجدين</a>
+                                            <a class="dropdown-item" href="{{route('OldForm')}}"> اضافة اكسل مستمرين </a>
+                                        </div>
+                                    </li>
                                 </ul>
 
                             </div>

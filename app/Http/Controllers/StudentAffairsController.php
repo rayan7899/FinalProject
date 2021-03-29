@@ -104,4 +104,55 @@ class StudentAffairsController extends Controller
             return view('manager.studentsAffairs.studentFinalAcceptedList')->with('error', "تعذر جلب المتدربين");;
         }
     }
+
+    public function publishToRayatForm()
+    {
+        $users = [];
+        foreach ($this->getFinalAcceptedStudents() as $user) {
+            if(!$user->student->published){
+                array_push($users, $user);
+            }
+        }
+        if (isset($users)) {
+            return view('manager.studentsAffairs.publishHoursToRayat')
+                ->with(compact('users'));
+        } else {
+            return view('manager.studentsAffairs.publishHoursToRayat')
+                ->with('error', "تعذر جلب المتدربين");
+        }
+    }
+
+    public function publishToRayat(Request $request)
+    {
+        $studentData = $this->validate($request, [
+            "national_id"        => "required|numeric",
+            'state'              => 'required',
+        ]);
+        try {
+            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
+            $user->student()->update([
+                "published" => $studentData['state'],
+            ]);
+            return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
+        } catch (Exception $e) {
+            return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
+        }
+    }
+
+    public function rayatReportForm()
+    {
+        $users = [];
+        foreach ($this->getFinalAcceptedStudents() as $user) {
+            if($user->student->published){
+                array_push($users, $user);
+            }
+        }
+        if (isset($users)) {
+            return view('manager.studentsAffairs.rayatReport')
+                ->with(compact('users'));
+        } else {
+            return view('manager.studentsAffairs.rayatReport')
+                ->with('error', "تعذر جلب المتدربين");
+        }
+    }
 }
