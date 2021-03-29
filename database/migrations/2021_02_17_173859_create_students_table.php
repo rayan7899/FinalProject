@@ -26,7 +26,9 @@ class CreateStudentsTable extends Migration
             $table->boolean("studentState")->default(true);
             $table->boolean('agreement')->default(false);
             $table->boolean('data_updated')->default(false);
+            $table->boolean('student_docs_verified')->default(false);
             $table->boolean('documents_verified')->default(false);
+            $table->string('has_imported_docs');
             $table->boolean('final_accepted')->default(false);
             $table->double('wallet')->default(0);
             $table->string('traineeState')->default('trainee');

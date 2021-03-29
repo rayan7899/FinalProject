@@ -57,7 +57,6 @@
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                             </tr>
                         @empty
-                            <td colspan="12">لا يوجد بيانات</td>
                     @endforelse
                     @endif
                 </tbody>

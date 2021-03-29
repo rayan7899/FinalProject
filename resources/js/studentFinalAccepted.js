@@ -9,12 +9,23 @@ jQuery(function () {
 
 
 window.finalAcceptChanged = function (national_id, event) {
-    let final_accepted = 0;
-    if (event.target.checked) {
-        final_accepted = 1;
+    let studentRowInputs = event.target.parentNode.parentNode.querySelectorAll("input");
+    let studentDocsVerified = studentRowInputs[0].checked;
+    console.log("st "+studentDocsVerified);
+    let finalAccepted       = studentRowInputs[1].checked;
+    console.log("fi "+finalAccepted);
+    
+    if (studentDocsVerified) {
+        studentDocsVerified = 1;
     } else {
-        final_accepted = 0;
+        studentDocsVerified = 0;
     }
+    if (finalAccepted) {
+        finalAccepted = 1;
+    } else {
+        finalAccepted = 0;
+    }
+
     
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
@@ -28,7 +39,8 @@ window.finalAcceptChanged = function (national_id, event) {
         url: window.finalAcceptedRoute,
         data: {
             national_id: national_id,
-            final_accepted: final_accepted,
+            final_accepted: finalAccepted,
+            student_docs_verified: studentDocsVerified,
         },
         headers: {
             Accept: "application/json",

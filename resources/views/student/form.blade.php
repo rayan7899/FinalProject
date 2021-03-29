@@ -131,6 +131,7 @@
                     <tbody id="courses">
                         @php
                         $default_cost = 0;
+                        $default_total_hours = 0;
                         @endphp
                         @if(isset($courses))
                             @foreach ($courses as $course)
@@ -155,14 +156,14 @@
                                 </tr>
                             @endforeach
                         @endif
-                        <tr>
+                        {{-- <tr>
                             <td class="text-center"></td>
                             <td class="text-center"></td>
                             <td class="text-center"></td>
                             <td id="total_hours" class="text-center font-weight-bold">{{ $default_total_hours ?? '0' }}</td>
                             <td id="total_cost" class="text-center font-weight-bold">{{ $default_cost ?? '0' }}</td>
                             <td class="text-center @if ($user->student->level < 2) d-none @endif"></td>
-                        </tr>
+                        </tr> --}}
                     </tbody>
                 </table>
                 <div id="courses-error" class="alert alert-danger d-none"></div>
