@@ -6,6 +6,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class StudentAffairsController extends Controller
 {
@@ -23,21 +24,31 @@ class StudentAffairsController extends Controller
             ->with('users', $users);
     }
 
-
-
-
-
     public function finalAcceptedForm()
     {
+        try {
+            $users = User::with('student')->whereHas('student', function ($result) {
+                $result->where('documents_verified', true);
+            })->get();
 
-        $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('documents_verified', true);
-        })->get();
-
-        return view('manager.studentsAffairs.studentFinalAccepted')->with(compact('users'));
+            $fetch_errors = [];
+            for ($i = 0; $i < count($users); $i++) {
+                try {
+                    $files = Storage::disk('studentDocuments')->files($users[$i]->national_id);
+                    $users[$i]->student->identity = $files[array_key_first(preg_grep('/identity/', $files))];
+                    $users[$i]->student->degree = $files[array_key_first(preg_grep('/degree/', $files))];
+                } catch (Exception $err) {
+                    Log::error($err);
+                    array_push($fetch_errors, $users[$i]->name);
+                    continue;
+                }
+            }
+            return view('manager.studentsAffairs.studentFinalAccepted')->with(compact('users', 'fetch_errors'));
+        } catch (Exception $err) {
+            Log::error($err);
+            return view('manager.studentsAffairs.studentFinalAccepted')->with('error', "تعذر جلب المتدربين");;
+        }
     }
-
-
 
     public function finalAcceptedUpdate(Request $request)
     {
