@@ -172,7 +172,6 @@
                         @if(isset($courses))
                             @foreach ($courses as $course)
                                 @php
-                                $default_total_hours = 0;
                                 $default_cost += $course->credit_hours * 550;
                                 $default_total_hours += $course->credit_hours;
                                 @endphp
