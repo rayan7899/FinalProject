@@ -30,6 +30,7 @@ class CreateStudentsTable extends Migration
             $table->boolean('documents_verified')->default(false);
             $table->string('has_imported_docs');
             $table->boolean('final_accepted')->default(false);
+            $table->boolean('published')->default(false);
             $table->double('wallet')->default(0);
             $table->string('traineeState')->default('trainee');
             $table->text('note')->nullable();

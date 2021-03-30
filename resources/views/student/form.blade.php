@@ -113,6 +113,42 @@
                     <input disabled required type="text" class="form-control  " id="major" name="major" value="{{ $user->student->major->name }}">
                 </div>
             </div>
+            
+            <!-- trainee state -->
+            <label>فئة المتدرب</label>
+            <div class="form-group bg-white border px-4 py-3">
+                <div class="form-row">
+                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                        <input value="trainee" type="radio" onclick="changeTraineeState()" id="trainee" name="traineeState" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="trainee">متدرب</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                        <input value="employee" type="radio" onclick="changeTraineeState()" id="employee" name="traineeState" class="custom-control-input">
+                        <label class="custom-control-label" for="employee">أحد منسوبي المؤسسة</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                        <input value="employeeSon" type="radio" onclick="changeTraineeState()" id="employeeSon" name="traineeState" class="custom-control-input">
+                        <label class="custom-control-label" for="employeeSon">من ابناء منسوبي المؤسسة</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
+                        <a id="info-popup" data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة" class="h5 text-right mx-2" data-content="
+                               <div class='text-right' dir='rtl' style='width: 30%;'>
+                               ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
+                               <br>
+                               ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
+                               <br>
+                               ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
+                               <br>
+                               ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
+                               <br>
+                               ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
+                               </div>
+                               ">( ! )</a>
+                        <input value="privateState" type="radio" onclick="changeTraineeState()" id="privateState" name="traineeState" class="custom-control-input">
+                        <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
+                    </div>
+                </div>
+            </div>
 
             <!-- suggested courses -->
             <div class="form-group">
@@ -136,6 +172,7 @@
                         @if(isset($courses))
                             @foreach ($courses as $course)
                                 @php
+                                $default_total_hours = 0;
                                 $default_cost += $course->credit_hours * 550;
                                 $default_total_hours += $course->credit_hours;
                                 @endphp
@@ -172,41 +209,6 @@
                 @endif
             </div>
 
-            <!-- trainee state -->
-            <label>فئة المتدرب</label>
-            <div class="form-group bg-white border px-4 py-3">
-                <div class="form-row">
-                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                        <input value="trainee" type="radio" onclick="changeTraineeState()" id="trainee" name="traineeState" class="custom-control-input" checked>
-                        <label class="custom-control-label" for="trainee">متدرب</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                        <input value="employee" type="radio" onclick="changeTraineeState()" id="employee" name="traineeState" class="custom-control-input">
-                        <label class="custom-control-label" for="employee">أحد منسوبي المؤسسة</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                        <input value="employeeSon" type="radio" onclick="changeTraineeState()" id="employeeSon" name="traineeState" class="custom-control-input">
-                        <label class="custom-control-label" for="employeeSon">من ابناء منسوبي المؤسسة</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                        <a id="info-popup" data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة" class="h5 text-right mx-2" data-content="
-                               <div class='text-right' dir='rtl' style='width: 30%;'>
-                               ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
-                               <br>
-                               ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
-                               <br>
-                               ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
-                               <br>
-                               ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
-                               <br>
-                               ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
-                               </div>
-                               ">( ! )</a>
-                        <input value="privateState" type="radio" onclick="changeTraineeState()" id="privateState" name="traineeState" class="custom-control-input">
-                        <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
-                    </div>
-                </div>
-            </div>
             <!-- cost -->
             <div id="costGroup" class="form-row mb-3">
                 <label class="col-2 align-self-center m-0" for="cost">المبلغ المراد سداده</label>

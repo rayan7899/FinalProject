@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\Student;
 use App\Models\StudentCourse;
 use App\Models\User;
@@ -28,8 +29,7 @@ class StudentCoursesController extends Controller
             'studentNationalId'   => 'required|string|max:10|min:10',
             "courses.*"     => "required|numeric|distinct|exists:courses,id",
         ]);
-
-
+        
         try {
             foreach ($coursesData['courses'] as $course) {
                 if (!$user->student->courses->contains('id', $course)) {
@@ -38,9 +38,20 @@ class StudentCoursesController extends Controller
                     ]);
                 }
             }
-            return response(['message' => 'تمت اضافة المواد بنجاح'], 200);
+            return response(['message' => 'تمت اضافة المقررات بنجاح'], 200);
         } catch (QueryException $e) {
-            return response(['message' => 'حدث خطأ غير معروف اثناء اضافة المواد'], 422);
+            return response(['message' => 'حدث خطأ غير معروف اثناء اضافة المقررات'], 422);
+        }
+    }
+
+
+    public function deleteCourseFromStudent(Request $request)
+    {
+        try{
+            StudentCourse::where('course_id', $request->studentCourseId)->delete();
+            return response(['message' => 'تم حذف المقرر بنجاح'], 200);
+        } catch (QueryException $e) {
+            return response(['message' => $e->getMessage()], 422);
         }
     }
 }
