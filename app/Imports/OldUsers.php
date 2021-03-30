@@ -261,6 +261,14 @@ class OldUsers implements ToCollection
             } catch (QueryException $e) {
                 Log::error($e);
                 DB::rollback();
+                try {
+                    $dir = Storage::disk('studentDocuments')->exists($userinfo['national_id']);
+                    if ($dir) {
+                        Storage::disk('studentDocuments')->deleteDirectory($userinfo['national_id']);
+                    }
+                } catch (Exception $e) {
+                    Log::error($e);
+                }
                 if ($e->errorInfo[1] == "1062") {
                     array_push($duplicate, $userinfo);
                 } else {
