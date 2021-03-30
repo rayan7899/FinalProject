@@ -121,6 +121,7 @@ class OldUsers implements ToCollection
                     continue;
                 }
             } catch (Exception $e) {
+                Log::error($e);
                 array_push($errorsArr, ['message' => ' خطأ غير معروف ' . $e->getCode(), 'userinfo' => $userinfo]);
                 continue;
             }
@@ -246,19 +247,21 @@ class OldUsers implements ToCollection
                     'department_id'         => $deptId,
                     'major_id'              => $mjrId,
                     'documents_verified'    => $row[DOCUMENTS_VERIFIED],
+                    'student_docs_verified' => true,
                     'traineeState'          => $row[TRAINEE_STATE],
                     'wallet'                => $row[WALLET],
                     'note'                  => $row[NOTE],
                     'data_updated'          => true,
                     'agreement'             => false,
                     'final_accepted'        => true,
+                    'has_imported_docs'     => "نعم",
 
                 ]);
                 DB::commit();
             } catch (QueryException $e) {
+                Log::error($e);
                 DB::rollback();
-                //   dump($e);
-                if ($e->errorInfo[0] == "23000" || $e->errorInfo[1] == "1062") {
+                if ($e->errorInfo[1] == "1062") {
                     array_push($duplicate, $userinfo);
                 } else {
                     array_push($errorsArr, ['message' => $e->getCode(), 'userinfo' => $userinfo]);

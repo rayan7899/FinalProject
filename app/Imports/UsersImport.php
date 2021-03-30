@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\Importable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -90,6 +91,7 @@ class UsersImport implements ToCollection
                 ]);
                 DB::commit();
             } catch (QueryException $e) {
+                Log::error($e);
                 DB::rollback();
 
                 if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
