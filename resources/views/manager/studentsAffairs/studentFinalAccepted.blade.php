@@ -13,7 +13,7 @@
                 <div class="modal-body">
                     <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
                     <div class="text-center">
-                        <img id="modalImage" src="" alt="image" class="img-fluid"/>
+                        <img id="modalImage" src="" alt="image" class="img-fluid" />
                     </div>
                 </div>
             </div>
@@ -51,7 +51,9 @@
                         <th scope="col">التخصص</th>
                         <th scope="col">الهوية</th>
                         <th scope="col">المؤهل</th>
-                        <th scope="col">القبول الهائي</th>
+                        <th scope="col">المؤهل مستورد</th>
+                        <th scope="col">حالة التحقق</th>
+                        <th scope="col">القبول النهائي</th>
                     </tr>
                     <tr>
                         <th class="filterhead" scope="col"></th>
@@ -64,6 +66,9 @@
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -82,18 +87,19 @@
                                 <td class="text-center">
                                     @if (isset($user->student->identity))
                                         @php
-                                        $splitByDot = explode('.', $user->student->identity);
-                                        $fileExtantion = end($splitByDot);
+                                            $splitByDot = explode('.', $user->student->identity);
+                                            $fileExtantion = end($splitByDot);
                                         @endphp
                                         @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                               onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->identity]) }}','pdf')">
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->identity]) }}','pdf')">
                                                 <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                                             </a>
                                         @else
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                               onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->identity]) }}','img')">        
-                                                <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;" alt="Image File">
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->identity]) }}','img')">
+                                                <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
+                                                    alt="Image File">
                                             </a>
                                         @endif
                                     @else
@@ -105,25 +111,33 @@
                                 <td class="text-center">
                                     @if (isset($user->student->degree))
                                         @php
-                                        $splitByDot = explode('.', $user->student->degree);
-                                        $fileExtantion = end($splitByDot);
+                                            $splitByDot = explode('.', $user->student->degree);
+                                            $fileExtantion = end($splitByDot);
                                         @endphp
                                         @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                               onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->degree]) }}','pdf')">
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->degree]) }}','pdf')">
                                                 <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                                             </a>
                                         @else
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                               onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->degree]) }}','img')">        
-                                                <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;" alt="Image File">
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->degree]) }}','img')">
+                                                <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
+                                                    alt="Image File">
                                             </a>
                                         @endif
                                     @else
                                         غير متوفر
                                     @endif
                                 </td>
-
+                                <td class="text-center">{{ $user->student->has_imported_docs ?? 'لا يوجد' }} </td>
+                                <td class="text-center">
+                                    <input id="check_{{ $user->national_id }}" type="checkbox"
+                                        onchange="window.finalAcceptChanged('{{ $user->national_id }}',event)"
+                                        class="custom-checkbox" style="width: 16px; height: 16px;"
+                                        {{ $user->student->student_docs_verified == true ? 'checked' : '' ?? '' }}
+                                        value="{{ $user->student->student_docs_verified }}" />
+                                </td>
                                 <td class="text-center">
                                     <input id="check_{{ $user->national_id }}" type="checkbox"
                                         onchange="window.finalAcceptChanged('{{ $user->national_id }}',event)"
@@ -133,7 +147,6 @@
                                 </td>
                             </tr>
                         @empty
-                            <td colspan="12">لا يوجد بيانات</td>
                     @endforelse
                     @endif
                 </tbody>

@@ -24,9 +24,9 @@
                                 <input type="text" class="form-control" id="sname" aria-describedby="name" disabled="true">
                             </div>
                             <!-- <div class="form-group">
-                                 <label for="wallet">المبلغ المدفوع</label>
-                                 <input required type="number" class="form-control" id="wallet" aria-describedby="wallet">
-                                 </div> -->
+                                         <label for="wallet">المبلغ المدفوع</label>
+                                         <input required type="number" class="form-control" id="wallet" aria-describedby="wallet">
+                                         </div> -->
                             <div class="form-group">
                                 <label for="verified">حالة التدقيق</label>
                                 <input type="checkbox" id="documents_verified"
@@ -59,7 +59,7 @@
                     <div class="modal-body">
                         <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
                         <div class="text-center">
-                        <img id="modalImage" src="" alt="image" class="img-fluid"/>
+                            <img id="modalImage" src="" alt="image" class="img-fluid" />
                         </div>
                     </div>
                 </div>
@@ -109,14 +109,6 @@
                                 <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-                                {{-- <td>
-                    <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
-                        data-content='
-                                @foreach ($user['receipts'] as $receipt)
-                                    <a class="d-block" href="{{ route('GetStudentDocument',['path' => $receipt ]) }}">{{ substr($receipt, 20, 10) }}</a>
-                                @endforeach
-                            '>عرض الايصالات</a>
-                </td> --}}
                                 <td class="text-center">
                                     @forelse ($user['docs'] as $doc)
                                         @php
@@ -125,38 +117,37 @@
                                         @endphp
                                         @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $doc]) }}','pdf')">
-                                            <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
-                                        </a>
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $doc]) }}','pdf')">
+                                                <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
+                                            </a>
                                         @else
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $doc]) }}','img')">        
-                                            <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;" alt="Image File">
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $doc]) }}','img')">
+                                                <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
+                                                    alt="Image File">
                                             </a>
                                         @endif
 
                                     @empty
                                         لايوجد
-                        @endforelse
-                        </td>
-                        <td class="text-center">
-                            <input id="check_{{ $user->national_id }}" type="checkbox"
-                                onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
-                                style="width: 16px; height: 16px;"
-                                {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
-                                value="{{ $user->student->documents_verified }}">
-                        </td>
-                        <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
-
-                      <td class="text-center">
-                            <a data-toggle="modal" data-target="#editModal" href="#"
-                                onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
-                                <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
-                            </a>
-                        </td>
-                        </tr>
+                                    @endforelse
+                                </td>
+                                <td class="text-center">
+                                    <input id="check_{{ $user->national_id }}" type="checkbox"
+                                        onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
+                                        style="width: 16px; height: 16px;"
+                                        {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
+                                        value="{{ $user->student->documents_verified }}">
+                                </td>
+                                <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
+                                <td class="text-center">
+                                    <a data-toggle="modal" data-target="#editModal" href="#"
+                                        onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
+                                        <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
+                                    </a>
+                                </td>
+                            </tr>
                     @empty
-                        <td colspan="12">لا يوجد بيانات</td>
                     @endforelse
                     @endif
                 </tbody>

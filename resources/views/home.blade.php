@@ -4,10 +4,12 @@
     {{-- {{ $user->student->documents_verified == true && $user->student->final_accepted == true ? 'border-success text-success' : '' }} --}}
     @php
     $step_1 = $user->student->documents_verified == true ? 'border-success text-success' : '';
-    $step_2 = $user->student->final_accepted == true ? 'border-success text-success' : '';
-    $step_3 = $user->student->documents_verified == true && $user->student->final_accepted == true ? 'border-success text-success' : '';
     $line_1 = $user->student->documents_verified == true ? 'bg-success' : '';
-    $line_2 = $user->student->final_accepted == true ? 'bg-success' : '';
+
+    $step_2 = $user->student->student_docs_verified == true ? 'border-success text-success' : '';
+    $line_2 = $user->student->student_docs_verified == true ? 'bg-success' : '';
+
+    $step_3 = $user->student->final_accepted == true  ? 'border-success text-success' : '';
     @endphp
     <div class="container">
         <div class="stepState">       

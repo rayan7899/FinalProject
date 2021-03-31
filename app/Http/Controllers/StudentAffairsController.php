@@ -54,18 +54,21 @@ class StudentAffairsController extends Controller
     {
 
         $studentData = $this->validate($request, [
-            "national_id"        => "required|numeric",
-            "final_accepted" => "required|boolean"
+            "national_id"           => "required|numeric",
+            "final_accepted"        => "required|boolean",
+            "student_docs_verified" => "required|boolean"
         ]);
 
         try {
             $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
             $user->student()->update([
-                "final_accepted" => $studentData['final_accepted'],
+                "final_accepted"        => $studentData['final_accepted'],
+                "student_docs_verified" => $studentData['student_docs_verified'],
             ]);
 
             return response(json_encode(['message' => 'تم تغيير الحالة بنجاح']), 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }

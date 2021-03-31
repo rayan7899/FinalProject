@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\Importable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -17,7 +18,7 @@ define('NATIONAL_ID', 18);
 define('NAME', 19);;
 define('PHONE', 7);
 define('BIRTHDATE', 17);
-define('HAS_DOCUMENTS', 14);
+define('HAS_IMPORTED_DOCS', 14);
 
 
 class UsersImport implements ToCollection
@@ -54,7 +55,7 @@ class UsersImport implements ToCollection
             '*.' . NAME => 'required|string|max:100', 
             '*.' . BIRTHDATE => 'required|digits:4', 
             '*.' . PHONE => 'required|digits_between:9,14',
-            '*.' . HAS_DOCUMENTS => 'required|string|max:255',
+            '*.' . HAS_IMPORTED_DOCS => 'required|string|max:255',
 
         ], [
             '*.' . BIRTHDATE . '.digits'           => 'يجب ان ان يكون تاريخ الميلاد 4 ارقام',
@@ -63,11 +64,10 @@ class UsersImport implements ToCollection
             '*.' . PHONE . '.digits_between'    => 'يجب ان يكون رقم الجوال بين 10 و 14 رقماَ',
         ])->validate();
         foreach ($rows as $row) {
-            $hasDocuments = false;
-            $row[HAS_DOCUMENTS] = trim($row[HAS_DOCUMENTS]);
-            if($row[HAS_DOCUMENTS] == "نعم")
+            $studentDocsVerified = false;
+            if(trim($row[HAS_IMPORTED_DOCS]) == "نعم")
             {
-                $hasDocuments = true;
+                $studentDocsVerified = true;
             }
             try {
                 $userinfo = [
@@ -80,15 +80,18 @@ class UsersImport implements ToCollection
                 DB::beginTransaction();
                 $user = User::create($userinfo);
                 $user->student()->create([
-                    'user_id'          => $user->id,
-                    'birthdate'        => $row[BIRTHDATE],
-                    'program_id'       => $this::$deptMjr['program'],
-                    'department_id'    => $this::$deptMjr['department'],
-                    'major_id'         => $this::$deptMjr['major'],
-                    'final_accepted'   => $hasDocuments,
+                    'user_id'               => $user->id,
+                    'birthdate'             => $row[BIRTHDATE],
+                    'program_id'            => $this::$deptMjr['program'],
+                    'department_id'         => $this::$deptMjr['department'],
+                    'major_id'              => $this::$deptMjr['major'],
+                    'student_docs_verified' => $studentDocsVerified,
+                    'has_imported_docs'     => $row[HAS_IMPORTED_DOCS],
+                    
                 ]);
                 DB::commit();
             } catch (QueryException $e) {
+                Log::error($e);
                 DB::rollback();
 
                 if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
