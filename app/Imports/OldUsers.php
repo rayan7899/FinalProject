@@ -247,14 +247,15 @@ class OldUsers implements ToCollection
                     'department_id'         => $deptId,
                     'major_id'              => $mjrId,
                     'documents_verified'    => $row[DOCUMENTS_VERIFIED],
-                    'student_docs_verified' => true,
                     'traineeState'          => $row[TRAINEE_STATE],
                     'wallet'                => $row[WALLET],
                     'note'                  => $row[NOTE],
+                    'student_docs_verified' => true,
+                    'has_imported_docs'     => "نعم",
+                    'final_accepted'        => true,
                     'data_updated'          => true,
                     'agreement'             => false,
-                    'final_accepted'        => true,
-                    'has_imported_docs'     => "نعم",
+                    "student_docs_verified" => true,
 
                 ]);
                 DB::commit();

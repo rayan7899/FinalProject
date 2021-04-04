@@ -15,6 +15,20 @@ class CommunityController extends Controller
         $this->middleware('auth');
     }
 
+    public function dashboard()
+    {
+        $links = (object)[
+            (object) [
+                "name" => "تجربة",
+                "url" => "http://google.ocm"
+            ],
+            (object) [
+                "name" => "تجربة ٢",
+                "url" => "http://google.ocm"
+            ],
+        ];
+        return view("manager.community.dashboard")->with(compact("links"));
+    }
 
     public function studentDocumentsReviewForm()
     {
