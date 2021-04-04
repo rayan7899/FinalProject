@@ -70,6 +70,8 @@ Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->
 
 Route::get('/privatestate/student/docs/review',[CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
 Route::get('/community/student/docs/review',[CommunityController::class, 'studentDocumentsReviewForm'])->name('studentDocumentsReviewForm');
+Route::get('/community/dashboard',[CommunityController::class, 'dashboard'])->name('communityDashboard');
+
 //Route::get('/community/student/docs/review/data',[CommunityController::class, 'studentDocumentsReviewJson'])->name('studentDocumentsReviewJson');
 
 

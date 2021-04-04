@@ -19,12 +19,8 @@ class CommunityController extends Controller
     {
         $links = (object)[
             (object) [
-                "name" => "تجربة",
-                "url" => "http://google.ocm"
-            ],
-            (object) [
-                "name" => "تجربة ٢",
-                "url" => "http://google.ocm"
+                "name" => "تدقيق الايصالات",
+                "url" => route("studentDocumentsReviewForm")
             ],
         ];
         return view("manager.community.dashboard")->with(compact("links"));
