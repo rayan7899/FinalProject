@@ -53,12 +53,6 @@ Route::post('/student/level',[StudentController::class,'getStudentOnLevel'])->na
 Route::post('/student/update-state/',[StudentController::class,'updateStudentState'])->name('updateStudentState');
 
 
-
-Route::post('/community/student/verified-update',[CommunityController::class,'studentDocumentsReviewUpdate'])->name('studentDocumentsReviewUpdate');
-Route::post('/community/student/verified-docs',[CommunityController::class,'studentDocumentsReviewVerifiyDocs'])->name('studentDocumentsReviewVerifiyDocs');
-
-
-
 //StudentController - Agreement
 Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
 Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
@@ -68,8 +62,15 @@ Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm']
 Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
 
 
+// CommunityController
+Route::get('/community/dashboard',[CommunityController::class, 'dashboard'])->name('communityDashboard');
 Route::get('/privatestate/student/docs/review',[CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
 Route::get('/community/student/docs/review',[CommunityController::class, 'studentDocumentsReviewForm'])->name('studentDocumentsReviewForm');
+Route::get('/community/create-user',[CommunityController::class, 'createUser'])->name('createUser');
+
+//json
+Route::post('/community/student/verified-update',[CommunityController::class,'studentDocumentsReviewUpdate'])->name('studentDocumentsReviewUpdate');
+Route::post('/community/student/verified-docs',[CommunityController::class,'studentDocumentsReviewVerifiyDocs'])->name('studentDocumentsReviewVerifiyDocs');
 //Route::get('/community/student/docs/review/data',[CommunityController::class, 'studentDocumentsReviewJson'])->name('studentDocumentsReviewJson');
 
 
