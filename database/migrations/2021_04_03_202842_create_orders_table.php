@@ -17,13 +17,17 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('transaction_id');
+            $table->integer("requested_hours");
             $table->integer("amount");
             $table->text("note")->default(null);
-            $table->string("doc_file_id");
-            $table->boolean("doc_verified")->nullable();
+            // for private state only
+            $table->string("private_doc_file_id")->nullable();
+            $table->boolean("private_doc_verified")->nullable();
+            // -----------
+            $table->timestamps();
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign("transaction_id")->references("id")->on("transactions");
-            $table->timestamps();
+            
         });
     }
 

@@ -17,13 +17,23 @@ class CommunityController extends Controller
 
     public function dashboard()
     {
-        $links = (object)[
+        $links = [
             (object) [
                 "name" => "تدقيق الايصالات",
                 "url" => route("studentDocumentsReviewForm")
             ],
+            (object) [
+                "name" => "انشاء مستخدم",
+                "url" => route("createUser")
+            ],
         ];
         return view("manager.community.dashboard")->with(compact("links"));
+    }
+
+    public function createUser()
+    {
+      
+        return view("manager.community.createUser");
     }
 
     public function studentDocumentsReviewForm()

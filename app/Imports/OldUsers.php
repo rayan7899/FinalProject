@@ -253,9 +253,8 @@ class OldUsers implements ToCollection
                     'student_docs_verified' => true,
                     'has_imported_docs'     => "نعم",
                     'final_accepted'        => true,
-                    'data_updated'          => true,
+                    'data_updated'          => false,
                     'agreement'             => false,
-                    "student_docs_verified" => true,
 
                 ]);
                 DB::commit();
