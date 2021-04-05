@@ -170,8 +170,8 @@
             </table>
         </div>
         <script defer>
-            var docsVerified = "{{ route('studentDocumentsReviewVerifiyDocs') }}";
-            var studentUpdate = "{{ route('studentDocumentsReviewUpdate') }}";
+            var docsVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
+            var studentUpdate = "{{ route('paymentsReviewUpdate') }}";
 
         </script>
     </div>

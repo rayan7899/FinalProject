@@ -1,6 +1,21 @@
 @extends('layouts.app')
 @section('content')
     <div class="container-fluid">
+        @if (isset($error) || !empty($fetch_errors))
+            <div class="alert alert-danger">
+                @if (isset($error))
+                    {{ $error }}
+                @endif
+                @if (isset($fetch_errors))
+                    <p>حصل خطا في جلب بعض ملفات المتدربين:</p>
+                    @foreach ($fetch_errors as $err)
+                        <ul>
+                            <li>{{ $err }}</li>
+                        </ul>
+                    @endforeach
+                @endif
+            </div>
+        @endif
         <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
             aria-hidden="true">
             <div class="modal-dialog " role="document">
@@ -59,7 +74,7 @@
                     <div class="modal-body">
                         <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
                         <div class="text-center">
-                        <img id="modalImage" src="" alt="image" class="img-fluid"/>
+                            <img id="modalImage" src="" alt="image" class="img-fluid" />
                         </div>
                     </div>
                 </div>
@@ -101,7 +116,8 @@
                 </thead>
                 <tbody>
                     @if (isset($users))
-                        @forelse ($users as $user)
+                    @forelse ($users as $user)
+                        @if (isset($user->student->receipt))
                             <tr>
                                 <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
@@ -111,68 +127,54 @@
                                 <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-
-                                      {{-- <td>
-                                      <a data-toggle="popover"  onclick="window.popup()" title="الايصالات" class="link p-0 m-0"
-                                    data-content='
-                                        @foreach ($user['receipts'] as $receipt)
-                                        <a class="d-block" href="{{ route('GetStudentDocument',['path' => $receipt ]) }}">{{ substr($receipt, 20, 10) }}</a>
-                                           @endforeach
-                                       '>عرض الايصالات</a>
-                                      </td> --}}
                                 <td class="text-center">
-                                    @forelse ($user['receipts'] as $receipt)
-                                        @php
-                                            $splitByDot = explode('.', $receipt);
-                                            $fileExtantion = end($splitByDot);
-                                        @endphp
-                                        @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                                            <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','pdf')">
-                                                <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
-                                            </a>
-                                        @else
+
+                                    @php
+                                        $splitByDot = explode('.', $user->student->receipt);
+                                        $fileExtantion = end($splitByDot);
+                                    @endphp
+                                    @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
                                         <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','img')">        
-                                        <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;" alt="Image File">
+                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','pdf')">
+                                            <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                                         </a>
-                                        @endif
-                                      @empty
-                                        لايوجد
-                                    @endforelse
+                                    @else
+                                        <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','img')">
+                                            <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
+                                                alt="Image File">
+                                        </a>
+                                    @endif
+
                                 </td>
 
-                        <td class="text-center" id="wallet_{{ $user->national_id }}">
-                            {{ $user->student->wallet ?? 'لا يوجد' }}
-                        </td>
+                                <td class="text-center" id="amount_{{ $user->student->payment->id ?? 0 }}">
+                                    {{ $user->student->payment->amount ?? 'لا يوجد' }}
+                                </td>
 
 
-                        <td class="text-center">
-                            <input id="check_{{ $user->national_id }}" type="checkbox"
-                                onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
-                                style="width: 16px; height: 16px;"
-                                {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
-                                value="{{ $user->student->documents_verified }}">
-                        </td>
+                                <td class="text-center">
+                                    <button class="btn btn-primary px-2 py-0"
+                                        onclick="window.okClicked('{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">
+                                    تم</button>
+                                </td>
 
 
-                        <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
+                                <td id="note_{{ $user->student->payment->id ?? 0 }}"></td>
 
-                        <td class="text-center">
-                            <a data-toggle="modal" data-target="#editModal" href="#"
-                            onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
-                            <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
-                        </a>
-                        </td>
-
-                        </tr>
+                                <td class="text-center">
+                                    <a data-toggle="modal" data-target="#editModal" href="#"
+                                        onclick="window.showModal('{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}','{{ $user->name ?? 0 }}','{{ $user->student->payment->amount ?? 0 }}')">
+                                        <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
                     @empty
-                    <tr>
-                         <td colspan="13">لا يوجد بيانات</td>
-                    </tr>
-                    @endforelse
-                    @endif
-                    
+                @endforelse
+                @endif
+
+
                 </tbody>
                 <tfoot>
                     <tr>
@@ -195,8 +197,9 @@
             </table>
         </div>
         <script defer>
-            var docsVerified = "{{ route('studentDocumentsReviewVerifiyDocs') }}";
-            var studentUpdate = "{{ route('studentDocumentsReviewUpdate') }}";
+            var docsVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
+            var studentUpdate = "{{ route('paymentsReviewUpdate') }}";
+
         </script>
     </div>
 @stop

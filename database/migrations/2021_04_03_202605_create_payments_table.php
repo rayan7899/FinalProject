@@ -16,12 +16,13 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('transaction_id')->nullable();
             $table->integer("amount");
-            $table->text("note")->default(null);
             $table->string("receipt_file_id");
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign("transaction_id")->references("id")->on("transactions");
+
+
             $table->timestamps();
         });
     }

@@ -6,7 +6,6 @@ use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
@@ -15,7 +14,9 @@ use App\Http\Controllers\DepartmentBossController;
 use App\Http\Controllers\FalteringStudentsController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\StudentCoursesController;
-use App\Models\Student;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,19 @@ Route::get('/student/delete',[StudentController::class,'destroy'])->name('Delete
 Route::post('/student/level',[StudentController::class,'getStudentOnLevel'])->name('getStudentOnLevel');
 Route::post('/student/update-state/',[StudentController::class,'updateStudentState'])->name('updateStudentState');
 
+// Student wallet PaymentController
+Route::get('/student/wallet/main',[PaymentController::class,'main'])->name('walletMain');
+Route::get('/student/wallet/payment/from',[PaymentController::class,'form'])->name('paymentForm');
+Route::post('/student/wallet/payment/store',[PaymentController::class,'store'])->name('paymentStore');
+
+// Student wallet PaymentController (json)
+// Well be move from CommunityController
+// Route::post('/community/student/payments/verified-update',[TransactionController::class,'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
+// Route::post('/community/student/payments/verified-docs',[TransactionController::class,'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
+
+// Student Courses Orders OrderController
+Route::get('/student/order/form',[OrderController::class,'form'])->name('orderForm');
+Route::post('/student/order/store',[OrderController::class,'store'])->name('orderStore');
 
 //StudentController - Agreement
 Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
@@ -65,13 +79,10 @@ Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->
 // CommunityController
 Route::get('/community/dashboard',[CommunityController::class, 'dashboard'])->name('communityDashboard');
 Route::get('/privatestate/student/docs/review',[CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
-Route::get('/community/student/docs/review',[CommunityController::class, 'studentDocumentsReviewForm'])->name('studentDocumentsReviewForm');
+Route::get('/community/student/docs/review',[CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
 Route::get('/community/create-user',[CommunityController::class, 'createUser'])->name('createUser');
-
-//json
-Route::post('/community/student/verified-update',[CommunityController::class,'studentDocumentsReviewUpdate'])->name('studentDocumentsReviewUpdate');
-Route::post('/community/student/verified-docs',[CommunityController::class,'studentDocumentsReviewVerifiyDocs'])->name('studentDocumentsReviewVerifiyDocs');
-//Route::get('/community/student/docs/review/data',[CommunityController::class, 'studentDocumentsReviewJson'])->name('studentDocumentsReviewJson');
+Route::post('/community/student/payments/verified-update',[CommunityController::class,'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
+Route::post('/community/student/payments/verified-docs',[CommunityController::class,'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
 
 
 Route::get('documents/{national_id}',[FileController::class,'student_documents'])->name('GetStudentDocuments');
