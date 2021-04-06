@@ -22,6 +22,10 @@ class CreateOrdersTable extends Migration
             $table->text("note")->default(null);
             // for private state only
             $table->string("private_doc_file_id")->nullable();
+            // private_doc_verified
+            // null = waiting
+            // true = accepted
+            // false = rejected
             $table->boolean("private_doc_verified")->nullable();
             // -----------
             $table->timestamps();
