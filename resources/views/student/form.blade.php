@@ -259,11 +259,15 @@
      var courses = @php 
          if(isset($courses)){
              echo json_encode($courses);
+         } else {
+             echo "{}";
          }
      @endphp;
      var major_courses = @php 
          if(isset($major_courses)){
              echo json_encode($major_courses);
+         } else {
+             echo "{}";
          }
      @endphp;
     </script>

@@ -23,7 +23,7 @@ window.addToCoursesTable = function() {
         let result_row = tableCourses.children[0];
         tableCourses.insertBefore(row, result_row);
     });
-    $('#pick-courses').modal('hide') 
+    $('#pick-courses').modal('hide');
     changeTraineeState();
 }
 
@@ -62,7 +62,7 @@ window.changeTraineeState = function() {
 
     let total_hours = document.getElementById("total_hours");
     if (total_hours != undefined) {
-        total_hours.innerText = new_total_hours
+        total_hours.innerText = new_total_hours;
     }
     let total_cost = document.getElementById("total_cost");
     if (total_cost != undefined) {
