@@ -9,28 +9,53 @@
     $step_2 = $user->student->student_docs_verified == true ? 'border-success text-success' : '';
     $line_2 = $user->student->student_docs_verified == true ? 'bg-success' : '';
 
-    $step_3 = $user->student->final_accepted == true  ? 'border-success text-success' : '';
+    $step_3 = $user->student->final_accepted == true ? 'border-success text-success' : '';
+
+    $total_cost = 0;
+    $total_hours = 0;
+    foreach ($user->student->courses as $course) {
+        $total_hours += $course->credit_hours;
+        $total_cost += $course->credit_hours * 550;
+    }
     @endphp
     <div class="container">
-        <div class="stepState">       
+        <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 75%" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pdfName"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
+                        <div class="text-center">
+                            <img id="modalImage" src="" alt="image" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- <div class="stepState">
             <div class="flag {{ $step_1 }}">الايصال</div>
             <!-- <div class="line {{ $line_1 }}"></div> -->
             <div class="flag {{ $step_2 }}">الوثائق</div>
             <!-- <div class="line {{ $line_2 }}"></div> -->
             <div class="flag {{ $step_3 }}">مقبول</div>
-        </div>
+        </div> --}}
         <div class="row justify-content-center">
             <div class="col-10">
-                @if (session()->has('success'))
-                    <div class="alert alert-success">
-                        {{ session()->get('success') }}
-                    </div>
-                @endif
-                @if (isset($error))
-                    <div class="alert alert-danger">
-                        {{ $error }}
-                    </div>
-                @endif
+                @if (session()->has('error') || isset($error))
+                <div class="alert alert-danger">
+                    {{ session()->get('error') ?? $error}}
+                </div>
+            @endif
+            @if (session()->has('success') || isset($success))
+                <div class="alert alert-success">
+                    {{ session()->get('success') ?? $success}}
+                </div>
+            @endif
                 <div class="card my-4">
                     <div class="card-header">
                         <h5 class="card-title">
@@ -41,63 +66,79 @@
                         <div class="col-12">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white h5"
-                                       value="{{ $user->name ?? 'لا يوجد' }}">
+                                    value="{{ $user->name ?? 'لا يوجد' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
-                                                                                                         class="text-center m-0 p-0 w-100">الاسم</label></span>
+                                            class="text-center m-0 p-0 w-100">الاسم</label></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                       value="{{ $user->national_id ?? 'لا يوجد' }}">
+                                    value="{{ $user->national_id ?? 'لا يوجد' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
-                                                                                                         class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
+                                            class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
                                 </div>
                             </div>
 
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                       value="{{ $user->phone ?? 'لا يوجد' }}">
+                                    value="{{ $user->phone ?? 'لا يوجد' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
-                                                                                                         class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
+                                            class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
                                 </div>
                             </div>
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                       value="{{ $user->email ?? 'لا يوجد' }}">
+                                    value="{{ $user->email ?? 'لا يوجد' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
-                                                                                                         class="text-center m-0 p-0 w-100">البريد الألكتروني</label></span>
+                                            class="text-center m-0 p-0 w-100">البريد الألكتروني</label></span>
+                                </div>
+                            </div>
+                            <div dir="ltr" class="input-group mb-1">
+                                <input readonly type="text" class="form-control text-right bg-white"
+                                    value="{{ $user->student->wallet ?? 'لا يوجد' }}">
+                                <div class="input-group-append">
+                                    <span class="input-group-text text-center" style="width: 120px;"><label
+                                            class="text-center m-0 p-0 w-100">رصيد المحفظة</label></span>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                       value="{{ $user->student->program->name ?? 'لا يوجد' }}">
+                                    value="{{ $user->student->program->name ?? 'لا يوجد' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
-                                                                                                         class="text-center m-0 p-0 w-100">البرنامج</label></span>
+                                            class="text-center m-0 p-0 w-100">البرنامج</label></span>
                                 </div>
                             </div>
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                       value="{{ $user->student->department->name ?? 'لا يوجد' }}">
+                                    value="{{ $user->student->department->name ?? 'لا يوجد' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
-                                                                                                         class="text-center m-0 p-0 w-100">القسم</label></span>
+                                            class="text-center m-0 p-0 w-100">القسم</label></span>
                                 </div>
                             </div>
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                       value="{{ $user->student->major->name ?? 'لا يوجد' }}">
+                                    value="{{ $user->student->major->name ?? 'لا يوجد' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
-                                                                                                         class="text-center m-0 p-0 w-100">التخصص</label></span>
+                                            class="text-center m-0 p-0 w-100">التخصص</label></span>
+                                </div>
+                            </div>
+                            <div dir="ltr" class="input-group mb-1">
+                                <input readonly type="text" class="form-control text-right bg-white"
+                                    value="{{ $total_hours ?? 'لا يوجد' }}">
+                                <div class="input-group-append">
+                                    <span class="input-group-text text-center" style="width: 120px;"><label
+                                            class="text-center m-0 p-0 w-100">الساعات المعتمدة</label></span>
                                 </div>
                             </div>
 
@@ -108,68 +149,101 @@
             </div>
             <!-- courses -->
             <div class="col-10">
-                <div class="card my-4">
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title"> المقررات المسجلة</h5>
+                        <div class="h5">
+                            المحفظة
+                        </div>
                     </div>
-                    <table class="table table-hover table-bordered bg-white">
-                        <thead>
-                            <tr>
-                                <th class="text-center">رمز المقرر</th>
-                                <th class="text-center">اسم المقرر</th>
-                                <th class="text-center">المستوى</th>
-                                <th class="text-center">الساعات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="courses">
-                            @php
-                            $default_cost = 0;
-                            @endphp
-                            @foreach ($user->student->courses as $course)
-                                @php
-                                $default_cost += $course->credit_hours * 550;
-                                @endphp
-                                <tr>
-                                    <td class="text-center">{{ $course->code }}</td>
-                                    <td class="text-center">{{ $course->name }}</td>
-                                    <td class="text-center">{{ $course->level }}</td>
-                                    <td class="text-center">{{ $course->credit_hours }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="card-body">
+                        <div class="row m-2">
+                            <a href="{{ route('paymentForm') }}" class=" btn btn-primary rounded">
+                                شحن المحفظة
+                            </a>
+                            {{-- <a href="{{ route('orderForm') }}" class=" btn btn-primary m-3 rounded"
+                                style="padding: 20px; font-size: 14px; font-weight:bold;">
+                                اضافة مقررات
+                            </a> --}}
+                        </div>
+                        <div class="row m-2">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>المبلغ</th>
+                                        <th>حالة الطلب</th>
+                                        <th>صورة لايصال</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($user->student->payments as $payment)
+                                        @php
+                                            $user->student->receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $payment->amount }}</td>
+                                            <td>{{ $payment->transaction_id !== null ? 'مقبول' : 'قيد المراجعة' }}</td>
+                                            <td class="">
+
+                                                @php
+                                                    $splitByDot = explode('.', $user->student->receipt);
+                                                    $fileExtantion = end($splitByDot);
+                                                @endphp
+                                                @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
+                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','pdf')">
+                                                        <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
+                                                    </a>
+                                                @else
+                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','img')">
+                                                        <img src=" {{ asset('/images/camera_img_icon.png') }}"
+                                                            style="width:25px;" alt="Image File">
+                                                    </a>
+                                                @endif
+
+                                            </td>
+                                        </tr>
+                                    @empty
+
+                                    @endforelse
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <style>
-     .stepState {
-         width: 100%;
-         display: flex;
-         justify-content: center;
-         align-content: center;
-         align-items: center;
-     }
+        .stepState {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+        }
 
-     .line {
-         height: 3px;
-         width: 5%;
-         background: #b4b4b4;
-     }
+        .line {
+            height: 3px;
+            width: 5%;
+            background: #b4b4b4;
+        }
 
-     .flag {
-         display: flex;
-         width: 70px;
-         height: 70px;
-         justify-content: center;
-         align-content: center;
-         align-items: center;
-         border-radius: 50%;
-         border: 3px solid #b4b4b4;
-         background-color: #f3f3f3;
-         font-weight: bold;
-         margin-left: 2%;
-         margin-right: 2%;
-     }
+        .flag {
+            display: flex;
+            width: 70px;
+            height: 70px;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: 3px solid #b4b4b4;
+            background-color: #f3f3f3;
+            font-weight: bold;
+            margin-left: 2%;
+            margin-right: 2%;
+        }
+
     </style>
 @endsection

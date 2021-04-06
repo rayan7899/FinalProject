@@ -57,4 +57,14 @@ class Student extends Model
     {
         return $this->belongsToMany(Course::class, "student_courses");
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

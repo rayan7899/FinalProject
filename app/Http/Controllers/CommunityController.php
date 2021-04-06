@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Payment;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CommunityController extends Controller
@@ -20,7 +23,7 @@ class CommunityController extends Controller
         $links = [
             (object) [
                 "name" => "تدقيق الايصالات",
-                "url" => route("studentDocumentsReviewForm")
+                "url" => route("paymentsReviewForm")
             ],
             (object) [
                 "name" => "انشاء مستخدم",
@@ -32,26 +35,52 @@ class CommunityController extends Controller
 
     public function createUser()
     {
-      
         return view("manager.community.createUser");
     }
 
-    public function studentDocumentsReviewForm()
+    public function paymentsReviewForm()
     {
 
-        $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('traineeState', '!=', 'privateState')->where("data_updated", true);
-        })->get();
-
-        for ($i = 0; $i < count($users); $i++) {
-            // $documents = Storage::disk('studentDocuments')->files($user->national_id);
-            $users[$i]['receipts'] = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/receipts');
+        $fetch_errors = [];
+        try {
+            // $users = User::with("student")->whereHas(
+            //     "student",
+            //     function ($res) {
+            //         $res->where("traineeState", "!=", "privateState");
+            //     }
+            // )->get();
+            $payments = Payment::where("transaction_id", null)->get();
+            $paymentIds = $payments->pluck('student_id')->toArray();
+            $users = User::with("student")->whereHas(
+                "student",
+                function ($res) use($paymentIds) {
+                    $res->where("traineeState", "!=", "privateState")
+                        ->whereIn("id",$paymentIds);
+                })->get();
+        } catch (Exception $e) {
+            Log::error($e);
+            dd($e);
+            return view('manager.community.paymentsReview')->with('error', "تعذر جلب المتدربين");
         }
-        return view('manager.community.studentDocumentsReview')->with(compact('users'));
+        for ($i = 0; $i < count($payments); $i++) {
+            try {
+                if ($users[$i]->id == $payments[$i]->student_id) {
+                    $users[$i]->student->payment = $payments[$i];
+                    $users[$i]->student->receipt = Storage::disk('studentDocuments')->files(
+                        $users[$i]->national_id . '/receipts/' . $users[$i]->student->payments[0]->receipt_file_id
+                    )[0];
+                }
+            } catch (Exception $e) {
+                Log::error($e);
+                array_push($fetch_errors, $users[$i]->name);
+                continue;
+            }
+        }
+        return view('manager.community.paymentsReview')->with(compact('users'));
     }
 
 
-    public function studentDocumentsReviewJson()
+    public function paymentsReviewJson()
     {
 
         $users = User::with('student')->whereHas('student', function ($result) {
@@ -65,12 +94,11 @@ class CommunityController extends Controller
             $users[$i]->deptname = $users[$i]->student->department->name;
             $users[$i]->mjrname = $users[$i]->student->major->name;
         }
-        //return view('manager.community.studentDocumentsReview')->with(compact('users'));
+        //return view('manager.community.paymentsReview')->with(compact('users'));
         return response(\json_encode(['data' => $users]), 200);
     }
 
-
-    public function studentDocumentsReviewUpdate(Request $request)
+    public function paymentsReviewUpdate(Request $request)
     {
         $studentData = $this->validate($request, [
             "national_id"        => "required|numeric",
@@ -103,27 +131,42 @@ class CommunityController extends Controller
         }
     }
 
-    public function studentDocumentsReviewVerifiyDocs(Request $request)
-    {
 
-        $studentData = $this->validate($request, [
+
+
+
+    public function paymentsReviewVerifiyDocs(Request $request)
+    {
+        $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
-            "documents_verified" => "required|boolean"
+            "payment_id"         => "required|numeric|exists:payments,id",
         ]);
 
         try {
-            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
-            $user->student()->update([
-                "documents_verified" => $studentData['documents_verified'],
+            DB::beginTransaction();
+            $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
+
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])->first();
+            $transaction = $user->student->transactions()->create([
+                "payment_id"    => $payment->id,
+                "amount"    => $payment->amount,
+                "type"    => "recharge",
+                "by_user"    => Auth::user()->id,
+            ]);
+            $payment->update([
+                "transaction_id" => $transaction->id,
             ]);
 
-            return response(json_encode(['message' => 'تم تغيير الحالة بنجاح']), 200);
+            $user->student->wallet += $payment->amount;
+            $user->student->save();
+            DB::commit();
+            return response(json_encode(['message' => 'تم قبول الطلب بنجاح']), 200);
         } catch (Exception $e) {
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
+            Log::error($e);
+            DB::rollBack();
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
         }
     }
-
-
 
     public function private_all_student_form()
     {
