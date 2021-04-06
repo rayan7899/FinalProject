@@ -283,14 +283,8 @@ window.sendStudentUpdate = function (requestType) {
     Swal.close();
 };
 
-window.checkChanged = function (national_id, event) {
-    let documents_verified = 0;
-    if (event.target.checked) {
-        documents_verified = 1;
-    } else {
-        documents_verified = 0;
-    }
-
+window.okClicked = function (national_id,payment_id,event) {
+let row =  event.currentTarget.parentNode.parentNode;
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
         timerProgressBar: true,
@@ -302,8 +296,8 @@ window.checkChanged = function (national_id, event) {
         type: "post",
         url: window.docsVerified,
         data: {
-            national_id: national_id,
-            documents_verified: documents_verified,
+            national_id:national_id,
+            payment_id: payment_id,
         },
         headers: {
             Accept: "application/json",
@@ -312,6 +306,7 @@ window.checkChanged = function (national_id, event) {
         dataType: "json",
         success: function (response) {
             const message = response.message;
+            row.remove();
             Swal.fire({
                 position: "center",
                 icon: "success",
@@ -331,7 +326,6 @@ window.checkChanged = function (national_id, event) {
     });
     Swal.close();
 };
-
 window.showPdf = function (url, type) {
     if (type == "pdf") {
         $("#modalImage").hide();
@@ -345,21 +339,3 @@ window.showPdf = function (url, type) {
         $("#modalImage").attr("src", url);
     }
 };
-
-// window.find = function (text) {
-//     console.log(text)
-//     window.findit = new Array();
-//     let sptext = text.split(" ")
-//     for (let td of all) {
-//         let sp = td.innerText.split(" ")
-//         for (let word of sp) {
-//             for (let txt of sptext) {
-//                 if (word == txt) {
-//                     let parent = td.parentNode
-//                     if (findit[findit.length - 1] != parent) {
-//                         findit.push(parent)
-//                     }
-//                 }
-//             }
-//         }
-//     }

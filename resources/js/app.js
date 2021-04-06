@@ -1,5 +1,5 @@
 require("./bootstrap");
-require("./studentsDocumentsReview");
+require("./paymentsReview");
 require("./studentFinalAccepted");
 require("./studentForm");
 require("./excelForm");
