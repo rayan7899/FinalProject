@@ -89,7 +89,7 @@
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <a class="dropdown-item" href="{{route('communityDashboard')}}">{{ __('Go Home') }}</a>
                                             <a class="dropdown-item" href="{{route('createUser')}}">انشاء مستخدم</a>
-                                            <a class="dropdown-item" href="{{route('studentDocumentsReviewForm')}}">تدقيق الايصالات</a>
+                                            <a class="dropdown-item" href="{{route('paymentsReviewForm')}}">تدقيق الايصالات</a>
                                             <a class="dropdown-item" href="{{route('rayatReportForm')}}">تقرير رايات</a>
                                             <a class="dropdown-item" href="{{route('publishToRayatForm')}}">الرفع لرايات</a>
                                         </div>
