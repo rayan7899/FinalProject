@@ -15,6 +15,37 @@ class StudentAffairsController extends Controller
         $this->middleware(['auth', 'errors']);
     }
 
+    public function dashboard()
+    {
+        $links = [
+            (object) [
+                "name" => "قائمة القبول النهائي",
+                "url" => route("finalAcceptedList")
+            ],
+            (object) [
+                "name" => "المتدربين المدققة بياناتهم",
+                "url" => route("CheckedStudents")
+            ],
+            (object) [
+                "name" => "المتدربين المستجدين",
+                "url" => route("NewStudents")
+            ],
+            (object) [
+                "name" => "القبول النهائي",
+                "url" => route("finalAcceptedForm")
+            ],
+            (object) [
+                "name" => "اضافة اكسل مستجدين",
+                "url" => route("AddExcelForm")
+            ],
+            (object) [
+                "name" => "اضافة اكسل مستمرين",
+                "url" => route("OldForm")
+            ],
+        ];
+        return view("manager.studentsAffairs.dashboard")->with(compact("links"));
+    }
+
     public function checkedStudents()
     {
         $users = User::with('student')->whereHas('student', function ($result) {

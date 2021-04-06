@@ -101,6 +101,7 @@
                                     <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>شؤون المتدربين</li>
                                     <li class="nav-item dropdown">
                                         <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="{{route('affairsDashboard')}}">{{ __('Go Home') }}</a>
                                             <a class="dropdown-item" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a>
                                             <a class="dropdown-item" href="{{route('NewStudents')}}">المتدربين المستجدين </a>
                                             <a class="dropdown-item" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a>

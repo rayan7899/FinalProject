@@ -13,7 +13,7 @@ class DepartmentBossController extends Controller
     {
         $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
         // dd($programs);
-        return view('departmentBoss.manageCourses')->with(compact('programs'));
+        return view('manager.departmentBoss.manageCourses')->with(compact('programs'));
     }
 
     public function getCoursesData()

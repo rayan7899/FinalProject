@@ -81,6 +81,7 @@ Route::get('documents/show/{path?}',[FileController::class,'get_student_document
 Auth::routes(['register'=> false]);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+Route::get('/affairs/dashboard',[StudentAffairsController::class, 'dashboard'])->name('affairsDashboard');
 Route::get('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
 Route::post('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
 Route::get('/affairs/finalaccepted/list',[StudentAffairsController::class, 'finalAcceptedList'])->name('finalAcceptedList');
