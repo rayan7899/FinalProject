@@ -38,7 +38,7 @@ window.addToCoursesTable = function () {
     let selectedCourses = tablePickCourses.querySelectorAll("[data-selected='true']");
     let newTotal = 0;
     selectedCourses.forEach((row) => {
-        row.children[5].children[0].setAttribute('onclick', 'calcCost(event);')
+        row.children[5].children[0].setAttribute('onclick', 'window.calcCost(event);')
         let id = row.children[5].children[0].value;
         row.children[5].children[0].setAttribute('id', 'course_' + id);
         // let result_row = tableCourses.children[0];
