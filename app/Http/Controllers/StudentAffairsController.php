@@ -54,7 +54,7 @@ class StudentAffairsController extends Controller
     public function checkedStudents()
     {
         $users = User::with('student.payments')->whereHas('student', function ($result) {
-            $result->whereHas('payments');
+            $result->whereHas('transactions');
         })->get();
         return view('manager.studentsAffairs.CheckedStudents')
             ->with('users', $users);
