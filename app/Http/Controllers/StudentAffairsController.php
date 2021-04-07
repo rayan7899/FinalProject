@@ -28,7 +28,7 @@ class StudentAffairsController extends Controller
     {
         try {
             $users = User::with('student')->whereHas('student', function ($result) {
-                $result->where('documents_verified', true);
+                $result->where('level', 1);
             })->get();
 
             $fetch_errors = [];

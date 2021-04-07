@@ -16,10 +16,10 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('transaction_id')->nullable();
             $table->integer("requested_hours");
             $table->integer("amount");
-            $table->text("note")->default(null);
+            $table->text("note")->nullable();
             // for private state only
             $table->string("private_doc_file_id")->nullable();
             // private_doc_verified

@@ -184,7 +184,9 @@ return [
         'major'                 => 'التخصص',
         'department'            => 'القسم',
         'program'               => 'البرنامج',
-        'excel_file'               => 'ملف excel',
+        'excel_file'            => 'ملف excel',
+        'trainee'               => 'متدرب',
+        "courses"               => 'المقررات',
         
     ],
 ];
