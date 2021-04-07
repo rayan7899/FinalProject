@@ -77,12 +77,18 @@ Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->
 
 
 // CommunityController
-Route::get('/community/dashboard',[CommunityController::class, 'dashboard'])->name('communityDashboard');
+Route::get('/community',[CommunityController::class, 'dashboard'])->name('communityDashboard');
+Route::get('/private',[CommunityController::class, 'privateDashboard'])->name('privateDashboard');
 Route::get('/privatestate/student/docs/review',[CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
 Route::get('/community/student/docs/review',[CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
 Route::get('/community/create-user',[CommunityController::class, 'createUser'])->name('createUser');
 Route::post('/community/student/payments/verified-update',[CommunityController::class,'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
 Route::post('/community/student/payments/verified-docs',[CommunityController::class,'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
+Route::get('/community/new-semester',[CommunityController::class,'newSemester'])->name('newSemester');
+Route::get('/community/publish-to-rayat',[CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');
+Route::post('/community/publish-to-rayat',[CommunityController::class, 'publishToRayat'])->name('publishToRayatCommunity');
+Route::get('/community/rayat-report',[CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
+Route::get('/community/students-states',[CommunityController::class, 'studentsStates'])->name('studentsStates');
 
 
 Route::get('documents/{national_id}',[FileController::class,'student_documents'])->name('GetStudentDocuments');
@@ -104,6 +110,7 @@ Route::get('/affairs/rayat-report',[StudentAffairsController::class, 'rayatRepor
 
 
 //departmentBoss
+Route::get('/deptBoss',[DepartmentBossController::class, 'dashboard'])->name('deptBossDashboard');
 Route::get('/deptBoss/manage-courses',[DepartmentBossController::class, 'index'])->name('manageCourses');
 Route::get('/deptBoss/courses-data',[DepartmentBossController::class, 'getCoursesData'])->name('getCoursesData');
 Route::post('/deptBoss/courses/update-level',[DepartmentBossController::class, 'updateCoursesLevel'])->name('updateCoursesLevel');

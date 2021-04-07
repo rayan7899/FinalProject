@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Models\Student;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -26,11 +27,38 @@ class CommunityController extends Controller
                 "url" => route("paymentsReviewForm")
             ],
             (object) [
+                "name" => "المتدربين المدققة ايصالاتهم",
+                "url" => route("CheckedStudents")
+            ],
+            (object) [
                 "name" => "انشاء مستخدم",
                 "url" => route("createUser")
             ],
+            (object) [
+                "name" => "فصل دراسي جديد",
+                "url" => route("newSemester")
+            ],
+            (object) [
+                "name" => "متابعة حالات المتدربين",
+                "url" => route("studentsStates")
+            ],
         ];
         return view("manager.community.dashboard")->with(compact("links"));
+    }
+
+    public function privateDashboard()
+    {
+        $links = [
+            (object) [
+                "name" => "تدقيق المستندات(ظروف خاصة)",
+                "url" => route("PrivateAllStudentsForm")
+            ],
+            (object) [
+                "name" => "متابعة حالات المتدربين",
+                "url" => route("studentsStates")
+            ],
+        ];
+        return view("manager.private.dashboard")->with(compact("links"));
     }
 
     public function createUser()
@@ -53,10 +81,11 @@ class CommunityController extends Controller
             $paymentIds = $payments->pluck('student_id')->toArray();
             $users = User::with("student")->whereHas(
                 "student",
-                function ($res) use($paymentIds) {
+                function ($res) use ($paymentIds) {
                     $res->where("traineeState", "!=", "privateState")
-                        ->whereIn("id",$paymentIds);
-                })->get();
+                        ->whereIn("id", $paymentIds);
+                }
+            )->get();
         } catch (Exception $e) {
             Log::error($e);
             dd($e);
@@ -131,7 +160,20 @@ class CommunityController extends Controller
         }
     }
 
-
+    public function newSemester()
+    {
+        try {
+            DB::table('students')->update([
+                'documents_verified'    => false,
+                'student_docs_verified' => false,
+                'final_accepted'    => false,
+                'published' => false,
+            ]);
+            return response(200);
+        } catch (Exception $e) {
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
+        }
+    }
 
 
 
@@ -256,5 +298,75 @@ class CommunityController extends Controller
     public function destroy()
     {
         //
+    }
+
+    public function publishToRayatForm()
+    {   
+        $newUsers = User::with('student')->whereHas('student', function ($result) {
+            $result->where('final_accepted', true)
+                ->where('documents_verified', true)
+                ->where('level', '>', '1');
+        })->get();
+        $users = [];
+        foreach ($newUsers as $user) {
+            if(!$user->student->published){
+                array_push($users, $user);
+            }
+        }
+        if (isset($users)) {
+            return view('manager.community.publishHoursToRayat')
+                ->with(compact('users'));
+        } else {
+            return view('manager.community.publishHoursToRayat')
+                ->with('error', "تعذر جلب المتدربين");
+        }
+    }
+
+    public function publishToRayat(Request $request)
+    {
+        $studentData = $this->validate($request, [
+            "national_id"        => "required|numeric",
+            'state'              => 'required',
+        ]);
+        try {
+            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
+            $user->student()->update([
+                "published" => $studentData['state'],
+            ]);
+            return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
+        } catch (Exception $e) {
+            return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
+        }
+    }
+
+    public function rayatReportForm()
+    {
+        $newUsers = User::with('student')->whereHas('student', function ($result) {
+            $result->where('final_accepted', true)
+                ->where('documents_verified', true)
+                ->where('level', '>', '1');
+        })->get();
+
+        $users = [];
+        foreach ($newUsers as $user) {
+            if($user->student->published){
+                array_push($users, $user);
+            }
+        }
+        if (isset($users)) {
+            return view('manager.community.rayatReport')
+                ->with(compact('users'));
+        } else {
+            return view('manager.community.rayatReport')
+                ->with('error', "تعذر جلب المتدربين");
+        }
+    }
+
+
+    public function studentsStates()
+    {
+        $users = User::with('student')->get();
+        return view('manager.community.studentsStates')
+                ->with(compact('users'));
     }
 }

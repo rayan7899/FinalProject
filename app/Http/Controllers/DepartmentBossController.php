@@ -16,6 +16,21 @@ class DepartmentBossController extends Controller
         return view('manager.departmentBoss.manageCourses')->with(compact('programs'));
     }
 
+    public function dashboard()
+    {
+        $links = [
+            (object) [
+                "name" => "الطلاب المتعثرين",
+                "url" => route("falteringStudents")
+            ],
+            (object) [
+                "name" => "الجداول المقترحة",
+                "url" => route("manageCourses")
+            ],
+        ];
+        return view("manager.departmentBoss.dashboard")->with(compact("links"));
+    }
+
     public function getCoursesData()
     { 
         try{

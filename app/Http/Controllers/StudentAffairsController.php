@@ -23,10 +23,6 @@ class StudentAffairsController extends Controller
                 "url" => route("finalAcceptedList")
             ],
             (object) [
-                "name" => "المتدربين المدققة بياناتهم",
-                "url" => route("CheckedStudents")
-            ],
-            (object) [
                 "name" => "المتدربين المستجدين",
                 "url" => route("NewStudents")
             ],
@@ -41,6 +37,14 @@ class StudentAffairsController extends Controller
             (object) [
                 "name" => "اضافة اكسل مستمرين",
                 "url" => route("OldForm")
+            ],
+            (object) [
+                "name" => "الجداول المقترحة",
+                "url" => route("manageCourses")
+            ],
+            (object) [
+                "name" => "متابعة حالات المتدربين",
+                "url" => route("studentsStates")
             ],
         ];
         return view("manager.studentsAffairs.dashboard")->with(compact("links"));
@@ -140,9 +144,15 @@ class StudentAffairsController extends Controller
     }
 
     public function publishToRayatForm()
-    {
+    {   
+        $newUsers = User::with('student')->whereHas('student', function ($result) {
+            $result->where('final_accepted', true)
+                ->where('documents_verified', true)
+                ->where('level', '1');
+        })->get();
+
         $users = [];
-        foreach ($this->getFinalAcceptedStudents() as $user) {
+        foreach ($newUsers as $user) {
             if(!$user->student->published){
                 array_push($users, $user);
             }

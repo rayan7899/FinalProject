@@ -301,10 +301,10 @@ class StudentController extends Controller
             if (isset($userInfo)) {
                 return response()->json($userInfo, 200);
             } else {
-                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
+                return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
             }
         } catch (QueryException $e) {
-            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
+            return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
         }
     }
 }

@@ -20,7 +20,7 @@
             <thead>
                 <tr>
                     <p class="text-center">
-                        الرفع الى رايات - شؤون الطلاب - مستجدين
+                        تقرير رايات - خدمة المجتمع
                     </p>
 
                     <th>#</th>
@@ -31,7 +31,7 @@
                     <th>القسم</th>
                     <th>التخصص</th>
                     <th>عدد الساعات</th>
-                    <th>التسجيل في رايات</th>
+                    <th>حالة التسجيل</th>
                 </tr>
                 <tr>
                     <th class="filterhead"></th>
@@ -88,7 +88,7 @@
                                     }
                                 @endphp
                             </td>
-                            <td><input type="checkbox" name="published" id="published" onchange="publishStudentHours({{$user->national_id}}, event)"></td>
+                            <td class="text-success">مسجل في رايات</td>
                         </tr>
                     @empty
                         لايوجد
