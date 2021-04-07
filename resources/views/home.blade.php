@@ -186,8 +186,8 @@
                     </div>
                     <div class="card-body">
                         <div class="row m-2">
-                            <a href="{{ route('paymentForm') }}" class=" btn btn-primary rounded">
-                                شحن المحفظة
+                            <a href="{{ route('walletMain') }}" class=" btn btn-primary rounded">
+                               اضافة مقررات  / شحن المحفظة
                             </a>
                             {{-- <a href="{{ route('orderForm') }}" class=" btn btn-primary m-3 rounded"
                                 style="padding: 20px; font-size: 14px; font-weight:bold;">
