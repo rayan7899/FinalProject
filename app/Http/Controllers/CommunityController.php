@@ -137,34 +137,37 @@ class CommunityController extends Controller
 
     public function paymentsReviewUpdate(Request $request)
     {
-        $studentData = $this->validate($request, [
+        $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
-            "wallet"             => "required|numeric",
-            "documents_verified" => "required|boolean",
+            "payment_id"         => "required|numeric|exists:payments,id",
+            "amount"             => "required|numeric",
             "note"               => "string|nullable"
         ]);
 
-
-
         try {
-            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
-            if ($user->student->traineeState == 'privateState') {
-                $user->student()->update([
-                    "documents_verified" => $studentData['documents_verified'],
-                    "note"               => $studentData['note'],
-                ]);
-            } else {
-                $user->student()->update([
-                    "wallet"             => $studentData['wallet'],
-                    "documents_verified" => $studentData['documents_verified'],
-                    "note"               => $studentData['note'],
-                ]);
-            }
+            DB::beginTransaction();
+            $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
 
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])->first();
+            $transaction = $user->student->transactions()->create([
+                "payment_id"    => $payment->id,
+                "amount"        => $reviewedPayment["amount"],
+                "note"          => $reviewedPayment["note"],
+                "type"          => "recharge",
+                "by_user"       => Auth::user()->id,
+            ]);
+            $payment->update([
+                "transaction_id" => $transaction->id,
+            ]);
 
-            return response(json_encode(['message' => 'تم تحديث البيانات بنجاح']), 200);
+            $user->student->wallet += $reviewedPayment["amount"];
+            $user->student->save();
+            DB::commit();
+            return response(json_encode(['message' => 'تم قبول الطلب بنجاح']), 200);
         } catch (Exception $e) {
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
+            Log::error($e);
+            DB::rollBack();
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
         }
     }
 
@@ -182,6 +185,7 @@ class CommunityController extends Controller
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }
+
 
 
 

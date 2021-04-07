@@ -39,13 +39,8 @@
                                 <input type="text" class="form-control" id="sname" aria-describedby="name" disabled="true">
                             </div>
                             <div class="form-group">
-                                <label for="wallet">المبلغ المدفوع</label>
-                                <input required type="number" class="form-control" id="wallet" aria-describedby="wallet">
-                            </div>
-                            <div class="form-group">
-                                <label for="verified">حالة التدقيق</label>
-                                <input type="checkbox" id="documents_verified"
-                                    style="padding:10px; width: 20px; height: 20px;">
+                                <label for="amount">المبلغ المدفوع</label>
+                                <input required type="number" class="form-control" id="amount" aria-describedby="amount">
                             </div>
 
                             <div class="form-group">
@@ -94,7 +89,7 @@
                         <th scope="col">الحالة</th>
                         <th scope="col">ايصالات السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
-                        <th scope="col">حالة التدقيق</th>
+                        <th scope="col">قبول الطلب</th>
                         <th scope="col">ملاحظات المدقق</th>
                         <th scope="col"> </th>
                     </tr>
@@ -197,8 +192,8 @@
             </table>
         </div>
         <script defer>
-            var docsVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
-            var studentUpdate = "{{ route('paymentsReviewUpdate') }}";
+            var paymentVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
+            var paymentWithNote = "{{ route('paymentsReviewUpdate') }}";
 
         </script>
     </div>
