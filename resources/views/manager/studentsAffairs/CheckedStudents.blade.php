@@ -1,8 +1,9 @@
 @extends('layouts.app')
 @section('content')
 <div class="container">
+المتدربين المدققة ايصالاتهم
 
-      <table class="table table-sm table-bordered table-striped  table-hover">
+      <table class="table nowrap display cell-border" id="mainTable">
         <thead class="text-center">
           <tr>
             <th scope="col">#</th>

@@ -255,7 +255,7 @@ class OldUsers implements ToCollection
                     'final_accepted'        => true,
                     'data_updated'          => false,
                     'agreement'             => false,
-
+                    'level'                 => 2,
                 ]);
                 DB::commit();
             } catch (QueryException $e) {

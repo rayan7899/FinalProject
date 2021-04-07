@@ -15,6 +15,41 @@ class StudentAffairsController extends Controller
         $this->middleware(['auth', 'errors']);
     }
 
+    public function dashboard()
+    {
+        $links = [
+            (object) [
+                "name" => "قائمة القبول النهائي",
+                "url" => route("finalAcceptedList")
+            ],
+            (object) [
+                "name" => "المتدربين المستجدين",
+                "url" => route("NewStudents")
+            ],
+            (object) [
+                "name" => "القبول النهائي",
+                "url" => route("finalAcceptedForm")
+            ],
+            (object) [
+                "name" => "اضافة اكسل مستجدين",
+                "url" => route("AddExcelForm")
+            ],
+            (object) [
+                "name" => "اضافة اكسل مستمرين",
+                "url" => route("OldForm")
+            ],
+            (object) [
+                "name" => "الجداول المقترحة",
+                "url" => route("manageCourses")
+            ],
+            (object) [
+                "name" => "متابعة حالات المتدربين",
+                "url" => route("studentsStates")
+            ],
+        ];
+        return view("manager.studentsAffairs.dashboard")->with(compact("links"));
+    }
+
     public function checkedStudents()
     {
         $users = User::with('student')->whereHas('student', function ($result) {
@@ -109,9 +144,15 @@ class StudentAffairsController extends Controller
     }
 
     public function publishToRayatForm()
-    {
+    {   
+        $newUsers = User::with('student')->whereHas('student', function ($result) {
+            $result->where('final_accepted', true)
+                ->where('documents_verified', true)
+                ->where('level', '1');
+        })->get();
+
         $users = [];
-        foreach ($this->getFinalAcceptedStudents() as $user) {
+        foreach ($newUsers as $user) {
             if(!$user->student->published){
                 array_push($users, $user);
             }
