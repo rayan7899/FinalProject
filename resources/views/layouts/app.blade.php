@@ -90,8 +90,8 @@
                                             <a class="dropdown-item" href="{{route('communityDashboard')}}">{{ __('Go Home') }}</a>
                                             <a class="dropdown-item" href="{{route('createUser')}}">انشاء مستخدم</a>
                                             <a class="dropdown-item" href="{{route('paymentsReviewForm')}}">تدقيق الايصالات</a>
-                                            <a class="dropdown-item" href="{{route('rayatReportForm')}}">تقرير رايات</a>
-                                            <a class="dropdown-item" href="{{route('publishToRayatForm')}}">الرفع لرايات</a>
+                                            <a class="dropdown-item" href="{{route('rayatReportFormCommunity')}}">تقرير رايات</a>
+                                            <a class="dropdown-item" href="{{route('publishToRayatFormCommunity')}}">الرفع لرايات</a>
                                         </div>
                                     </li>
                                 </ul>
@@ -101,11 +101,14 @@
                                     <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>شؤون المتدربين</li>
                                     <li class="nav-item dropdown">
                                         <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="{{route('affairsDashboard')}}">{{ __('Go Home') }}</a>
                                             <a class="dropdown-item" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a>
                                             <a class="dropdown-item" href="{{route('NewStudents')}}">المتدربين المستجدين </a>
                                             <a class="dropdown-item" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a>
                                             <a class="dropdown-item" href="{{route('AddExcelForm')}}">اضافة اكسل مستجدين</a>
                                             <a class="dropdown-item" href="{{route('OldForm')}}"> اضافة اكسل مستمرين </a>
+                                            <a class="dropdown-item" href="{{route('rayatReportForm')}}">تقرير رايات</a>
+                                            <a class="dropdown-item" href="{{route('publishToRayatForm')}}">الرفع لرايات</a>
                                         </div>
                                     </li>
                                 </ul>
@@ -115,6 +118,7 @@
                                     <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>رئيس القسم</li>
                                     <li class="nav-item dropdown">
                                         <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="{{route('deptBossDashboard')}}">{{ __('Go Home') }}</a>
                                             <a class="dropdown-item" href="{{route('falteringStudents')}}">الطلاب المتعثرين</a>
                                             <a class="dropdown-item" href="{{route('manageCourses')}}">الجداول المقترحة</a>
                                         </div>
@@ -126,6 +130,7 @@
                                     <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>الإرشاد</li>
                                     <li class="nav-item dropdown">
                                         <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="{{route('privateDashboard')}}">{{ __('Go Home') }}</a>
                                             <a class="dropdown-item" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a>
                                         </div>
                                     </li>

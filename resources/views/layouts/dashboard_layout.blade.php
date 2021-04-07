@@ -5,7 +5,7 @@
         </div>
         <div class="card-body">
             @forelse ($links as $link)
-                <a href="{{ $link->url }}" class="btn btn-primary p-5 m-1"
+                <a href="{{ $link->url }}" class="btn btn-outline-primary p-5 m-1"
                     style="font-size: 16px;">{{ $link->name }}</a>
             @empty
             @endforelse
