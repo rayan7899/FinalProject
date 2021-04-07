@@ -89,6 +89,8 @@ Route::get('/community/publish-to-rayat',[CommunityController::class, 'publishTo
 Route::post('/community/publish-to-rayat',[CommunityController::class, 'publishToRayat'])->name('publishToRayatCommunity');
 Route::get('/community/rayat-report',[CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
 Route::get('/community/students-states',[CommunityController::class, 'studentsStates'])->name('studentsStates');
+Route::get('/community/old-students-report',[CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
+Route::get('/community/new-students-report',[CommunityController::class, 'newStudentsReport'])->name('newStudentsReport');
 
 
 Route::get('documents/{national_id}',[FileController::class,'student_documents'])->name('GetStudentDocuments');

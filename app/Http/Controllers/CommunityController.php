@@ -34,13 +34,21 @@ class CommunityController extends Controller
                 "name" => "انشاء مستخدم",
                 "url" => route("createUser")
             ],
-            (object) [
-                "name" => "فصل دراسي جديد",
-                "url" => route("newSemester")
-            ],
+            // (object) [
+            //     "name" => "فصل دراسي جديد",
+            //     "url" => route("newSemester")
+            // ],
             (object) [
                 "name" => "متابعة حالات المتدربين",
                 "url" => route("studentsStates")
+            ],
+            (object) [
+                "name" => "المتدربين المستمرين",
+                "url" => route("oldStudentsReport")
+            ],
+            (object) [
+                "name" => "المتدربين المستجدين",
+                "url" => route("newStudentsReport")
             ],
         ];
         return view("manager.community.dashboard")->with(compact("links"));
@@ -367,6 +375,24 @@ class CommunityController extends Controller
     {
         $users = User::with('student')->get();
         return view('manager.community.studentsStates')
+                ->with(compact('users'));
+    }
+
+    public function oldStudentsReport()
+    {
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('level', '>', '1');
+        })->get();
+        return view('manager.community.oldStudentsReport')
+                ->with(compact('users'));
+    }
+
+    public function newStudentsReport()
+    {
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('level', '1');
+        })->get();
+        return view('manager.community.newStudentsReport')
                 ->with(compact('users'));
     }
 }

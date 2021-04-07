@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-    متابعة حالات المتدربين
+    المتدربين المستجدين
         @if (isset($error) || !empty($fetch_errors))
             <div class="alert alert-danger">
                 @if (isset($error))
