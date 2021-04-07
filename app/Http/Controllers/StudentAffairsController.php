@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -52,8 +53,8 @@ class StudentAffairsController extends Controller
 
     public function checkedStudents()
     {
-        $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('documents_verified', true);
+        $users = User::with('student.payments')->whereHas('student', function ($result) {
+            $result->whereHas('payments');
         })->get();
         return view('manager.studentsAffairs.CheckedStudents')
             ->with('users', $users);
