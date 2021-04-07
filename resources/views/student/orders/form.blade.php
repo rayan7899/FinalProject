@@ -128,7 +128,7 @@
                                             <td class="text-center">{{ $course->credit_hours * 550 }}</td>
                                             <td class="text-center @if ($user->student->level < 2) d-none @endif">
                                                     <input id="course_{{ $course->id }}" type="checkbox" name="courses[]"
-                                                        value="{{ $course->id }}" onclick="calcCost(event)" checked />
+                                                        value="{{ $course->id }}" onclick="window.calcCost(event)" checked />
                                             </td>
                                         </tr>
                                     @endforeach
@@ -147,17 +147,17 @@
                         <div class="form-group bg-white border px-4 py-3">
                             <div class="form-row">
                                 <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                                    <input value="trainee" type="radio" onclick="calcCost()" id="trainee"
+                                    <input value="trainee" type="radio" onclick="window.calcCost()" id="trainee"
                                         name="traineeState" class="custom-control-input" checked>
                                     <label class="custom-control-label" for="trainee">متدرب</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                                    <input value="employee" type="radio" onclick="calcCost()" id="employee"
+                                    <input value="employee" type="radio" onclick="window.calcCost()" id="employee"
                                         name="traineeState" class="custom-control-input">
                                     <label class="custom-control-label" for="employee">أحد منسوبي المؤسسة</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
-                                    <input value="employeeSon" type="radio" onclick="calcCost()" id="employeeSon"
+                                    <input value="employeeSon" type="radio" onclick="window.calcCost()" id="employeeSon"
                                         name="traineeState" class="custom-control-input">
                                     <label class="custom-control-label" for="employeeSon">من ابناء منسوبي المؤسسة</label>
                                 </div>
@@ -176,7 +176,7 @@
                                                                    ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
                                                                    </div>
                                                                    ">( ! )</a>
-                                    <input value="privateState" type="radio" onclick="calcCost()" id="privateState"
+                                    <input value="privateState" type="radio" onclick="window.calcCost()" id="privateState"
                                         name="traineeState" class="custom-control-input">
                                     <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
                                 </div>
