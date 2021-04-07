@@ -13,7 +13,22 @@ class DepartmentBossController extends Controller
     {
         $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
         // dd($programs);
-        return view('departmentBoss.coursesPerLevel')->with(compact('programs'));
+        return view('manager.departmentBoss.coursesPerLevel')->with(compact('programs'));
+    }
+
+    public function dashboard()
+    {
+        $links = [
+            (object) [
+                "name" => "الطلاب المتعثرين",
+                "url" => route("studentCourses")
+            ],
+            (object) [
+                "name" => "الجداول المقترحة",
+                "url" => route("coursesPerLevel")
+            ],
+        ];
+        return view("manager.departmentBoss.dashboard")->with(compact("links"));
     }
 
     public function apiGetCourses()

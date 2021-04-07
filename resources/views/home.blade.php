@@ -63,7 +63,8 @@
                         </h5>
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white h5"
                                     value="{{ $user->name ?? 'لا يوجد' }}">
@@ -73,7 +74,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $user->national_id ?? 'لا يوجد' }}">
@@ -82,7 +83,9 @@
                                             class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $user->phone ?? 'لا يوجد' }}">
@@ -91,6 +94,9 @@
                                             class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $user->email ?? 'لا يوجد' }}">
@@ -99,6 +105,9 @@
                                             class="text-center m-0 p-0 w-100">البريد الألكتروني</label></span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $user->student->wallet ?? 'لا يوجد' }}">
@@ -108,7 +117,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $user->student->program->name ?? 'لا يوجد' }}">
@@ -117,6 +127,9 @@
                                             class="text-center m-0 p-0 w-100">البرنامج</label></span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $user->student->department->name ?? 'لا يوجد' }}">
@@ -125,6 +138,9 @@
                                             class="text-center m-0 p-0 w-100">القسم</label></span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $user->student->major->name ?? 'لا يوجد' }}">
@@ -133,6 +149,20 @@
                                             class="text-center m-0 p-0 w-100">التخصص</label></span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div dir="ltr" class="input-group mb-1">
+                                <input readonly type="text" class="form-control text-right bg-white"
+                                    value="{{ $user->student->level ?? 'لا يوجد' }}">
+                                <div class="input-group-append">
+                                    <span class="input-group-text text-center" style="width: 120px;"><label
+                                            class="text-center m-0 p-0 w-100">المستوى</label></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{ $total_hours ?? 'لا يوجد' }}">
@@ -141,7 +171,6 @@
                                             class="text-center m-0 p-0 w-100">الساعات المعتمدة</label></span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -157,8 +186,8 @@
                     </div>
                     <div class="card-body">
                         <div class="row m-2">
-                            <a href="{{ route('paymentForm') }}" class=" btn btn-primary rounded">
-                                شحن المحفظة
+                            <a href="{{ route('walletMain') }}" class=" btn btn-primary rounded">
+                               اضافة مقررات  / شحن المحفظة
                             </a>
                             {{-- <a href="{{ route('orderForm') }}" class=" btn btn-primary m-3 rounded"
                                 style="padding: 20px; font-size: 14px; font-weight:bold;">

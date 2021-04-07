@@ -11,8 +11,6 @@ class FalteringStudentsController extends Controller
     public function index()
     {
         $majors = Major::with('courses')->get();
-        return view('departmentBoss.studentCourses')->with('majors', $majors);
+        return view('manager.departmentBoss.studentCourses')->with('majors', $majors);
     }
-
-    
 }

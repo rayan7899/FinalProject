@@ -79,58 +79,26 @@ class StudentController extends Controller
             "email"             => "required|email|unique:users,email," . $user->id,
             "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
-            "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
-            "traineeState"      => "required|string",
-            "cost"              => "required|numeric",
-            "privateStateDoc"   => "required_if:traineeState,privateState",
-            "courses"           => "required|array|min:1",
-            "courses.*"         => "required|numeric|distinct|exists:courses,id",
-        ], [
-            'payment_receipt.required_if' => 'إيصال السداد مطلوب',
-            'courses.required' => 'لم تقم باختيار المواد',
+            'password'          => 'required|string|min:8|confirmed',
+
         ]);
-
-        $total_hours = array_sum(array_map(
-            function ($c) {
-                return $c['credit_hours'];
-            },
-            Course::whereIn('id', $studentData['courses'])->get()->toArray()
-        ));
-        if ($total_hours < 11 || $total_hours > 21) {
-            return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 11 و 21');
-        }
-
         try {
+            if ($studentData['password'] == "bct12345") {
+                return back()->with('error', 'خطأ يجب تغيير كلمة المرور الافتراضية');
+            }
             DB::beginTransaction();
             $user->update(
                 array(
-                    'email' => $studentData['email']
+                    'email' => $studentData['email'],
+                    'password' => Hash::make($studentData['password']),
                 )
             );
 
             $user->student()->update(
                 array(
-                    'traineeState' => $studentData['traineeState'],
-                    'wallet'       => $studentData['cost'],
                     'data_updated' => true,
                 )
             );
-
-            $courses = $studentData['courses'];
-            if ($user->student->level < 2) {
-                $courses = [];
-                foreach (Course::where('suggested_level', $user->student->level)
-                    ->where('major_id', $user->student->major_id)
-                    ->get()
-                    as $course) {
-                    $courses[] = $course->id;
-                }
-            }
-            foreach ($courses as $course) {
-                $user->student->studentCourses()->create([
-                    'course_id' => $course,
-                ]);
-            }
 
             $national_id = Auth::user()->national_id;
 
@@ -140,16 +108,12 @@ class StudentController extends Controller
             $doc_name = 'degree.' . $studentData['degree']->getClientOriginalExtension();
             Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['degree']));
 
-            if ($studentData['traineeState'] != 'privateState') {
-                $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $studentData['payment_receipt']->getClientOriginalExtension();
-                Storage::disk('studentDocuments')->put('/' . $national_id . '/receipts/' . $doc_name, File::get($studentData['payment_receipt']));
-            } else {
-                $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $studentData['privateStateDoc']->getClientOriginalExtension();
-                Storage::disk('studentDocuments')->put('/' . $national_id . '/privateStateDoc/' . $doc_name, File::get($studentData['privateStateDoc']));
-            }
+            // if ($studentData['traineeState'] == 'privateState') {
+            //     $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $studentData['privateStateDoc']->getClientOriginalExtension();
+            //     Storage::disk('studentDocuments')->put('/' . $national_id . '/privateStateDoc/' . $doc_name, File::get($studentData['privateStateDoc']));
+            // }
 
             DB::commit();
-
             return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
         } catch (\Throwable $e) {
             DB::rollback();
@@ -301,10 +265,10 @@ class StudentController extends Controller
             if (isset($userInfo)) {
                 return response()->json($userInfo, 200);
             } else {
-                return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
+                return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
             }
         } catch (QueryException $e) {
-            return response()->json(["message" => "لا يوجد متدرب برقم الهوية المرسل"], 422);
+            return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
         }
     }
 }

@@ -19,6 +19,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('payment_id')->nullable();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->integer("amount");
+            $table->string("note")->nullable();
             $table->string("type");
             $table->unsignedBigInteger("by_user");
             $table->foreign('student_id')->references('id')->on('students');

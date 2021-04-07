@@ -160,10 +160,10 @@ jQuery(function () {
                             .each(function (d, j) {
                                 select.append(
                                     '<option value="' +
-                                        d +
-                                        '">' +
-                                        d +
-                                        "</option>"
+                                    d +
+                                    '">' +
+                                    d +
+                                    "</option>"
                                 );
                             });
                     }
@@ -180,9 +180,9 @@ jQuery(function () {
 
 window.national_id = document.getElementById("national_id");
 window.sname = document.getElementById("sname");
-window.wallet = document.getElementById("wallet");
-window.documents_verified = document.getElementById("documents_verified");
+window.amount = document.getElementById("amount");
 window.note = document.getElementById("note");
+window.payment_id = 0;
 
 window.popup = function () {
     $('[data-toggle="popover"]').popover({
@@ -190,49 +190,33 @@ window.popup = function () {
     });
 };
 
-window.showModal = function (national_id, name, wallet, note) {
-    window.documents_verified.checked = document.getElementById(
-        "check_" + national_id
-    ).checked;
+window.showModal = function (national_id, payment_id, name, amount) {
+
     window.national_id.value = national_id;
     window.sname.value = name;
     window.note.value = "";
-    window.note.value = note;
-    if (window.wallet !== null) {
-        window.wallet.value = wallet;
+    window.payment_id = payment_id;
+    if (window.amount !== null) {
+        window.amount.value = amount;
     }
 };
 
 window.sendStudentUpdate = function (requestType) {
     let national_id = window.national_id.value;
-    let documents_verified = window.documents_verified.checked;
-    let wallet = 0;
-    let note = window.note.value;
-    let form = {};
-    if (wallet == "" || wallet <= 0) {
-        wallet = 0;
+    let amount      = window.amount.value;
+    let payment_id  = window.payment_id;
+    let note        = window.note.value;
+
+    if (amount == "" || amount <= 0) {
+        amount = 0;
     }
-    if (documents_verified) {
-        documents_verified = 1;
-    } else {
-        documents_verified = 0;
-    }
-    if (requestType != "privateState") {
-        wallet = window.wallet.value;
-        form = {
-            national_id: national_id,
-            documents_verified: documents_verified,
-            wallet: wallet,
-            note: note,
-        };
-    } else {
-        form = {
-            national_id: national_id,
-            documents_verified: documents_verified,
-            wallet: 0,
-            note: note,
-        };
-    }
+    let form = {
+        national_id: national_id,
+        amount: amount,
+        payment_id: payment_id,
+        note: note,
+    };
+
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
         timerProgressBar: true,
@@ -242,7 +226,7 @@ window.sendStudentUpdate = function (requestType) {
     });
     $.ajax({
         type: "post",
-        url: window.studentUpdate,
+        url: window.paymentWithNote,
         data: form,
         headers: {
             Accept: "application/json",
@@ -250,17 +234,11 @@ window.sendStudentUpdate = function (requestType) {
         },
         dataType: "json",
         success: function (response) {
-            if (document.getElementById("wallet_" + national_id) !== null) {
+            if (document.getElementById("amount_" + national_id) !== null) {
                 document.getElementById(
-                    "wallet_" + national_id
-                ).innerHTML = wallet;
+                    "amount_" + national_id
+                ).innerHTML = amount;
             }
-
-            document.getElementById("note_" + national_id).innerHTML = note;
-            document.getElementById(
-                "check_" + national_id
-            ).checked = documents_verified;
-
             const message = response.message;
             Swal.fire({
                 position: "center",
@@ -284,8 +262,8 @@ window.sendStudentUpdate = function (requestType) {
     Swal.close();
 };
 
-window.okClicked = function (national_id,payment_id,event) {
-let row =  event.currentTarget.parentNode.parentNode;
+window.okClicked = function (national_id, payment_id, event) {
+    let row = event.currentTarget.parentNode.parentNode;
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
         timerProgressBar: true,
@@ -295,9 +273,9 @@ let row =  event.currentTarget.parentNode.parentNode;
     });
     $.ajax({
         type: "post",
-        url: window.docsVerified,
+        url: window.paymentVerified,
         data: {
-            national_id:national_id,
+            national_id: national_id,
             payment_id: payment_id,
         },
         headers: {

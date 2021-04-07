@@ -38,7 +38,10 @@ Route::middleware('auth')->group(function () {
     // FIXME: use the home page as dashboard page for all type of users and make
     //        sure the home page display different content foreach type of users
     // CommunityController
-    Route::get('/community/dashboard', [CommunityController::class, 'dashboard'])->name('communityDashboard');
+    Route::get('/community', [CommunityController::class, 'dashboard'])->name('communityDashboard');
+    Route::get('/private', [CommunityController::class, 'privateDashboard'])->name('privateDashboard');
+    Route::get('/affairs/dashboard', [StudentAffairsController::class, 'dashboard'])->name('affairsDashboard');
+    Route::get('/deptBoss', [DepartmentBossController::class, 'dashboard'])->name('deptBossDashboard');
 
     // FIXME: this route is not used anywhere, shall we remove it?
     Route::get('/documents/{national_id}', [FileController::class, 'student_documents'])->name('GetStudentDocuments');
@@ -57,6 +60,13 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
+    Route::get('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
+    Route::get('/community/publish-to-rayat', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');
+    Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatCommunity');
+    Route::get('/community/rayat-report', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
+    Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
+    Route::get('/community/old-students-report', [CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
+    Route::get('/community/new-students-report', [CommunityController::class, 'newStudentsReport'])->name('newStudentsReport');
     Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
     Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
     Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
@@ -84,7 +94,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
 });
 
-// رأساء الأقسام
+// روأسا الأقسام
 Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
     //departmentBoss
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
@@ -136,3 +146,7 @@ Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {
 Route::middleware(['auth', 'role:الإرشاد'])->group(function () {
     Route::get('/privatestate/student/docs/review', [CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
 });
+
+
+// Route::get('/deptBoss/courses-data', [DepartmentBossController::class, 'getCoursesData'])->name('getCoursesData');
+// Route::post('/deptBoss/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('updateCoursesLevel');

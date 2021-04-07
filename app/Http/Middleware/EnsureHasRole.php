@@ -31,6 +31,7 @@ class EnsureHasRole
                 break;
             case "رئيس قسم":
                 // FIXME: impelement this role
+                return redirect(route('home'));
                 break;
             case "متدرب":
                 if ($student === null) {
