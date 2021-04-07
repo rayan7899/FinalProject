@@ -66,8 +66,8 @@
                                     @endguest
                                 </ul>
                                 {{-- <ul class="navbar-nav ml-auto py-4 py-md-0"> --}}
-                                    {{-- <li class="nav-item"><a class="nav-link" href="{{route('falteringStudents')}}">الطلاب المتعثرين</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('manageCourses')}}">الجداول المقترحة</a></li> --}}
+                                    {{-- <li class="nav-item"><a class="nav-link" href="{{route('studentCourses')}}">الطلاب المتعثرين</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('coursesPerLevel')}}">الجداول المقترحة</a></li> --}}
                                     {{-- <li class="nav-item"><a class="nav-link" href="{{route('rayatReportForm')}}">تقرير رايات</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{route('publishToRayatForm')}}">الرفع لرايات</a></li> --}}
                                     {{-- <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a></li>
@@ -115,8 +115,8 @@
                                     <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>رئيس القسم</li>
                                     <li class="nav-item dropdown">
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="{{route('falteringStudents')}}">الطلاب المتعثرين</a>
-                                            <a class="dropdown-item" href="{{route('manageCourses')}}">الجداول المقترحة</a>
+                                            <a class="dropdown-item" href="{{route('studentCourses')}}">الطلاب المتعثرين</a>
+                                            <a class="dropdown-item" href="{{route('coursesPerLevel')}}">الجداول المقترحة</a>
                                         </div>
                                     </li>
                                 </ul>

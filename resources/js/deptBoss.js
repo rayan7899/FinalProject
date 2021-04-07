@@ -56,7 +56,7 @@ window.findCourses = function (major) {
 };
 
 window.fillCourses = function () {
-    let dataState = getCoursesData();
+    let dataState = getCourses();
     if (!dataState) {
         return;
     }
@@ -106,7 +106,7 @@ window.fillCourses = function () {
 
 window.fillSuggestedCourses = function (shouldUpdateData = true) {
     if (shouldUpdateData) {
-        let dataState = getCoursesData();
+        let dataState = getCourses();
         if (!dataState) {
             return;
         }
@@ -278,7 +278,7 @@ async function updateCoursesRequset(coursesData) {
         });
 }
 
-async function getCoursesData() {
+async function getCourses() {
     let state = false;
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
@@ -293,7 +293,7 @@ async function getCoursesData() {
         },
     });
     await axios
-        .get(window.getCoursesDataUrl)
+        .get(window.getCoursesUrl)
         .then((response) => {
             window.programs = response.data;
             state = true;

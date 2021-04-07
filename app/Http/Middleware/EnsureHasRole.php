@@ -16,6 +16,28 @@ class EnsureHasRole
      */
     public function handle(Request $request, Closure $next, $role)
     {
+        $manager = $request->user()->manager;
+        $student = $request->user()->student;
+        switch ($role) {
+            case "خدمة المجتمع":
+            case "شؤون المتدربين":
+            case "الإرشاد":
+                if ($manager === null) {
+                    return redirect(route('home'));
+                }
+                if (!$manager->hasRole($role)) {
+                    return redirect(route('home'));
+                }
+                break;
+            case "رئيس قسم":
+                // FIXME: impelement this role
+                break;
+            case "متدرب":
+                if ($student === null) {
+                    return redirect(route('home'));
+                }
+                break;
+        }
         return $next($request);
     }
 }

@@ -22,7 +22,7 @@ class StudentCoursesController extends Controller
         return response(['info' => $info], 200);
     }
 
-    public function addCourseToStudent(Request $request)
+    public function addCoursesToStudent(Request $request)
     {
         $user = User::where('national_id', $request->studentNationalId)->first();
         $coursesData = $this->validate($request, [

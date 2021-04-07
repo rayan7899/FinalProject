@@ -14,16 +14,16 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-       Role::create([
-        "خدمة المجتمع"
-       ]);
-       
-       Role::create([
-        "الإرشاد"
-       ]);
+        Role::create([
+            "خدمة المجتمع"
+        ]);
 
-       Role::create([
-        "شؤون الطلاب"
-       ]);
+        Role::create([
+            "الإرشاد"
+        ]);
+
+        Role::create([
+            "شؤون المتدربين"
+        ]);
     }
 }

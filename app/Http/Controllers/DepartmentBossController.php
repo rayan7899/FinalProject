@@ -13,32 +13,31 @@ class DepartmentBossController extends Controller
     {
         $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
         // dd($programs);
-        return view('departmentBoss.manageCourses')->with(compact('programs'));
+        return view('departmentBoss.coursesPerLevel')->with(compact('programs'));
     }
 
-    public function getCoursesData()
-    { 
-        try{
+    public function apiGetCourses()
+    {
+        try {
             $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
-            return response($programs,200);
-        }catch(QueryException $e){
-            return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'],500);
+            return response($programs, 200);
+        } catch (QueryException $e) {
+            return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
         }
     }
 
     public function updateCoursesLevel(Request $request)
     {
         $coursesData = $this->validate($request, [
-         "suggested_level" => "required|numeric",
-         "courses.*"         => "required|numeric"
+            "suggested_level" => "required|numeric",
+            "courses.*"         => "required|numeric"
         ]);
-        try{
+        try {
             Course::whereIn('id', $coursesData['courses'])->update(['suggested_level' => $coursesData['suggested_level']]);
             $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
-            return response(['message' => 'تم تحديث الجدول المقترح بنجاح', 'programs' => $programs],200);
-        }catch(QueryException $e){
-            return response(['message' => 'حدث خطأ غير معروف اثناء تحديث الجدول المقترح'],422);
+            return response(['message' => 'تم تحديث الجدول المقترح بنجاح', 'programs' => $programs], 200);
+        } catch (QueryException $e) {
+            return response(['message' => 'حدث خطأ غير معروف اثناء تحديث الجدول المقترح'], 422);
         }
     }
-    
 }

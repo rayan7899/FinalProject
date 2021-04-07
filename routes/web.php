@@ -29,91 +29,110 @@ use App\Http\Controllers\TransactionController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
-
-//Logs Viewer
-Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
-//ExcelController
-Route::get('/excel/new/add',[ExcelController::class,'importNewForm'])->name('AddExcelForm');
-Route::post('/excel/new/import',[ExcelController::class,'importNewUsers'])->name('importExcel');
-//Route::get('/excel/new/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
-
- //Old users
-Route::get('/excel/old/add',[ExcelController::class,'importOldForm'])->name('OldForm');
-Route::post('/excel/old/import',[ExcelController::class,'importOldUsers'])->name('OldImport');
-//Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
-
-
-//StudentController - Edit student form
-//Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
-Route::get('/student/edit',[StudentController::class,'edit'])->name('EditOneStudent')->middleware('agreement');
-Route::post('/student/update',[StudentController::class,'update'])->name('UpdateOneStudent')->middleware('agreement');
-Route::get('/student/delete',[StudentController::class,'destroy'])->name('DeleteOneStudent');
-Route::post('/student/level',[StudentController::class,'getStudentOnLevel'])->name('getStudentOnLevel');
-Route::post('/student/update-state/',[StudentController::class,'updateStudentState'])->name('updateStudentState');
-
-// Student wallet PaymentController
-Route::get('/student/wallet/main',[PaymentController::class,'main'])->name('walletMain');
-Route::get('/student/wallet/payment/from',[PaymentController::class,'form'])->name('paymentForm');
-Route::post('/student/wallet/payment/store',[PaymentController::class,'store'])->name('paymentStore');
-
-// Student wallet PaymentController (json)
-// Well be move from CommunityController
-// Route::post('/community/student/payments/verified-update',[TransactionController::class,'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
-// Route::post('/community/student/payments/verified-docs',[TransactionController::class,'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
-
-// Student Courses Orders OrderController
-Route::get('/student/order/form',[OrderController::class,'form'])->name('orderForm');
-Route::post('/student/order/store',[OrderController::class,'store'])->name('orderStore');
-
-//StudentController - Agreement
-Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
-Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
-
-//UserControllaer New passwprd
-Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
-Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
-
-
-// CommunityController
-Route::get('/community/dashboard',[CommunityController::class, 'dashboard'])->name('communityDashboard');
-Route::get('/privatestate/student/docs/review',[CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
-Route::get('/community/student/docs/review',[CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
-Route::get('/community/create-user',[CommunityController::class, 'createUser'])->name('createUser');
-Route::post('/community/student/payments/verified-update',[CommunityController::class,'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
-Route::post('/community/student/payments/verified-docs',[CommunityController::class,'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
-
-
-Route::get('documents/{national_id}',[FileController::class,'student_documents'])->name('GetStudentDocuments');
-Route::get('documents/show/{path?}',[FileController::class,'get_student_document'])->where('path', '(.*)')->name('GetStudentDocument');
-
 //Auth::routes();
-Auth::routes(['register'=> false]);
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Auth::routes(['register' => false]);
 
-Route::get('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
-Route::post('/affairs/finalaccepted',[StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
-Route::get('/affairs/finalaccepted/list',[StudentAffairsController::class, 'finalAcceptedList'])->name('finalAcceptedList');
-Route::get('/affairs/checked',[StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
-Route::get('/affairs/new',[StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
-Route::get('/affairs/publish-to-rayat',[StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-Route::post('/affairs/publish-to-rayat',[StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
-Route::get('/affairs/rayat-report',[StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
+Route::middleware('auth')->group(function () {
+    // Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    // FIXME: use the home page as dashboard page for all type of users and make
+    //        sure the home page display different content foreach type of users
+    // CommunityController
+    Route::get('/community/dashboard', [CommunityController::class, 'dashboard'])->name('communityDashboard');
 
+    // FIXME: this route is not used anywhere, shall we remove it?
+    Route::get('/documents/{national_id}', [FileController::class, 'student_documents'])->name('GetStudentDocuments');
+    Route::get('/documents/show/{path?}', [FileController::class, 'get_student_document'])
+        ->where('path', '(.*)')
+        ->name('GetStudentDocument');
 
-//departmentBoss
-Route::get('/deptBoss/manage-courses',[DepartmentBossController::class, 'index'])->name('manageCourses');
-Route::get('/deptBoss/courses-data',[DepartmentBossController::class, 'getCoursesData'])->name('getCoursesData');
-Route::post('/deptBoss/courses/update-level',[DepartmentBossController::class, 'updateCoursesLevel'])->name('updateCoursesLevel');
-Route::get('/deptBoss/faltering-students',[falteringStudentsController::class, 'index'])->name('falteringStudents');
-Route::get('/deptBoss/student-info/{id}',[StudentController::class, 'getStudentInfo'])->name('studentInfo');
-Route::get('/major/{majorId}/courses',[CourseController::class, 'getCoursesByMajorId']);
+    // TODO: disable this in release
+    //Logs Viewer
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+});
 
-Route::post('/student-courses/add',[StudentCoursesController::class, 'addCourseToStudent']);
+// خدمة المجتمع
+Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
+    Route::get('/community/create-user', [CommunityController::class, 'createUser'])->name('createUser');
+    Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
+    Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
+    Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
+    Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
+    Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
+    Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
+});
 
+// شؤون المتدربين
+Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function () {
+    Route::get('/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
+    Route::post('/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
+    Route::get('/affairs/finalaccepted/list', [StudentAffairsController::class, 'finalAcceptedList'])->name('finalAcceptedList');
+    Route::get('/affairs/checked', [StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
+    Route::get('/affairs/new', [StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
+    // ExcelController
+    Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
+    //Route::get('/excel/new/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
+    Route::post('/excel/new/import', [ExcelController::class, 'importNewUsers'])->name('importExcel');
+    // Old users
+    Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
+    Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
+    //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
+    Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
+    Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
+    Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
 
-Route::get('/majorsByProgramId/{id}',[MajorController::class, 'getmajorsByProgramId']);
+    Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
+});
 
-Route::post('/student-courses/delete', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('deleteCourse');
+// رأساء الأقسام
+Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
+    //departmentBoss
+    Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
+    Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
+    Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
 
+    Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
+    Route::get('/api/student/{id}', [StudentController::class, 'getStudent'])->name('apiGetStudent');
+    Route::get('/api/major/{majorId}/courses', [CourseController::class, 'getCoursesByMajorId']);
+    Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCoursesToStudent']);
+    Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
+    // FIXME: use path-parameter instead of header key-value pairs (for consistency)
+    Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');
+});
+
+// المتدربين
+Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {
+    //StudentController - Edit student form
+    //Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
+    Route::get('/student/edit', [StudentController::class, 'edit'])->name('EditOneStudent');
+    Route::post('/student/update', [StudentController::class, 'update'])->name('UpdateOneStudent');
+    Route::get('/student/delete', [StudentController::class, 'destroy'])->name('DeleteOneStudent');
+    Route::post('/student/level', [StudentController::class, 'getStudentOnLevel'])->name('getStudentOnLevel');
+    Route::post('/student/update-state/', [StudentController::class, 'updateStudentState'])->name('updateStudentState');
+
+    // Student wallet PaymentController
+    Route::get('/student/wallet/main', [PaymentController::class, 'main'])->name('walletMain');
+    Route::get('/student/wallet/payment/from', [PaymentController::class, 'form'])->name('paymentForm');
+    Route::post('/student/wallet/payment/store', [PaymentController::class, 'store'])->name('paymentStore');
+
+    // Student wallet PaymentController (json)
+    // Well be move from CommunityController
+    // Route::post('/community/student/payments/verified-update',[TransactionController::class,'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
+    // Route::post('/community/student/payments/verified-docs',[TransactionController::class,'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
+
+    // Student Courses Orders OrderController
+    Route::get('/student/order/form', [OrderController::class, 'form'])->name('orderForm');
+    Route::post('/student/order/store', [OrderController::class, 'store'])->name('orderStore');
+
+    //StudentController - Agreement
+    Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
+    Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
+
+    //UserControllaer New passwprd
+    Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
+    Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
+});
+
+Route::middleware(['auth', 'role:الإرشاد'])->group(function () {
+    Route::get('/privatestate/student/docs/review', [CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
+});

@@ -139,6 +139,7 @@ jQuery(function () {
                         )
                             .appendTo($(this).empty())
                             .on("change", function () {
+                                // FIXME: error dataTable undefined
                                 var val = $.fn.dataTable.util.escapeRegex(
                                     $(this).val()
                                 );

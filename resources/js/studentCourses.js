@@ -13,7 +13,7 @@ window.getStudentCourses = function () {
     var section2 = document.getElementById('section2');
     $.ajax({
         type: "get",
-        url: '/deptBoss/student-info/' + id,
+        url: '/api/student/' + id,
         headers: {
             Accept: "application/json",
             ContentType: "application/json",
@@ -68,7 +68,7 @@ function fillStudentTable(courses) {
 
 window.getMajors = function () {
     var programId = document.getElementById('program').value;
-    axios.get('/majorsByProgramId/' + programId)
+    axios.get('/api/program/' + programId + '/majors/')
         .then((response) => {
             fillMajors(response.data.majors);
         })
@@ -97,7 +97,7 @@ window.getCourses = function () {
     var majorId = document.getElementById('major').value;
     $.ajax({
         type: "get",
-        url: '/major/' + majorId + '/courses',
+        url: '/api/major/' + majorId + '/courses',
         headers: {
             Accept: "application/json",
             ContentType: "application/json",
@@ -187,7 +187,7 @@ function addCoursesRequset(coursesData) {
         },
     });
     axios
-        .post('/student-courses/add', coursesData)
+        .post('/api/student/add-courses', coursesData)
         .then((response) => {
             Swal.fire({
                 position: "center",
@@ -212,7 +212,7 @@ function addCoursesRequset(coursesData) {
 
 window.deleteCourse = function (studentCourseId) {
     axios
-        .post('/student-courses/delete', {
+        .post('/api/student/delete-courses', {
             studentCourseId: studentCourseId,
         })
         .then((response) => {

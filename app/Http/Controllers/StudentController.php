@@ -158,7 +158,7 @@ class StudentController extends Controller
         }
     }
 
-   
+
     // Route: type GET | URL: /student/delete | route name DeleteOneStudent
     public function destroy()
     {
@@ -292,7 +292,7 @@ class StudentController extends Controller
     }
 
 
-    public function getStudentInfo($id)
+    public function getStudent($id)
     {
         try {
             $userInfo = User::with('student.courses')->whereHas('student', function ($result) use ($id) {
