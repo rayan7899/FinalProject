@@ -11,6 +11,11 @@ class Permission extends Model
 
     public function role()
     {
-        return $this->hasOne(Role::class);
+        return $this->belongsTo(Role::class);
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(Manager::class);
     }
 }

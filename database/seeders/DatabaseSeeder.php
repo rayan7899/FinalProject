@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Program;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,10 +19,13 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
         $this->call([
+            RoleSeeder::class,
             ProgramSeeder::class,
             DepartmentSeeder::class,
             MajorSeeder::class,
             CourseSeeder::class,
+            UserSeeder::class
+            
             //StudentSeeder::class,
             ]);
     }

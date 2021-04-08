@@ -17,6 +17,11 @@
         $total_hours += $course->credit_hours;
         $total_cost += $course->credit_hours * 550;
     }
+
+    $paymentsCount  = count($user->student->payments);
+    if($user->student->payments[$paymentsCount - 1 ]->transaction_id == null){
+        $total_hours = 0;
+    }
     @endphp
     <div class="container">
         <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -47,15 +52,15 @@
         <div class="row justify-content-center">
             <div class="col-10">
                 @if (session()->has('error') || isset($error))
-                <div class="alert alert-danger">
-                    {{ session()->get('error') ?? $error}}
-                </div>
-            @endif
-            @if (session()->has('success') || isset($success))
-                <div class="alert alert-success">
-                    {{ session()->get('success') ?? $success}}
-                </div>
-            @endif
+                    <div class="alert alert-danger">
+                        {{ session()->get('error') ?? $error }}
+                    </div>
+                @endif
+                @if (session()->has('success') || isset($success))
+                    <div class="alert alert-success">
+                        {{ session()->get('success') ?? $success }}
+                    </div>
+                @endif
                 <div class="card my-4">
                     <div class="card-header">
                         <h5 class="card-title">
@@ -63,7 +68,7 @@
                         </h5>
                     </div>
                     <div class="row">
-                        
+
                         <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white h5"
@@ -187,7 +192,7 @@
                     <div class="card-body">
                         <div class="row m-2">
                             <a href="{{ route('walletMain') }}" class=" btn btn-primary rounded">
-                               اضافة مقررات  / شحن المحفظة
+                                اضافة مقررات / شحن المحفظة
                             </a>
                             {{-- <a href="{{ route('orderForm') }}" class=" btn btn-primary m-3 rounded"
                                 style="padding: 20px; font-size: 14px; font-weight:bold;">

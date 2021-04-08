@@ -26,30 +26,42 @@ class CommunityController extends Controller
                 "name" => "تدقيق الايصالات",
                 "url" => route("paymentsReviewForm")
             ],
-            (object) [
-                "name" => "المتدربين المدققة ايصالاتهم",
-                "url" => route("CheckedStudents")
-            ],
-            (object) [
-                "name" => "انشاء مستخدم",
-                "url" => route("createUser")
-            ],
+            // (object) [
+            //     "name" => "المتدربين المدققة ايصالاتهم",
+            //     "url" => route("CheckedStudents")
+            // ],
+            // (object) [
+            //     "name" => "انشاء مستخدم",
+            //     "url" => route("createUser")
+            // ],
             // (object) [
             //     "name" => "فصل دراسي جديد",
             //     "url" => route("newSemester")
             // ],
+            // (object) [
+            //     "name" => "متابعة حالات المتدربين",
+            //     "url" => route("studentsStates")
+            // ],
+
             (object) [
-                "name" => "متابعة حالات المتدربين",
-                "url" => route("studentsStates")
+                "name" => "الرفع لرايات",
+                "url" => route("publishToRayatFormCommunity")
             ],
+
             (object) [
-                "name" => "المتدربين المستمرين",
+                "name" => "تقرير رايات",
+                "url" => route("rayatReportFormCommunity")
+            ],
+
+            (object) [
+                "name" => "جميع المتدربين المستمرين",
                 "url" => route("oldStudentsReport")
             ],
             (object) [
-                "name" => "المتدربين المستجدين",
+                "name" => "جميع المتدربين المستجدين",
                 "url" => route("newStudentsReport")
             ],
+          
         ];
         return view("manager.community.dashboard")->with(compact("links"));
     }
@@ -61,10 +73,10 @@ class CommunityController extends Controller
                 "name" => "تدقيق المستندات(ظروف خاصة)",
                 "url" => route("PrivateAllStudentsForm")
             ],
-            (object) [
-                "name" => "متابعة حالات المتدربين",
-                "url" => route("studentsStates")
-            ],
+            // (object) [
+            //     "name" => "متابعة حالات المتدربين",
+            //     "url" => route("studentsStates")
+            // ],
         ];
         return view("manager.private.dashboard")->with(compact("links"));
     }
@@ -101,7 +113,7 @@ class CommunityController extends Controller
         }
         for ($i = 0; $i < count($payments); $i++) {
             try {
-                if ($users[$i]->id == $payments[$i]->student_id) {
+                if ($users[$i]->student->id == $payments[$i]->student_id) {
                     $users[$i]->student->payment = $payments[$i];
                     $users[$i]->student->receipt = Storage::disk('studentDocuments')->files(
                         $users[$i]->national_id . '/receipts/' . $users[$i]->student->payments[0]->receipt_file_id
@@ -236,95 +248,24 @@ class CommunityController extends Controller
     }
 
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\  $
-     * @return \Illuminate\Http\Response
-     */
-    public function show()
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\  $
-     * @return \Illuminate\Http\Response
-     */
-    public function edit()
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\  $
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\  $
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy()
-    {
-        //
-    }
 
     public function publishToRayatForm()
     {   
-        $newUsers = User::with('student')->whereHas('student', function ($result) {
-            $result->where('final_accepted', true)
-                ->where('documents_verified', true)
-                ->where('level', '>', '1');
-        })->get();
-        $users = [];
-        foreach ($newUsers as $user) {
-            if(!$user->student->published){
-                array_push($users, $user);
-            }
-        }
+        // $users = User::with('student')->whereHas('student', function ($result) {
+        //     $result->where('final_accepted', true)
+        //         ->where('documents_verified', true)
+        //         ->where('level', '>', '1')
+        //         ->where("published", false);
+        // })->get();
+        $payments = Payment::where("transaction_id", "!=", null)->get();
+        $paymentIds = $payments->pluck('student_id')->toArray();
+        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+                $res->where("traineeState", "!=", "privateState")
+                    ->where('level', '>', '1')
+                    ->where("published", false)
+                    ->whereIn("id", $paymentIds);
+            })->get();
+
         if (isset($users)) {
             return view('manager.community.publishHoursToRayat')
                 ->with(compact('users'));
@@ -353,18 +294,13 @@ class CommunityController extends Controller
 
     public function rayatReportForm()
     {
-        $newUsers = User::with('student')->whereHas('student', function ($result) {
+        $users = User::with('student')->whereHas('student', function ($result) {
             $result->where('final_accepted', true)
                 ->where('documents_verified', true)
-                ->where('level', '>', '1');
+                ->where('level', '>', '1')
+                ->where("published", true);
         })->get();
 
-        $users = [];
-        foreach ($newUsers as $user) {
-            if($user->student->published){
-                array_push($users, $user);
-            }
-        }
         if (isset($users)) {
             return view('manager.community.rayatReport')
                 ->with(compact('users'));

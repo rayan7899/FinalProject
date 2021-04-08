@@ -17,13 +17,14 @@ class Agreement
      */
     public function handle(Request $request, Closure $next)
     {
-        // dd(Auth::user()->agreement);
-        if(Auth::user()->student->agreement != 0){
-            return $next($request);
-        }
-        else{
-            return redirect(route('AgreementForm'))->with('error', 'يجب الموافقة على الشروط اولا');
+        if (Auth::user()->student !== null) {
+            if (Auth::user()->student->agreement != 0) {
+                return $next($request);
+            } else {
+                return redirect(route('AgreementForm'))->with('error', 'يجب الموافقة على الشروط اولا');
+            }
         }
 
+        return $next($request);
     }
 }

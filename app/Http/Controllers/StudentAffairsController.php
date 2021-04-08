@@ -20,6 +20,10 @@ class StudentAffairsController extends Controller
     {
         $links = [
             (object) [
+                "name" => "القبول النهائي",
+                "url" => route("finalAcceptedForm")
+            ],
+            (object) [
                 "name" => "قائمة القبول النهائي",
                 "url" => route("finalAcceptedList")
             ],
@@ -27,10 +31,7 @@ class StudentAffairsController extends Controller
                 "name" => "المتدربين المستجدين",
                 "url" => route("NewStudents")
             ],
-            (object) [
-                "name" => "القبول النهائي",
-                "url" => route("finalAcceptedForm")
-            ],
+
             (object) [
                 "name" => "اضافة اكسل مستجدين",
                 "url" => route("AddExcelForm")
@@ -43,10 +44,10 @@ class StudentAffairsController extends Controller
                 "name" => "الجداول المقترحة",
                 "url" => route("coursesPerLevel")
             ],
-            (object) [
-                "name" => "متابعة حالات المتدربين",
-                "url" => route("studentsStates")
-            ],
+            // (object) [
+            //     "name" => "متابعة حالات المتدربين",
+            //     "url" => route("studentsStates")
+            // ],
         ];
         return view("manager.studentsAffairs.dashboard")->with(compact("links"));
     }
@@ -113,7 +114,9 @@ class StudentAffairsController extends Controller
     {
         try {
             $users = User::with('student')->whereHas('student', function ($result) {
-                $result->where('final_accepted', true)->where('documents_verified', true);
+                $result->where('final_accepted', true)
+                    ->where('documents_verified', true)
+                    ->where("level", 1);
             })->get();
             return $users;
         } catch (Exception $e) {
@@ -145,7 +148,7 @@ class StudentAffairsController extends Controller
     }
 
     public function publishToRayatForm()
-    {   
+    {
         $newUsers = User::with('student')->whereHas('student', function ($result) {
             $result->where('final_accepted', true)
                 ->where('documents_verified', true)
@@ -154,7 +157,7 @@ class StudentAffairsController extends Controller
 
         $users = [];
         foreach ($newUsers as $user) {
-            if(!$user->student->published){
+            if (!$user->student->published) {
                 array_push($users, $user);
             }
         }
@@ -188,7 +191,7 @@ class StudentAffairsController extends Controller
     {
         $users = [];
         foreach ($this->getFinalAcceptedStudents() as $user) {
-            if($user->student->published){
+            if ($user->student->published) {
                 array_push($users, $user);
             }
         }

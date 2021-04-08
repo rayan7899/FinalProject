@@ -69,13 +69,25 @@ class OrderController extends Controller
          "traineeState"      => "required|string",
          "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
          "privateStateDoc"   => "required_if:traineeState,privateState",
-      ],[
+      ], [
          'payment_receipt.required_if' => 'إيصال السداد مطلوب',
          'courses.required' => 'لم تقم باختيار المقررات',
-     ]);
+      ]);
 
 
       try {
+         switch($requestData["traineeState"]){
+            
+            case 'employee':
+                $discount = 0.75;
+                break;
+            case 'employeeSon':
+                $discount=0.5;
+                break;
+            default:
+                $discount = 0;
+                break;
+        }
          $total_hours = array_sum(array_map(
             function ($c) {
                return $c['credit_hours'];
@@ -84,8 +96,8 @@ class OrderController extends Controller
          ));
          $amount = $total_hours * 550;
 
-         if ($total_hours < 9 || $total_hours > 21) {
-            return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 9 و 21');
+         if ($total_hours < 12 || $total_hours > 21) {
+            return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 12 و 21');
          }
 
          DB::beginTransaction();
@@ -105,7 +117,7 @@ class OrderController extends Controller
             ]);
          }
 
-         // traineeState ------------------------------------------------------------
+         // privateState ------------------------------------------------------------
 
          if ($requestData["traineeState"] == "privateState") {
 
@@ -123,8 +135,9 @@ class OrderController extends Controller
          } else {
 
 
-            
-             $walletAfterCalc = $user->student->wallet - $amount;
+            // Other traineeState ------------------------------------------------------------
+
+            $walletAfterCalc = $user->student->wallet - $amount;
             if ($walletAfterCalc < 0) {
                $cost = abs($walletAfterCalc);
                $randomId =  uniqid();
@@ -136,10 +149,9 @@ class OrderController extends Controller
                );
                $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $requestData['payment_receipt']->getClientOriginalExtension();
                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($requestData['payment_receipt']));
-               
             }
-
-            $user->student->wallet -= $amount;
+            $discountAmount = $amount * $discount;
+            $user->student->wallet -= ($amount - $discountAmount);
             $user->student->save();
             $order = $user->student->orders()->create(
                [

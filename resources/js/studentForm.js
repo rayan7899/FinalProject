@@ -49,31 +49,32 @@ window.addToCoursesTable = function () {
         //     
         tableCourses.appendChild(row);
         // }
-
+       
     });
-    calcCost();
+    window.calcCost();
     $('#pick-courses').modal('hide');
 }
 
 
 window.calcCost = function (event) {
     window.t_cost = 0;
+    window.total_hours = 0;
     document.getElementById('totalHoursCost').value = 0;
     let coursesTable = document.getElementById("courses");
     for (let course of coursesTable.children) {
-        
         if (course.children[5].children[0].checked == true) {
             window.t_cost += parseInt(course.dataset.cost);
             window.total_hours += parseInt(course.dataset.hours);
         }
     }
-    // if(window.total_hours < 9 || window.total_hours > 21){
-    //     $("#courses-error").html("يجب ان يكون مجموع الساعات بين ٩ و ٢١ ساعة");
-    //     $("#courses-error").show();
-    // }else{
-    //     $("#courses-error").hide();
+    if(window.total_hours < 12 || window.total_hours > 21){
+        $("#courses-error").html("يجب ان يكون مجموع الساعات بين 12 و 21 ساعة");
+        $("#courses-error").show();
+    }else{
+        $("#courses-error").html("");
+        $("#courses-error").hide();
         
-    // }
+    }
     
 
     let state = 'trainee';
@@ -127,16 +128,18 @@ window.calcCost = function (event) {
     }
 
     let walletAfterCalc = window.wallet - window.t_cost;
-    
     let cost = 0;
     if (walletAfterCalc >= 0) {
         document.getElementById("walletAfterCalc").value = walletAfterCalc;
+        $('#costFormGroup').hide();
+        $('#receiptImg').prop('disabled', true);
+        document.getElementById("cost").value = 0;;
     } else {
-        cost = Math.abs(walletAfterCalc);
-        
+        cost = Math.abs(walletAfterCalc);        
         document.getElementById("walletAfterCalc").value = 0;
         $('#costFormGroup').show();
-        $('#cost').val(cost)
+        $('#receiptImg').prop('disabled', false);
+        document.getElementById("cost").value = cost;
     }
 
 }

@@ -14,20 +14,27 @@ window.findMajor = function (programs, program_id, department_id) {
 };
 
 window.findDepartment = function (programs, program_id) {
-    for (var i = 0; i < programs.length; i++) {
-        if (programs[i].id == program_id) {
-            return programs[i].departments;
+    if(programs !== undefined && programs !== null){
+        for (var i = 0; i < programs.length; i++) {
+            if (programs[i].id == program_id) {
+                return programs[i].departments;
+            }
         }
     }
 };
 
 window.fillDepartments = function () {
     var prog = document.getElementById("program").value;
+    if(prog == undefined){
+        return ;
+    }
 
     var dept = document.getElementById("department");
     dept.innerHTML = '<option value="0" disabled selected>أختر</option>';
     var departments = findDepartment(window.programs, prog);
-
+if(departments === undefined){
+    return;
+}
     for (var i = 0; i < departments.length; i++) {
         var option = document.createElement("option");
         option.innerHTML = departments[i].name;
@@ -56,6 +63,12 @@ window.fillMajors = function () {
 
 window.onload = function () {
     $("#excel_form").on("submit", function (e) {
-        $("#loading").css("display", "block");
+        Swal.fire({
+            html: "<h4>جاري تحديث البيانات</h4>",
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+        });
     });
 };

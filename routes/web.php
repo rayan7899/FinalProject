@@ -37,10 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     // FIXME: use the home page as dashboard page for all type of users and make
     //        sure the home page display different content foreach type of users
-    // CommunityController
-    Route::get('/community', [CommunityController::class, 'dashboard'])->name('communityDashboard');
-    Route::get('/private', [CommunityController::class, 'privateDashboard'])->name('privateDashboard');
-    Route::get('/affairs/dashboard', [StudentAffairsController::class, 'dashboard'])->name('affairsDashboard');
+
+   
     Route::get('/deptBoss', [DepartmentBossController::class, 'dashboard'])->name('deptBossDashboard');
 
     // FIXME: this route is not used anywhere, shall we remove it?
@@ -56,6 +54,7 @@ Route::middleware('auth')->group(function () {
 
 // خدمة المجتمع
 Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
+    Route::get('/community', [CommunityController::class, 'dashboard'])->name('communityDashboard');
     Route::get('/community/create-user', [CommunityController::class, 'createUser'])->name('createUser');
     Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
@@ -74,6 +73,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
 
 // شؤون المتدربين
 Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function () {
+    Route::get('/affairs/dashboard', [StudentAffairsController::class, 'dashboard'])->name('affairsDashboard');
     Route::get('/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
     Route::post('/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
     Route::get('/affairs/finalaccepted/list', [StudentAffairsController::class, 'finalAcceptedList'])->name('finalAcceptedList');
@@ -95,7 +95,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
 });
 
 // روأسا الأقسام
-Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
+// Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
     //departmentBoss
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
     Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
@@ -108,10 +108,12 @@ Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
     Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
     // FIXME: use path-parameter instead of header key-value pairs (for consistency)
     Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');
-});
+// });
 
 // المتدربين
-Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {
+// Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {
+Route::middleware(['auth','agreement'])->group(function () {
+
     //StudentController - Edit student form
     //Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
     Route::get('/student/edit', [StudentController::class, 'edit'])->name('EditOneStudent');
@@ -134,9 +136,6 @@ Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {
     Route::get('/student/order/form', [OrderController::class, 'form'])->name('orderForm');
     Route::post('/student/order/store', [OrderController::class, 'store'])->name('orderStore');
 
-    //StudentController - Agreement
-    Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
-    Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
 
     //UserControllaer New passwprd
     Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
@@ -144,8 +143,15 @@ Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:الإرشاد'])->group(function () {
+    Route::get('/private', [CommunityController::class, 'privateDashboard'])->name('privateDashboard');
     Route::get('/privatestate/student/docs/review', [CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
+    Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
+
 });
+
+    //StudentController - Agreement
+    Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
+    Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
 
 
 // Route::get('/deptBoss/courses-data', [DepartmentBossController::class, 'getCoursesData'])->name('getCoursesData');
