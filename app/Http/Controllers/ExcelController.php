@@ -35,7 +35,7 @@ class ExcelController extends Controller
     function importNewUsers(Request $request)
     {
         $deptMjr = $this->validate($request, [
-            "excel_file" => "required|mimes:xls,xlsx",
+            "excel_file" => "required|mimes:xls,xlsx,ods",
             "program" => "required|numeric|min:1",
             "department" => "required|numeric|min:1",
             "major" => "required|numeric|min:1",
@@ -64,9 +64,11 @@ class ExcelController extends Controller
 
     public function importOldUsers(Request $request)
     {
-
+       $request->validate([
+        "excel_file" => "mimes:xls,xlsx,ods",
+       ]);
         try {
-            $coll =  Excel::import(new OldUsersImport, $request->file('excel_file'));
+            Excel::import(new OldUsersImport, $request->file('excel_file'));
             return back();
         } catch (Exception $e) {
             return redirect(route('OldForm'))->with('error',$e->getMessage());

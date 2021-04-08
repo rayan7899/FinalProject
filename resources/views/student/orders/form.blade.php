@@ -27,7 +27,8 @@
                         <tbody id="pick-courses">
                             @if (isset($major_courses))
                                 @forelse ($major_courses as $course)
-                                    <tr data-cost="{{ $course->credit_hours * 550 }}" data-hours="{{ $course->credit_hours }}">
+                                    <tr data-cost="{{ $course->credit_hours * 550 }}"
+                                        data-hours="{{ $course->credit_hours }}">
                                         <td class="text-center">{{ $course->code }}</td>
                                         <td class="text-center">{{ $course->name }}</td>
                                         <td class="text-center">{{ $course->level }}</td>
@@ -75,7 +76,8 @@
                 اصافة مقررات
             </div>
             <div class="card-body">
-                <form id="addCoursesOrder" action="{{ route('orderStore') }}" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                <form id="addCoursesOrder" action="{{ route('orderStore') }}" method="post" accept-charset="utf-8"
+                    enctype="multipart/form-data">
                     @csrf
                     <!-- department and major -->
                     <div class="form-row form-group">
@@ -120,7 +122,8 @@
                                             $default_cost += $course->credit_hours * 550;
                                             $default_total_hours += $course->credit_hours;
                                         @endphp
-                                        <tr>
+                                        <tr data-cost="{{ $course->credit_hours * 550 }}"
+                                            data-hours="{{ $course->credit_hours }}">
                                             <td class="text-center">{{ $course->code }}</td>
                                             <td class="text-center">{{ $course->name }}</td>
                                             <td class="text-center">{{ $course->level }}</td>
@@ -128,7 +131,8 @@
                                             <td class="text-center">{{ $course->credit_hours * 550 }}</td>
                                             <td class="text-center @if ($user->student->level < 2) d-none @endif">
                                                     <input id="course_{{ $course->id }}" type="checkbox" name="courses[]"
-                                                        value="{{ $course->id }}" onclick="window.calcCost(event)" checked />
+                                                        value="{{ $course->id }}" onclick="window.calcCost(event)"
+                                                        checked />
                                             </td>
                                         </tr>
                                     @endforeach
@@ -164,18 +168,18 @@
                                 <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
                                     <a id="info-popup" data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة"
                                         class="h5 text-right mx-2" data-content="
-                                                                   <div class='text-right' dir='rtl' style='width: 30%;'>
-                                                                   ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
-                                                                   <br>
-                                                                   ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
-                                                                   <br>
-                                                                   ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
-                                                                   <br>
-                                                                   ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
-                                                                   <br>
-                                                                   ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
-                                                                   </div>
-                                                                   ">( ! )</a>
+                                                                       <div class='text-right' dir='rtl' style='width: 30%;'>
+                                                                       ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
+                                                                       <br>
+                                                                       ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
+                                                                       <br>
+                                                                       ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
+                                                                       <br>
+                                                                       ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
+                                                                       <br>
+                                                                       ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
+                                                                       </div>
+                                                                       ">( ! )</a>
                                     <input value="privateState" type="radio" onclick="window.calcCost()" id="privateState"
                                         name="traineeState" class="custom-control-input">
                                     <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
@@ -227,16 +231,17 @@
                                 <input dir="rtl" disabled type="text" class="form-control text-center" id="cost" name="cost"
                                     value="">
                             </div>
+                            <!-- payment receipt image -->
+                            <div class="form-group" id="receipt">
+                                <label for="receiptImg"> صورة إيصال السداد</label>
+                                <input type="file" name="payment_receipt" class="form-control" id="receiptImg">
+                            </div>
                         </div>
 
 
                     </div>
 
-                    <!-- payment receipt image -->
-                    <div class="form-group" id="receipt">
-                        <label for="receiptImg"> صورة إيصال السداد</label>
-                        <input type="file" name="payment_receipt" class="form-control" id="receiptImg">
-                    </div>
+
 
                     <!-- requiered documents -->
                     <div class="form-group" id="privateStateDocGroup" style="display: none;">

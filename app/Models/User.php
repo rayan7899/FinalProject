@@ -42,16 +42,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
-    public function student(){
+
+    public function student()
+    {
         return $this->hasOne(Student::class);
     }
 
-    public function manager(){
+    public function manager()
+    {
         return $this->hasOne(Manager::class);
     }
 
-  
-
-
+    public function hasRole($role)
+    {
+        $user = $this;
+        if ($user->manager !== null) {
+            return $user->manager->hasRole($role);
+        } else {
+            if ($role == "متدرب") {
+                if ($user->student !== null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
