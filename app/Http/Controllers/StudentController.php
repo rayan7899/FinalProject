@@ -185,15 +185,18 @@ class StudentController extends Controller
 
     public function UpdatePasswordForm()
     {
-        return view('student.update_password');
+        return back();
+        // return view('');
     }
 
 
     public function UpdatePassword(Request $request)
     {
         $newpass = $this->validate($request, [
+            // 'username' => 'required|digits:10',
             'password' => 'required|string|min:8|confirmed',
         ]);
+
         if ($newpass['password'] != "bct12345") {
             Auth::user()->update([
                 'password' => Hash::make($newpass['password']),

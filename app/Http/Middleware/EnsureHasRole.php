@@ -3,7 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EnsureHasRole
 {
@@ -16,6 +18,7 @@ class EnsureHasRole
      */
     public function handle(Request $request, Closure $next, $role)
     {
+        try {
         $manager = $request->user()->manager;
         $student = $request->user()->student;
         switch ($role) {
@@ -39,6 +42,11 @@ class EnsureHasRole
                 }
                 break;
         }
-        return $next($request);
+       
+            return $next($request);
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("errer","حدث خطأ غير معروف");
+        }
     }
 }

@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
 
         $user = User::create([
             'national_id' => "3333333333",
-            'name'          => "الإرشاد",
+            'name'          => "موظف الإرشاد",
             'email'         => NULL,
             'phone'         => "0533333333",
             'password' => Hash::make("12345678")

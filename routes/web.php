@@ -55,7 +55,6 @@ Route::middleware('auth')->group(function () {
 // خدمة المجتمع
 Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community', [CommunityController::class, 'dashboard'])->name('communityDashboard');
-    Route::get('/community/create-user', [CommunityController::class, 'createUser'])->name('createUser');
     Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
@@ -66,6 +65,14 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
     Route::get('/community/old-students-report', [CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
     Route::get('/community/new-students-report', [CommunityController::class, 'newStudentsReport'])->name('newStudentsReport');
+    Route::get('/community/users/create', [CommunityController::class, 'createUserForm'])->name('createUserForm');
+    Route::post('/community/users/store', [CommunityController::class, 'createUserStore'])->name('createUserStore');
+    Route::get('/community/users/edit/{user}', [CommunityController::class, 'editUserForm'])->name('editUserForm');
+    Route::post('/community/users/update/{user}', [CommunityController::class, 'editUserUpdate'])->name('editUserUpdate');
+    Route::get('/community/users/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+    Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
+    Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
+    Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');
     Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
     Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
     Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
