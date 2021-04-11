@@ -67,10 +67,9 @@ class OrderController extends Controller
          "courses"      => "required|array|min:1",
          "courses.*"    => "required|numeric|distinct|exists:courses,id",
          "traineeState"      => "required|string",
-         "payment_receipt"   => "required_if:traineeState,trainee,employee,employeeSon|mimes:pdf,png,jpg,jpeg|max:4000",
+         "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:4000",
          "privateStateDoc"   => "required_if:traineeState,privateState",
       ], [
-         'payment_receipt.required_if' => 'إيصال السداد مطلوب',
          'courses.required' => 'لم تقم باختيار المقررات',
       ]);
 
@@ -95,6 +94,11 @@ class OrderController extends Controller
             Course::whereIn('id', $requestData['courses'])->get()->toArray()
          ));
          $amount = $total_hours * 550;
+         $walletAfterCalc = $user->student->wallet - $amount;
+
+         if ($walletAfterCalc < 0) {
+            return back()->with('error', ' ايصال السداد حقل مطلوب');
+         }
 
          if ($total_hours < 12 || $total_hours > 21) {
             return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 12 و 21');
