@@ -77,5 +77,9 @@
                 </tbody>
             </table>
         </div>
+        <script>
+             var publishToRayat = "{{ route('publishToRayatCommunity') }}";
+        </script>
+
     </div>
 @stop

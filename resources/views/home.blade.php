@@ -3,27 +3,34 @@
     {{-- @dd($user->student->final_accepted); --}}
     {{-- {{ $user->student->documents_verified == true && $user->student->final_accepted == true ? 'border-success text-success' : '' }} --}}
     @php
-    $step_1 = $user->student->documents_verified == true ? 'border-success text-success' : '';
-    $line_1 = $user->student->documents_verified == true ? 'bg-success' : '';
-
-    $step_2 = $user->student->student_docs_verified == true ? 'border-success text-success' : '';
-    $line_2 = $user->student->student_docs_verified == true ? 'bg-success' : '';
-
-    $step_3 = $user->student->final_accepted == true ? 'border-success text-success' : '';
-
     $total_cost = 0;
     $total_hours = 0;
+    $paymentsState = true;
     foreach ($user->student->courses as $course) {
         $total_hours += $course->credit_hours;
         $total_cost += $course->credit_hours * 550;
     }
-
     $paymentsCount = count($user->student->payments);
+    // dd($user->student->payments[$paymentsCount - 1]);
     if ($paymentsCount > 0) {
         if ($user->student->payments[$paymentsCount - 1]->transaction_id == null) {
             $total_hours = 0;
+            $paymentsState = false;
         }
+    } else {
+        $total_hours = 0;
+        $paymentsState = false;
     }
+    
+    $step_1 = $paymentsState == true ? 'border-success text-success' : '';
+    $line_1 = $paymentsState == true ? 'bg-success' : '';
+
+    $step_2 = $user->student->published == true ? 'border-success text-success' : '';
+    $line_2 = $user->student->published == true ? 'bg-success' : '';
+
+    // $step_3 = $user->student->final_accepted == true ? 'border-success text-success' : '';
+
+    
 
     @endphp
     <div class="container">
@@ -45,13 +52,13 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="stepState">
-            <div class="flag {{ $step_1 }}">الايصال</div>
-            <!-- <div class="line {{ $line_1 }}"></div> -->
-            <div class="flag {{ $step_2 }}">الوثائق</div>
-            <!-- <div class="line {{ $line_2 }}"></div> -->
-            <div class="flag {{ $step_3 }}">مقبول</div>
-        </div> --}}
+        <div class="stepState">
+            <div class="flag {{ $step_1 }}">ايصالات الدفع</div>
+            {{-- <!-- <div class="line {{ $line_1 }}"></div> --> --}}
+            <div class="flag {{ $step_2 }}">اعتماد الساعات</div>
+            {{-- <!-- <div class="line {{ $line_2 }}"></div> --> --}}
+            {{-- <div class="flag {{ $step_3 }}">مقبول</div> --}}
+        </div>
         <div class="row justify-content-center">
             <div class="col-10">
                 @if (session()->has('error') || isset($error))
@@ -173,7 +180,9 @@
                         <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                    value="{{ $total_hours ?? 'لا يوجد' }}">
+                                    value="{{
+                                        $user->student->published == true ?  $total_hours : ' بانتظار الاعتماد '
+                                    }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
                                             class="text-center m-0 p-0 w-100">الساعات المعتمدة</label></span>
@@ -269,12 +278,12 @@
 
         .flag {
             display: flex;
-            width: 70px;
-            height: 70px;
+            width: 120px;
+            padding: 5px;
             justify-content: center;
             align-content: center;
             align-items: center;
-            border-radius: 50%;
+            border-radius: 5px;
             border: 3px solid #b4b4b4;
             background-color: #f3f3f3;
             font-weight: bold;

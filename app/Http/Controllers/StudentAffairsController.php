@@ -149,18 +149,16 @@ class StudentAffairsController extends Controller
 
     public function publishToRayatForm()
     {
-        $newUsers = User::with('student')->whereHas('student', function ($result) {
-            $result->where('final_accepted', true)
-                ->where('documents_verified', true)
-                ->where('level', '1');
-        })->get();
+        $payments = Payment::where("transaction_id", "!=", null)->get();
+        $paymentIds = $payments->pluck('student_id')->toArray();
+        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+                $res->where("traineeState", "!=", "privateState")
+                    ->where('level', '1')
+                    ->where('final_accepted', true)
+                    ->where("published", false)
+                    ->whereIn("id", $paymentIds);
+            })->get();
 
-        $users = [];
-        foreach ($newUsers as $user) {
-            if (!$user->student->published) {
-                array_push($users, $user);
-            }
-        }
         if (isset($users)) {
             return view('manager.studentsAffairs.publishHoursToRayat')
                 ->with(compact('users'));
@@ -189,12 +187,15 @@ class StudentAffairsController extends Controller
 
     public function rayatReportForm()
     {
-        $users = [];
-        foreach ($this->getFinalAcceptedStudents() as $user) {
-            if ($user->student->published) {
-                array_push($users, $user);
-            }
-        }
+        $payments = Payment::where("transaction_id", "!=", null)->get();
+        $paymentIds = $payments->pluck('student_id')->toArray();
+        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+                $res->where("traineeState", "!=", "privateState")
+                    ->where('final_accepted', true)
+                    ->where('level', '1')
+                    ->where("published", true)
+                    ->whereIn("id", $paymentIds);
+            })->get();
         if (isset($users)) {
             return view('manager.studentsAffairs.rayatReport')
                 ->with(compact('users'));

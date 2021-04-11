@@ -1,5 +1,5 @@
 window.publishStudentHours = function (national_id, event) {
-    axios.post('/affairs/publish-to-rayat', {
+    axios.post(window.publishToRayat, {
         national_id: national_id,
         state: event.target.checked,
     })
