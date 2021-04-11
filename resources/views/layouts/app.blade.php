@@ -177,6 +177,15 @@
                                                     href="{{ route('PrivateAllStudentsForm') }}">ظروف خاصة</a></li>
                                         </ul>
                                     @endif
+
+                                     {{-- ---------  student ----------- --}}
+                                     @if (Auth::user()->hasRole('متدرب'))
+                                     <ul class="navbar-nav">
+                                         <li class="nav-item"><a class="nav-link"
+                                                 href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                         </li>
+                                     </ul>
+                                 @endif
                                 @endauth
 
                                 <a class="navbar-brand py-0" href="https://www.tvtc.gov.sa/" target="_blank">
