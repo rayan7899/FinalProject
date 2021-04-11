@@ -15,5 +15,10 @@
                 {{ session()->get('error') ?? $error }}
             </div>
         @endif
+        @if (session()->has('success') || isset($success))
+            <div class="alert alert-success">
+                {{ session()->get('success') ?? $success }}
+            </div>
+        @endif
     </div>
 @stop

@@ -38,7 +38,7 @@ class CreateStudentsTable extends Migration
             $table->foreign('program_id')->references('id')->on('programs');
             $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('major_id')->references('id')->on('majors');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete("cascade");
         });
     }
 

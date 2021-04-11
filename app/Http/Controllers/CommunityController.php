@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\Student;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -32,7 +35,7 @@ class CommunityController extends Controller
             // ],
             // (object) [
             //     "name" => "انشاء مستخدم",
-            //     "url" => route("createUser")
+            //     "url" => route("createUserForm")
             // ],
             // (object) [
             //     "name" => "فصل دراسي جديد",
@@ -61,7 +64,7 @@ class CommunityController extends Controller
                 "name" => "جميع المتدربين المستجدين",
                 "url" => route("newStudentsReport")
             ],
-          
+
         ];
         return view("manager.community.dashboard")->with(compact("links"));
     }
@@ -81,9 +84,114 @@ class CommunityController extends Controller
         return view("manager.private.dashboard")->with(compact("links"));
     }
 
-    public function createUser()
+
+    public function manageUsersForm()
     {
-        return view("manager.community.createUser");
+        try {
+            $users = User::with("manager.permissions")->whereHas("manager")->where("id", ">", 1)->get();
+            return view("manager.community.users.manage")->with(compact('users'));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+    public function createUserForm()
+    {
+        return view("manager.community.users.create");
+    }
+
+    public function createUserStore(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            'national_id' => 'required|digits:10|unique:users,national_id',
+            'name'     => 'required|string|min:3|max:100',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+        $requestData['password'] = Hash::make($requestData['password']);
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                User::create($requestData)->manager()->create();
+
+                return redirect(route("manageUsersForm"))->with('success', 'تم انشاء المستخدم بنجاح');
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+    public function editUserUpdate(Request $request,User $user)
+    {
+        $requestData = $this->validate($request, [
+            'national_id' => 'required|digits:10|exists:users,national_id',
+            'name'     => 'required|string|min:3|max:100',
+            // 'password' => 'required|string|min:8|confirmed',
+        ]);
+        // $requestData['password'] = Hash::make($requestData['password']);
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                $user->update($requestData);
+                return redirect(route("manageUsersForm"))->with('success', 'تم تحديث بيانات المستخدم بنجاح');
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+
+
+    public function editUserForm(User $user)
+    {
+        $roles = Role::all();
+        if (Auth::user()->hasRole("خدمة المجتمع")) {
+            return view("manager.community.users.edit")->with(compact('roles', 'user'));
+        } else {
+            return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+        }
+    }
+
+    public function editUserPermissionsUpdate(Request $request, User $user)
+    {
+        $requestData = $this->validate($request, [
+            "roles"      => "required|array|min:1",
+            "roles.*"    => "required|numeric|distinct|exists:roles,id",
+        ]);
+        if (Auth::user()->hasRole("خدمة المجتمع")) {
+            foreach ($requestData['roles'] as $role_id) {
+                $user->manager->permissions()->create(array('role_id' => $role_id));
+            }
+            return redirect(route("manageUsersForm"))->with("success", "تم تعديل الصلاحيات بنجاح");
+        } else {
+            return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+        }
+    }
+
+    public function deleteUser(User $user)
+    {
+        try {
+            $user->delete();
+            return back()->with('success', 'تم حذف المستخدم بنجاح');
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+    public function deleteUserPermission(Permission $permission)
+    {
+        try {
+            $permission->delete();
+            return back()->with('success', 'تم ازالة الصلاحية بنجاح');
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
     }
 
     public function paymentsReviewForm()
@@ -250,7 +358,7 @@ class CommunityController extends Controller
 
 
     public function publishToRayatForm()
-    {   
+    {
         // $users = User::with('student')->whereHas('student', function ($result) {
         //     $result->where('final_accepted', true)
         //         ->where('documents_verified', true)
@@ -260,11 +368,11 @@ class CommunityController extends Controller
         $payments = Payment::where("transaction_id", "!=", null)->get();
         $paymentIds = $payments->pluck('student_id')->toArray();
         $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
-                $res->where("traineeState", "!=", "privateState")
-                    ->where('level', '>', '1')
-                    ->where("published", false)
-                    ->whereIn("id", $paymentIds);
-            })->get();
+            $res->where("traineeState", "!=", "privateState")
+                ->where('level', '>', '1')
+                ->where("published", false)
+                ->whereIn("id", $paymentIds);
+        })->get();
 
         if (isset($users)) {
             return view('manager.community.publishHoursToRayat')
@@ -315,7 +423,7 @@ class CommunityController extends Controller
     {
         $users = User::with('student')->get();
         return view('manager.community.studentsStates')
-                ->with(compact('users'));
+            ->with(compact('users'));
     }
 
     public function oldStudentsReport()
@@ -324,7 +432,7 @@ class CommunityController extends Controller
             $result->where('level', '>', '1');
         })->get();
         return view('manager.community.oldStudentsReport')
-                ->with(compact('users'));
+            ->with(compact('users'));
     }
 
     public function newStudentsReport()
@@ -333,6 +441,6 @@ class CommunityController extends Controller
             $result->where('level', '1');
         })->get();
         return view('manager.community.newStudentsReport')
-                ->with(compact('users'));
+            ->with(compact('users'));
     }
 }

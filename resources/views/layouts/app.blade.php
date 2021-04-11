@@ -62,8 +62,9 @@
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                                 <a class="dropdown-item  text-right"
                                                     href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                                <a class="dropdown-item text-right" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                                        document.getElementById('logout-form').submit();">
+                                                <a class="dropdown-item text-right" href="{{ route('logout') }}"
+                                                    onclick="event.preventDefault();
+                                                                            document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -133,8 +134,8 @@
                                             </li>
                                             <li class="nav-item"><a class="nav-link"
                                                     href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a></li>
-                                            {{-- <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('createUser') }}">انشاء مستخدم</a></li> --}}
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="{{ route('manageUsersForm') }}">ادارة المستخدمين</a></li>
                                             <li class="nav-item"><a class="nav-link"
                                                     href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
                                             </li>
@@ -178,14 +179,14 @@
                                         </ul>
                                     @endif
 
-                                     {{-- ---------  student ----------- --}}
-                                     @if (Auth::user()->hasRole('متدرب'))
-                                     <ul class="navbar-nav">
-                                         <li class="nav-item"><a class="nav-link"
-                                                 href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                         </li>
-                                     </ul>
-                                 @endif
+                                    {{-- ---------  student ----------- --}}
+                                    @if (Auth::user()->hasRole('متدرب'))
+                                        <ul class="navbar-nav">
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                            </li>
+                                        </ul>
+                                    @endif
                                 @endauth
 
                                 <a class="navbar-brand py-0" href="https://www.tvtc.gov.sa/" target="_blank">

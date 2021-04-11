@@ -45,13 +45,13 @@ class DepartmentSeeder extends Seeder
             ]);
         }
 
-        foreach ($this::$diplomDepts as $diplomDeptName) {
+        foreach ($this::$diplomDepts as $deptName) {
             $role = Role::create([
                     'name' => $deptName . ' - دبلوم ',
                 ]);
                 
             Department::create([
-                'name' => $diplomDeptName,
+                'name' => $deptName,
                 'program_id' => 2,
                 'role_id' => $role->id
 
