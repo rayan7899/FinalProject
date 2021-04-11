@@ -96,7 +96,7 @@ class OrderController extends Controller
          $amount = $total_hours * 550;
          $walletAfterCalc = $user->student->wallet - $amount;
 
-         if ($walletAfterCalc < 0) {
+         if ($walletAfterCalc < 0 && !isset($requestData["payment_receipt"])) {
             return back()->with('error', ' ايصال السداد حقل مطلوب');
          }
 
