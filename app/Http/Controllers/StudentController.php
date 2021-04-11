@@ -114,11 +114,11 @@ class StudentController extends Controller
             // }
 
             DB::commit();
-            return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
+            return redirect(route('home'))->with('success', ' تم تحديث البيانات بنجاح');
         } catch (\Throwable $e) {
             DB::rollback();
             Log::error($e);
-            return back()->with('error', ' تعذر تحديث بيانات تقديم الطلب حدث خطأ غير معروف ' . $e->getCode());
+            return back()->with('error', ' تعذر تحديث البيانات حدث خطأ غير معروف ' . $e->getCode());
         }
     }
 

@@ -18,10 +18,13 @@
         $total_cost += $course->credit_hours * 550;
     }
 
-    $paymentsCount  = count($user->student->payments);
-    if($user->student->payments[$paymentsCount - 1 ]->transaction_id == null){
-        $total_hours = 0;
+    $paymentsCount = count($user->student->payments);
+    if ($paymentsCount > 0) {
+        if ($user->student->payments[$paymentsCount - 1]->transaction_id == null) {
+            $total_hours = 0;
+        }
     }
+
     @endphp
     <div class="container">
         <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
