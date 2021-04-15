@@ -65,7 +65,8 @@ class StudentAffairsController extends Controller
     {
         try {
             $users = User::with('student')->whereHas('student', function ($result) {
-                $result->where('level', 1);
+                $result->where('level', 1)
+                    ->where('data_updated', true);
             })->get();
 
             $fetch_errors = [];
@@ -127,7 +128,9 @@ class StudentAffairsController extends Controller
 
     public function newStudents()
     {
-        $users = $this->getFinalAcceptedStudents();
+        $users = User::with('student')->whereHas('student', function ($result){
+            $result->where('level', '1');
+        })->get();
         if (isset($users)) {
             return view('manager.studentsAffairs.newStudents')
                 ->with('users', $users);

@@ -95,7 +95,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
     //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
     Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
+    Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayatAffairs');
     Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
 
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');

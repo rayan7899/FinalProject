@@ -20,7 +20,7 @@
             <thead>
                 <tr>
                     <p class="text-center">
-                        الرفع الى رايات - شؤون الطلاب - مستجدين
+                        الرفع الى رايات - شؤون المتدربين - مستجدين
                     </p>
 
                     <th>#</th>
@@ -48,6 +48,14 @@
             <tbody>
                 @if (isset($users))
                     @forelse ($users as $user)
+                        @php
+                            $total_cost = 0;
+                            $total_hours = 0;
+                            foreach ($user->student->courses as $course) {
+                                $total_hours += $course->credit_hours;
+                                $total_cost += $course->credit_hours * 550;
+                            }
+                        @endphp
                         <tr>
                             <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
                             <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
@@ -56,7 +64,8 @@
                             <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                            <td>
+                            <td>{{ $total_hours ?? 0 }}</td>
+                            {{-- <td>
                                 @php
                                     if($user->student->traineeState=='privateState'){
                                         echo $user->student->major->hours;
@@ -87,7 +96,7 @@
                                         echo $clearCost/$hourCostAfterDiscount;
                                     }
                                 @endphp
-                            </td>
+                            </td> --}}
                             <td><input type="checkbox" name="published" id="published" onchange="publishStudentHours({{$user->national_id}}, event)"></td>
                         </tr>
                     @empty
@@ -97,5 +106,8 @@
             </tbody>
         </table>
     </div>
+    <script>
+         var publishToRayat = "{{ route('publishToRayatAffairs') }}";
+    </script>
 </div>
 @stop
