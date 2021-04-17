@@ -146,6 +146,7 @@
         </div>
     </div>
     <script>
+        var addCoursesURL = "{{ route('addCoursesToStudent') }}";
         // function fillTable(courses) {
         //     tblCourses = document.getElementById(tblCourses);
         //     console.log(courses);

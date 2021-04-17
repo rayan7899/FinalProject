@@ -6,6 +6,8 @@ use App\Models\Payment;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -128,7 +130,7 @@ class StudentAffairsController extends Controller
 
     public function newStudents()
     {
-        $users = User::with('student')->whereHas('student', function ($result){
+        $users = User::with('student')->whereHas('student', function ($result) {
             $result->where('level', '1');
         })->get();
         if (isset($users)) {
@@ -152,22 +154,35 @@ class StudentAffairsController extends Controller
 
     public function publishToRayatForm()
     {
-        $payments = Payment::where("transaction_id", "!=", null)->get();
-        $paymentIds = $payments->pluck('student_id')->toArray();
-        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+
+        // $payments = Payment::where("transaction_id", "!=", null)->get();
+        // $paymentIds = $payments->pluck('student_id')->toArray();
+        // $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+        //         $res->where("traineeState", "!=", "privateState")
+        //             ->where('level', '1')
+        //             ->where('final_accepted', true)
+        //             ->where("published", false)
+        //             ->whereIn("id", $paymentIds);
+        //     })->get();
+        try {
+            $users = User::with("student.orders")->whereHas("student", function ($res) {
                 $res->where("traineeState", "!=", "privateState")
                     ->where('level', '1')
-                    ->where('final_accepted', true)
-                    ->where("published", false)
-                    ->whereIn("id", $paymentIds);
+                    ->whereHas("orders", function ($res) {
+                        $res->where("transaction_id", null);
+                    });
             })->get();
 
-        if (isset($users)) {
+            if (isset($users)) {
+                return view('manager.studentsAffairs.publishHoursToRayat')
+                    ->with(compact('users'));
+            } else {
+                return view('manager.studentsAffairs.publishHoursToRayat')
+                    ->with('error', "تعذر جلب المتدربين");
+            }
+        } catch (\Throwable $th) {
             return view('manager.studentsAffairs.publishHoursToRayat')
-                ->with(compact('users'));
-        } else {
-            return view('manager.studentsAffairs.publishHoursToRayat')
-                ->with('error', "تعذر جلب المتدربين");
+                ->with('error', $th);
         }
     }
 
@@ -175,15 +190,32 @@ class StudentAffairsController extends Controller
     {
         $studentData = $this->validate($request, [
             "national_id"        => "required|numeric",
-            'state'              => 'required',
+            // 'state'              => 'required',
+            'hours'              => 'required',
         ]);
+        return response($studentData['hours']);
         try {
-            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
-            $user->student()->update([
-                "published" => $studentData['state'],
-            ]);
+            $user = User::with('student.orders')->where('national_id', $studentData['national_id'])->first();
+            $orders = $user->student->orders->where("transaction_id", null);
+            DB::beginTransaction();
+                // $user->student()->update([
+                //     "published" => $studentData['state'],
+                // ]);
+                foreach ($orders as $order) {
+                    $transaction = $user->student->transactions()->create([
+                        "order_id"      => $order->id,
+                        "amount"        => $order->amount,
+                        "type"          => "deduction",
+                        "by_user"       => Auth::user()->id,
+                    ]);
+                    $order->update([
+                       "transaction_id" => $transaction->id,
+                    ]);
+                }
+            DB::commit();
             return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
         } catch (Exception $e) {
+            DB::rollback();
             return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
         }
     }
@@ -193,12 +225,12 @@ class StudentAffairsController extends Controller
         $payments = Payment::where("transaction_id", "!=", null)->get();
         $paymentIds = $payments->pluck('student_id')->toArray();
         $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
-                $res->where("traineeState", "!=", "privateState")
-                    ->where('final_accepted', true)
-                    ->where('level', '1')
-                    ->where("published", true)
-                    ->whereIn("id", $paymentIds);
-            })->get();
+            $res->where("traineeState", "!=", "privateState")
+                ->where('final_accepted', true)
+                ->where('level', '1')
+                ->where("published", true)
+                ->whereIn("id", $paymentIds);
+        })->get();
         if (isset($users)) {
             return view('manager.studentsAffairs.rayatReport')
                 ->with(compact('users'));

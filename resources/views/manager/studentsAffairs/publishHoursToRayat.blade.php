@@ -49,11 +49,11 @@
                 @if (isset($users))
                     @forelse ($users as $user)
                         @php
-                            $total_cost = 0;
                             $total_hours = 0;
-                            foreach ($user->student->courses as $course) {
-                                $total_hours += $course->credit_hours;
-                                $total_cost += $course->credit_hours * 550;
+                            foreach ($user->student->orders as $order) {
+                                if($order->transaction_id == null){
+                                    $total_hours += $order->requested_hours;
+                                }
                             }
                         @endphp
                         <tr>
@@ -64,7 +64,7 @@
                             <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                            <td>{{ $total_hours ?? 0 }}</td>
+                            <td><input type="number" class="p-0" name="hours" id="hours" value="{{ $total_hours ?? 0 }}"></td>
                             {{-- <td>
                                 @php
                                     if($user->student->traineeState=='privateState'){
@@ -97,7 +97,7 @@
                                     }
                                 @endphp
                             </td> --}}
-                            <td><input type="checkbox" name="published" id="published" onchange="publishStudentHours({{$user->national_id}}, event)"></td>
+                            <td><button class="btn py-0 btn-primary" onclick="window.publishStudentHours({{$user->national_id}}, event)">تم</button></td>
                         </tr>
                     @empty
                         لايوجد
