@@ -73,9 +73,9 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
     Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');
-    Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
-    Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
+    // Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
+    // Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
+    // Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
 });
 
 // شؤون المتدربين
@@ -111,7 +111,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
     Route::get('/api/student/{id}', [StudentController::class, 'getStudent'])->name('apiGetStudent');
     Route::get('/api/major/{majorId}/courses', [CourseController::class, 'getCoursesByMajorId']);
-    Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCoursesToStudent']);
+    Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCoursesToStudent'])->name('addCoursesToStudent');
     Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
     // FIXME: use path-parameter instead of header key-value pairs (for consistency)
     Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');

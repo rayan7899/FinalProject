@@ -26,7 +26,6 @@ window.getStudentCourses = function () {
             //     showConfirmButton: false,
             //     timer: 1700,
             // });
-            console.log(response);
             section2.style.display = "block";
             studentNationalId = response.national_id;
             document.getElementById('studentName').value = response.name;
@@ -125,6 +124,7 @@ function fillAllCoursesTable(courses) {
         var row = tblAllCourses.insertRow(0);
         row.setAttribute("data-id", course.id);
         row.setAttribute("data-selected", false);
+        row.setAttribute("data-hours", course.credit_hours);
         row.addEventListener("click", (event) =>
             window.courseClicked(event)
         );
@@ -149,6 +149,7 @@ window.addCourseToStudentTable = function (event) {
     let coursesData = {
         studentNationalId: studentNationalId,
         courses: [],
+        totalHours: 0,
     };
     event.preventDefault();
     if (selectedCourses.length < 1) {
@@ -164,6 +165,7 @@ window.addCourseToStudentTable = function (event) {
     selectedCourses.forEach((row) => {
         // row = row.cloneNode(true);
         coursesData.courses.push(row.dataset.id);
+        coursesData.totalHours += parseInt(row.dataset.hours);
         row.setAttribute("data-selected", false);
         row.classList.add("bg-light");
         row.classList.add("text-dark");
@@ -189,9 +191,10 @@ function addCoursesRequset(coursesData) {
     axios
         .post('/api/student/add-courses', coursesData)
         .then((response) => {
+            console.log(response);
             Swal.fire({
                 position: "center",
-                // html: "<h4>"+response.data.message+"</h4>",
+                html: "<h4>"+response.data.message+"</h4>",
                 icon: "success",
                 showConfirmButton: false,
                 timer: 1000,
