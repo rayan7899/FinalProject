@@ -251,14 +251,18 @@ class StudentAffairsController extends Controller
 
     public function rayatReportForm()
     {
-        $payments = Payment::where("transaction_id", "!=", null)->get();
-        $paymentIds = $payments->pluck('student_id')->toArray();
-        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+        // $payments = Payment::where("transaction_id", "!=", null)->get();
+        // $paymentIds = $payments->pluck('student_id')->toArray();
+        // $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+        //     $res->where("traineeState", "!=", "privateState")
+        //         ->where('final_accepted', true)
+        //         ->where('level', '1')
+        //         ->where("published", true)
+        //         ->whereIn("id", $paymentIds);
+        // })->get();
+        $users = User::with("student")->whereHas("student", function ($res) {
             $res->where("traineeState", "!=", "privateState")
-                ->where('final_accepted', true)
-                ->where('level', '1')
-                ->where("published", true)
-                ->whereIn("id", $paymentIds);
+                ->where('credit_hours', '>', 0);
         })->get();
         if (isset($users)) {
             return view('manager.studentsAffairs.rayatReport')
