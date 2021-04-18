@@ -50,7 +50,7 @@
                 <!----------------all courses table------------------------------------>
                 <!--------------------------------------------------------------------->
                 <!--------------------------------------------------------------------->
-                <div class="col-sm-5 p-0">
+                <div class="col-sm-12 p-0">
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
@@ -91,7 +91,9 @@
                     </div>
                 </div>
 
-                <div class="col-2 d-none d-md-block p-0">
+                <button onclick="addCourseToStudentTable(event)" class="btn btn-primary m-3">ارسال الطلب</button>
+
+                {{-- <div class="col-2 d-none d-md-block p-0">
                     <div class="row justify-content-center mt-2">
                         <a href="" onclick="addCourseToStudentTable(event)"
                             class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
@@ -100,9 +102,9 @@
                                 src="{{ asset('images/left-arrow.png') }}" alt="left-arrow-icon">
                         </a>
                     </div>
-                </div>
+                </div> --}}
 
-                <div class="row d-flex justify-content-center justify-items-center d-sm-none p-3">
+                {{-- <div class="row d-flex justify-content-center justify-items-center d-sm-none p-3">
                     <div class="col justify-content-center">
                         <a href="" onclick="addCourseToStudentTable(event)"
                             class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
@@ -111,14 +113,14 @@
                                 src="{{ asset('images/left-arrow.png') }}" alt="left-arrow-icon">
                         </a>
                     </div>
-                </div>
+                </div> --}}
 
                 <!--------------------------------------------------------------------->
                 <!--------------------------------------------------------------------->
                 <!----------------student courses table------------------------------------>
                 <!--------------------------------------------------------------------->
                 <!--------------------------------------------------------------------->
-                <div class="col-sm-5 p-0">
+                {{-- <div class="col-sm-5 p-0">
                     <div class="card">
                         <div class="card-header">
                             <h6 class="d-inline">جدول الطالب</h6>
@@ -140,50 +142,13 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>
     </div>
     <script>
-        // function fillTable(courses) {
-        //     tblCourses = document.getElementById(tblCourses);
-        //     console.log(courses);
-        //     for (var i = 0; i < courses.length; i++) {
-        //         let tblIndex = 0;
-        // let row = tblCourses.insertRow(tblIndex);
-        // row.setAttribute("data-id", courses[i].id);
-        // row.setAttribute("data-selected", false);
-        // row.addEventListener("click", (event) =>
-        //     window.courseClicked(event)
-        // );
-        //         let code = row.insertCell(0);
-        //         let name = row.insertCell(1);
-        //         let level = row.insertCell(2);
-        //         let credit_hours = row.insertCell(3);
-        //         let contact_hours = row.insertCell(4);
-        //         code.className = "text-center";
-        //         name.className = "text-center";
-        //         credit_hours.className = "text-center";
-        //         contact_hours.className = "text-center";
-        //         code.innerHTML = courses[i].code;
-        //         name.innerHTML = courses[i].name;
-        //         level.innerHTML = getStringLevel(courses[i].level);
-        //         credit_hours.innerHTML = courses[i].credit_hours;
-        //         contact_hours.innerHTML = courses[i].contact_hours;
-        //         tblIndex++;
-        //     }
-        // }
-
-
-
-        // fillAllCourses();
-        // function fillAllCourses() {
-        //     var tblAllCourses = document.getElementById("allCourses");
-        //     var courses = window.findCourses(0);
-        //     console.log(courses);
-        // }
-
+        var addCoursesURL = "{{ route('addCoursesToStudent') }}";
     </script>
 
 @stop

@@ -181,7 +181,8 @@
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
                                     value="{{
-                                        $user->student->published == true || $total_hours == 0 ?  $total_hours : ' بانتظار الاعتماد '
+                                        // $user->student->published == true || $total_hours == 0 ?  $total_hours : ' بانتظار الاعتماد '
+                                        $user->student->credit_hours
                                     }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
