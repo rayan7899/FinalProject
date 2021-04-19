@@ -23,6 +23,7 @@ class CreateStudentsTable extends Migration
             $table->unsignedBigInteger('department_id');
             $table->unsignedBigInteger('major_id');
             $table->integer('level')->default(1);
+            $table->integer('credit_hours')->default(0);
             $table->boolean("studentState")->default(true);
             $table->boolean('agreement')->default(false);
             $table->boolean('data_updated')->default(false);

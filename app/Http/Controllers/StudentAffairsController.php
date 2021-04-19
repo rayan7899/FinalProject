@@ -170,6 +170,9 @@ class StudentAffairsController extends Controller
                     ->where('level', '1')
                     ->whereHas("orders", function ($res) {
                         $res->where("transaction_id", null);
+                    })
+                    ->whereDoesntHave('payments', function($res){
+                        $res->where('transaction_id', null);
                     });
             })->get();
 
@@ -190,30 +193,59 @@ class StudentAffairsController extends Controller
     {
         $studentData = $this->validate($request, [
             "national_id"        => "required|numeric",
-            // 'state'              => 'required',
             'hours'              => 'required',
         ]);
-        return response($studentData['hours']);
         try {
             $user = User::with('student.orders')->where('national_id', $studentData['national_id'])->first();
-            $orders = $user->student->orders->where("transaction_id", null);
+            switch ($user->student->traineeState) {
+                case 'employee':
+                    $discount = 0.25;
+                    break;
+                case 'employeeSon':
+                    $discount = 0.5;
+                    break;
+                case 'privateState':
+                    $discount = 0.0;
+                    break;
+                default:
+                    $discount = 1.0;
+                    break;
+            }
+            $order = $user->student->orders->where("transaction_id", null)->first();
+
+            if ($order->requested_hours < $studentData['hours']) {
+                return response(['message' => 'لا يمكن ادخال ساعات اكثر من الساعات في الطلب'], 422);
+            }
+
+            $amountAfterEdit = $studentData['hours'] * 550 * $discount;
+            $amountbeforeEdit = $order->amount * 550 * $discount;
+
             DB::beginTransaction();
-                // $user->student()->update([
-                //     "published" => $studentData['state'],
-                // ]);
-                foreach ($orders as $order) {
-                    $transaction = $user->student->transactions()->create([
-                        "order_id"      => $order->id,
-                        "amount"        => $order->amount,
-                        "type"          => "deduction",
+                $transaction = $user->student->transactions()->create([
+                    "order_id"      => $order->id,
+                    "amount"        => $amountAfterEdit,
+                    "type"          => "deduction",
+                    "by_user"       => Auth::user()->id,
+                ]);
+                $order->update([
+                    "transaction_id" => $transaction->id,
+                    "requested_hours" => $studentData['hours'],
+                ]);
+                
+                if($amountAfterEdit != $amountbeforeEdit){
+                    $user->student->transactions()->create([
+                        "amount"        => $amountbeforeEdit - $amountAfterEdit,
+                        "type"          => "recharge",
                         "by_user"       => Auth::user()->id,
-                    ]);
-                    $order->update([
-                       "transaction_id" => $transaction->id,
+                        "note"          => "رصيد مسترد",
                     ]);
                 }
+
+                $user->student->credit_hours += $studentData['hours'];
+                $user->student->wallet -= $amountAfterEdit;
+                $user->student->save();
             DB::commit();
-            return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
+            return response(['message' => 'تم رفع الساعات بنجاح'], 200);
         } catch (Exception $e) {
             DB::rollback();
             return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
@@ -222,14 +254,19 @@ class StudentAffairsController extends Controller
 
     public function rayatReportForm()
     {
-        $payments = Payment::where("transaction_id", "!=", null)->get();
-        $paymentIds = $payments->pluck('student_id')->toArray();
-        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+        // $payments = Payment::where("transaction_id", "!=", null)->get();
+        // $paymentIds = $payments->pluck('student_id')->toArray();
+        // $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+        //     $res->where("traineeState", "!=", "privateState")
+        //         ->where('final_accepted', true)
+        //         ->where('level', '1')
+        //         ->where("published", true)
+        //         ->whereIn("id", $paymentIds);
+        // })->get();
+        $users = User::with("student")->whereHas("student", function ($res) {
             $res->where("traineeState", "!=", "privateState")
-                ->where('final_accepted', true)
                 ->where('level', '1')
-                ->where("published", true)
-                ->whereIn("id", $paymentIds);
+                ->where('credit_hours', '>', 0);
         })->get();
         if (isset($users)) {
             return view('manager.studentsAffairs.rayatReport')

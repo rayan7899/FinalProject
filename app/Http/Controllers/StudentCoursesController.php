@@ -33,43 +33,35 @@ class StudentCoursesController extends Controller
             $user = User::where('national_id', $coursesData['studentNationalId'])->first();
             switch ($user->student->traineeState) {
                 case 'employee':
-                    $discount = 0.75;
+                    $discount = 0.25;
                     break;
                 case 'employeeSon':
                     $discount = 0.5;
                     break;
                 case 'privateState':
-                    $discount = 1.0;
+                    $discount = 0.0;
                     break;
                 default:
-                    $discount = 0;
+                    $discount = 1.0;
                     break;
             }
 
-            $amount = $coursesData['totalHours'] * 550;
-            $discountAmount = $amount - ($amount * $discount);
+            $amount = $coursesData['totalHours'] * 550 * $discount;
 
-            if ($user->student->wallet < $discountAmount) {
+            if ($user->student->wallet < $amount) {
                 return response(['message' => 'الرصيد لايسمح بإضافة هذه المقررات'], 422);
+            } elseif (!empty($user->student->orders->where('transaction_id', null)->first())) {
+                return response(['message' => 'يوجد لدى المتدرب طلب قيد المعالجة'], 422);
             }
-            DB::beginTransaction();
-            // foreach ($coursesData['courses'] as $course) {
-            //     if (!$user->student->courses->contains('id', $course)) {
-            //         $user->student->studentCourses()->create([
-            //             'course_id' => $course,
-            //         ]);
-            //     }
-            // }
-            $user->student->wallet -= $discountAmount;
-            $user->student->save();
-            $order = $user->student->orders()->create(
-               [
-                  "amount" => $amount,
-                  "requested_hours" => $coursesData['totalHours'],
-                  "note"    => "الطلب تم بواسطة رئيس القسم"
-               ]
-            );
 
+            DB::beginTransaction();
+                $order = $user->student->orders()->create(
+                [
+                    "amount" => $amount,
+                    "requested_hours" => $coursesData['totalHours'],
+                    "note"    => "الطلب تم بواسطة رئيس القسم"
+                ]
+                );
             DB::commit();
             return response(['message' => 'تم طلب اضافة المقررات بنجاح'], 200);
         } catch (QueryException $e) {

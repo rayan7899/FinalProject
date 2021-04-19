@@ -118,7 +118,7 @@
                 <!----------------student courses table------------------------------------>
                 <!--------------------------------------------------------------------->
                 <!--------------------------------------------------------------------->
-                <div class="col-sm-5 p-0">
+                {{-- <div class="col-sm-5 p-0">
                     <div class="card">
                         <div class="card-header">
                             <h6 class="d-inline">جدول الطالب</h6>
@@ -140,51 +140,13 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
         </div>
     </div>
     <script>
         var addCoursesURL = "{{ route('addCoursesToStudent') }}";
-        // function fillTable(courses) {
-        //     tblCourses = document.getElementById(tblCourses);
-        //     console.log(courses);
-        //     for (var i = 0; i < courses.length; i++) {
-        //         let tblIndex = 0;
-        // let row = tblCourses.insertRow(tblIndex);
-        // row.setAttribute("data-id", courses[i].id);
-        // row.setAttribute("data-selected", false);
-        // row.addEventListener("click", (event) =>
-        //     window.courseClicked(event)
-        // );
-        //         let code = row.insertCell(0);
-        //         let name = row.insertCell(1);
-        //         let level = row.insertCell(2);
-        //         let credit_hours = row.insertCell(3);
-        //         let contact_hours = row.insertCell(4);
-        //         code.className = "text-center";
-        //         name.className = "text-center";
-        //         credit_hours.className = "text-center";
-        //         contact_hours.className = "text-center";
-        //         code.innerHTML = courses[i].code;
-        //         name.innerHTML = courses[i].name;
-        //         level.innerHTML = getStringLevel(courses[i].level);
-        //         credit_hours.innerHTML = courses[i].credit_hours;
-        //         contact_hours.innerHTML = courses[i].contact_hours;
-        //         tblIndex++;
-        //     }
-        // }
-
-
-
-        // fillAllCourses();
-        // function fillAllCourses() {
-        //     var tblAllCourses = document.getElementById("allCourses");
-        //     var courses = window.findCourses(0);
-        //     console.log(courses);
-        // }
-
     </script>
 
 @stop

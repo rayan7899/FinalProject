@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Permission;
 use App\Models\Role;
@@ -365,36 +366,100 @@ class CommunityController extends Controller
         //         ->where('level', '>', '1')
         //         ->where("published", false);
         // })->get();
-        $payments = Payment::where("transaction_id", "!=", null)->get();
-        $paymentIds = $payments->pluck('student_id')->toArray();
-        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
-            $res->where("traineeState", "!=", "privateState")
-                ->where('level', '>', '1')
-                ->where("published", false)
-                ->whereIn("id", $paymentIds);
-        })->get();
 
-        if (isset($users)) {
+        // $payments = Payment::where("transaction_id", "!=", null)->get();
+        // $paymentIds = $payments->pluck('student_id')->toArray();
+        // $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
+        //     $res->where("traineeState", "!=", "privateState")
+        //         ->where('level', '>', '1')
+        //         ->where("published", false)
+        //         ->whereIn("id", $paymentIds);
+        // })->get();
+
+        try {
+            $users = User::with("student.orders")->whereHas("student", function ($res) {
+                $res->where("traineeState", "!=", "privateState")
+                    ->where('level', ">", '1')
+                    ->whereHas("orders", function ($res) {
+                        $res->where("transaction_id", null);
+                    })
+                    ->whereDoesntHave('payments', function($res){
+                        $res->where('transaction_id', null);
+                    });
+            })->get();
             return view('manager.community.publishHoursToRayat')
-                ->with(compact('users'));
-        } else {
-            return view('manager.community.publishHoursToRayat')
-                ->with('error', "تعذر جلب المتدربين");
+            ->with(compact('users'));
+            if (isset($users)) {
+                return view('manager.community.publishHoursToRayat')
+                    ->with(compact('users'));
+            } else {
+                return view('manager.community.publishHoursToRayat')
+                    ->with('error', "تعذر جلب المتدربين");
+            }
+
+        } catch (\Throwable $th) {
+            throw $th;
         }
+
     }
 
     public function publishToRayat(Request $request)
     {
         $studentData = $this->validate($request, [
             "national_id"        => "required|numeric",
-            'state'              => 'required',
+            'hours'              => 'required',
         ]);
         try {
-            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
-            $user->student()->update([
-                "published" => $studentData['state'],
-            ]);
-            return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
+            $user = User::with('student.orders')->where('national_id', $studentData['national_id'])->first();
+            switch ($user->student->traineeState) {
+                case 'employee':
+                    $discount = 0.25;
+                    break;
+                case 'employeeSon':
+                    $discount = 0.5;
+                    break;
+                case 'privateState':
+                    $discount = 0.0;
+                    break;
+                default:
+                    $discount = 1.0;
+                    break;
+            }
+            $order = $user->student->orders->where("transaction_id", null)->first();
+
+            if ($order->requested_hours < $studentData['hours']) {
+                return response(['message' => 'لا يمكن ادخال ساعات اكثر من الساعات في الطلب'], 422);
+            }
+
+            $amountAfterEdit = $studentData['hours'] * 550 * $discount;
+            $amountbeforeEdit = $order->amount * 550 * $discount;
+
+            DB::beginTransaction();
+                $transaction = $user->student->transactions()->create([
+                    "order_id"      => $order->id,
+                    "amount"        => $amountAfterEdit,
+                    "type"          => "deduction",
+                    "by_user"       => Auth::user()->id,
+                ]);
+                $order->update([
+                    "transaction_id" => $transaction->id,
+                    "requested_hours" => $studentData['hours'],
+                ]);
+                
+                if($amountAfterEdit != $amountbeforeEdit){
+                    $user->student->transactions()->create([
+                        "amount"        => $amountbeforeEdit - $amountAfterEdit,
+                        "type"          => "recharge",
+                        "by_user"       => Auth::user()->id,
+                        "note"          => "رصيد مسترد",
+                    ]);
+                }
+
+                $user->student->credit_hours += $studentData['hours'];
+                $user->student->wallet -= $amountAfterEdit;
+                $user->student->save();
+            DB::commit();
+            return response(['message' => 'تم رفع الساعات بنجاح'], 200);
         } catch (Exception $e) {
             return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
         }
@@ -403,10 +468,8 @@ class CommunityController extends Controller
     public function rayatReportForm()
     {
         $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('final_accepted', true)
-                ->where('documents_verified', true)
-                ->where('level', '>', '1')
-                ->where("published", true);
+            $result->where('level', '>', '1')
+                ->where('credit_hours', '>', 0);
         })->get();
 
         if (isset($users)) {
