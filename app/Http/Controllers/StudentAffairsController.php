@@ -170,6 +170,9 @@ class StudentAffairsController extends Controller
                     ->where('level', '1')
                     ->whereHas("orders", function ($res) {
                         $res->where("transaction_id", null);
+                    })
+                    ->whereDoesntHave('payments', function($res){
+                        $res->where('transaction_id', null);
                     });
             })->get();
 
@@ -242,7 +245,7 @@ class StudentAffairsController extends Controller
                 $user->student->wallet -= $amountAfterEdit;
                 $user->student->save();
             DB::commit();
-            return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
+            return response(['message' => 'تم رفع الساعات بنجاح'], 200);
         } catch (Exception $e) {
             DB::rollback();
             return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
@@ -262,6 +265,7 @@ class StudentAffairsController extends Controller
         // })->get();
         $users = User::with("student")->whereHas("student", function ($res) {
             $res->where("traineeState", "!=", "privateState")
+                ->where('level', '1')
                 ->where('credit_hours', '>', 0);
         })->get();
         if (isset($users)) {
