@@ -72,4 +72,9 @@ class Student extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function departmentRoleId()
+    {
+        return $this->department->role_id;
+    }
 }

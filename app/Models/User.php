@@ -67,4 +67,13 @@ class User extends Authenticatable
         }
         return false;
     }
+
+    public function isDepartmentManager()
+    {
+        $user = $this;
+        if ($user->manager !== null) {
+            return $user->manager->isDepartmentManager();
+        }
+        return false;
+    }
 }

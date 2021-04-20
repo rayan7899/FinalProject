@@ -31,6 +31,7 @@ class DepartmentBossController extends Controller
         return view("manager.departmentBoss.dashboard")->with(compact("links"));
     }
 
+    //todo response level 2 and upper for dept boss and level 1 only for student affairs
     public function apiGetCourses()
     {
         try {

@@ -56,12 +56,17 @@
                                         </span>
                                     @enderror
                                 </div>
-                                <div class="col-sm-4 ">
 
+                                <div class="col-sm-4 ">
                                     <label for="department" class="pl-1"> القسم </label>
                                     <select required name="department" id="department" class="form-controller w-100 "
                                         onchange="fillMajors()">
                                         <option value="0" disabled selected>أختر</option>
+                                        @forelse (Auth::user()->with() as $item)
+                                            
+                                        @empty
+                                            
+                                        @endforelse
                                     </select>
                                     @error('department')
                                         <span class="invalid-feedback" role="alert">
@@ -160,11 +165,15 @@
                                     <h6 class="d-inline">الجداول المقترح</h6>
                                     <select id="suggestedLevel" onchange="fillSuggestedCourses()"
                                         class="ml-0 d-inline mx-3 d-inline">
-                                        <option value="1"> المستوى الاول</option>
-                                        <option value="2"> المستوى الثاني</option>
-                                        <option value="3"> المستوى الثالث</option>
-                                        <option value="4"> المستوى الرابع</option>
-                                        <option value="5"> المستوى الخامس</option>
+                                        @if (Auth::user()->hasRole('شؤون المتدربين'))
+                                            <option value="1"> المستوى الاول</option>
+                                        @endif
+                                        @if (Auth::user()->isDepartmentManager())
+                                            <option value="2"> المستوى الثاني</option>
+                                            <option value="3"> المستوى الثالث</option>
+                                            <option value="4"> المستوى الرابع</option>
+                                            <option value="5"> المستوى الخامس</option>
+                                        @endif
                                     </select>
                                 </div>
                                 <div class="d-inline float-left">
