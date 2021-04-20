@@ -23,8 +23,10 @@ class OrderController extends Controller
    {
       $user = Auth::user();
       $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
-      if ($waitingTransCount > 0) {
-         return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب سابق تحت المراجعة");
+      $waitingOrdersCount = $user->student->orders()->where("transaction_id", "=", null)
+                                                   ->where("private_doc_verified", "=", null)->count();
+      if ($waitingTransCount > 0 || $waitingOrdersCount > 0) {
+         return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
       }
       $courses = Course::where('suggested_level', $user->student->level)
          ->where('major_id', $user->student->major_id)
@@ -78,13 +80,13 @@ class OrderController extends Controller
          switch($requestData["traineeState"]){
             
             case 'employee':
-                $discount = 0.75;
+                $discount = 0.25;
                 break;
             case 'employeeSon':
                 $discount=0.5;
                 break;
             default:
-                $discount = 0;
+                $discount = 1;
                 break;
         }
          $total_hours = array_sum(array_map(
@@ -94,16 +96,17 @@ class OrderController extends Controller
             Course::whereIn('id', $requestData['courses'])->get()->toArray()
          ));
          $amount = $total_hours * 550;
+         $amount = $amount * $discount;
          $walletAfterCalc = $user->student->wallet - $amount;
 
-         if ($walletAfterCalc < 0 && !isset($requestData["payment_receipt"])) {
+         if ($walletAfterCalc < 0 && !isset($requestData["payment_receipt"]) && $requestData["traineeState"] != "privateState") {
             return back()->with('error', ' ايصال السداد حقل مطلوب');
          }
 
          if ($total_hours < 12 || $total_hours > 21) {
             return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 12 و 21');
          }
-
+         
          DB::beginTransaction();
          $courses = $requestData['courses'];
          if ($user->student->level < 2) {
@@ -127,8 +130,9 @@ class OrderController extends Controller
 
             $randomId =  uniqid();
             $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $requestData['privateStateDoc']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $user->national_id . '/privateStateDoc/' . $randomId . '/' . $doc_name, File::get($requestData['privateStateDoc']));
-
+            Storage::disk('studentDocuments')->put('/' . $user->national_id . '/privateStateDocs/' . $randomId . '/' . $doc_name, File::get($requestData['privateStateDoc']));
+            $user->student->traineeState = "privateState";
+            $user->student->save();
             $order = $user->student->orders()->create(
                [
                   "amount" => 0,
@@ -136,6 +140,7 @@ class OrderController extends Controller
                   "private_doc_file_id" => $randomId,
                ]
             );
+
          } else {
 
 
@@ -154,28 +159,19 @@ class OrderController extends Controller
                $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $requestData['payment_receipt']->getClientOriginalExtension();
                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($requestData['payment_receipt']));
             }
-            $discountAmount = $amount * $discount;
-            $user->student->wallet -= ($amount - $discountAmount);
-            $user->student->save();
+
             $order = $user->student->orders()->create(
                [
                   "amount" => $amount,
                   "requested_hours" => $total_hours,
+                  "private_doc_verified" => true
                ]
             );
 
-            $transaction = $user->student->transactions()->create([
-               "order_id"    => $order->id,
-               "amount"        => $amount,
-               "type"          => "deduction",
-               "by_user"       => Auth::user()->id,
-            ]);
-            $order->update([
-               "transaction_id" => $transaction->id,
-            ]);
+            $user->student->traineeState = $requestData["traineeState"];
+            $user->student->save();
+
          }
-
-
          DB::commit();
          return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
       } catch (\Throwable $e) {

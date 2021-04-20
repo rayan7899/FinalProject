@@ -23,16 +23,6 @@
                                 <label for="name">الاسم</label>
                                 <input type="text" class="form-control" id="sname" aria-describedby="name" disabled="true">
                             </div>
-                            <!-- <div class="form-group">
-                                         <label for="wallet">المبلغ المدفوع</label>
-                                         <input required type="number" class="form-control" id="wallet" aria-describedby="wallet">
-                                         </div> -->
-                            <div class="form-group">
-                                <label for="verified">حالة التدقيق</label>
-                                <input type="checkbox" id="documents_verified"
-                                    style="padding:10px; width: 20px; height: 20px;">
-                            </div>
-
                             <div class="form-group">
                                 <label for="" class="col-form-label">ملاحظات المدقق</label>
                                 <textarea class="form-control" id="note"></textarea>
@@ -40,8 +30,9 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
-                        <button onclick="window.sendStudentUpdate('privateState')" class="btn btn-primary">حفظ</button>
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
+                        <button onclick="privateDocDecision('accept','modal')" class="btn btn-primary btn-md">قبول</button>
+                        <button onclick="privateDocDecision('reject','modal')" class="btn btn-danger btn-md">رفض</button>
                     </div>
                 </div>
             </div>
@@ -100,7 +91,7 @@
                 <tbody>
                     @if (isset($users))
                         @forelse ($users as $user)
-                            <tr>
+                            <tr id="{{$user->national_id ?? 0}}"> 
                                 <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
@@ -110,7 +101,7 @@
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
                                 <td class="text-center">
-                                    @forelse ($user['docs'] as $doc)
+                                    @forelse ($user->student->docs as $doc)
                                         @php
                                             $splitByDot = explode('.', $doc);
                                             $fileExtantion = end($splitByDot);
@@ -133,16 +124,13 @@
                                     @endforelse
                                 </td>
                                 <td class="text-center">
-                                    <input id="check_{{ $user->national_id }}" type="checkbox"
-                                        onchange="window.checkChanged('{{ $user->national_id }}',event)" class="custom-checkbox"
-                                        style="width: 16px; height: 16px;"
-                                        {{ $user->student->documents_verified == true ? 'checked' : '' ?? '' }}
-                                        value="{{ $user->student->documents_verified }}">
+                                   <button onclick="window.privateDocDecision('accept','direct',{{$user->national_id ?? 0}},{{$user->student->order->id ?? 0}},event)" class="btn btn-primary btn-sm">قبول</button>
+                                   <button onclick="window.privateDocDecision('reject','direct',{{$user->national_id ?? 0}},{{$user->student->order->id ?? 0}},event)" class="btn btn-danger btn-sm">رفض</button>
                                 </td>
-                                <td id="note_{{ $user->national_id }}">{{ $user->student->note ?? '' }} </td>
+                                <td id="note_{{ $user->national_id }}">{{ $user->student->order->note ?? '' }} </td>
                                 <td class="text-center">
                                     <a data-toggle="modal" data-target="#editModal" href="#"
-                                        onclick="window.showModal('{{ $user->national_id }}','{{ $user->name }}','{{ $user->student->wallet }}','{{ $user->student->note }}')">
+                                        onclick="window.showPrivateModal('{{ $user->national_id ?? ''}}','{{ $user->name ?? ''}}','{{ $user->student->order->id ?? 0 }}','{{$user->student->order->note ?? ''}}',event)">
                                         <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                                     </a>
                                 </td>
@@ -170,9 +158,7 @@
             </table>
         </div>
         <script defer>
-            var docsVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
-            var studentUpdate = "{{ route('paymentsReviewUpdate') }}";
-
+            var privateDocDecisionRoute = "{{ route('privateDocDecision') }}";
         </script>
     </div>
 @stop

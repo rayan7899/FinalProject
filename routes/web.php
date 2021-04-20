@@ -16,6 +16,7 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\StudentCoursesController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\TransactionController;
 
 /*
@@ -59,7 +60,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
     Route::get('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
-    Route::get('/community/publish-to-rayat', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');
+    Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
     Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatCommunity');
     Route::get('/community/rayat-report', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
     Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
@@ -73,9 +74,6 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
     Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');
-    // Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    // Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayat');
-    // Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
 });
 
 // شؤون المتدربين
@@ -149,10 +147,13 @@ Route::middleware(['auth','agreement'])->group(function () {
     Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
 });
 
+//الإرشاد
 Route::middleware(['auth', 'role:الإرشاد'])->group(function () {
-    Route::get('/private', [CommunityController::class, 'privateDashboard'])->name('privateDashboard');
-    Route::get('/privatestate/student/docs/review', [CommunityController::class, 'private_all_student_form'])->name('PrivateAllStudentsForm');
-    Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
+    Route::get('/privatestate', [PrivateStateController::class, 'privateDashboard'])->name('privateDashboard');
+    Route::get('/privatestate/docs/review', [PrivateStateController::class, 'privateAllStudentsForm'])->name('PrivateAllStudentsForm');
+    Route::post('/privatestate/docs/decision', [PrivateStateController::class, 'privateDocDecision'])->name('privateDocDecision');
+    //Rayan ???????
+    // Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
 
 });
 

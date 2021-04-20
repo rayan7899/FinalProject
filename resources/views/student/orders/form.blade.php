@@ -73,7 +73,7 @@
         @endif
         <div class="card">
             <div class="card-header">
-                اصافة مقررات
+                اضافة مقررات
             </div>
             <div class="card-body">
                 <form id="addCoursesOrder" action="{{ route('orderStore') }}" method="post" accept-charset="utf-8"
@@ -131,7 +131,7 @@
                                             <td class="text-center">{{ $course->credit_hours * 550 }}</td>
                                             <td class="text-center @if ($user->student->level < 2) d-none @endif">
                                                     <input id="course_{{ $course->id }}" type="checkbox" name="courses[]"
-                                                        value="{{ $course->id }}" onclick="window.calcCost(event)"
+                                                        value="{{ $course->id }}" onclick="window.calcCost()"
                                                         checked />
                                             </td>
                                         </tr>
@@ -257,6 +257,9 @@
             </div>
         </div>
         <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                 window.calcCost(true);
+            });
             var courses =
                 @php
                 if (isset($courses)) {
@@ -270,7 +273,7 @@
                 if (isset($major_courses)) {
                     echo json_encode($major_courses) . ';';
                 } else {
-                    echo "\n";
+                    echo "'';\n";
                 }
                 @endphp
             var traineeState = "{{ $user->student->traineeState ?? 'trainee' }}"

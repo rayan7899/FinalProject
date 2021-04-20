@@ -18,6 +18,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('transaction_id')->nullable();
             $table->integer("amount");
+            $table->text("note")->nullable();
             $table->string("receipt_file_id");
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign("transaction_id")->references("id")->on("transactions");

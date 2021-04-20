@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Permission;
 use App\Models\Role;
@@ -48,7 +49,7 @@ class CommunityController extends Controller
 
             (object) [
                 "name" => "الرفع لرايات",
-                "url" => route("publishToRayatFormCommunity")
+                "url" => route('publishToRayatForm', ["type" => "community"])
             ],
 
             (object) [
@@ -69,20 +70,7 @@ class CommunityController extends Controller
         return view("manager.community.dashboard")->with(compact("links"));
     }
 
-    public function privateDashboard()
-    {
-        $links = [
-            (object) [
-                "name" => "تدقيق المستندات(ظروف خاصة)",
-                "url" => route("PrivateAllStudentsForm")
-            ],
-            // (object) [
-            //     "name" => "متابعة حالات المتدربين",
-            //     "url" => route("studentsStates")
-            // ],
-        ];
-        return view("manager.private.dashboard")->with(compact("links"));
-    }
+
 
 
     public function manageUsersForm()
@@ -123,7 +111,7 @@ class CommunityController extends Controller
         }
     }
 
-    public function editUserUpdate(Request $request,User $user)
+    public function editUserUpdate(Request $request, User $user)
     {
         $requestData = $this->validate($request, [
             'national_id' => 'required|digits:10|exists:users,national_id',
@@ -196,64 +184,60 @@ class CommunityController extends Controller
 
     public function paymentsReviewForm()
     {
-
         $fetch_errors = [];
         try {
-            // $users = User::with("student")->whereHas(
-            //     "student",
-            //     function ($res) {
-            //         $res->where("traineeState", "!=", "privateState");
-            //     }
-            // )->get();
-            $payments = Payment::where("transaction_id", null)->get();
-            $paymentIds = $payments->pluck('student_id')->toArray();
-            $users = User::with("student")->whereHas(
-                "student",
-                function ($res) use ($paymentIds) {
-                    $res->where("traineeState", "!=", "privateState")
-                        ->whereIn("id", $paymentIds);
+
+
+            $users = User::with("student.payments")
+                ->whereHas("student", function ($res) {
+                    $res->where('final_accepted', true)
+                        ->whereHas("payments", function ($res) {
+                            $res->where("transaction_id", null);
+                        });
+                })->get();
+            for ($i = 0; $i < count($users); $i++) {
+                foreach ($users[$i]->student->payments as $payment) {
+                    try {
+                        if ($payment->transaction_id == null) {
+
+                            $users[$i]->student->payment = $payment;
+                            $users[$i]->student->receipt = Storage::disk('studentDocuments')->files(
+                                $users[$i]->national_id . '/receipts/' . $payment->receipt_file_id
+                            )[0];
+                            break;
+                        }
+                    } catch (Exception $e) {
+                        Log::error($e);
+                        array_push($fetch_errors, $users[$i]->name);
+                        continue;
+                    }
                 }
-            )->get();
+            }
         } catch (Exception $e) {
             Log::error($e);
-            dd($e);
             return view('manager.community.paymentsReview')->with('error', "تعذر جلب المتدربين");
-        }
-        for ($i = 0; $i < count($payments); $i++) {
-            try {
-                if ($users[$i]->student->id == $payments[$i]->student_id) {
-                    $users[$i]->student->payment = $payments[$i];
-                    $users[$i]->student->receipt = Storage::disk('studentDocuments')->files(
-                        $users[$i]->national_id . '/receipts/' . $users[$i]->student->payments[0]->receipt_file_id
-                    )[0];
-                }
-            } catch (Exception $e) {
-                Log::error($e);
-                array_push($fetch_errors, $users[$i]->name);
-                continue;
-            }
         }
         return view('manager.community.paymentsReview')->with(compact('users'));
     }
 
 
-    public function paymentsReviewJson()
-    {
+    // public function paymentsReviewJson()
+    // {
 
-        $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('traineeState', '!=', 'privateState');
-        })->get();
+    //     $users = User::with('student')->whereHas('student', function ($result) {
+    //         $result->where('traineeState', '!=', 'privateState');
+    //     })->get();
 
-        for ($i = 0; $i < count($users); $i++) {
-            // $documents = Storage::disk('studentDocuments')->files($user->national_id);
-            $users[$i]['receipts'] = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/receipts');
-            $users[$i]->progname = $users[$i]->student->program->name;
-            $users[$i]->deptname = $users[$i]->student->department->name;
-            $users[$i]->mjrname = $users[$i]->student->major->name;
-        }
-        //return view('manager.community.paymentsReview')->with(compact('users'));
-        return response(\json_encode(['data' => $users]), 200);
-    }
+    //     for ($i = 0; $i < count($users); $i++) {
+    //         // $documents = Storage::disk('studentDocuments')->files($user->national_id);
+    //         $users[$i]['receipts'] = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/receipts');
+    //         $users[$i]->progname = $users[$i]->student->program->name;
+    //         $users[$i]->deptname = $users[$i]->student->department->name;
+    //         $users[$i]->mjrname = $users[$i]->student->major->name;
+    //     }
+    //     //return view('manager.community.paymentsReview')->with(compact('users'));
+    //     return response(\json_encode(['data' => $users]), 200);
+    // }
 
     public function paymentsReviewUpdate(Request $request)
     {
@@ -263,7 +247,6 @@ class CommunityController extends Controller
             "amount"             => "required|numeric",
             "note"               => "string|nullable"
         ]);
-
         try {
             DB::beginTransaction();
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
@@ -278,6 +261,8 @@ class CommunityController extends Controller
             ]);
             $payment->update([
                 "transaction_id" => $transaction->id,
+                "amount"        => $reviewedPayment["amount"],
+                "note"          => $reviewedPayment["note"],
             ]);
 
             $user->student->wallet += $reviewedPayment["amount"];
@@ -290,23 +275,6 @@ class CommunityController extends Controller
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
         }
     }
-
-    public function newSemester()
-    {
-        try {
-            DB::table('students')->update([
-                'documents_verified'    => false,
-                'student_docs_verified' => false,
-                'final_accepted'    => false,
-                'published' => false,
-            ]);
-            return response(200);
-        } catch (Exception $e) {
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
-        }
-    }
-
-
 
 
     public function paymentsReviewVerifiyDocs(Request $request)
@@ -342,38 +310,55 @@ class CommunityController extends Controller
         }
     }
 
-    public function private_all_student_form()
+
+    public function newSemester()
     {
-        $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('traineeState', 'privateState');
-        })->get();
-
-        for ($i = 0; $i < count($users); $i++) {
-            $users[$i]['docs'] = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/privateStateDoc');
+        try {
+            DB::table('students')->update([
+                'documents_verified'    => false,
+                'student_docs_verified' => false,
+                'final_accepted'    => false,
+                'published' => false,
+            ]);
+            return response(200);
+        } catch (Exception $e) {
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
-
-        return view('manager.private.private_student')->with(compact('users'));
     }
 
 
-
-    public function publishToRayatForm()
+    public function publishToRayatForm($type)
     {
-        // $users = User::with('student')->whereHas('student', function ($result) {
-        //     $result->where('final_accepted', true)
-        //         ->where('documents_verified', true)
-        //         ->where('level', '>', '1')
-        //         ->where("published", false);
-        // })->get();
-        $payments = Payment::where("transaction_id", "!=", null)->get();
-        $paymentIds = $payments->pluck('student_id')->toArray();
-        $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
-            $res->where("traineeState", "!=", "privateState")
-                ->where('level', '>', '1')
-                ->where("published", false)
-                ->whereIn("id", $paymentIds);
-        })->get();
+        if (isset($type)) {
+            if ($type == "affairs") {
+                $cond = "=";
+            } else if ($type == "community") {
+                $cond = ">";
+            }
+        }
+        $users = User::with("student")
+            ->whereHas("student", function ($res) use ($cond) {
+                $res->where('final_accepted', true)
+                    ->where('level', $cond, '1')
+                    ->whereHas("orders", function ($res) {
+                        $res->where("transaction_id", null)
+                            ->where("private_doc_verified", true);
+                    })
+                    ->whereDoesntHave("payments", function ($res) {
+                        $res->where("transaction_id", null);
+                    });
+            })->get();
 
+
+
+        foreach ($users as $user) {
+            foreach ($user->student->orders as $order) {
+                if ($order->transaction_id == null && $order->private_doc_verified == true) {
+                    $user->student->order = $order;
+                    break;
+                }
+            }
+        }
         if (isset($users)) {
             return view('manager.community.publishHoursToRayat')
                 ->with(compact('users'));
@@ -385,16 +370,83 @@ class CommunityController extends Controller
 
     public function publishToRayat(Request $request)
     {
-        $studentData = $this->validate($request, [
-            "national_id"        => "required|numeric",
-            'state'              => 'required',
+        $requestData = $this->validate($request, [
+            "national_id"        => "required|digits:10",
+            "requested_hours"    => "required|numeric|min:1|max:21",
+            "order_id"         => "required|numeric|exists:orders,id",
+
         ]);
+
         try {
-            $user = User::with('student')->where('national_id', $studentData['national_id'])->first();
-            $user->student()->update([
-                "published" => $studentData['state'],
+            $user = User::with('student.orders')->where('national_id', $requestData['national_id'])
+                ->whereHas("student.orders", function ($res) use ($requestData) {
+                    $res->where("id", $requestData['order_id']);
+                })->first();
+
+            if ($user === null) {
+                return response(['message' => "خطأ في بيانات المتدرب"], 422);
+            }
+
+            $order = Order::where("id", $requestData['order_id'])->first();
+            if ($order === null) {
+                return response(['message' => "خطأ في بيانات الطلب"], 422);
+            }
+
+            switch ($user->student->traineeState) {
+                case 'privateState':
+                    $discount = 0; // = %100 discount
+                    break;
+                case 'employee':
+                    $discount = 0.25; // = %75 discount
+                    break;
+                case 'employeeSon':
+                    $discount = 0.5; // = %50 discount
+                    break;
+                default:
+                    $discount = 1; // = %0 discount
+            }
+
+            $hoursCost = $requestData['requested_hours'] * (550 * $discount);
+            $canAddHours = $requestData['requested_hours'];
+            $note = null;
+
+            if ($user->student->traineeState != 'privateState') {
+                if ($hoursCost >= $user->student->wallet) {
+                    $canAddHours = floor($user->student->wallet / (550 * $discount));
+                }
+            }
+
+            if ($requestData['requested_hours'] > $canAddHours) {
+                return response(['message' => "عدد الساعات اكبر من الحد الاعلى"], 422);
+            }
+
+            if ($requestData['requested_hours'] > $order->requested_hours) {
+                return response(['message' => "عدد الساعات اكبر من الحد الاعلى"], 422);
+            }
+
+            if ($requestData['requested_hours'] < $order->requested_hours) {
+                $note = "تم تغيير عدد الساعات لعدم امكانية اضافتها الى رايات او عدم كفاية الرصيد";
+            }
+
+            $transaction = $user->student->transactions()->create([
+                "order_id"    => $order->id,
+                "amount"        => $hoursCost,
+                "type"          => "deduction",
+                "by_user"       => Auth::user()->id,
             ]);
-            return response(['message' => 'تم تغيير الحالة بنجاح'], 200);
+
+            $order->update([
+                "amount" => $hoursCost,
+                "requested_hours" => $requestData['requested_hours'],
+                "note"          => $note,
+                "transaction_id" => $transaction->id,
+            ]);
+
+            $user->student->wallet -= $hoursCost;
+            $user->student->credit_hours += $requestData['requested_hours'];
+            $user->student->save();
+
+            return response(['message' => 'تم قبول الطلب بنجاح'], 200);
         } catch (Exception $e) {
             return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
         }
@@ -402,12 +454,15 @@ class CommunityController extends Controller
 
     public function rayatReportForm()
     {
-        $users = User::with('student')->whereHas('student', function ($result) {
-            $result->where('final_accepted', true)
-                ->where('documents_verified', true)
-                ->where('level', '>', '1')
-                ->where("published", true);
-        })->get();
+        $users = User::with("student")
+            ->whereHas("student", function ($res) {
+                $res->where('final_accepted', true)
+                    ->where('level', '>', '1')
+                    ->whereHas("orders", function ($res) {
+                        $res->where("transaction_id", "!=", null)
+                            ->where("private_doc_verified", true);
+                    });
+            })->get();
 
         if (isset($users)) {
             return view('manager.community.rayatReport')
@@ -419,12 +474,7 @@ class CommunityController extends Controller
     }
 
 
-    public function studentsStates()
-    {
-        $users = User::with('student')->get();
-        return view('manager.community.studentsStates')
-            ->with(compact('users'));
-    }
+
 
     public function oldStudentsReport()
     {
@@ -441,6 +491,14 @@ class CommunityController extends Controller
             $result->where('level', '1');
         })->get();
         return view('manager.community.newStudentsReport')
+            ->with(compact('users'));
+    }
+
+
+    public function studentsStates()
+    {
+        $users = User::with('student')->get();
+        return view('manager.community.studentsStates')
             ->with(compact('users'));
     }
 }
