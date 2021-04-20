@@ -2,7 +2,6 @@ window.publishStudentHours = function (national_id, event) {
     let row = event.currentTarget.parentNode.parentNode;
     axios.post(window.publishToRayat, {
         national_id: national_id,
-        state: event.target.checked,
         hours: document.getElementById('hours').value,
     })
         .then((response) => {
@@ -19,7 +18,7 @@ window.publishStudentHours = function (national_id, event) {
         .catch((error) => {
             Swal.fire({
                 position: "center",
-                html: "<h4>" + error.response + "</h4>",
+                html: "<h4>" + error.response.data.message + "</h4>",
                 icon: "error",
                 showConfirmButton: true,
             });

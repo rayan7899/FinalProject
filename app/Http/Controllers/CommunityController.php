@@ -65,11 +65,14 @@ class CommunityController extends Controller
                 "name" => "جميع المتدربين المستجدين",
                 "url" => route("newStudentsReport")
             ],
+            (object) [
+                "name" => "شحن محفظة متدرب",
+                "url" => route("chargeForm")
+            ],
 
         ];
         return view("manager.community.dashboard")->with(compact("links"));
     }
-
 
 
 
@@ -366,6 +369,7 @@ class CommunityController extends Controller
             return view('manager.community.publishHoursToRayat')
                 ->with('error', "تعذر جلب المتدربين");
         }
+
     }
 
     public function publishToRayat(Request $request)
@@ -454,15 +458,10 @@ class CommunityController extends Controller
 
     public function rayatReportForm()
     {
-        $users = User::with("student")
-            ->whereHas("student", function ($res) {
-                $res->where('final_accepted', true)
-                    ->where('level', '>', '1')
-                    ->whereHas("orders", function ($res) {
-                        $res->where("transaction_id", "!=", null)
-                            ->where("private_doc_verified", true);
-                    });
-            })->get();
+        $users = User::with('student')->whereHas('student', function ($result) {
+            $result->where('level', '>', '1')
+                ->where('credit_hours', '>', 0);
+        })->get();
 
         if (isset($users)) {
             return view('manager.community.rayatReport')

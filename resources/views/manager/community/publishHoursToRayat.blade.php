@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-    {{-- @dd($users[0]->student->courses) --}}
+    {{-- @dd($users) --}}
     <div class="container-fluid">
         @if ($errors->any() || isset($error))
             <div class="alert alert-danger">

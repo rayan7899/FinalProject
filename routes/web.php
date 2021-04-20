@@ -13,6 +13,7 @@ use App\Http\Controllers\StudentAffairsController;
 use App\Http\Controllers\DepartmentBossController;
 use App\Http\Controllers\FalteringStudentsController;
 use App\Http\Controllers\MajorController;
+use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StudentCoursesController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
@@ -51,6 +52,9 @@ Route::middleware('auth')->group(function () {
     // TODO: disable this in release
     //Logs Viewer
     Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
+    Route::get('/charge', [ManagerController::class, 'chargeForm'])->name('chargeForm');
+    Route::post('/charge', [ManagerController::class, 'charge'])->name('charge');
 });
 
 // خدمة المجتمع

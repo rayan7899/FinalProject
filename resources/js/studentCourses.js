@@ -189,7 +189,7 @@ function addCoursesRequset(coursesData) {
         },
     });
     axios
-        .post('/api/student/add-courses', coursesData)
+        .post(window.addCoursesURL, coursesData)
         .then((response) => {
             console.log(response);
             Swal.fire({

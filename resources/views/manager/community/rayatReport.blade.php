@@ -56,7 +56,7 @@
                                 <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->credit_hours ?? 0}}</td>
+                                <td>{{ $user->student->credit_hours ?? 0 }}</td>
                                 <td class="text-success">مسجل في رايات</td>
                             </tr>
                         @empty

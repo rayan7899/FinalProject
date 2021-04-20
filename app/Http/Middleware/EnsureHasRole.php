@@ -33,6 +33,12 @@ class EnsureHasRole
                 }
                 break;
             case "رئيس قسم":
+                if ($manager === null) {
+                    return redirect(route('home'));
+                }
+                if (!$manager->isDepartmentManager($role)) {
+                    return redirect(route('home'));
+                }
                 // FIXME: impelement this role
                 return redirect(route('home'));
                 break;

@@ -258,19 +258,32 @@ class StudentController extends Controller
         }
     }
 
-
     public function getStudent($id)
     {
         try {
-            $userInfo = User::with('student.courses')->whereHas('student', function ($result) use ($id) {
-                $result->where('national_id', $id)->orWhere('rayat_id', $id);
-            })->first();
+            // $roles = array_map(
+            //     function ($p) {
+            //        return $p['role_id'];
+            //     },
+            //     Auth::user()->manager->permissions->toArray()
+            //  );
+            $roles = Auth::user()->manager->getPermissionRoleIds();
+             
+             $userInfo = User::whereHas('student', function($res) use ($id, $roles) {
+                $res->where('national_id', $id)
+                    ->orWhere('rayat_id', $id);
+             })->first();
             if (isset($userInfo)) {
-                return response()->json($userInfo, 200);
+                if(in_array($userInfo->student->departmentRoleId(), $roles)){
+                    return response()->json($userInfo, 200);
+                }else {
+                    return response()->json(["message" => "هذا المتدرب في قسم آخر"], 422);
+                }
             } else {
                 return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
             }
         } catch (QueryException $e) {
+            throw $e;
             return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
         }
     }
