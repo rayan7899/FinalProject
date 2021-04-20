@@ -224,42 +224,34 @@ window.sendStudentUpdate = function (requestType) {
             Swal.showLoading();
         },
     });
-    $.ajax({
-        type: "post",
-        url: window.paymentWithNote,
-        data: form,
-        headers: {
-            Accept: "application/json",
-            ContentType: "application/json",
-        },
-        dataType: "json",
-        success: function (response) {
-            if (document.getElementById("amount_" + national_id) !== null) {
-                document.getElementById(
-                    "amount_" + national_id
-                ).innerHTML = amount;
-            }
-            const message = response.message;
-            Swal.fire({
-                position: "center",
-                html: "<h4> تم تحديث البيانات بنجاح</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1700,
-            });
-            $("#editModal").modal("hide");
-        },
-        error: function (response) {
-            const message = response.responseJSON.message;
-            Swal.fire({
-                position: "center",
-                icon: "error",
-                title: message,
-                showConfirmButton: true,
-            });
-        },
+
+
+    axios.post(window.paymentWithNote, form)
+    .then((response) => {
+        if (document.getElementById(national_id) !== null) {
+            document.getElementById(national_id).remove();
+        }
+        
+        Swal.fire({
+            position: "center",
+            html: "<h4>" + response.data.message + "</h4>",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 1000,
+        });
+          $("#editModal").modal("hide");
+    })
+    .catch((error) => {
+        Swal.fire({
+            position: "center",
+            html: "<h4>" + error.response.data.message + "</h4>",
+            icon: "error",
+            showConfirmButton: true,
+        });
     });
-    Swal.close();
+
+Swal.close();
+
 };
 
 window.okClicked = function (national_id, payment_id, event) {
@@ -271,39 +263,35 @@ window.okClicked = function (national_id, payment_id, event) {
             Swal.showLoading();
         },
     });
-    $.ajax({
-        type: "post",
-        url: window.paymentVerified,
-        data: {
-            national_id: national_id,
-            payment_id: payment_id,
-        },
-        headers: {
-            Accept: "application/json",
-            ContentType: "application/json",
-        },
-        dataType: "json",
-        success: function (response) {
-            const message = response.message;
-            row.remove();
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1000,
-            });
-        },
-        error: function (response) {
-            const message = response.responseJSON.message;
-            Swal.fire({
-                position: "center",
-                icon: "error",
-                title: message,
-                showConfirmButton: true,
-            });
-        },
+
+    var form  = {
+        national_id: national_id,
+        payment_id: payment_id,
+    };
+
+    axios.post(window.paymentVerified, form)
+    .then((response) => {
+        row.remove();
+        Swal.fire({
+            position: "center",
+            html: "<h4>" + response.data.message + "</h4>",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 1000,
+        });
+          $("#editModal").modal("hide");
+    })
+    .catch((error) => {
+        Swal.fire({
+            position: "center",
+            html: "<h4>" + error.response.data.message + "</h4>",
+            icon: "error",
+            showConfirmButton: true,
+        });
     });
-    Swal.close();
+
+Swal.close();
+
 };
 window.showPdf = function (url, type) {
     if (type == "pdf") {

@@ -20,7 +20,7 @@ window.toggleChecked = function (event) {
     } else {
         window.new_cost -= cost;
     }
-    
+
     if (event.currentTarget.checked) {
         row.dataset.selected = true;
     } else {
@@ -38,7 +38,7 @@ window.addToCoursesTable = function () {
     let selectedCourses = tablePickCourses.querySelectorAll("[data-selected='true']");
     let newTotal = 0;
     selectedCourses.forEach((row) => {
-        row.children[5].children[0].setAttribute('onclick', 'window.calcCost(event);')
+        row.children[5].children[0].setAttribute('onclick', 'window.calcCost();')
         let id = row.children[5].children[0].value;
         row.children[5].children[0].setAttribute('id', 'course_' + id);
         // let result_row = tableCourses.children[0];
@@ -49,14 +49,14 @@ window.addToCoursesTable = function () {
         //     
         tableCourses.appendChild(row);
         // }
-       
+
     });
     window.calcCost();
     $('#pick-courses').modal('hide');
 }
 
 
-window.calcCost = function (event) {
+window.calcCost = function (firstLoad = false) {
     window.t_cost = 0;
     window.total_hours = 0;
     document.getElementById('totalHoursCost').value = 0;
@@ -67,15 +67,18 @@ window.calcCost = function (event) {
             window.total_hours += parseInt(course.dataset.hours);
         }
     }
-    if(window.total_hours < 12 || window.total_hours > 21){
-        $("#courses-error").html("يجب ان يكون مجموع الساعات بين 12 و 21 ساعة");
-        $("#courses-error").show();
-    }else{
-        $("#courses-error").html("");
-        $("#courses-error").hide();
-        
+    if (!firstLoad) {
+        if (window.total_hours < 12 || window.total_hours > 21) {
+            $("#courses-error").html("يجب ان يكون مجموع الساعات بين 12 و 21 ساعة");
+            $("#courses-error").show();
+        } else {
+            $("#courses-error").html("");
+            $("#courses-error").hide();
+
+        }
     }
-    
+
+
 
     let state = 'trainee';
     if (document.getElementById("employee").checked) {
@@ -87,7 +90,8 @@ window.calcCost = function (event) {
     }
     switch (state) {
         case 'employee':
-            document.getElementById('totalHoursCost').value = window.t_cost * 0.25;
+            // document.getElementById('totalHoursCost').value = window.t_cost * 0.25;
+            window.t_cost = window.t_cost * 0.25;
             $('#pledgeSection').show();
             $('#receiptImg').prop('disabled', false);
             $('#paymentGroup').show();
@@ -97,7 +101,8 @@ window.calcCost = function (event) {
             break;
 
         case 'employeeSon':
-            document.getElementById('totalHoursCost').value = window.t_cost * 0.5;
+            // document.getElementById('totalHoursCost').value = window.t_cost * 0.5;
+            window.t_cost = window.t_cost * 0.5;
             $('#pledgeSection').show();
             $('#receiptImg').prop('disabled', false);
             $('#paymentGroup').show();
@@ -107,7 +112,8 @@ window.calcCost = function (event) {
             break;
 
         case 'privateState':
-            document.getElementById('totalHoursCost').value = 0;
+            // document.getElementById('totalHoursCost').value = 0;
+            window.t_cost = 0;
             $('#paymentGroup').hide();
             $('#receipt').hide();
             $('#receiptImg').prop('disabled', true);
@@ -126,7 +132,7 @@ window.calcCost = function (event) {
             $('#privateStateDoc').prop('disabled', true);
             break;
     }
-
+    document.getElementById('totalHoursCost').value = window.t_cost;
     let walletAfterCalc = window.wallet - window.t_cost;
     let cost = 0;
     if (walletAfterCalc >= 0) {
@@ -135,7 +141,7 @@ window.calcCost = function (event) {
         $('#receiptImg').prop('disabled', true);
         document.getElementById("cost").value = 0;;
     } else {
-        cost = Math.abs(walletAfterCalc);        
+        cost = Math.abs(walletAfterCalc);
         document.getElementById("walletAfterCalc").value = 0;
         $('#costFormGroup').show();
         $('#receiptImg').prop('disabled', false);

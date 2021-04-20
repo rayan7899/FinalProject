@@ -26,6 +26,12 @@ class PaymentController extends Controller
 
     public function form()
     {
+        $user = Auth::user();
+        $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
+        $waitingOrdersCount = $user->student->orders()->where("transaction_id", "=", null)->count();
+        if ($waitingTransCount > 0 || $waitingOrdersCount > 0) {
+           return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+        }
         return view("student.wallet.payment");
     }
 
@@ -38,7 +44,7 @@ class PaymentController extends Controller
         $user = Auth::user(); 
         $waitingTransCount = $user->student->payments()->where("transaction_id", "=" ,null)->count();
         if($waitingTransCount > 0){
-            return redirect(route("home"))->with("error","تعذر ارسال الطلب يوجد طلب سابق تحت المراجعة");
+            return redirect(route("home"))->with("error","تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
         }
         try {
             DB::beginTransaction();

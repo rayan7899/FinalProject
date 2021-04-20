@@ -48,14 +48,6 @@
                 <tbody>
                     @if (isset($users))
                         @forelse ($users as $user)
-                            {{-- @php
-                                $total_cost = 0;
-                                $total_hours = 0;
-                                foreach ($user->student->courses as $course) {
-                                    $total_hours += $course->credit_hours;
-                                    $total_cost += $course->credit_hours * 550;
-                                }
-                            @endphp --}}
                             <tr>
                                 <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td>{{ $user->national_id ?? 'لا يوجد' }} </td>

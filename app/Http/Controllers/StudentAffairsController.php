@@ -259,8 +259,7 @@ class StudentAffairsController extends Controller
         //         ->whereIn("id", $paymentIds);
         // })->get();
         $users = User::with("student")->whereHas("student", function ($res) {
-            $res->where("traineeState", "!=", "privateState")
-                ->where('level', '1')
+            $res->where('level', '1')
                 ->where('credit_hours', '>', 0);
         })->get();
         if (isset($users)) {

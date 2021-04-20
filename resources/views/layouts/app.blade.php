@@ -64,7 +64,7 @@
                                                     href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                            document.getElementById('logout-form').submit();">
+                                                                                                document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -125,19 +125,25 @@
                                     {{-- --------- community ----------- --}}
                                     @if (Auth::user()->hasRole('خدمة المجتمع'))
                                         <ul class="navbar-nav">
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('rayatReportFormCommunity') }}">تقرير رايات</a>
-                                            </li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('publishToRayatFormCommunity') }}">الرفع
-                                                    لرايات</a>
-                                            </li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a></li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('manageUsersForm') }}">ادارة المستخدمين</a></li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>خدمة
+                                                المجتمع</li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right">
+
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('rayatReportFormCommunity') }}">تقرير رايات</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('publishToRayatForm',["type" => "community"]) }}">الرفع
+                                                        لرايات</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
+                                                    <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة
+                                                        المستخدمين</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
+
+                                                </div>
                                             </li>
                                         </ul>
                                     @endif
@@ -146,24 +152,36 @@
                                     {{-- --------- student affairs ----------- --}}
                                     @if (Auth::user()->hasRole('شؤون المتدربين'))
                                         <ul class="navbar-nav">
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('finalAcceptedList') }}">قائمة القبول النهائي</a>
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                                شؤون المتدربين</li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right">
+
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('finalAcceptedList') }}">قائمة
+                                                        القبول النهائي</a>
+                                                    <a class="dropdown-item" href="{{ route('NewStudents') }}">المتدربين
+                                                        المستجدين </a>
+                                                    <a class="dropdown-item" href="{{ route('finalAcceptedForm') }}">
+                                                        القبول
+                                                        النهائي </a>
+                                                    <a class="dropdown-item" href="{{ route('AddExcelForm') }}">اضافة
+                                                        اكسل
+                                                        مستجدين</a>
+                                                    <a class="dropdown-item" href="{{ route('OldForm') }}">
+                                                        اضافة اكسل مستمرين </a>
+                                                    <a class="dropdown-item" href="{{ route('rayatReportForm') }}">تقرير
+                                                        رايات</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('publishToRayatForm',["type" => "affairs"]) }}">الرفع
+                                                        لرايات</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('affairsDashboard') }}">{{ __('Go Home') }}</a>
+
+                                                </div>
                                             </li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('NewStudents') }}">المتدربين المستجدين </a></li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('finalAcceptedForm') }}"> القبول النهائي </a></li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('AddExcelForm') }}">اضافة اكسل مستجدين</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="{{ route('OldForm') }}">
-                                                    اضافة اكسل مستمرين </a></li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('rayatReportForm') }}">تقرير رايات</a></li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('publishToRayatForm') }}">الرفع لرايات</a></li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('affairsDashboard') }}">{{ __('Go Home') }}</a>
-                                            </li>
+
                                         </ul>
                                     @endif
 
@@ -171,11 +189,19 @@
                                     {{-- --------- private state ----------- --}}
                                     @if (Auth::user()->hasRole('الإرشاد'))
                                         <ul class="navbar-nav">
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('privateDashboard') }}">{{ __('Go Home') }}</a>
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                                الارشاد</li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right">
+
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('privateDashboard') }}">{{ __('Go Home') }}</a>
+
+                                                    <a class="dropdown-item" href="{{ route('PrivateAllStudentsForm') }}">ظروف
+                                                        خاصة</a>
+                                                </div>
                                             </li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('PrivateAllStudentsForm') }}">ظروف خاصة</a></li>
                                         </ul>
                                     @endif
 

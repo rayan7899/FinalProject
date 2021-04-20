@@ -51,7 +51,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
-                        <button onclick="window.sendStudentUpdate('else')" class="btn btn-primary">حفظ</button>
+                        <button onclick="window.sendStudentUpdate('else')" class="btn btn-primary">ارسال</button>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                     @if (isset($users))
                     @forelse ($users as $user)
                         @if (isset($user->student->receipt))
-                            <tr>
+                            <tr id="{{$user->national_id ?? 0}}">
                                 <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
