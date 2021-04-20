@@ -43,7 +43,8 @@
                             <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                            <td>
+                            <td>{{ $user->student->credit_hours ?? 'لا يوجد' }} </td>
+                            {{-- <td>
                                 @php
                                     if($user->student->traineeState=='privateState'){
                                         echo $user->student->major->hours;
@@ -74,7 +75,7 @@
                                         echo $clearCost/$hourCostAfterDiscount;
                                     }
                                 @endphp
-                            </td>
+                            </td> --}}
                         </tr>
                     @empty
                         لايوجد

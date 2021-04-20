@@ -65,6 +65,10 @@ class CommunityController extends Controller
                 "name" => "جميع المتدربين المستجدين",
                 "url" => route("newStudentsReport")
             ],
+            (object) [
+                "name" => "شحن محفظة متدرب",
+                "url" => route("chargeForm")
+            ],
 
         ];
         return view("manager.community.dashboard")->with(compact("links"));
@@ -76,6 +80,10 @@ class CommunityController extends Controller
             (object) [
                 "name" => "تدقيق المستندات(ظروف خاصة)",
                 "url" => route("PrivateAllStudentsForm")
+            ],
+            (object) [
+                "name" => "شحن محفظة متدرب",
+                "url" => route("chargeForm")
             ],
             // (object) [
             //     "name" => "متابعة حالات المتدربين",
@@ -445,15 +453,6 @@ class CommunityController extends Controller
                     "transaction_id" => $transaction->id,
                     "requested_hours" => $studentData['hours'],
                 ]);
-                
-                if($amountAfterEdit != $amountbeforeEdit){
-                    $user->student->transactions()->create([
-                        "amount"        => $amountbeforeEdit - $amountAfterEdit,
-                        "type"          => "recharge",
-                        "by_user"       => Auth::user()->id,
-                        "note"          => "رصيد مسترد",
-                    ]);
-                }
 
                 $user->student->credit_hours += $studentData['hours'];
                 $user->student->wallet -= $amountAfterEdit;

@@ -44,12 +44,12 @@
                 </div>
             </div>
 
+            <!--------------------------------------------------------------------->
+            <!--------------------------------------------------------------------->
+            <!----------------all courses table------------------------------------>
+            <!--------------------------------------------------------------------->
+            <!--------------------------------------------------------------------->
             <div class="container-fluid row m-0">
-                <!--------------------------------------------------------------------->
-                <!--------------------------------------------------------------------->
-                <!----------------all courses table------------------------------------>
-                <!--------------------------------------------------------------------->
-                <!--------------------------------------------------------------------->
                 <div class="col-sm-12 p-0">
                     <div class="card">
                         <div class="card-header">
@@ -64,6 +64,13 @@
                                 <select required name="major" id="major" class="form-controller col-4"
                                     onchange="getCourses()">
                                     <option value="" disabled selected>حدد التخصص</option>
+                                </select>
+                                <select name="level" id="level" onchange="fillSuggestedCourses()" class="ml-0 d-inline mx-3 d-inline">
+                                    <option value="1"> المستوى الاول</option>
+                                    <option value="2"> المستوى الثاني</option>
+                                    <option value="3"> المستوى الثالث</option>
+                                    <option value="4"> المستوى الرابع</option>
+                                    <option value="5"> المستوى الخامس</option>
                                 </select>
                                 @error('major')
                                     <span class="invalid-feedback" role="alert">

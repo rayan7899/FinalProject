@@ -5,6 +5,7 @@ namespace App\Models;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class Manager extends Model
@@ -32,5 +33,36 @@ class Manager extends Model
         
         // $role_row = Role::where('name', $role);
         // return $this->permissions()->where('manager_id', $this->id)->Where('role_id', $role_row->id);
+    }
+
+    public function isDepartmentManager()
+    {
+        foreach ($this->permissions as $permission) {
+            $diplomPattern =  ' - دبلوم ';
+            $baccPattern = ' - بكالوريوس ';
+            $name = $permission->role->name;
+            return (str_ends_with($name, $diplomPattern) || str_ends_with($name, $baccPattern));
+        }
+    }
+
+    public function getPermissionRoleIds()
+    {
+        return $roles = array_map(
+            function ($p) {
+               return $p['role_id'];
+            },
+            $this->permissions->toArray()
+         );
+    }
+
+    public function getMyDepartment()
+    {
+        $roles = $this->getPermissionRoleIds();
+        Department::whereIn('role_id', $roles);
+
+        dd($roles);
+        // foreach ($this->permissions as $permission) {
+
+        // }
     }
 }

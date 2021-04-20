@@ -46,6 +46,10 @@ class StudentAffairsController extends Controller
                 "name" => "الجداول المقترحة",
                 "url" => route("coursesPerLevel")
             ],
+            (object) [
+                "name" => "شحن محفظة متدرب",
+                "url" => route("chargeForm")
+            ],
             // (object) [
             //     "name" => "متابعة حالات المتدربين",
             //     "url" => route("studentsStates")
@@ -231,15 +235,6 @@ class StudentAffairsController extends Controller
                     "transaction_id" => $transaction->id,
                     "requested_hours" => $studentData['hours'],
                 ]);
-                
-                if($amountAfterEdit != $amountbeforeEdit){
-                    $user->student->transactions()->create([
-                        "amount"        => $amountbeforeEdit - $amountAfterEdit,
-                        "type"          => "recharge",
-                        "by_user"       => Auth::user()->id,
-                        "note"          => "رصيد مسترد",
-                    ]);
-                }
 
                 $user->student->credit_hours += $studentData['hours'];
                 $user->student->wallet -= $amountAfterEdit;
