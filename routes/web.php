@@ -65,7 +65,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
     Route::get('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
     Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatCommunity');
+    Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
     Route::get('/community/rayat-report', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
     Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
     Route::get('/community/old-students-report', [CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
@@ -95,9 +95,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     // Old users
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
-    //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
-    Route::get('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    Route::post('/affairs/publish-to-rayat', [StudentAffairsController::class, 'publishToRayat'])->name('publishToRayatAffairs');
+    // //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
     Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
 
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');

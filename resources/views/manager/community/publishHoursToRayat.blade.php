@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-    {{-- @dd($users) --}}
+    {{-- @dd($users[0]->student->courses) --}}
     <div class="container-fluid">
         @if ($errors->any() || isset($error))
             <div class="alert alert-danger">
@@ -89,7 +89,7 @@
                                         id="requested_hours" value="{{ $requested_hours ?? 0 }}"><small> الحد الاعلى
                                         {{ $maxHours ?? 0 }}</small></td>
                                 <td><button class="btn btn-primary btn-sm"
-                                        onclick="publishToRayatCommunity({{ $user->national_id }},{{ $user->student->order->id }},event)">تم</button>
+                                        onclick="publishToRayatStore({{ $user->national_id }},{{ $user->student->order->id }},event)">تم</button>
                                 </td>
                             </tr>
                         @empty
@@ -100,7 +100,7 @@
             </table>
         </div>
         <script>
-            var publishToRayat = "{{ route('publishToRayatCommunity') }}";
+            var publishToRayat = "{{ route('publishToRayatStore') }}";
 
         </script>
 
