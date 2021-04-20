@@ -62,11 +62,11 @@
                                     <select required name="department" id="department" class="form-controller w-100 "
                                         onchange="fillMajors()">
                                         <option value="0" disabled selected>أختر</option>
-                                        @forelse (Auth::user()->with() as $item)
+                                        {{-- @forelse (Auth::user()->with('departments') as $item)
                                             
                                         @empty
                                             
-                                        @endforelse
+                                        @endforelse --}}
                                     </select>
                                     @error('department')
                                         <span class="invalid-feedback" role="alert">
