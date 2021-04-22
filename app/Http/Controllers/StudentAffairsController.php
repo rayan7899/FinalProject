@@ -80,7 +80,10 @@ class StudentAffairsController extends Controller
         try {
             $users = User::with('student')->whereHas('student', function ($result) {
                 $result->where('level', 1)
-                    ->where('data_updated', true);
+                    ->where('data_updated', true)
+                    ->whereHas('payments', function($res){
+                        $res->where('transaction_id', '!=', null);
+                    });
             })->get();
 
             $fetch_errors = [];

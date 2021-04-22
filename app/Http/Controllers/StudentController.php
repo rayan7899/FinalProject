@@ -94,11 +94,11 @@ class StudentController extends Controller
                 )
             );
 
-            $user->student()->update(
-                array(
-                    'data_updated' => true,
-                )
-            );
+            // $user->student()->update(
+            //     array(
+            //         'data_updated' => true,
+            //     )
+            // );
 
             $national_id = Auth::user()->national_id;
 
@@ -114,7 +114,7 @@ class StudentController extends Controller
             // }
 
             DB::commit();
-            return redirect(route('home'))->with('success', ' تم تحديث البيانات بنجاح');
+            return redirect(route('orderForm'))->with('success', ' تم تحديث البيانات بنجاح');
         } catch (\Throwable $e) {
             DB::rollback();
             Log::error($e);

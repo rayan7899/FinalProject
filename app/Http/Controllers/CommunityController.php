@@ -198,8 +198,7 @@ class CommunityController extends Controller
 
             $users = User::with("student.payments")
                 ->whereHas("student", function ($res) {
-                    $res->where('final_accepted', true)
-                        ->whereHas("payments", function ($res) {
+                    $res->whereHas("payments", function ($res) {
                             $res->where("transaction_id", null);
                         });
                 })->get();

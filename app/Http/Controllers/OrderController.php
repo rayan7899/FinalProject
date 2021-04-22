@@ -172,6 +172,11 @@ class OrderController extends Controller
             $user->student->save();
 
          }
+         $user->student()->update(
+            array(
+                'data_updated' => true,
+            )
+         );
          DB::commit();
          return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
       } catch (\Throwable $e) {
