@@ -16,10 +16,12 @@ class ProgramSeeder extends Seeder
     {
         Program::create([
             'name' => 'البكالوريوس',
+            'hourPrice' => 550,
         ]);
 
         Program::create([
             'name' => 'الدبلوم',
+            "hourPrice" => 400,
         ]);
     }
 }

@@ -53,7 +53,7 @@
                 <div class="col-sm-12 p-0">
                     <div class="card">
                         <div class="card-header">
-                            <div class="row">
+                            {{-- <div class="row">
                                 <h6 class="d-inline col-4">المقررات</h6>
                                 <select required name="program" id="program" class="form-controller col-4"
                                     onchange="getMajors()">
@@ -77,6 +77,56 @@
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                            </div> --}}
+
+                            <div class="form-row mb-3">
+                                <div class="col-sm-4">
+                                    <label for="program" class="pl-1"> البرنامج </label>
+                                    <select required name="program" id="program" class="form-controller w-100"
+                                        onchange="fillDepartments()">
+                                        <option value="0" disabled selected>أختر</option>
+                                        @forelse (json_decode($programs) as $program)
+                                            <option value="{{ $program->id }}">{{ $program->name }}</option>
+                                        @empty
+                                        @endforelse
+
+                                    </select>
+                                    @error('program')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-sm-4 ">
+                                    <label for="department" class="pl-1"> القسم </label>
+                                    <select required name="department" id="department" class="form-controller w-100 "
+                                        onchange="fillMajors()">
+                                        <option value="0" disabled selected>أختر</option>
+                                        {{-- @forelse (Auth::user()->with('departments') as $item)
+                                            
+                                        @empty
+                                            
+                                        @endforelse --}}
+                                    </select>
+                                    @error('department')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="major" class="pl-1"> التخصص </label>
+                                    <select required name="major" id="major" class="form-controller w-100"
+                                        onchange="getCourses()">
+                                        <option value="0" disabled selected>أختر</option>
+                                    </select>
+                                    @error('major')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
                             </div>
 
                         </div>
@@ -156,6 +206,8 @@
     </div>
     <script>
         var addCoursesURL = "{{ route('addCoursesToStudent') }}";
+        var programs = @php echo $programs; @endphp;  
+            var getCoursesUrl = "{{ route('apiGetCourses') }}";
     </script>
 
 @stop

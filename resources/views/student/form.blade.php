@@ -28,12 +28,12 @@
                         <tbody id="pick-courses">
                             @if (isset($major_courses))
                                 @forelse ($major_courses as $course)
-                                    <tr data-cost="{{ $course->credit_hours * 550 }}">
+                                    <tr data-cost="{{ $course->credit_hours * $user->student->program->hourPrice }}">
                                         <td class="text-center">{{ $course->code }}</td>
                                         <td class="text-center">{{ $course->name }}</td>
                                         <td class="text-center">{{ $course->level }}</td>
                                         <td class="text-center">{{ $course->credit_hours }}</td>
-                                        <td class="text-center">{{ $course->credit_hours * 550 }}</td>
+                                        <td class="text-center">{{ $course->credit_hours * $user->student->program->hourPrice }}</td>
                                         <td class="text-center @if ($user->student->level < 2) d-none @endif">
                                                 <input id="major_course_{{ $course->id }}" name="courses[]" type="checkbox"
                                                     value="{{ $course->id }}" onclick="window.toggleChecked(event)" />

@@ -63,7 +63,8 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
-    Route::get('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
+    Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
+    Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
     Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
     Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
     Route::get('/community/rayat-report', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');

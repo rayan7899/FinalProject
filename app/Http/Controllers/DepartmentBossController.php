@@ -5,15 +5,36 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Models\Program;
+use Exception;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DepartmentBossController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+
     public function index()
     {
-        $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
-        // dd($programs);
-        return view('manager.departmentBoss.coursesPerLevel')->with(compact('programs'));
+        try{
+            if (Auth::user()->isDepartmentManager()) {
+            $programs =  json_encode(Auth::user()->manager->getMyDepartment());
+           
+            return view('manager.departmentBoss.coursesPerLevel')->with(compact('programs'));
+        }else{
+            return view("error")->with("error","لا تملك الصلاحيات لدخول لهذه الصفحة");
+        }
+        }catch(Exception $e){
+            return view("error")->with("error","حدث خطأ غير معروف");
+            Log::error($e);
+        }
+        
+       
     }
 
     public function dashboard()
@@ -35,9 +56,13 @@ class DepartmentBossController extends Controller
     public function apiGetCourses()
     {
         try {
-            $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
-            return response($programs, 200);
+            if (Auth::user()->isDepartmentManager()) {
+                $programs =  json_encode(Auth::user()->manager->getMyDepartment());
+                return response($programs, 200);
+            }
+           
         } catch (QueryException $e) {
+            Log::error($e);
             return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
         }
     }
@@ -53,6 +78,7 @@ class DepartmentBossController extends Controller
             $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
             return response(['message' => 'تم تحديث الجدول المقترح بنجاح', 'programs' => $programs], 200);
         } catch (QueryException $e) {
+            Log::error($e);
             return response(['message' => 'حدث خطأ غير معروف اثناء تحديث الجدول المقترح'], 422);
         }
     }
