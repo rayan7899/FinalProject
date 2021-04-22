@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     // FIXME: use the home page as dashboard page for all type of users and make
     //        sure the home page display different content foreach type of users
 
-   
+
     Route::get('/deptBoss', [DepartmentBossController::class, 'dashboard'])->name('deptBossDashboard');
 
     // FIXME: this route is not used anywhere, shall we remove it?
@@ -65,8 +65,8 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
-    Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
+    // Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
+    // Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
     Route::get('/community/rayat-report', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
     Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
     Route::get('/community/old-students-report', [CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
@@ -79,6 +79,14 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
     Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');
+});
+
+
+// FIXME: these routes are shard between `شؤون المتدربين` and `خدمة المجتمع`,
+//        and I cannot find way to tell our middleware `role` that.
+Route::middleware(['auth'])->group(function () {
+    Route::get('/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
+    Route::post('/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
 });
 
 // شؤون المتدربين
@@ -98,29 +106,31 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
     // //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
     Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
+    // Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
+    // Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
 
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
 });
 
 // روأسا الأقسام
 // Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
-    //departmentBoss
-    Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
-    Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
-    Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
+//departmentBoss
+Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
+Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
+Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
 
-    Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
-    Route::get('/api/student/{id}', [StudentController::class, 'getStudent'])->name('apiGetStudent');
-    Route::get('/api/major/{majorId}/courses', [CourseController::class, 'getCoursesByMajorId']);
-    Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCoursesToStudent'])->name('addCoursesToStudent');
-    Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
-    // FIXME: use path-parameter instead of header key-value pairs (for consistency)
-    Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');
+Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
+Route::get('/api/student/{id}', [StudentController::class, 'getStudent'])->name('apiGetStudent');
+Route::get('/api/major/{majorId}/courses', [CourseController::class, 'getCoursesByMajorId']);
+Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCoursesToStudent'])->name('addCoursesToStudent');
+Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
+// FIXME: use path-parameter instead of header key-value pairs (for consistency)
+Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');
 // });
 
 // المتدربين
 // Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {
-Route::middleware(['auth','agreement'])->group(function () {
+Route::middleware(['auth', 'agreement'])->group(function () {
 
     //StudentController - Edit student form
     //Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
@@ -160,9 +170,9 @@ Route::middleware(['auth', 'role:الإرشاد'])->group(function () {
 
 });
 
-    //StudentController - Agreement
-    Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
-    Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
+//StudentController - Agreement
+Route::get('/student/agreement', [StudentController::class, 'agreement_form'])->name('AgreementForm');
+Route::post('/student/agreement', [StudentController::class, 'agreement_submit'])->name('AgreementSubmit');
 
 
 // Route::get('/deptBoss/courses-data', [DepartmentBossController::class, 'getCoursesData'])->name('getCoursesData');
