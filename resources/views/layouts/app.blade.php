@@ -129,7 +129,7 @@
                                                     <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع المتدربين المستمرين</a>
                                                     <a class="dropdown-item" href="{{ route('newStudentsReport') }}">جميع المتدربين المستجدين</a>
                                                     <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a>
-
+                                                    <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل دراسي جديد</a>
                                                 </div>
                                             </li>
                                         </ul>
