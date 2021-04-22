@@ -210,7 +210,7 @@
                                 </div>
                             </div>
                         </div>
-                    @if ($user->student->final_accepted == false)
+                    {{-- @if ($user->student->final_accepted == false)
                         <div class="col-12">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
@@ -221,7 +221,7 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    @endif --}}
                     </div>
                 </div>
 
@@ -229,7 +229,7 @@
 
 
 
-            @if ($user->student->final_accepted == true)
+            {{-- @if ($user->student->final_accepted == true) --}}
                 <div class="col-12">
 
 
@@ -424,7 +424,7 @@
 
                 </div>
 
-            @endif
+            {{-- @endif --}}
         </div>
     </div>
     <style>
