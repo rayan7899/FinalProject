@@ -21,20 +21,21 @@ class DepartmentBossController extends Controller
 
     public function index()
     {
-        try{
+        try {
             if (Auth::user()->isDepartmentManager()) {
-            $programs =  json_encode(Auth::user()->manager->getMyDepartment());
-           
-            return view('manager.departmentBoss.coursesPerLevel')->with(compact('programs'));
-        }else{
-            return view("error")->with("error","لا تملك الصلاحيات لدخول لهذه الصفحة");
-        }
-        }catch(Exception $e){
-            return view("error")->with("error","حدث خطأ غير معروف");
+                $programs = json_encode(Auth::user()->manager->getMyDepartment());
+
+                return view('manager.departmentBoss.coursesPerLevel')->with(compact('programs'));
+            } else if (Auth::user()->hasRole('شؤون المتدربين')) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+                return view('manager.departmentBoss.coursesPerLevel')->with(compact('programs'));
+            } else {
+                return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
+            }
+        } catch (Exception $e) {
+            return view("error")->with("error", "حدث خطأ غير معروف");
             Log::error($e);
         }
-        
-       
     }
 
     public function dashboard()
@@ -59,8 +60,10 @@ class DepartmentBossController extends Controller
             if (Auth::user()->isDepartmentManager()) {
                 $programs =  json_encode(Auth::user()->manager->getMyDepartment());
                 return response($programs, 200);
+            } else if (Auth::user()->hasRole('شؤون المتدربين')) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+                return response($programs, 200);
             }
-           
         } catch (QueryException $e) {
             Log::error($e);
             return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
