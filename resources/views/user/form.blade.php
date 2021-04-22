@@ -80,7 +80,7 @@
             <div class="col-sm-4">
                 <label for="cost"> المبلغ المراد سداده</label>
                 <div class="input-group mb-3">
-                    <input disabled required type="text" class="form-control  " id="cost" name="cost" value="{{ $user->major->hours * 550 }}">
+                    <input disabled required type="text" class="form-control  " id="cost" name="cost" value="{{ $user->major->hours * $user->student->program->hourPrice }}">
                     <span class="input-group-text">SR</span>
                 </div>
             </div>
@@ -144,7 +144,15 @@
     function changeTraineeState(state) {
         var user = [@php echo $user;@endphp];
         var hours = user[0].major.hours;
-        var hourCost = 550;
+        var hourCost = 
+        @php
+        if(isset($user->student->program->hourPrice)){
+            echo $user->student->program->hourPrice; 
+        }else{
+            echo 550;
+        }
+         @endphp;
+         ;
         var costGroup = document.getElementById('costGroup');
         switch (state) {
             case 'trainee':

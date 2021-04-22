@@ -95,7 +95,7 @@ class OrderController extends Controller
             },
             Course::whereIn('id', $requestData['courses'])->get()->toArray()
          ));
-         $amount = $total_hours * 550;
+         $amount = $total_hours * $user->student->program->hourPrice;
          $amount = $amount * $discount;
          $walletAfterCalc = $user->student->wallet - $amount;
 

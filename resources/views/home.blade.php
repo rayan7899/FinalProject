@@ -8,7 +8,7 @@
     $paymentsState = true;
     foreach ($user->student->courses as $course) {
         $total_hours += $course->credit_hours;
-        $total_cost += $course->credit_hours * 550;
+        $total_cost += $course->credit_hours * $user->student->program->hourPrice;
     }
     $paymentsCount = count($user->student->payments);
     // dd($user->student->payments[$paymentsCount - 1]);
@@ -237,14 +237,8 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex flex-row justify-content-between">
-                                <div>
-                                    <p class="h5 d-inline"> الرصيد الحالي: </p>
-                                    {{-- <input readonly type="text" class="text-center bg-white d-inline"
-                                    value="{{ $user->student->wallet ?? 'لا يوجد' }}"> --}}
-                                    <p class="h5 d-inline">
-                                        {{ $user->student->wallet ?? 'لا يوجد' }}
-                                    </p>
-
+                                <div class="h5">
+                                    المحفظة
                                 </div>
 
 
@@ -272,7 +266,11 @@
                                         <tr class="text-center">
                                             <td>{{ $payment->id }}</td>
                                             <td>{{ $payment->amount }}</td>
-                                            <td>{{ $payment->transaction_id !== null ? 'مقبول' : 'قيد المراجعة' }}</td>
+                                             @if ($payment->transaction_id  == null)
+                                                    <td>قيد المراجعة</td>
+                                                @else
+                                                    <td class="text-success">مقبول</td>
+                                                @endif
                                             <td class="text-right">{{ $payment->note ?? 'لا يوجد' }}</td>
                                             <td class="">
 
@@ -355,17 +353,24 @@
 
 
 
-
-
-
-
-
                     {{-- transactions --}}
                     <div class="card my-4">
                         <div class="card-header">
-                            <div class="h5">
-                                جميع العمليات المالية
-                            </div>
+                          
+                               
+                                <div class="d-flex flex-row justify-content-between">
+                                    <div class="h5">
+                                    جميع العمليات المالية
+                                    </div>
+                                   <div>
+                                       <p class="h5 d-inline"> الرصيد الحالي : </p>
+                                       <p class="h5 d-inline">
+                                           {{ $user->student->wallet ?? 'لا يوجد' }}
+                                       </p>
+                                   </div>
+
+                                </div>
+                            
                         </div>
                         <div class="card-body p-0">
                             <table class="table table-bordered m-0">
@@ -380,7 +385,9 @@
                                 </thead>
                                 <tbody>
                                     @forelse ($user->student->transactions as $transaction)
-                                        @php $hoursNote = ""; @endphp
+                                        @php $hoursNote = ""; 
+                                        
+                                        @endphp
                                         <tr class="text-center">
                                             <td>{{ $transaction->id ?? 'Error' }}</td>
 

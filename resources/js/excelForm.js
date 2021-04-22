@@ -17,6 +17,7 @@ window.findDepartment = function (programs, program_id) {
     if(programs !== undefined && programs !== null){
         for (var i = 0; i < programs.length; i++) {
             if (programs[i].id == program_id) {
+                
                 return programs[i].departments;
             }
         }
@@ -25,6 +26,7 @@ window.findDepartment = function (programs, program_id) {
 
 window.fillDepartments = function () {
     var prog = document.getElementById("program").value;
+    
     if(prog == undefined){
         return ;
     }

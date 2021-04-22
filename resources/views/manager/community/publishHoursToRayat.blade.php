@@ -65,13 +65,13 @@
                                         $discount = 1; // = %0 discount
                                 }
                                 
-                                $hoursCost = $user->student->order->requested_hours * 550;
+                                $hoursCost = $user->student->order->requested_hours * $user->student->program->hourPrice;
                                 $hoursCost = $hoursCost * $discount;
                                 $requested_hours = $user->student->order->requested_hours;
                                 $maxHours =  $requested_hours;
                                 if ($user->student->traineeState != 'privateState') {
                                     if ($hoursCost >= $user->student->wallet) {
-                                        $maxHours = floor($user->student->wallet / 550);
+                                        $maxHours = floor($user->student->wallet / $user->student->program->hourPrice);
                                         $requested_hours = $maxHours;
                                     }
                                 }

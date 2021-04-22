@@ -46,7 +46,7 @@ class StudentCoursesController extends Controller
                     break;
             }
 
-            $amount = $coursesData['totalHours'] * 550 * $discount;
+            $amount = $coursesData['totalHours'] * $user->student->program->hourPrice * $discount;
 
             if ($user->student->wallet < $amount) {
                 return response(['message' => 'الرصيد لايسمح بإضافة هذه المقررات'], 422);
@@ -59,7 +59,9 @@ class StudentCoursesController extends Controller
                 [
                     "amount" => $amount,
                     "requested_hours" => $coursesData['totalHours'],
-                    "note"    => "الطلب تم بواسطة رئيس القسم"
+                    "note"    => "الطلب تم بواسطة رئيس القسم",
+                    "private_doc_verified" => true
+
                 ]
                 );
             DB::commit();

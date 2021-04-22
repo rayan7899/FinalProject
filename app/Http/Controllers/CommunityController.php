@@ -38,10 +38,10 @@ class CommunityController extends Controller
             //     "name" => "انشاء مستخدم",
             //     "url" => route("createUserForm")
             // ],
-            // (object) [
-            //     "name" => "فصل دراسي جديد",
-            //     "url" => route("newSemester")
-            // ],
+            (object) [
+                "name" => "فصل دراسي جديد",
+                "url" => route("newSemester")
+            ],
             // (object) [
             //     "name" => "متابعة حالات المتدربين",
             //     "url" => route("studentsStates")
@@ -170,8 +170,9 @@ class CommunityController extends Controller
     public function deleteUser(User $user)
     {
         try {
-            $user->delete();
-            return back()->with('success', 'تم حذف المستخدم بنجاح');
+            // $user->delete();
+            // return back()->with('success', 'تم حذف المستخدم بنجاح');
+            return back()->with('error', 'تم ايقاف هذا الامر ');
         } catch (Exception $e) {
             Log::error($e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
@@ -268,7 +269,6 @@ class CommunityController extends Controller
             ]);
             $payment->update([
                 "transaction_id" => $transaction->id,
-                "amount"        => $reviewedPayment["amount"],
                 "note"          => $reviewedPayment["note"],
             ]);
 
@@ -318,18 +318,47 @@ class CommunityController extends Controller
     }
 
 
-    public function newSemester()
+    public function newSemesterForm()
     {
+        return view("manager.community.newSemester");
+    }
+
+
+
+    public function newSemester(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "national_id"        => "required|digits:10",
+            'password' => 'required|string|min:8',
+
+        ]);
+
         try {
-            DB::table('students')->update([
-                'documents_verified'    => false,
-                'student_docs_verified' => false,
-                'final_accepted'    => false,
-                'published' => false,
-            ]);
-            return response(200);
+          
+
+            if (!Hash::check($requestData["password"], Auth::user()->password) && $requestData["national_id"] != Auth::user()->national_id) 
+            {
+                return  back()->with('error', 'البيانات المدخلة لا تتطابق مع سجلاتنا');
+            }
+            DB::beginTransaction();
+
+            DB::table('students')
+                ->update([
+                    'credit_hours' => 0,
+                ]);
+
+            DB::table('students')
+                ->where('level', "<", 5)
+                ->update([
+                    'level' => DB::raw('level + 1'),
+                ]);
+
+            DB::commit();
+            return redirect(route("communityDashboard"))->with("success", "تم معالجة الطلب بنجاح");
         } catch (Exception $e) {
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
+            Log::error($e);
+            DB::rollBack();
+            return back()->with('error', 'حدث خطأ غير معروف');
         }
     }
 
@@ -373,7 +402,6 @@ class CommunityController extends Controller
             return view('manager.community.publishHoursToRayat')
                 ->with('error', "تعذر جلب المتدربين");
         }
-
     }
 
     public function publishToRayat(Request $request)
@@ -389,7 +417,7 @@ class CommunityController extends Controller
             $user = User::with('student.orders')->where('national_id', $requestData['national_id'])
                 ->whereHas("student.orders", function ($res) use ($requestData) {
                     $res->where("id", $requestData['order_id']);
-                })->first();
+                })->get()[0];
 
             if ($user === null) {
                 return response(['message' => "خطأ في بيانات المتدرب"], 422);
@@ -414,13 +442,13 @@ class CommunityController extends Controller
                     $discount = 1; // = %0 discount
             }
 
-            $hoursCost = $requestData['requested_hours'] * (550 * $discount);
+            $hoursCost = $requestData['requested_hours'] * ($user->student->program->hourPrice * $discount);
             $canAddHours = $requestData['requested_hours'];
             $note = null;
 
             if ($user->student->traineeState != 'privateState') {
                 if ($hoursCost >= $user->student->wallet) {
-                    $canAddHours = floor($user->student->wallet / (550 * $discount));
+                    $canAddHours = floor($user->student->wallet / ($user->student->program->hourPrice * $discount));
                 }
             }
 
@@ -433,7 +461,10 @@ class CommunityController extends Controller
             }
 
             if ($requestData['requested_hours'] < $order->requested_hours) {
-                $note = "تم تغيير عدد الساعات لعدم امكانية اضافتها الى رايات او عدم كفاية الرصيد";
+                $note = " تم تغيير عدد الساعات من " .
+                    $order->requested_hours .
+                    " الى " . $requestData['requested_hours'] .
+                    " لعدم امكانية اضافتها الى رايات او عدم كفاية الرصيد ";
             }
 
             $transaction = $user->student->transactions()->create([
@@ -456,6 +487,7 @@ class CommunityController extends Controller
 
             return response(['message' => 'تم قبول الطلب بنجاح'], 200);
         } catch (Exception $e) {
+            Log::error($e);
             return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
         }
     }

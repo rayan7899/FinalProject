@@ -76,24 +76,6 @@
                                         </li>
                                     @endguest
                                 </ul>
-                                {{-- <ul class="navbar-nav ml-auto py-4 py-md-0"> --}}
-                                {{-- <li class="nav-item"><a class="nav-link" href="{{route('studentCourses')}}">الطلاب المتعثرين</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('coursesPerLevel')}}">الجداول المقترحة</a></li> --}}
-                                {{-- <li class="nav-item"><a class="nav-link" href="{{route('rayatReportForm')}}">تقرير رايات</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('publishToRayatForm')}}">الرفع لرايات</a></li> --}}
-                                {{-- <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedList')}}">قائمة القبول النهائي</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('NewStudents')}}">المتدربين المستجدين </a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('finalAcceptedForm')}}"> القبول النهائي </a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('PrivateAllStudentsForm')}}">تدقيق المستندات(ظروف خاصة)</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('paymentsReviewForm')}}">تدقيق الايصالات</a></li>
-                                    {{-- <li class="nav-item"><a class="nav-link" href="{{route('AddExcelForm')}}">اضافة اكسل مستجدين</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{route('OldForm')}}"> اضافة اكسل مستمرين </a></li> --}}
-
-                                {{-- <li class="nav-item"><a class="nav-link" href="https://ugate.tvtc.gov.sa/AFrontGate/">البوابة الإلكترونية للقبول</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="https://tvtc.gov.sa/pdf/TVTC-at-a-Glance-AR.pdf">تعرف علينا </a></li> --}}
-                                {{-- </ul> --}}
-
-
                                 @auth
 
 
@@ -106,21 +88,24 @@
                                             <li class="nav-item"><a class="nav-link" href="{{route('coursesPerLevel')}}">الجداول المقترحة</a></li>
                                         </ul>
                                         @endif --}}
-                                    <ul class="navbar-nav">
-                                        <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>رئيس
-                                            القسم</li>
-                                        <li class="nav-item dropdown">
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item"
-                                                    href="{{ route('deptBossDashboard') }}">{{ __('Go Home') }}</a>
-                                                <a class="dropdown-item" href="{{ route('studentCourses') }}">الطلاب
-                                                    المتعثرين</a>
-                                                <a class="dropdown-item" href="{{ route('coursesPerLevel') }}">الجداول
-                                                    المقترحة</a>
-                                            </div>
-                                        </li>
-                                    </ul>
+
+                                    @if (Auth::user()->isDepartmentManager())
+                                        <ul class="navbar-nav">
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>رئيس
+                                                القسم</li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('deptBossDashboard') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item" href="{{ route('studentCourses') }}">الطلاب
+                                                        المتعثرين</a>
+                                                    <a class="dropdown-item" href="{{ route('coursesPerLevel') }}">الجداول
+                                                        المقترحة</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    @endif
 
                                     {{-- --------- community ----------- --}}
                                     @if (Auth::user()->hasRole('خدمة المجتمع'))

@@ -47,6 +47,9 @@ window.getStudentCourses = function () {
 
 function fillStudentTable(courses) {
     var tblAllCourses = document.getElementById('studentCourses');
+    if(tblAllCourses == undefined){
+        return;
+    }
     tblAllCourses.innerHTML = null;
     courses.forEach(course => {
         var row = tblAllCourses.insertRow(0);

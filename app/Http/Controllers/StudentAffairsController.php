@@ -130,7 +130,7 @@ class StudentAffairsController extends Controller
         try {
             $users = User::with('student')->whereHas('student', function ($result) {
                 $result->where('final_accepted', true)
-                    ->where('documents_verified', true)
+                    ->where('student_docs_verified', true)
                     ->where("level", 1);
             })->get();
             return $users;
@@ -229,8 +229,8 @@ class StudentAffairsController extends Controller
                 return response(['message' => 'لا يمكن ادخال ساعات اكثر من الساعات في الطلب'], 422);
             }
 
-            $amountAfterEdit = $studentData['hours'] * 550 * $discount;
-            $amountbeforeEdit = $order->amount * 550 * $discount;
+            $amountAfterEdit = $studentData['hours'] * $user->student->program->hourPrice * $discount;
+            $amountbeforeEdit = $order->amount * $user->student->program->hourPrice * $discount;
 
             DB::beginTransaction();
                 $transaction = $user->student->transactions()->create([
