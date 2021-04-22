@@ -36,6 +36,9 @@ class HomeController extends Controller
             if ($user->manager->hasRole("الإرشاد")) {
                 return redirect(route('privateDashboard'));
             }
+            if ($user->isDepartmentManager()) {
+                return redirect(route('deptBossDashboard'));
+            }
             return view("error")->with("error", "لا يوجد لديك اي صلاحيات");
         } else {
             $user = User::with("student")->find(Auth::user()->id);
