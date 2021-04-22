@@ -178,7 +178,7 @@
                                 </div>
                                 <div class="d-inline float-left">
                                     <a onclick="window.showStudent()" class="btn btn-sm btn-primary" href="#"
-                                        role="button">عرض بيانات الطلاب</a>
+                                        role="button">عرض بيانات المتدربين</a>
                                 </div>
                             </div>
                             <div class="card-body p-0">
