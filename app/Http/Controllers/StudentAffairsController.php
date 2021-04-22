@@ -50,6 +50,14 @@ class StudentAffairsController extends Controller
                 "name" => "شحن محفظة متدرب",
                 "url" => route("chargeForm")
             ],
+            (object) [
+                "name" => "تقرير رايات",
+                "url" => route("rayatReportForm")
+            ],
+            (object) [
+                "name" => "الرفع لرايات",
+                "url" => route("publishToRayatForm",["type" => "affairs"])
+            ],
             // (object) [
             //     "name" => "متابعة حالات المتدربين",
             //     "url" => route("studentsStates")
