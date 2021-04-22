@@ -334,10 +334,9 @@ class CommunityController extends Controller
         ]);
 
         try {
-          
 
-            if (!Hash::check($requestData["password"], Auth::user()->password) && $requestData["national_id"] != Auth::user()->national_id) 
-            {
+
+            if (!Hash::check($requestData["password"], Auth::user()->password) && $requestData["national_id"] != Auth::user()->national_id) {
                 return  back()->with('error', 'البيانات المدخلة لا تتطابق مع سجلاتنا');
             }
             DB::beginTransaction();
@@ -408,9 +407,8 @@ class CommunityController extends Controller
     {
         $requestData = $this->validate($request, [
             "national_id"        => "required|digits:10",
-            "requested_hours"    => "required|numeric|min:1|max:21",
+            "requested_hours"    => "required|numeric|min:0|max:21",
             "order_id"         => "required|numeric|exists:orders,id",
-
         ]);
 
         try {

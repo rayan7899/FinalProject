@@ -234,7 +234,7 @@
                             <!-- payment receipt image -->
                             <div class="form-group" id="receipt">
                                 <label for="receiptImg"> صورة إيصال السداد</label>
-                                <input type="file" name="payment_receipt" class="form-control" id="receiptImg">
+                                <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="payment_receipt" class="form-control" id="receiptImg">
                             </div>
                         </div>
 
@@ -246,7 +246,7 @@
                     <!-- requiered documents -->
                     <div class="form-group" id="privateStateDocGroup" style="display: none;">
                         <label for="privateStateDoc"> صور المستندات المطلوبة</label>
-                        <input type="file" name="privateStateDoc" class="form-control" id="privateStateDoc" multiple
+                        <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="privateStateDoc" class="form-control" id="privateStateDoc" multiple
                             disabled>
                     </div>
                     <!-- submet button -->

@@ -103,7 +103,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="excel_file">أختر الملف</label>
-                        <input required type="file" class="form-control-file" id="excel_file" name="excel_file">
+                        <input required type="file" accept=".xls,.xlsx,.ods" class="form-control-file" id="excel_file" name="excel_file">
                     </div>
                     <div class="form-group">
                         <input type="submit" name="excel_submit" id="excel_submit" value="أرسال"

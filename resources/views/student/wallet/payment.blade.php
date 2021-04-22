@@ -29,7 +29,7 @@
                     </div>
                     <div class="form-group" id="receipt">
                         <label for="receiptImg"> صورة إيصال السداد</label>
-                        <input required type="file" name="payment_receipt" class="form-control" id="receiptImg">
+                        <input required type="file" accept=".pdf,.png,.jpg,.jpeg" name="payment_receipt" class="form-control" id="receiptImg">
                     </div>
                     <div class="form-group text-center">
                         <button class="btn btn-primary w-25" type="submit">أرسال</button>

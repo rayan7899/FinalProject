@@ -142,13 +142,13 @@
             <!-- national id image -->
             <div class="form-group">
                 <label for="">صورة الهوية الوطنية </label>
-                <input type="file" name="identity" class="form-control" value="">
+                <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="identity" class="form-control" value="">
             </div>
 
             <!-- certificate image -->
             <div class="form-group">
                 <label for="">صورة من المؤهل </label>
-                <input type="file" name="degree" class="form-control" value="">
+                <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="degree" class="form-control" value="">
             </div>
 
             <!-- submet button -->
