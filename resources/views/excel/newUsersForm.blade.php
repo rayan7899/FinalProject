@@ -15,22 +15,14 @@
 
         @if ($errors->any())
             @php
-                $errArr = $errors->all();
+                $errArr = array_unique($errors->all());
                 // dd(count($errArr));
             @endphp
             <div class="alert alert-danger">
                 <ul>
-                    @php
-                        for ($i = 0; $i < count($errArr); $i++) {
-                            if (count($errArr) > 1) {
-                                if ($errArr[$i] != $errArr[$i + 1]) {
-                                    echo '<li>' . $errArr[$i] . '</li>';
-                                }
-                            } else {
-                                echo '<li>' . $errArr[$i] . '</li>';
-                            }
-                        }
-                    @endphp
+                    @foreach ($errArr as $message)
+                        <li>{{ $message }}</li>
+                    @endforeach
                 </ul>
             </div>
         @endif
