@@ -117,16 +117,18 @@
                                                 <div class="dropdown-menu dropdown-menu-right">
 
                                                     <a class="dropdown-item"
+                                                        href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item"
                                                         href="{{ route('rayatReportFormCommunity') }}">تقرير رايات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('publishToRayatForm',["type" => "community"]) }}">الرفع
                                                         لرايات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
-                                                    <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة
-                                                        المستخدمين</a>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة المستخدمين</a>
+                                                    <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع المتدربين المستمرين</a>
+                                                    <a class="dropdown-item" href="{{ route('newStudentsReport') }}">جميع المتدربين المستجدين</a>
+                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a>
 
                                                 </div>
                                             </li>
@@ -144,6 +146,8 @@
                                                 <div class="dropdown-menu dropdown-menu-right">
 
                                                     <a class="dropdown-item"
+                                                        href="{{ route('affairsDashboard') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item"
                                                         href="{{ route('finalAcceptedList') }}">قائمة
                                                         القبول النهائي</a>
                                                     <a class="dropdown-item" href="{{ route('NewStudents') }}">المتدربين
@@ -156,13 +160,11 @@
                                                         مستجدين</a>
                                                     <a class="dropdown-item" href="{{ route('OldForm') }}">
                                                         اضافة اكسل مستمرين </a>
-                                                    <a class="dropdown-item" href="{{ route('rayatReportForm') }}">تقرير
-                                                        رايات</a>
+                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a>
+                                                    <a class="dropdown-item" href="{{ route('coursesPerLevel') }}">الجداول المقترحة</a>
+                                                    <a class="dropdown-item" href="{{ route('rayatReportForm') }}">تقرير رايات</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('publishToRayatForm',["type" => "affairs"]) }}">الرفع
-                                                        لرايات</a>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('affairsDashboard') }}">{{ __('Go Home') }}</a>
+                                                        href="{{ route('publishToRayatForm',["type" => "affairs"]) }}">الرفع لرايات</a>
 
                                                 </div>
                                             </li>
