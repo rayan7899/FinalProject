@@ -170,8 +170,9 @@ class CommunityController extends Controller
     public function deleteUser(User $user)
     {
         try {
-            $user->delete();
-            return back()->with('success', 'تم حذف المستخدم بنجاح');
+            // $user->delete();
+            // return back()->with('success', 'تم حذف المستخدم بنجاح');
+            return back()->with('error', 'تم ايقاف هذا الامر ');
         } catch (Exception $e) {
             Log::error($e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());

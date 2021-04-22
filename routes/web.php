@@ -75,7 +75,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/users/store', [CommunityController::class, 'createUserStore'])->name('createUserStore');
     Route::get('/community/users/edit/{user}', [CommunityController::class, 'editUserForm'])->name('editUserForm');
     Route::post('/community/users/update/{user}', [CommunityController::class, 'editUserUpdate'])->name('editUserUpdate');
-    Route::get('/community/users/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+    // Route::get('/community/users/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
     Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
     Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');

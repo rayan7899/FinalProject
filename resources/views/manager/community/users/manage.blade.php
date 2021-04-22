@@ -49,9 +49,9 @@
                                     <a class="px-2" href="{{ route('editUserForm', ['user' => $user->id]) }}">
                                         <i class="fa fa-edit fa-lg text-primary" aria-hidden="true"></i>
                                     </a>
-                                    <a href="{{ route('deleteUser', ['user' => $user->id]) }}" onclick="return confirm('سيتم حذف المستخدم ( {{$user->name}} )  هل انت متأكد ؟')">
+                                    {{-- <a href="{{ route('deleteUser', ['user' => $user->id]) }}" onclick="return confirm('سيتم حذف المستخدم ( {{$user->name}} )  هل انت متأكد ؟')">
                                         <i class="fa fa-trash fa-lg text-danger" aria-hidden="true"></i>
-                                    </a>
+                                    </a> --}}
                                 </td>
                             </tr>
                         @empty
