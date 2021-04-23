@@ -64,7 +64,7 @@
                                                     href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                document.getElementById('logout-form').submit();">
+                                                                                                        document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -81,14 +81,6 @@
 
                                     {{-- --------- department boss ----------- --}}
 
-                                    {{-- @if (Auth::user()->hasRole('??????????????????'))
-                                        <ul class="navbar-nav">
-                                            <li class="nav-item"><a class="nav-link" href="{{route('deptBossDashboard')}}">{{ __('Go Home') }}</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="{{route('studentCourses')}}">الطلاب المتعثرين</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="{{route('coursesPerLevel')}}">الجداول المقترحة</a></li>
-                                        </ul>
-                                        @endif --}}
-
                                     @if (Auth::user()->isDepartmentManager())
                                         <ul class="navbar-nav">
                                             <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
@@ -98,9 +90,11 @@
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item"
                                                         href="{{ route('deptBossDashboard') }}">{{ __('Go Home') }}</a>
-                                                    <a class="dropdown-item" href="{{ route('studentCourses') }}">الطلاب
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('studentCourses') }}">المتدربين
                                                         المتعثرين</a>
-                                                    <a class="dropdown-item" href="{{ route('coursesPerLevel') }}">الجداول
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('coursesPerLevel') }}">الجداول
                                                         المقترحة</a>
                                                 </div>
                                             </li>
@@ -121,15 +115,22 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('rayatReportFormCommunity') }}">تقرير رايات</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('publishToRayatForm',["type" => "community"]) }}">الرفع
+                                                        href="{{ route('publishToRayatForm', ['type' => 'community']) }}">الرفع
                                                         لرايات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
-                                                    <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة المستخدمين</a>
-                                                    <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع المتدربين المستمرين</a>
-                                                    <a class="dropdown-item" href="{{ route('newStudentsReport') }}">جميع المتدربين المستجدين</a>
-                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a>
-                                                    <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل دراسي جديد</a>
+                                                    <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة
+                                                        المستخدمين</a>
+                                                    <a class="dropdown-item" href="{{ route('coursesIndex') }}">ادارة
+                                                        المقررات</a>
+                                                    <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع
+                                                        المتدربين المستمرين</a>
+                                                    <a class="dropdown-item" href="{{ route('newStudentsReport') }}">جميع
+                                                        المتدربين المستجدين</a>
+                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة
+                                                        متدرب</a>
+                                                    <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل
+                                                        دراسي جديد</a>
                                                 </div>
                                             </li>
                                         </ul>
@@ -147,24 +148,28 @@
 
                                                     <a class="dropdown-item"
                                                         href="{{ route('affairsDashboard') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item" href="{{ route('finalAcceptedForm') }}">
+                                                        القبول
+                                                        النهائي </a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('finalAcceptedList') }}">قائمة
                                                         القبول النهائي</a>
                                                     <a class="dropdown-item" href="{{ route('NewStudents') }}">المتدربين
                                                         المستجدين </a>
-                                                    <a class="dropdown-item" href="{{ route('finalAcceptedForm') }}">
-                                                        القبول
-                                                        النهائي </a>
+                                                    <a class="dropdown-item" href="{{ route('rayatReportForm') }}">تقرير
+                                                        رايات</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('publishToRayatForm', ['type' => 'affairs']) }}">الرفع
+                                                        لرايات</a>
                                                     <a class="dropdown-item" href="{{ route('AddExcelForm') }}">اضافة
                                                         اكسل
                                                         مستجدين</a>
                                                     <a class="dropdown-item" href="{{ route('OldForm') }}">
                                                         اضافة اكسل مستمرين </a>
-                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a>
-                                                    <a class="dropdown-item" href="{{ route('coursesPerLevel') }}">الجداول المقترحة</a>
-                                                    <a class="dropdown-item" href="{{ route('rayatReportForm') }}">تقرير رايات</a>
+                                                    {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a> --}}
                                                     <a class="dropdown-item"
-                                                        href="{{ route('publishToRayatForm',["type" => "affairs"]) }}">الرفع لرايات</a>
+                                                        href="{{ route('coursesPerLevel') }}">الجداول المقترحة</a>
+
 
                                                 </div>
                                             </li>
@@ -185,7 +190,8 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('privateDashboard') }}">{{ __('Go Home') }}</a>
 
-                                                    <a class="dropdown-item" href="{{ route('PrivateAllStudentsForm') }}">ظروف
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('PrivateAllStudentsForm') }}">ظروف
                                                         خاصة</a>
                                                 </div>
                                             </li>

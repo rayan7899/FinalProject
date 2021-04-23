@@ -97,7 +97,7 @@
                     <div class="form-row mb-3">
                         <div class="col-sm-4">
                             <label for="program" class="pl-1"> البرنامج </label>
-                            <select required name="program" id="program" class="form-controller w-100"
+                            <select required name="program" id="program" class="form-control w-100"
                                 onchange="fillDepartments()">
                                 <option value="" disabled selected>أختر</option>
                                 @forelse (json_decode($programs) as $program)
@@ -115,7 +115,7 @@
                         <div class="col-sm-4">
 
                             <label for="department" class="pl-1"> القسم </label>
-                            <select required name="department" id="department" class="form-controller w-100 "
+                            <select required name="department" id="department" class="form-control w-100 "
                                 onchange="fillMajors()">
                                 <option value="" disabled selected>أختر</option>
                             </select>
@@ -127,7 +127,7 @@
                         </div>
                         <div class="col-sm-4">
                             <label for="major" class="pl-1"> التخصص </label>
-                            <select required name="major" id="major" class="form-controller w-100">
+                            <select required name="major" id="major" class="form-control w-100">
                                 <option value="" disabled selected>أختر</option>
                             </select>
                             @error('major')

@@ -118,11 +118,11 @@ class OrderController extends Controller
                $courses[] = $course->id;
             }
          }
-         foreach ($courses as $course) {
-            $user->student->studentCourses()->create([
-               'course_id' => $course,
-            ]);
-         }
+         // foreach ($courses as $course) {
+         //    $user->student->studentCourses()->create([
+         //       'course_id' => $course,
+         //    ]);
+         // }
 
          // privateState ------------------------------------------------------------
 

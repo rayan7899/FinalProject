@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Program;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -17,6 +18,7 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Illuminate\Support\Facades\Storage;
 use Google_Service_Drive;
 use Google_Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 define('PROGRAM', 0);
@@ -257,6 +259,15 @@ class OldUsers implements ToCollection
                     'agreement'             => false,
                     'level'                 => 2,
                 ]);
+                $user->student->transactions()->create([
+                    "amount"        => $row[WALLET],
+                    "type"          => "manager_recharge",
+                    "note"          => "رصيد سابق",
+                    "by_user"       => Auth::user()->id,
+                ]);
+                // $transaction = Transaction::create([
+
+                // ]);
                 DB::commit();
             } catch (QueryException $e) {
                 Log::error($e);

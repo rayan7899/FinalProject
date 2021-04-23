@@ -210,7 +210,7 @@
                                 </div>
                             </div>
                         </div>
-                    {{-- @if ($user->student->final_accepted == false)
+                        {{-- @if ($user->student->final_accepted == false)
                         <div class="col-12">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
@@ -230,199 +230,203 @@
 
 
             {{-- @if ($user->student->final_accepted == true) --}}
-                <div class="col-12">
+            <div class="col-12">
 
 
-                    {{-- payments --}}
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="d-flex flex-row justify-content-between">
-                                <div class="h5">
-                                    المحفظة
-                                </div>
-
-
-                                <a href="{{ route('paymentForm') }}" class="btn btn-primary rounded">
-                                    شحن المحفظة
-                                </a>
+                {{-- payments --}}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="h5">
+                                المحفظة
                             </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-bordered m-0 p-0">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">رقم الطلب</th>
-                                        <th class="text-center">المبلغ</th>
-                                        <th class="text-center">حالة الطلب</th>
-                                        <th>الملاحظات</th>
-                                        <th class="text-center">صورة لايصال</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($user->student->payments as $payment)
-                                        @php
-                                            $user->student->receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
-                                        @endphp
-                                        <tr class="text-center">
-                                            <td>{{ $payment->id }}</td>
-                                            <td>{{ $payment->amount }}</td>
-                                             @if ($payment->transaction_id  == null)
-                                                    <td>قيد المراجعة</td>
-                                                @else
-                                                    <td class="text-success">مقبول</td>
-                                                @endif
-                                            <td class="text-right">{{ $payment->note ?? 'لا يوجد' }}</td>
-                                            <td class="">
 
-                                                @php
-                                                    $splitByDot = explode('.', $user->student->receipt);
-                                                    $fileExtantion = end($splitByDot);
-                                                @endphp
-                                                @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','pdf')">
-                                                        <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
-                                                    </a>
-                                                @else
-                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','img')">
-                                                        <img src=" {{ asset('/images/camera_img_icon.png') }}"
-                                                            style="width:25px;" alt="Image File">
-                                                    </a>
-                                                @endif
 
-                                            </td>
-                                        </tr>
-                                    @empty
-
-                                    @endforelse
-
-                                </tbody>
-                            </table>
+                            <a href="{{ route('paymentForm') }}" class="btn btn-primary rounded">
+                                شحن المحفظة
+                            </a>
                         </div>
                     </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered m-0 p-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">رقم الطلب</th>
+                                    <th class="text-center">المبلغ</th>
+                                    <th class="text-center">حالة الطلب</th>
+                                    <th>الملاحظات</th>
+                                    <th class="text-center">صورة لايصال</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($user->student->payments as $payment)
+                                    @php
+                                        $user->student->receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
+                                    @endphp
+                                    <tr class="text-center">
+                                        <td>{{ $payment->id }}</td>
+                                        <td>{{ $payment->amount }}</td>
+                                        @if ($payment->transaction_id == null)
+                                            <td>قيد المراجعة</td>
+                                        @else
+                                            <td class="text-success">مقبول</td>
+                                        @endif
+                                        <td class="text-right">{{ $payment->note ?? 'لا يوجد' }}</td>
+                                        <td class="">
 
-
-
-
-
-                    {{-- orders --}}
-                    <div class="card my-4">
-                        <div class="card-header">
-                            <div class="d-flex flex-row justify-content-between">
-                                <p class="h5">طلبات اضافة المقررات</p>
-                                <a href="{{ route('orderForm') }}" class="btn btn-primary rounded">
-                                    اضافة مقررات
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-bordered p-0 m-0">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">رقم الطلب</th>
-                                        <th class="text-center">عدد الساعات</th>
-                                        <th class="text-center">حالة الطلب</th>
-                                        <th>الملاحظات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($user->student->orders as $order)
-                                        <tr class="text-center">
-                                            <td>{{ $order->id ?? 'Error' }}</td>
-                                            <td>{{ $order->requested_hours ?? 'Error' }}</td>
-                                            @if ($order->private_doc_verified === false || $order->private_doc_verified === '0')
-                                                <td class="text-danger">مرفوض</td>
+                                            @php
+                                                $splitByDot = explode('.', $user->student->receipt);
+                                                $fileExtantion = end($splitByDot);
+                                            @endphp
+                                            @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
+                                                <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                    onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','pdf')">
+                                                    <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
+                                                </a>
                                             @else
-                                                @if ($order->transaction_id == null)
-                                                    <td>قيد المراجعة</td>
-                                                @else
-                                                    <td class="text-success">مقبول</td>
-                                                @endif
+                                                <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                    onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','img')">
+                                                    <img src=" {{ asset('/images/camera_img_icon.png') }}"
+                                                        style="width:25px;" alt="Image File">
+                                                </a>
                                             @endif
-                                            <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
-                                        </tr>
-                                    @empty
 
-                                    @endforelse
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-
-
-                    {{-- transactions --}}
-                    <div class="card my-4">
-                        <div class="card-header">
-                          
-                               
-                                <div class="d-flex flex-row justify-content-between">
-                                    <div class="h5">
-                                    جميع العمليات المالية
-                                    </div>
-                                   <div>
-                                       <p class="h5 d-inline"> الرصيد الحالي : </p>
-                                       <p class="h5 d-inline">
-                                           {{ $user->student->wallet ?? 'لا يوجد' }}
-                                       </p>
-                                   </div>
-
-                                </div>
-                            
-                        </div>
-                        <div class="card-body p-0">
-                            <table class="table table-bordered m-0">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">رقم العملية</th>
-                                        <th class="text-center">نوع العملية</th>
-                                        <th class="text-center">رقم الطلب (شحن / اضافة مقررات)</th>
-                                        <th class="text-center">المبلغ</th>
-                                        <th>الملاحظات</th>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($user->student->transactions as $transaction)
-                                        @php $hoursNote = ""; 
-                                        
-                                        @endphp
-                                        <tr class="text-center">
-                                            <td>{{ $transaction->id ?? 'Error' }}</td>
+                                @empty
 
-                                            @if ($transaction->type == 'deduction')
-                                                @php
-                                                    $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
-                                                @endphp
-                                                <td class="text-danger"> خصم (اضافة مقررات)</td>
-                                                <td>{{ $transaction->order->id ?? 'Error' }}</td>
-                                            @endif
-                                            @if ($transaction->type == 'recharge')
-                                                <td class="text-success"> اضافة (شحن المحفظة) </td>
-                                                <td>{{ $transaction->payment->id ?? 'Error' }}</td>
-                                            @endif
-                                            <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
-                                            <td class="text-right">
-                                                @if ($transaction->type == 'deduction')
-                                                    {{ $hoursNote ?? '' }}
-                                                    <br>
-                                                @endif
-                                                {{ $transaction->note ?? '' }}
-                                            </td>
+                                @endforelse
 
-                                        </tr>
-                                    @empty
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-                                    @endforelse
 
-                                </tbody>
-                            </table>
+
+
+
+                {{-- orders --}}
+                <div class="card my-4">
+                    <div class="card-header">
+                        <div class="d-flex flex-row justify-content-between">
+                            <p class="h5">طلبات اضافة المقررات</p>
+                            <a href="{{ route('orderForm') }}" class="btn btn-primary rounded">
+                                اضافة مقررات
+                            </a>
                         </div>
                     </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered p-0 m-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">رقم الطلب</th>
+                                    <th class="text-center">عدد الساعات</th>
+                                    <th class="text-center">حالة الطلب</th>
+                                    <th>الملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($user->student->orders as $order)
+                                    <tr class="text-center">
+                                        <td>{{ $order->id ?? 'Error' }}</td>
+                                        <td>{{ $order->requested_hours ?? 'Error' }}</td>
+                                        @if ($order->private_doc_verified === false || $order->private_doc_verified === '0')
+                                            <td class="text-danger">مرفوض</td>
+                                        @else
+                                            @if ($order->transaction_id == null)
+                                                <td>قيد المراجعة</td>
+                                            @else
+                                                <td class="text-success">مقبول</td>
+                                            @endif
+                                        @endif
+                                        <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
+                                    </tr>
+                                @empty
 
+                                @endforelse
 
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+
+
+                {{-- transactions --}}
+                <div class="card my-4">
+                    <div class="card-header">
+
+
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="h5">
+                                جميع العمليات المالية
+                            </div>
+                            <div>
+                                <p class="h5 d-inline"> الرصيد الحالي : </p>
+                                <p class="h5 d-inline">
+                                    {{ $user->student->wallet ?? 'لا يوجد' }}
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered m-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">رقم العملية</th>
+                                    <th class="text-center">نوع العملية</th>
+                                    <th class="text-center">رقم الطلب (شحن / اضافة مقررات)</th>
+                                    <th class="text-center">المبلغ</th>
+                                    <th>الملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($user->student->transactions as $transaction)
+                                    @php$hoursNote = '';
+                                        
+                                    @endphp
+                                    <tr class="text-center">
+                                        <td>{{ $transaction->id ?? 'Error' }}</td>
+
+                                        @if ($transaction->type == 'deduction')
+                                            @php
+                                                $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                            @endphp
+                                            <td class="text-danger"> خصم (اضافة مقررات)</td>
+                                            <td>{{ $transaction->order->id ?? 'Error' }}</td>
+                                        @endif
+                                        @if ($transaction->type == 'recharge')
+                                            <td class="text-success"> اضافة (شحن المحفظة) </td>
+                                            <td>{{ $transaction->payment->id ?? 'Error' }}</td>
+                                        @endif
+                                        @if ($transaction->type == 'manager_recharge')
+                                            <td class="text-success"> اضافة (من الادارة) </td>
+                                            <td>لا يوجد</td>
+                                        @endif
+                                        <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
+                                        <td class="text-right">
+                                            @if ($transaction->type == 'deduction')
+                                                {{ $hoursNote ?? '' }}
+                                                <br>
+                                            @endif
+                                            {{ $transaction->note ?? '' }}
+                                        </td>
+
+                                    </tr>
+                                @empty
+
+                                @endforelse
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
 
             {{-- @endif --}}
         </div>

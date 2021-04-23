@@ -95,7 +95,7 @@ function fillMajors(majors) {
     });
 }
 
-window.getCourses = function () {
+window.getCourses = function (isManageCourses = false) {
     var majorId = document.getElementById('major').value;
     $.ajax({
         type: "get",
@@ -106,7 +106,12 @@ window.getCourses = function () {
         },
         dataType: "json",
         success: function (response) {
-            fillAllCoursesTable(response.courses);
+            if(isManageCourses){
+                fillManageCoursesTbl(response.courses);
+            }else{
+                fillAllCoursesTable(response.courses);
+            }
+            
         },
         error: function (response) {
             const message = response.responseJSON.message;

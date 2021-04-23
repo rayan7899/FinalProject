@@ -42,7 +42,7 @@ class DepartmentBossController extends Controller
     {
         $links = [
             (object) [
-                "name" => "الطلاب المتعثرين",
+                "name" => "المتدربين المتعثرين",
                 "url" => route("studentCourses")
             ],
             (object) [
