@@ -9,7 +9,7 @@
                 <tr>
 
                     <p class="text-center">
-                        المتدربين المستجدين - قسم الحاسب الالي
+                        المتدربين المستجدين
                     </p>
 
                     <th>#</th>
@@ -44,38 +44,6 @@
                             <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->credit_hours ?? 'لا يوجد' }} </td>
-                            {{-- <td>
-                                @php
-                                    if($user->student->traineeState=='privateState'){
-                                        echo $user->student->major->hours;
-                                    }else{
-                                        $hourCost = $user->student->program->id==1?500:400;
-                                        $discount = 0;
-                                        switch($user->student->traineeState){
-                                            case 'trainee':
-                                                $discount = 0;
-                                                break;
-                                            case 'employee':
-                                                $discount = 0.75;
-                                                break;
-                                            case 'employeeSon':
-                                                $discount=0.5;
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                        $wallet = $user->student->wallet;
-                                        $hourCostAfterDiscount = $hourCost-$hourCost*$discount;
-                                        // $maxHours=$user->student->major->hours;
-                                        // $minHours=15;
-                                        // $maxCost=$maxHours*$hourCostAfterDiscount;
-                                        // $minCost=$minHours*$hourCostAfterDiscount;
-                                        $costRest = $wallet%$hourCostAfterDiscount;
-                                        $clearCost = $wallet-$costRest;
-                                        echo $clearCost/$hourCostAfterDiscount;
-                                    }
-                                @endphp
-                            </td> --}}
                         </tr>
                     @empty
                         لايوجد

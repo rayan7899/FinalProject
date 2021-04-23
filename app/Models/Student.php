@@ -43,10 +43,10 @@ class Student extends Model
         return $this->belongsTo(Major::class);
     }
 
-    public function studentCourses()
-    {
-        return $this->hasMany(StudentCourse::class);
-    }
+    // public function studentCourses()
+    // {
+    //     return $this->hasMany(StudentCourse::class);
+    // }
 
     public function user()
     {

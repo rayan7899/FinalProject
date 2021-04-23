@@ -9,8 +9,10 @@ class Major extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function deparment(){
-        return $this->hasOne(Department::class);
+        return $this->belongsTo(Department::class);
     }
 
     public function courses()

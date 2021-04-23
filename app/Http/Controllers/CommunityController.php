@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Major;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Permission;
+use App\Models\Program;
 use App\Models\Role;
 use App\Models\Student;
+use App\Models\Transaction;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -30,22 +34,10 @@ class CommunityController extends Controller
                 "name" => "تدقيق الايصالات",
                 "url" => route("paymentsReviewForm")
             ],
-            // (object) [
-            //     "name" => "المتدربين المدققة ايصالاتهم",
-            //     "url" => route("CheckedStudents")
-            // ],
-            // (object) [
-            //     "name" => "انشاء مستخدم",
-            //     "url" => route("createUserForm")
-            // ],
             (object) [
-                "name" => "فصل دراسي جديد",
-                "url" => route("newSemester")
+                "name" => "شحن محفظة متدرب",
+                "url" => route("chargeForm")
             ],
-            // (object) [
-            //     "name" => "متابعة حالات المتدربين",
-            //     "url" => route("studentsStates")
-            // ],
 
             (object) [
                 "name" => "الرفع لرايات",
@@ -56,7 +48,6 @@ class CommunityController extends Controller
                 "name" => "تقرير رايات",
                 "url" => route("rayatReportFormCommunity")
             ],
-
             (object) [
                 "name" => "جميع المتدربين المستمرين",
                 "url" => route("oldStudentsReport")
@@ -69,10 +60,36 @@ class CommunityController extends Controller
                 "name" => "ادارة المستخدمين",
                 "url" => route("manageUsersForm")
             ],
+
             (object) [
-                "name" => "شحن محفظة متدرب",
-                "url" => route("chargeForm")
+                "name" => "ادارة المقررات",
+                "url" => route("coursesIndex")
             ],
+            (object) [
+                "name" => "فصل دراسي جديد",
+                "url" => route("newSemester")
+            ],
+            // (object) [
+            //     "name" => "تقرير جميع العمليات المالية",
+            //     "url" => route("reportAll")
+            // ],
+            // (object) [
+            //     "name" => "المتدربين المدققة ايصالاتهم",
+            //     "url" => route("CheckedStudents")
+            // ],
+            // (object) [
+            //     "name" => "انشاء مستخدم",
+            //     "url" => route("createUserForm")
+            // ],
+
+            // (object) [
+            //     "name" => "متابعة حالات المتدربين",
+            //     "url" => route("studentsStates")
+            // ],
+
+
+
+
 
         ];
         return view("manager.community.dashboard")->with(compact("links"));
@@ -199,8 +216,8 @@ class CommunityController extends Controller
             $users = User::with("student.payments")
                 ->whereHas("student", function ($res) {
                     $res->whereHas("payments", function ($res) {
-                            $res->where("transaction_id", null);
-                        });
+                        $res->where("transaction_id", null);
+                    });
                 })->get();
             for ($i = 0; $i < count($users); $i++) {
                 foreach ($users[$i]->student->payments as $payment) {
@@ -533,4 +550,130 @@ class CommunityController extends Controller
         return view('manager.community.studentsStates')
             ->with(compact('users'));
     }
+
+
+    public function coursesIndex()
+    {
+        try {
+            if (Auth::user()->hasRole('خدمة المجتمع')) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+                return view('manager.community.courses.index')->with(compact('programs'));
+            } else {
+                return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
+            }
+        } catch (Exception $e) {
+            return view("error")->with("error", "حدث خطأ غير معروف");
+            Log::error($e);
+        }
+    }
+
+
+
+    public function createCourseForm()
+    {
+
+        try {
+            if (Auth::user()->hasRole('خدمة المجتمع')) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+                return view('manager.community.courses.create')->with(compact('programs'));
+            } else {
+                return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
+            }
+        } catch (Exception $e) {
+            return view("error")->with("error", "حدث خطأ غير معروف");
+            Log::error($e);
+        }
+    }
+
+
+
+
+    public function createCourse(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "major"         => "required|numeric|exists:majors,id",
+            "name"          => "required|string|min:3|max:100",
+            "code"          => "required|string|min:3|max:15",
+            "level"         => "required|numeric|min:1|max:5",
+            "credit_hours"  => "required|numeric|min:1|max:20",
+            "contact_hours" => "required|numeric|min:1|max:20",
+        ]);
+        $major = Major::findOrFail($requestData["major"]);
+
+        try {
+            $major->courses()->create([
+                'name' => $requestData["name"],
+                'code' => $requestData["code"],
+                'level' => $requestData["level"],
+                'suggested_level' => 0,
+                'credit_hours' => $requestData["credit_hours"],
+                'contact_hours' => $requestData["contact_hours"],
+            ]);
+            return redirect(route("coursesIndex"))->with("success", "تم انشاء المقرر بنجاح");
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("error", "حدث خطأ غير معروف تعذر انشاء المقرر");
+        }
+    }
+
+
+    public function deleteCourse(Course $course)
+    {
+        try {
+            $course->delete();
+            return response()->json(["message" => "تم حذف المقرر بنجاح"], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            return response()->json(["message" => "حدث خطأ غير معروف تعذر حذف المقرر"], 422);
+        }
+    }
+
+
+
+    public function editCourseForm(Course $course)
+    {
+        return view("manager.community.courses.edit")->with(compact('course'));
+    }
+
+
+
+    public function editCourse(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "id"         => "required|numeric|exists:courses,id",
+            "name"          => "required|string|min:3|max:100",
+            "code"          => "required|string|min:3|max:15",
+            "level"         => "required|numeric|min:1|max:5",
+            "credit_hours"  => "required|numeric|min:1|max:20",
+            "contact_hours" => "required|numeric|min:1|max:20",
+        ]);
+        
+        $course = Course::findOrFail($requestData["id"]);
+        try {
+            $course->update([
+                'name' => $requestData["name"],
+                'code' => $requestData["code"],
+                'level' => $requestData["level"],
+                'credit_hours' => $requestData["credit_hours"],
+                'contact_hours' => $requestData["contact_hours"],
+            ]);
+            return redirect(route("coursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
+        }
+    }
+
+
+
+    public function reportAll(Course $course)
+    {
+        return;
+        $allDeduction = Transaction::where("type", "deduction")->get()->sum("amount");
+        $allRecharge = Transaction::where("type", "recharge")->get()->sum("amount");
+        $allManagerRecharge = Transaction::where("type", "manager_recharge")->get()->sum("amount");
+
+        // return view("manager.community.reports.all")->with(compact('course'));
+    }
+
 }

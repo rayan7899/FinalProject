@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class HomeController extends Controller
 {
@@ -42,6 +43,13 @@ class HomeController extends Controller
             return view("error")->with("error", "لا يوجد لديك اي صلاحيات");
         } else {
             $user = User::with("student")->find(Auth::user()->id);
+
+            if (Hash::check("bct12345", $user->password)) {
+                return view('student.form')->with(compact('user'));
+            }
+            if (count($user->student->orders) < 1) {
+                return view('student.orders.form')->with(compact('user'));
+            }
             return view('home')->with(compact('user'));
         }
     }

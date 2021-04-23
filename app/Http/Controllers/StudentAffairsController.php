@@ -30,9 +30,22 @@ class StudentAffairsController extends Controller
                 "url" => route("finalAcceptedList")
             ],
             (object) [
+                "name" => "الرفع لرايات",
+                "url" => route("publishToRayatForm", ["type" => "affairs"])
+            ],
+            (object) [
+                "name" => "تقرير رايات",
+                "url" => route("rayatReportForm")
+            ],
+            (object) [
+                "name" => "الجداول المقترحة",
+                "url" => route("coursesPerLevel")
+            ],
+            (object) [
                 "name" => "المتدربين المستجدين",
                 "url" => route("NewStudents")
             ],
+
 
             (object) [
                 "name" => "اضافة اكسل مستجدين",
@@ -42,22 +55,12 @@ class StudentAffairsController extends Controller
                 "name" => "اضافة اكسل مستمرين",
                 "url" => route("OldForm")
             ],
-            (object) [
-                "name" => "الجداول المقترحة",
-                "url" => route("coursesPerLevel")
-            ],
-            (object) [
-                "name" => "شحن محفظة متدرب",
-                "url" => route("chargeForm")
-            ],
-            (object) [
-                "name" => "تقرير رايات",
-                "url" => route("rayatReportForm")
-            ],
-            (object) [
-                "name" => "الرفع لرايات",
-                "url" => route("publishToRayatForm",["type" => "affairs"])
-            ],
+
+            // (object) [
+            //     "name" => "شحن محفظة متدرب",
+            //     "url" => route("chargeForm")
+            // ],
+
             // (object) [
             //     "name" => "متابعة حالات المتدربين",
             //     "url" => route("studentsStates")
@@ -81,7 +84,7 @@ class StudentAffairsController extends Controller
             $users = User::with('student')->whereHas('student', function ($result) {
                 $result->where('level', 1)
                     ->where('data_updated', true)
-                    ->whereHas('payments', function($res){
+                    ->whereHas('payments', function ($res) {
                         $res->where('transaction_id', '!=', null);
                     });
             })->get();
@@ -186,7 +189,7 @@ class StudentAffairsController extends Controller
                     ->whereHas("orders", function ($res) {
                         $res->where("transaction_id", null);
                     })
-                    ->whereDoesntHave('payments', function($res){
+                    ->whereDoesntHave('payments', function ($res) {
                         $res->where('transaction_id', null);
                     });
             })->get();
@@ -236,20 +239,20 @@ class StudentAffairsController extends Controller
             $amountbeforeEdit = $order->amount * $user->student->program->hourPrice * $discount;
 
             DB::beginTransaction();
-                $transaction = $user->student->transactions()->create([
-                    "order_id"      => $order->id,
-                    "amount"        => $amountAfterEdit,
-                    "type"          => "deduction",
-                    "by_user"       => Auth::user()->id,
-                ]);
-                $order->update([
-                    "transaction_id" => $transaction->id,
-                    "requested_hours" => $studentData['hours'],
-                ]);
+            $transaction = $user->student->transactions()->create([
+                "order_id"      => $order->id,
+                "amount"        => $amountAfterEdit,
+                "type"          => "deduction",
+                "by_user"       => Auth::user()->id,
+            ]);
+            $order->update([
+                "transaction_id" => $transaction->id,
+                "requested_hours" => $studentData['hours'],
+            ]);
 
-                $user->student->credit_hours += $studentData['hours'];
-                $user->student->wallet -= $amountAfterEdit;
-                $user->student->save();
+            $user->student->credit_hours += $studentData['hours'];
+            $user->student->wallet -= $amountAfterEdit;
+            $user->student->save();
             DB::commit();
             return response(['message' => 'تم رفع الساعات بنجاح'], 200);
         } catch (Exception $e) {

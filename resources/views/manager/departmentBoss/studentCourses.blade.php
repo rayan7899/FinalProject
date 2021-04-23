@@ -55,13 +55,13 @@
                         <div class="card-header">
                             {{-- <div class="row">
                                 <h6 class="d-inline col-4">المقررات</h6>
-                                <select required name="program" id="program" class="form-controller col-4"
+                                <select required name="program" id="program" class="form-control col-4"
                                     onchange="getMajors()">
                                     <option value="" disabled selected>حدد البرنامج</option>
                                     <option value="1">بكالوريوس</option>
                                     <option value="2">دبلوم</option>
                                 </select>
-                                <select required name="major" id="major" class="form-controller col-4"
+                                <select required name="major" id="major" class="form-control col-4"
                                     onchange="getCourses()">
                                     <option value="" disabled selected>حدد التخصص</option>
                                 </select>
@@ -82,7 +82,7 @@
                             <div class="form-row mb-3">
                                 <div class="col-sm-4">
                                     <label for="program" class="pl-1"> البرنامج </label>
-                                    <select required name="program" id="program" class="form-controller w-100"
+                                    <select required name="program" id="program" class="form-control w-100"
                                         onchange="fillDepartments()">
                                         <option value="0" disabled selected>أختر</option>
                                         @forelse (json_decode($programs) as $program)
@@ -100,7 +100,7 @@
 
                                 <div class="col-sm-4 ">
                                     <label for="department" class="pl-1"> القسم </label>
-                                    <select required name="department" id="department" class="form-controller w-100 "
+                                    <select required name="department" id="department" class="form-control w-100 "
                                         onchange="fillMajors()">
                                         <option value="0" disabled selected>أختر</option>
                                         {{-- @forelse (Auth::user()->with('departments') as $item)
@@ -117,7 +117,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label for="major" class="pl-1"> التخصص </label>
-                                    <select required name="major" id="major" class="form-controller w-100"
+                                    <select required name="major" id="major" class="form-control w-100"
                                         onchange="getCourses()">
                                         <option value="0" disabled selected>أختر</option>
                                     </select>

@@ -79,9 +79,9 @@ class PrivateStateController extends Controller
             DB::beginTransaction();
             $user = User::with('student')->where('national_id', $reviewedOrder['national_id'])->first();
             $order = Order::where("id", $reviewedOrder["order_id"])->where("student_id", $user->student->id)->first();
-            if($decision == false){
-              $user->student->studentCourses()->delete();
-            }
+            // if($decision == false){
+            //   $user->student->studentCourses()->delete();
+            // }
                 $order->update([
                     "private_doc_verified" => $decision,
                     "note"                 => $reviewedOrder["note"]

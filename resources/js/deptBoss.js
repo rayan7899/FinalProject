@@ -67,6 +67,9 @@ window.fillCourses = function () {
     let major = document.getElementById("major").value;
     if (major !== "") {
         var courses = findCourses(major);
+        if(courses == undefined || courses == null){
+            return;
+        }
     } else {
         return;
     }
@@ -113,6 +116,9 @@ window.fillSuggestedCourses = function (shouldUpdateData = true) {
     }
 
     var suggestedLevelBody = document.getElementById("suggestedLevelBody");
+    if(suggestedLevelBody == undefined || suggestedLevelBody == null){
+        return;
+    }
     suggestedLevelBody.innerHTML = null;
     let suggLevel = document.getElementById("suggestedLevel");
     let major = document.getElementById("major").value;

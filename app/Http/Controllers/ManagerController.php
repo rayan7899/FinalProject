@@ -21,7 +21,7 @@ class ManagerController extends Controller
     public function charge(Request $request)
     {
         $paymentRequest = $this->validate($request, [
-            "amount"            => "required|numeric",
+            "amount"            => "required|numeric|min:0|max:20000",
             "id"            => 'required|string|max:10|min:10',
         ]);
         try {
@@ -35,7 +35,7 @@ class ManagerController extends Controller
                 $user->student->transactions()->create([
                     "amount"        => $paymentRequest["amount"],
                     "note"          => 'تمت الاضافة عن طريق الادارة',
-                    "type"          => "excepted_recharge",
+                    "type"          => "manager_recharge",
                     "by_user"       => Auth::user()->id,
                 ]);
 
