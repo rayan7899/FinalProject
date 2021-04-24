@@ -91,7 +91,10 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/charge', [ManagerController::class, 'charge'])->name('charge');
 
     //Reports
-    Route::get('/community/reports/all', [CommunityController::class, 'reportAll'])->name('reportAll');
+    Route::get('/community/reports/all', [CommunityController::class, 'reportAllForm'])->name('reportAllForm');
+    Route::get('/community/reports/filterd', [CommunityController::class, 'reportFilterdForm'])->name('reportFilterdForm');
+    Route::post('/community/reports/filterd', [CommunityController::class, 'reportFilterd'])->name('reportFilterd');
+
 
 
 });

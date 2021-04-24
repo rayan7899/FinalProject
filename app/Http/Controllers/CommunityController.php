@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Major;
 use App\Models\Order;
 use App\Models\Payment;
@@ -69,10 +70,14 @@ class CommunityController extends Controller
                 "name" => "فصل دراسي جديد",
                 "url" => route("newSemester")
             ],
-            // (object) [
-            //     "name" => "تقرير جميع العمليات المالية",
-            //     "url" => route("reportAll")
-            // ],
+            (object) [
+                "name" => "جميع العمليات المالية",
+                "url" => route("reportAllForm")
+            ],
+            (object) [
+                "name" => "العمليات المالية حسب التخصص",
+                "url" => route("reportFilterdForm")
+            ],
             // (object) [
             //     "name" => "المتدربين المدققة ايصالاتهم",
             //     "url" => route("CheckedStudents")
@@ -647,7 +652,7 @@ class CommunityController extends Controller
             "credit_hours"  => "required|numeric|min:1|max:20",
             "contact_hours" => "required|numeric|min:1|max:20",
         ]);
-        
+
         $course = Course::findOrFail($requestData["id"]);
         try {
             $course->update([
@@ -666,14 +671,133 @@ class CommunityController extends Controller
 
 
 
-    public function reportAll(Course $course)
+    public function reportAllForm()
     {
-        return;
-        $allDeduction = Transaction::where("type", "deduction")->get()->sum("amount");
-        $allRecharge = Transaction::where("type", "recharge")->get()->sum("amount");
-        $allManagerRecharge = Transaction::where("type", "manager_recharge")->get()->sum("amount");
 
-        // return view("manager.community.reports.all")->with(compact('course'));
+
+        try {
+            $programs = [];
+            if (Auth::user()->hasRole('خدمة المجتمع')) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+            }
+
+            $baccCount = User::with("student")->whereHas("student", function ($res) {
+                $res->where("program_id", 1);
+            })->get()->count();
+
+            $baccSumWallets = User::with("student")->whereHas("student", function ($res) {
+                $res->where("program_id", 1);
+            })->get()->sum("student.wallet");
+
+
+            $baccSumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) {
+                $res->where("program_id", 1);
+            })->where("type", "deduction")->get()->sum("amount");
+
+
+            $diplomCount = User::with("student")->whereHas("student", function ($res) {
+                $res->where("program_id", 2);
+            })->get()->count();
+
+            $diplomSumWallets = User::with("student")->whereHas("student", function ($res) {
+                $res->where("program_id", 2);
+            })->get()->sum("student.wallet");
+
+
+            $diplomSumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) {
+                $res->where("program_id", 2);
+            })->where("type", "deduction")->get()->sum("amount");
+
+            $baccSum = $baccSumWallets + $baccSumDeductions;
+            $diplomSum = $diplomSumWallets + $diplomSumDeductions;
+            return view("manager.community.reports.all")->with(compact(
+                [
+                    'baccCount',
+                    'baccSumWallets',
+                    'baccSumDeductions',
+                    'diplomCount',
+                    'diplomSumWallets',
+                    'diplomSumDeductions',
+                    'baccSum',
+                    'diplomSum',
+                    'programs'
+                ]
+            ));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
+        }
     }
 
+
+
+
+
+
+    public function reportFilterdForm()
+    {
+        if (Auth::user()->hasRole('خدمة المجتمع')) {
+            $programs = json_encode(Program::with("departments.majors.courses")->get());
+            return view('manager.community.reports.filtered')->with(compact('programs'));
+        } else {
+            return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
+        }
+    }
+
+    public function reportFilterd(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "prog_id"         => "required|numeric|exists:programs,id",
+            "dept_id"         => "required|numeric|exists:departments,id",
+            "major_id"         => "required|numeric|exists:majors,id",
+
+        ]);
+        try {
+            $programs = [];
+            $programObj = Program::findOrFail($requestData['prog_id']);
+            $department = Department::findOrFail($requestData['dept_id']);
+            $major = Major::findOrFail($requestData['major_id']);
+
+
+            if (Auth::user()->hasRole('خدمة المجتمع')) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+            }
+
+            $count = User::with("student")->whereHas("student", function ($res) use($requestData) {
+                $res->where("program_id",  $requestData['prog_id'])
+                    ->where("department_id", $requestData['dept_id'])
+                    ->where("major_id", $requestData['major_id']);
+            })->get()->count();
+
+            $sumWallets = User::with("student")->whereHas("student", function ($res) use($requestData) {
+                $res->where("program_id",  $requestData['prog_id'])
+                    ->where("department_id", $requestData['dept_id'])
+                    ->where("major_id", $requestData['major_id']);
+            })->get()->sum("student.wallet");
+
+
+            $sumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res)  use($requestData) {
+                $res->where("program_id",  $requestData['prog_id'])
+                ->where("department_id", $requestData['dept_id'])
+                ->where("major_id", $requestData['major_id']);
+            })->where("type", "deduction")->get()->sum("amount");
+
+            $sum = $sumWallets + $sumDeductions;
+            return view("manager.community.reports.filtered")->with(compact(
+                [
+                    'count',
+                    'sumWallets',
+                    'sumDeductions',
+                    'sum',
+                    'programs',
+                    'programObj',
+                    'department',
+                    'major'
+                ]
+            ));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
+        }
+    }
 }

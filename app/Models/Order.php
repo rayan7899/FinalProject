@@ -16,4 +16,9 @@ class Order extends Model
     {
         return $this->hasOne(Transaction::class);
     }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
 }

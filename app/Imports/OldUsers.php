@@ -295,7 +295,7 @@ class OldUsers implements ToCollection
         $addedCount = count($rows) - (count($duplicate) + count($errorsArr));
         if (count($duplicate) > 0  && count($errorsArr) > 0) {
             return redirect(route('OldForm'))->with([
-                'error' => ' تم أضافة جميع المتدربين بنجاح, ماعدا المتدربين التالية بياناتهم ',
+                // 'error' => ' تم أضافة جميع المتدربين بنجاح, ماعدا المتدربين التالية بياناتهم ',
                 'duplicate' => $duplicate,
                 'errorsArr' => $errorsArr,
                 'addedCount' => $addedCount,
@@ -312,7 +312,7 @@ class OldUsers implements ToCollection
 
         if (count($errorsArr) > 0) {
             return redirect(route('OldForm'))->with([
-                'error' => '  تعذر اضافة المتدربين التالية بياناتهم',
+                // 'error' => '  تعذر اضافة المتدربين التالية بياناتهم',
                 'errorsArr' => $errorsArr,
                 'addedCount' => $addedCount,
                 'countOfUsers' => $countOfUsers
