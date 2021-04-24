@@ -127,6 +127,9 @@
                                                         المتدربين المستمرين</a>
                                                     <a class="dropdown-item" href="{{ route('newStudentsReport') }}">جميع
                                                         المتدربين المستجدين</a>
+                                                        <a class="dropdown-item" href="{{ route('reportAllForm') }}">جميع العمليات المالية</a>
+                                                        <a class="dropdown-item" href="{{ route('reportFilterdForm') }}">العمليات المالية حسب التخصص</a>
+
                                                     <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة
                                                         متدرب</a>
                                                     <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل

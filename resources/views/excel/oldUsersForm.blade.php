@@ -34,11 +34,11 @@
                 </ul>
             </div>
         @endif
-        {{-- @if (session()->has('error'))
-        <div class="alert alert-warning">
+        @if (session()->has('error'))
+        <div class="alert alert-danger">
             {{ session()->get('error') }}
         </div>
-     @endif --}}
+     @endif
         @if (session()->has('errorsArr'))
             <div class="alert alert-danger" role="alert">
                 حدث خطأ اثناء اضافة المتدربين التالية بياناتهم
