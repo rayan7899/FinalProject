@@ -813,6 +813,10 @@ class CommunityController extends Controller
             if (!isset($user)) {
                 return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
             }
+            $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
+            if ($waitingTransCount > 0) {
+                return response()->json(["message" => "يوجد طلب شحن قيد المراجعة لهذا المتدرب"],422);
+            }
             return response()->json($user, 200);
         } catch (Exception $e) {
             Log::error($e);
