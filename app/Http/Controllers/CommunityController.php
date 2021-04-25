@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class CommunityController extends Controller
 {
@@ -763,23 +764,23 @@ class CommunityController extends Controller
                 $programs = json_encode(Program::with("departments.majors.courses")->get());
             }
 
-            $count = User::with("student")->whereHas("student", function ($res) use($requestData) {
+            $count = User::with("student")->whereHas("student", function ($res) use ($requestData) {
                 $res->where("program_id",  $requestData['prog_id'])
                     ->where("department_id", $requestData['dept_id'])
                     ->where("major_id", $requestData['major_id']);
             })->get()->count();
 
-            $sumWallets = User::with("student")->whereHas("student", function ($res) use($requestData) {
+            $sumWallets = User::with("student")->whereHas("student", function ($res) use ($requestData) {
                 $res->where("program_id",  $requestData['prog_id'])
                     ->where("department_id", $requestData['dept_id'])
                     ->where("major_id", $requestData['major_id']);
             })->get()->sum("student.wallet");
 
 
-            $sumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res)  use($requestData) {
+            $sumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res)  use ($requestData) {
                 $res->where("program_id",  $requestData['prog_id'])
-                ->where("department_id", $requestData['dept_id'])
-                ->where("major_id", $requestData['major_id']);
+                    ->where("department_id", $requestData['dept_id'])
+                    ->where("major_id", $requestData['major_id']);
             })->where("type", "deduction")->get()->sum("amount");
 
             $sum = $sumWallets + $sumDeductions;
@@ -799,5 +800,140 @@ class CommunityController extends Controller
             Log::error($e);
             return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
         }
+    }
+
+
+
+    public function getStudent($id)
+    {
+        try {
+            $user = User::with('student.courses')->whereHas('student', function ($result) use ($id) {
+                $result->where('national_id', $id)->orWhere('rayat_id', $id);
+            })->first();
+            if (!isset($user)) {
+                return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
+            }
+            return response()->json($user, 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            DB::rollBack();
+            return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
+        }
+    }
+
+
+
+    public function chargeForm()
+    {
+        return view('manager.charge_wallet');
+    }
+
+    public function charge(Request $request)
+    {
+        $paymentRequest = $this->validate($request, [
+            "id"            => 'required|string|max:10|min:10',
+            "amount"            => "required|numeric|min:0|max:20000",
+            "note"               => "string|nullable",
+            "payment_receipt"   => "required|mimes:pdf,png,jpg,jpeg|max:4000",
+
+
+        ]);
+            
+        try {
+
+            $user = User::with('student.courses')->whereHas('student', function ($result) use ($paymentRequest) {
+                $result->where('national_id', $paymentRequest['id'])->orWhere('rayat_id', $paymentRequest['id']);
+            })->first();
+            if (!isset($user)) {
+                return back()->with("error", "لا يوجد متدرب بهذا الرقم");
+            }
+            $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
+            if ($waitingTransCount > 0) {
+                return back()->with("error", "تعذر ارسال الطلب يوجد طلب شحن رصيد قيد المراجعة");
+            }
+
+            DB::beginTransaction();
+
+            $randomId =  uniqid();
+            $payment = $user->student->payments()->create(
+                [
+                    "amount"            => $paymentRequest["amount"],
+                    "receipt_file_id"   => $randomId
+                ]
+            );
+
+            $transaction = $user->student->transactions()->create([
+                "payment_id"    => $payment->id,
+                "amount"        => $paymentRequest["amount"],
+                "note"          => ' ( اضافة رصيد من قبل الادارة ) '. $paymentRequest["note"],
+                "type"          => "manager_recharge",
+                "by_user"       => Auth::user()->id,
+            ]);
+
+            $payment->update([
+                "transaction_id" => $transaction->id,
+                "note"          => ' ( اضافة رصيد من قبل الادارة ) '. $paymentRequest["note"],
+            ]);
+
+            $user->student->wallet += $paymentRequest["amount"];
+            $user->student->save();
+
+            $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
+            Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($paymentRequest['payment_receipt']));
+            DB::commit();
+            return  back()->with("success", "تم اضافة المبلغ الي محفظة المتدرب بنجاح");
+        } catch (Exception $e) {
+            Log::error($e);
+            DB::rollBack();
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+
+
+
+
+
+        // $transaction = $user->student->transactions()->create([
+        //     "payment_id"    => $payment->id,
+        //     "amount"        => $reviewedPayment["amount"],
+        //     "note"          => $reviewedPayment["note"],
+        //     "type"          => "recharge",
+        //     "by_user"       => Auth::user()->id,
+        // ]);
+        // $payment->update([
+        //     "transaction_id" => $transaction->id,
+        //     "note"          => $reviewedPayment["note"],
+        // ]);
+
+
+
+
+
+
+        // try {
+        //     $user = User::with('student.courses')->whereHas('student', function ($result) use ($paymentRequest) {
+        //         $result->where('national_id', $paymentRequest['id'])->orWhere('rayat_id', $paymentRequest['id']);
+        //     })->first();
+        //     if (!isset($user)) {
+        //         return back()->with("error","لا يوجد متدرب بهذا الرقم");
+        //     }
+        //     DB::beginTransaction();
+        //         $user->student->transactions()->create([
+        //             "amount"        => $paymentRequest["amount"],
+        //             "note"          => 'اضافة رصيد من قبل الادارة',
+        //             "type"          => "manager_recharge",
+        //             "by_user"       => Auth::user()->id,
+        //         ]);
+
+        //         $user->student->wallet += $paymentRequest["amount"];
+        //         $user->student->save();
+
+        //     DB::commit();
+        //     return back()->with("success","تم اضافة المبلغ في محفظة المتدرب بنجاح");
+        // } catch (Exception $e) {
+        //     Log::error($e);
+        //     DB::rollBack();
+        //     return back()->with("error","تعذر ارسال الطلب حدث خطا غير معروف");
+
+        // }
     }
 }
