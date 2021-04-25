@@ -253,7 +253,7 @@
                                 <tr>
                                     <th class="text-center">رقم الطلب</th>
                                     <th class="text-center">المبلغ</th>
-                                    <th class="text-center">حالة الطلب</th>
+                                    <th class="text-center">حالة السداد</th>
                                     <th>الملاحظات</th>
                                     <th class="text-center">صورة لايصال</th>
                                 </tr>
@@ -322,7 +322,7 @@
                                 <tr>
                                     <th class="text-center">رقم الطلب</th>
                                     <th class="text-center">عدد الساعات</th>
-                                    <th class="text-center">حالة الطلب</th>
+                                    <th class="text-center"> رفع الساعات الى رايات</th>
                                     <th>الملاحظات</th>
                                 </tr>
                             </thead>
@@ -387,8 +387,10 @@
                             </thead>
                             <tbody>
                                 @forelse ($user->student->transactions as $transaction)
-                                    @php $hoursNote = '';
-                                    $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
+                                    @php$hoursNote = '';
+                                        if ($transaction->payment != null) {
+                                            $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $transaction->payment->receipt_file_id)[0];
+                                        }
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $transaction->id ?? 'Error' }}</td>
@@ -417,7 +419,7 @@
                                             {{ $transaction->note ?? '' }}
                                         </td>
 
-                                        @if ($transaction->type == 'recharge' || $transaction->type == 'manager_recharge')
+                                        @if ($transaction->type == 'recharge' || ($transaction->type == 'manager_recharge' && $transaction->payment != null))
                                             <td>
                                                 @php
                                                     $splitByDot = explode('.', $receipt);
@@ -436,6 +438,8 @@
                                                     </a>
                                                 @endif
                                             </td>
+                                        @else
+                                            <td></td>
                                         @endif
 
                                     </tr>
