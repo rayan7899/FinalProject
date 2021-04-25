@@ -166,27 +166,41 @@ class CommunityController extends Controller
 
     public function editUserForm(User $user)
     {
-        $roles = Role::all();
-        if (Auth::user()->hasRole("خدمة المجتمع")) {
-            return view("manager.community.users.edit")->with(compact('roles', 'user'));
-        } else {
-            return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                $permissions = $user->manager->permissions->pluck('role_id');
+                $roles = Role::whereNotin('id', $permissions)->get();
+                return view("manager.community.users.edit")->with(compact('roles', 'user'));
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+            DB::rollBack();
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }
     }
 
     public function editUserPermissionsUpdate(Request $request, User $user)
     {
+
         $requestData = $this->validate($request, [
             "roles"      => "required|array|min:1",
             "roles.*"    => "required|numeric|distinct|exists:roles,id",
         ]);
-        if (Auth::user()->hasRole("خدمة المجتمع")) {
-            foreach ($requestData['roles'] as $role_id) {
-                $user->manager->permissions()->create(array('role_id' => $role_id));
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                foreach ($requestData['roles'] as $role_id) {
+                    $user->manager->permissions()->create(array('role_id' => $role_id));
+                }
+                return redirect(route("manageUsersForm"))->with("success", "تم تعديل الصلاحيات بنجاح");
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
-            return redirect(route("manageUsersForm"))->with("success", "تم تعديل الصلاحيات بنجاح");
-        } else {
-            return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+        } catch (Exception $e) {
+            Log::error($e);
+            DB::rollBack();
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }
     }
 
@@ -815,7 +829,7 @@ class CommunityController extends Controller
             }
             $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
             if ($waitingTransCount > 0) {
-                return response()->json(["message" => "يوجد طلب شحن قيد المراجعة لهذا المتدرب"],422);
+                return response()->json(["message" => "يوجد طلب شحن قيد المراجعة لهذا المتدرب"], 422);
             }
             return response()->json($user, 200);
         } catch (Exception $e) {
@@ -842,7 +856,7 @@ class CommunityController extends Controller
 
 
         ]);
-            
+
         try {
 
             $user = User::with('student.courses')->whereHas('student', function ($result) use ($paymentRequest) {
@@ -869,14 +883,14 @@ class CommunityController extends Controller
             $transaction = $user->student->transactions()->create([
                 "payment_id"    => $payment->id,
                 "amount"        => $paymentRequest["amount"],
-                "note"          => ' ( اضافة رصيد من قبل الادارة ) '. $paymentRequest["note"],
+                "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
                 "type"          => "manager_recharge",
                 "by_user"       => Auth::user()->id,
             ]);
 
             $payment->update([
                 "transaction_id" => $transaction->id,
-                "note"          => ' ( اضافة رصيد من قبل الادارة ) '. $paymentRequest["note"],
+                "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
             ]);
 
             $user->student->wallet += $paymentRequest["amount"];
