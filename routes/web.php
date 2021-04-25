@@ -52,8 +52,6 @@ Route::middleware('auth')->group(function () {
     // TODO: disable this in release
     //Logs Viewer
     Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
-
-
 });
 
 // خدمة المجتمع
@@ -78,6 +76,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
     Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');
+    
     //Manage Courses
     Route::get('/community/courses', [CommunityController::class, 'coursesIndex'])->name('coursesIndex');
     Route::get('/community/courses/create', [CommunityController::class, 'createCourseForm'])->name('createCourseForm');
@@ -85,24 +84,22 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
     Route::post('/community/courses/update', [CommunityController::class, 'editCourse'])->name('editCourse');
     Route::get('/community/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
-
-    //manager recharge 
-    Route::get('/charge', [ManagerController::class, 'chargeForm'])->name('chargeForm');
-    Route::post('/charge', [ManagerController::class, 'charge'])->name('charge');
+    
+    //charge student wallet direct
+    Route::get('/api/community/student/{id}', [CommunityController::class, 'getStudent'])->name('apiCommunityGetStudent');
+    Route::get('/community/charge', [CommunityController::class, 'chargeForm'])->name('chargeForm');
+    Route::post('/community/charge', [CommunityController::class, 'charge'])->name('charge');
 
     //Reports
     Route::get('/community/reports/all', [CommunityController::class, 'reportAllForm'])->name('reportAllForm');
     Route::get('/community/reports/filterd', [CommunityController::class, 'reportFilterdForm'])->name('reportFilterdForm');
     Route::post('/community/reports/filterd', [CommunityController::class, 'reportFilterd'])->name('reportFilterd');
-
-
-
 });
 
 
 // FIXME: these routes are shard between `شؤون المتدربين` and `خدمة المجتمع`,
 //        and I cannot find way to tell our middleware `role` that.
-Route::middleware(['auth','agreement'])->group(function () {
+Route::middleware(['auth', 'agreement'])->group(function () {
     Route::get('/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
     Route::post('/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
 });

@@ -261,7 +261,7 @@
                             <tbody>
                                 @forelse ($user->student->payments as $payment)
                                     @php
-                                        $user->student->receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
+                                        $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $payment->id }}</td>
@@ -275,17 +275,17 @@
                                         <td class="">
 
                                             @php
-                                                $splitByDot = explode('.', $user->student->receipt);
+                                                $splitByDot = explode('.', $receipt);
                                                 $fileExtantion = end($splitByDot);
                                             @endphp
                                             @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
                                                 <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                    onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','pdf')">
+                                                    onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','pdf')">
                                                     <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                                                 </a>
                                             @else
                                                 <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                    onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','img')">
+                                                    onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','img')">
                                                     <img src=" {{ asset('/images/camera_img_icon.png') }}"
                                                         style="width:25px;" alt="Image File">
                                                 </a>
@@ -381,12 +381,14 @@
                                     <th class="text-center">رقم الطلب (شحن / اضافة مقررات)</th>
                                     <th class="text-center">المبلغ</th>
                                     <th>الملاحظات</th>
+                                    <th class="text-center">ايصال السداد</th>
+
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($user->student->transactions as $transaction)
-                                    @php$hoursNote = '';
-                                        
+                                    @php $hoursNote = '';
+                                    $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $transaction->id ?? 'Error' }}</td>
@@ -414,6 +416,27 @@
                                             @endif
                                             {{ $transaction->note ?? '' }}
                                         </td>
+
+                                        @if ($transaction->type == 'recharge' || $transaction->type == 'manager_recharge')
+                                            <td>
+                                                @php
+                                                    $splitByDot = explode('.', $receipt);
+                                                    $fileExtantion = end($splitByDot);
+                                                @endphp
+                                                @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
+                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','pdf')">
+                                                        <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
+                                                    </a>
+                                                @else
+                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','img')">
+                                                        <img src=" {{ asset('/images/camera_img_icon.png') }}"
+                                                            style="width:25px;" alt="Image File">
+                                                    </a>
+                                                @endif
+                                            </td>
+                                        @endif
 
                                     </tr>
                                 @empty
