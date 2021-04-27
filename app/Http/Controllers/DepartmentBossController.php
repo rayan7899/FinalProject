@@ -40,6 +40,7 @@ class DepartmentBossController extends Controller
 
     public function dashboard()
     {
+        $title = "رئيس القسم";
         $links = [
             (object) [
                 "name" => "المتدربين المتعثرين",
@@ -50,7 +51,7 @@ class DepartmentBossController extends Controller
                 "url" => route("coursesPerLevel")
             ],
         ];
-        return view("manager.departmentBoss.dashboard")->with(compact("links"));
+        return view("manager.departmentBoss.dashboard")->with(compact("links","title"));
     }
 
     //todo response level 2 and upper for dept boss and level 1 only for student affairs

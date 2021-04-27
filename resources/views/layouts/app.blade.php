@@ -233,7 +233,7 @@
                 <img class="mySlides" src="/images/31.png" style="width:100%; height:758px;">
             </section> -->
 
-        <main class="py-4 my-4 p-2" style="text-align: right !important; min-height: 500px;" dir="rtl">
+        <main class="py-4 my-4 p-2" style="text-align: right !important; min-height: 550px;" dir="rtl">
             @yield('content')
         </main>
 

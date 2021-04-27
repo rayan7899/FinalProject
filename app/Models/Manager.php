@@ -37,6 +37,7 @@ class Manager extends Model
 
     public function isDepartmentManager()
     {
+        $hasRole = false;
         foreach ($this->permissions as $permission) {
             $diplomPattern =  ' - دبلوم ';
             $baccPattern = ' - بكالوريوس ';

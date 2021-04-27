@@ -22,10 +22,10 @@ class OrderController extends Controller
    public function form()
    {
       $user = Auth::user();
-      $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
-      $waitingOrdersCount = $user->student->orders()->where("transaction_id", "=", null)
-                                                   ->where("private_doc_verified", "=", null)->count();
-      if ($waitingTransCount > 0 || $waitingOrdersCount > 0) {
+      $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
+      $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
+                                                   ->where("private_doc_verified", "!=", false)->count();
+      if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
          return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
       }
       $courses = Course::where('suggested_level', $user->student->level)

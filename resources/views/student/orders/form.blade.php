@@ -72,8 +72,8 @@
             </div>
         @endif
         <div class="card">
-            <div class="card-header">
-                اضافة مقررات
+            <div class="card-header h5">
+                اضافة المقررات
             </div>
             <div class="card-body">
                 <form id="addCoursesOrder" action="{{ route('orderStore') }}" method="post" accept-charset="utf-8"

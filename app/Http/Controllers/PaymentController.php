@@ -27,9 +27,9 @@ class PaymentController extends Controller
     public function form()
     {
         $user = Auth::user();
-        $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
-        $waitingOrdersCount = $user->student->orders()->where("transaction_id", "=", null)->count();
-        if ($waitingTransCount > 0 || $waitingOrdersCount > 0) {
+        $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
+        $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)->count();
+        if ($waitingPaymentssCount > 0) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
         }
         return view("student.wallet.payment");
@@ -42,8 +42,8 @@ class PaymentController extends Controller
             "payment_receipt"   => "required|mimes:pdf,png,jpg,jpeg|max:4000",
         ]);
         $user = Auth::user();
-        $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
-        if ($waitingTransCount > 0) {
+        $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
+        if ($waitingPaymentssCount > 0) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
         }
         try {

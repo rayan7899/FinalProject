@@ -201,7 +201,7 @@ window.showModal = function (national_id, payment_id, name, amount) {
     }
 };
 
-window.sendStudentUpdate = function (requestType) {
+window.sendStudentUpdate = function (decision) {
     let national_id = window.national_id.value;
     let amount      = window.amount.value;
     let payment_id  = window.payment_id;
@@ -213,6 +213,7 @@ window.sendStudentUpdate = function (requestType) {
     let form = {
         national_id: national_id,
         amount: amount,
+        decision:decision,
         payment_id: payment_id,
         note: note,
     };
@@ -254,7 +255,7 @@ Swal.close();
 
 };
 
-window.okClicked = function (national_id, payment_id, event) {
+window.okClicked = function (decision,national_id, payment_id, event) {
     let row = event.currentTarget.parentNode.parentNode;
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
@@ -267,6 +268,7 @@ window.okClicked = function (national_id, payment_id, event) {
     var form  = {
         national_id: national_id,
         payment_id: payment_id,
+        decision:decision
     };
 
     axios.post(window.paymentVerified, form)

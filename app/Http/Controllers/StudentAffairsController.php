@@ -20,13 +20,14 @@ class StudentAffairsController extends Controller
 
     public function dashboard()
     {
+        $title = "شؤون المتدربين";
         $links = [
             (object) [
                 "name" => "القبول النهائي",
                 "url" => route("finalAcceptedForm")
             ],
             (object) [
-                "name" => "قائمة القبول النهائي",
+                "name" => "تقرير القبول النهائي",
                 "url" => route("finalAcceptedList")
             ],
             (object) [
@@ -42,7 +43,7 @@ class StudentAffairsController extends Controller
                 "url" => route("coursesPerLevel")
             ],
             (object) [
-                "name" => "المتدربين المستجدين",
+                "name" => " تقرير المتدربين المستجدين",
                 "url" => route("NewStudents")
             ],
 
@@ -66,7 +67,7 @@ class StudentAffairsController extends Controller
             //     "url" => route("studentsStates")
             // ],
         ];
-        return view("manager.studentsAffairs.dashboard")->with(compact("links"));
+        return view("manager.studentsAffairs.dashboard")->with(compact("links","title"));
     }
 
     public function checkedStudents()
@@ -85,7 +86,7 @@ class StudentAffairsController extends Controller
                 $result->where('level', 1)
                     ->where('data_updated', true)
                     ->whereHas('payments', function ($res) {
-                        $res->where('transaction_id', '!=', null);
+                        $res->where('accepted', true);
                     });
             })->get();
 
@@ -173,15 +174,6 @@ class StudentAffairsController extends Controller
     public function publishToRayatForm()
     {
 
-        // $payments = Payment::where("transaction_id", "!=", null)->get();
-        // $paymentIds = $payments->pluck('student_id')->toArray();
-        // $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
-        //         $res->where("traineeState", "!=", "privateState")
-        //             ->where('level', '1')
-        //             ->where('final_accepted', true)
-        //             ->where("published", false)
-        //             ->whereIn("id", $paymentIds);
-        //     })->get();
         try {
             $users = User::with("student.orders")->whereHas("student", function ($res) {
                 $res->where("traineeState", "!=", "privateState")
@@ -190,7 +182,7 @@ class StudentAffairsController extends Controller
                         $res->where("transaction_id", null);
                     })
                     ->whereDoesntHave('payments', function ($res) {
-                        $res->where('transaction_id', null);
+                        $res->where('accepted', null);
                     });
             })->get();
 

@@ -50,8 +50,9 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
-                        <button onclick="window.sendStudentUpdate('else')" class="btn btn-primary">ارسال</button>
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
+                        <button onclick="window.sendStudentUpdate('accept')" class="btn btn-primary btn-md">قبول</button>
+                        <button onclick="window.sendStudentUpdate('reject')" class="btn btn-danger btn-md">رفض</button>
                     </div>
                 </div>
             </div>
@@ -150,8 +151,9 @@
 
                                 <td class="text-center">
                                     <button class="btn btn-primary px-2 py-0"
-                                        onclick="window.okClicked('{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">
-                                    تم</button>
+                                        onclick="window.okClicked('accept','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">قبول</button>
+                                    <button class="btn btn-danger px-2 py-0"
+                                    onclick="window.okClicked('reject','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">رفض</button>
                                 </td>
 
 

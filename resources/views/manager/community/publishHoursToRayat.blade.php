@@ -32,10 +32,12 @@
                         <th>البرنامج</th>
                         <th>القسم</th>
                         <th>التخصص</th>
+                        <th>رقم الطلب</th>
                         <th> عدد الساعات</th>
-                        <th>التسجيل في رايات</th>
+                        <th class="text-center">التسجيل في رايات</th>
                     </tr>
                     <tr>
+                        <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
@@ -85,10 +87,11 @@
                                 <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                                <td>{{ $user->student->order->id ?? 'لا يوجد' }} </td>
                                 <td><input type="number" min="1" max="{{ $maxHours ?? 0 }}" class="p-0" name="requested_hours"
                                         id="requested_hours" value="{{ $requested_hours ?? 0 }}"><small> الحد الاعلى
                                         {{ $maxHours ?? 0 }}</small></td>
-                                <td><button class="btn btn-primary btn-sm"
+                                <td class="text-center"><button class="btn btn-primary btn-sm px-3"
                                         onclick="publishToRayatStore({{ $user->national_id }},{{ $user->student->order->id }},event)">تم</button>
                                 </td>
                             </tr>

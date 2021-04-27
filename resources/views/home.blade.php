@@ -259,17 +259,27 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $countWaitingPayment = 0;
+                                @endphp
                                 @forelse ($user->student->payments as $payment)
                                     @php
                                         $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id)[0];
+                                        if ($payment->accepted == null) {
+                                            $countWaitingPayment++;
+                                        }
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $payment->id }}</td>
                                         <td>{{ $payment->amount }}</td>
-                                        @if ($payment->transaction_id == null)
+                                        @if ($payment->accepted == null)
                                             <td>قيد المراجعة</td>
                                         @else
-                                            <td class="text-success">مقبول</td>
+                                            @if ($payment->accepted == true)
+                                                <td class="text-success">مقبول</td>
+                                            @else
+                                                <td class="text-danger">مرفوض</td>
+                                            @endif
                                         @endif
                                         <td class="text-right">{{ $payment->note ?? 'لا يوجد' }}</td>
                                         <td class="">
@@ -322,25 +332,41 @@
                                 <tr>
                                     <th class="text-center">رقم الطلب</th>
                                     <th class="text-center">عدد الساعات</th>
-                                    <th class="text-center"> رفع الساعات الى رايات</th>
+                                    <th class="text-center">المبلغ</th>
+                                    <th class="text-center">حالة تسجيل الساعات في رايات</th>
                                     <th>الملاحظات</th>
                                 </tr>
                             </thead>
                             <tbody>
+
                                 @forelse ($user->student->orders as $order)
+                                    @php
+                                        $hasEnoughMoney = true;
+                                        $cost = $order->requested_hours * $user->student->program->hourPrice;
+                                        if ($cost > $user->student->wallet && $countWaitingPayment == 0) {
+                                            $hasEnoughMoney = false;
+                                        }
+                                    @endphp
                                     <tr class="text-center">
                                         <td>{{ $order->id ?? 'Error' }}</td>
                                         <td>{{ $order->requested_hours ?? 'Error' }}</td>
+                                        <td>{{ $cost ?? 'Error' }}</td>
                                         @if ($order->private_doc_verified === false || $order->private_doc_verified === '0')
                                             <td class="text-danger">مرفوض</td>
                                         @else
                                             @if ($order->transaction_id == null)
-                                                <td>قيد المراجعة</td>
+                                                @if ($hasEnoughMoney == true)
+                                                    <td>قيد المراجعة</td>
+                                                    <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
+                                                @else
+                                                     <td>معلق</td>
+                                                    <td class="text-danger text-right">يرجى شحن المحفظة لا يوجد رصيد كافي</td>
+                                                @endif
                                             @else
                                                 <td class="text-success">مقبول</td>
+                                                <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                             @endif
                                         @endif
-                                        <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                     </tr>
                                 @empty
 
@@ -362,12 +388,12 @@
                             <div class="h5">
                                 جميع العمليات المالية
                             </div>
-                            <div>
+                            {{-- <div>
                                 <p class="h5 d-inline"> الرصيد الحالي : </p>
                                 <p class="h5 d-inline">
                                     {{ $user->student->wallet ?? 'لا يوجد' }}
                                 </p>
-                            </div>
+                            </div> --}}
 
                         </div>
 
@@ -375,6 +401,10 @@
                     <div class="card-body p-0">
                         <table class="table table-bordered m-0">
                             <thead>
+                                <tr class="bg-light">
+                                    <th>الرصيد الحالي</th>
+                                    <th colspan="5">{{ $user->student->wallet ?? 'لا يوجد' }}</th>
+                                </tr>
                                 <tr>
                                     <th class="text-center">رقم العملية</th>
                                     <th class="text-center">نوع العملية</th>
@@ -382,12 +412,14 @@
                                     <th class="text-center">المبلغ</th>
                                     <th>الملاحظات</th>
                                     <th class="text-center">ايصال السداد</th>
-
                                 </tr>
+                                
+                                
                             </thead>
                             <tbody>
                                 @forelse ($user->student->transactions as $transaction)
-                                    @php$hoursNote = '';
+                                    @php
+                                        $hoursNote = '';
                                         if ($transaction->payment != null) {
                                             $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $transaction->payment->receipt_file_id)[0];
                                         }
@@ -415,8 +447,11 @@
                                             @if ($transaction->type == 'deduction')
                                                 {{ $hoursNote ?? '' }}
                                                 <br>
+                                                {{ $transaction->note ?? '' }}
+                                                @else
+                                                {{ $transaction->note ?? 'لا يوجد' }}
                                             @endif
-                                            {{ $transaction->note ?? '' }}
+                                            
                                         </td>
 
                                         @if ($transaction->type == 'recharge' || ($transaction->type == 'manager_recharge' && $transaction->payment != null))

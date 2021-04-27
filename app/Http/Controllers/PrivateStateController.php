@@ -18,6 +18,7 @@ class PrivateStateController extends Controller
 
     public function privateDashboard()
     {
+        $title = "الارشاد";
         $links = [
             (object) [
                 "name" => "تدقيق المستندات(ظروف خاصة)",
@@ -28,7 +29,7 @@ class PrivateStateController extends Controller
             //     "url" => route("studentsStates")
             // ],
         ];
-        return view("manager.private.dashboard")->with(compact("links"));
+        return view("manager.private.dashboard")->with(compact("links","title"));
     }
 
 

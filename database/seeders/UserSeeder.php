@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
        
         $user = User::create([
             'national_id' => "1111111111",
-            'name'          => "موظف خدمة المجتمع",
+            'name'          => "مشرف خدمة المجتمع",
             'email'         => NULL,
             'phone'         => "0511111111",
             'password' => Hash::make("12345678")
@@ -25,12 +25,12 @@ class UserSeeder extends Seeder
 
         $user->manager()->create();
         $user->manager->permissions()->create([
-            "role_id" => 1, // موظف خدمة المجتمع
+            "role_id" => 1, // مشروف خدمة المجتمع
         ]);
 
         $user = User::create([
             'national_id' => "2222222222",
-            'name'          => "موظف شؤون المتدربين",
+            'name'          => "مشرف شؤون المتدربين",
             'email'         => NULL,
             'phone'         => "0522222222",
             'password' => Hash::make("12345678")
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
 
         $user = User::create([
             'national_id' => "3333333333",
-            'name'          => "موظف الإرشاد",
+            'name'          => "مشرف الإرشاد",
             'email'         => NULL,
             'phone'         => "0533333333",
             'password' => Hash::make("12345678")

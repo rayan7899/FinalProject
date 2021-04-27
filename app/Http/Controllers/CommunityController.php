@@ -31,6 +31,7 @@ class CommunityController extends Controller
 
     public function dashboard()
     {
+        $title = "خدمة المجتمع";
         $links = [
             (object) [
                 "name" => "تدقيق الايصالات",
@@ -98,7 +99,7 @@ class CommunityController extends Controller
 
 
         ];
-        return view("manager.community.dashboard")->with(compact("links"));
+        return view("manager.community.dashboard")->with(compact("links", "title"));
     }
 
 
@@ -236,13 +237,13 @@ class CommunityController extends Controller
             $users = User::with("student.payments")
                 ->whereHas("student", function ($res) {
                     $res->whereHas("payments", function ($res) {
-                        $res->where("transaction_id", null);
+                        $res->where("accepted", null);
                     });
                 })->get();
             for ($i = 0; $i < count($users); $i++) {
                 foreach ($users[$i]->student->payments as $payment) {
                     try {
-                        if ($payment->transaction_id == null) {
+                        if ($payment->accepted == null) {
 
                             $users[$i]->student->payment = $payment;
                             $users[$i]->student->receipt = Storage::disk('studentDocuments')->files(
@@ -264,54 +265,50 @@ class CommunityController extends Controller
         return view('manager.community.paymentsReview')->with(compact('users'));
     }
 
-
-    // public function paymentsReviewJson()
-    // {
-
-    //     $users = User::with('student')->whereHas('student', function ($result) {
-    //         $result->where('traineeState', '!=', 'privateState');
-    //     })->get();
-
-    //     for ($i = 0; $i < count($users); $i++) {
-    //         // $documents = Storage::disk('studentDocuments')->files($user->national_id);
-    //         $users[$i]['receipts'] = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/receipts');
-    //         $users[$i]->progname = $users[$i]->student->program->name;
-    //         $users[$i]->deptname = $users[$i]->student->department->name;
-    //         $users[$i]->mjrname = $users[$i]->student->major->name;
-    //     }
-    //     //return view('manager.community.paymentsReview')->with(compact('users'));
-    //     return response(\json_encode(['data' => $users]), 200);
-    // }
-
     public function paymentsReviewUpdate(Request $request)
     {
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
             "payment_id"         => "required|numeric|exists:payments,id",
             "amount"             => "required|numeric",
+            "decision"           => "required|in:accept,reject",
             "note"               => "string|nullable"
         ]);
-        try {
-            DB::beginTransaction();
-            $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
 
+        try {
+            $decision = false;
+            if ($reviewedPayment["decision"] == "accept") {
+                $decision = true;
+            }
+            $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
             $payment = Payment::where("id", $reviewedPayment["payment_id"])->first();
-            $transaction = $user->student->transactions()->create([
-                "payment_id"    => $payment->id,
-                "amount"        => $reviewedPayment["amount"],
-                "note"          => $reviewedPayment["note"],
-                "type"          => "recharge",
-                "by_user"       => Auth::user()->id,
-            ]);
-            $payment->update([
-                "transaction_id" => $transaction->id,
-                "note"          => $reviewedPayment["note"],
-            ]);
+
+            DB::beginTransaction();
+
+            if ($decision == true) {
+                $transaction = $user->student->transactions()->create([
+                    "payment_id"    => $payment->id,
+                    "amount"        => $reviewedPayment["amount"],
+                    "note"          => $reviewedPayment["note"],
+                    "type"          => "recharge",
+                    "by_user"       => Auth::user()->id,
+                ]);
+                $payment->update([
+                    "transaction_id" => $transaction->id,
+                    "note"          => $reviewedPayment["note"],
+                    "accepted"       => true
+                ]);
+            } else {
+                $payment->update([
+                    "note"          => $reviewedPayment["note"],
+                    "accepted"       => false
+                ]);
+            }
 
             $user->student->wallet += $reviewedPayment["amount"];
             $user->student->save();
             DB::commit();
-            return response(json_encode(['message' => 'تم قبول الطلب بنجاح']), 200);
+            return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
         } catch (Exception $e) {
             Log::error($e);
             DB::rollBack();
@@ -325,27 +322,43 @@ class CommunityController extends Controller
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
             "payment_id"         => "required|numeric|exists:payments,id",
+            "decision"           => "required|in:accept,reject",
+
         ]);
 
         try {
+            $decision = false;
+            if ($reviewedPayment["decision"] == "accept") {
+                $decision = true;
+            }
+
             DB::beginTransaction();
+
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
-
             $payment = Payment::where("id", $reviewedPayment["payment_id"])->first();
-            $transaction = $user->student->transactions()->create([
-                "payment_id"    => $payment->id,
-                "amount"    => $payment->amount,
-                "type"    => "recharge",
-                "by_user"    => Auth::user()->id,
-            ]);
-            $payment->update([
-                "transaction_id" => $transaction->id,
-            ]);
 
-            $user->student->wallet += $payment->amount;
-            $user->student->save();
+            if ($decision == true) {
+                $transaction = $user->student->transactions()->create([
+                    "payment_id"    => $payment->id,
+                    "amount"    => $payment->amount,
+                    "type"    => "recharge",
+                    "by_user"    => Auth::user()->id,
+                ]);
+                $payment->update([
+                    "transaction_id" => $transaction->id,
+                    "accepted"       => $decision
+                ]);
+                $user->student->wallet += $payment->amount;
+                $user->student->save();
+
+            } else {
+                $payment->update([
+                    "accepted"       => false
+                ]);
+            }
+
             DB::commit();
-            return response(json_encode(['message' => 'تم قبول الطلب بنجاح']), 200);
+            return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
         } catch (Exception $e) {
             Log::error($e);
             DB::rollBack();
@@ -416,12 +429,10 @@ class CommunityController extends Controller
                             ->where("private_doc_verified", true);
                     })
                     ->whereDoesntHave("payments", function ($res) {
-                        $res->where("transaction_id", null);
+                        $res->where("accepted", null);
                     });
             })->get();
-
-
-
+            
         foreach ($users as $user) {
             foreach ($user->student->orders as $order) {
                 if ($order->transaction_id == null && $order->private_doc_verified == true) {
