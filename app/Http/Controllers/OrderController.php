@@ -33,7 +33,7 @@ class OrderController extends Controller
          ->get();
       $major_courses = null;
 
-      if ($user->student->studentState != false) {
+      if ($user->student->studentState == true && $user->student->credit_hours == 0) {
          $courses_id = array_map(
             function ($c) {
                return $c['id'];

@@ -35,7 +35,7 @@ use App\Http\Controllers\TransactionController;
 Auth::routes(['register' => false]);
 
 Route::middleware('auth')->group(function () {
-    // Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/', [HomeController::class, 'index'])->name('home');
     // FIXME: use the home page as dashboard page for all type of users and make
     //        sure the home page display different content foreach type of users
