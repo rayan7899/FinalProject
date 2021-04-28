@@ -155,7 +155,7 @@
                                                         القبول
                                                         النهائي </a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('finalAcceptedList') }}">قائمة
+                                                        href="{{ route('finalAcceptedList') }}">تقرير
                                                         القبول النهائي</a>
                                                     <a class="dropdown-item" href="{{ route('NewStudents') }}">المتدربين
                                                         المستجدين </a>
