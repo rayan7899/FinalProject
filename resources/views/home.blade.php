@@ -223,7 +223,7 @@
                                     </div>
                                 </div>
                             </div>
-                        @elseif($user->student->credit_hours > 0 )
+                        @elseif($user->student->credit_hours > 0 && $user->student->level == 1)
                             <div class="col-12">
                                 <div dir="ltr" class="input-group mb-1">
                                     <input readonly type="text" class="form-control text-right bg-white"
