@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
     المتدربين المستجدين
         @if (isset($error) || !empty($fetch_errors))
             <div class="alert alert-danger">
