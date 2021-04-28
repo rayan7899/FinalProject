@@ -210,18 +210,42 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- @if ($user->student->final_accepted == false)
-                        <div class="col-12">
-                            <div dir="ltr" class="input-group mb-1">
-                                <input readonly type="text" class="form-control text-right bg-white"
-                                    value="قبول مبدئي">
-                                <div class="input-group-append">
-                                    <span class="input-group-text text-center" style="width: 120px;"><label
-                                            class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+
+                        {{-- accepted state --}}
+                        @if ($user->student->final_accepted == false)
+                            <div class="col-12">
+                                <div dir="ltr" class="input-group mb-1">
+                                    <input readonly type="text" class="form-control text-right bg-white"
+                                        value="مقبول مبدئي">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text text-center" style="width: 120px;"><label
+                                                class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endif --}}
+                        @elseif($user->student->credit_hours > 0 )
+                            <div class="col-12">
+                                <div dir="ltr" class="input-group mb-1">
+                                    <input readonly type="text" class="form-control text-right bg-white"
+                                        value="مقبول نهائي - تم اتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text text-center" style="width: 120px;"><label
+                                                class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif($user->student->final_accepted == true && $user->student->level == 1)
+                            <div class="col-12">
+                                <div dir="ltr" class="input-group mb-1">
+                                    <input readonly type="text" class="form-control text-right bg-white"
+                                        value="مقبول نهائي - بانتظار اتاحة الساعات في رايات">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text text-center" style="width: 120px;"><label
+                                                class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
