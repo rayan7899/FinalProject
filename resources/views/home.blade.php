@@ -292,10 +292,16 @@
                                         if ($payment->accepted == null) {
                                             $countWaitingPayment++;
                                         }
+                                        $acceptedAmount = $user->student->transactions
+                                            ->where("payment_id", $payment->id)->first()->amount ?? null;
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $payment->id }}</td>
-                                        <td>{{ $payment->amount }}</td>
+                                        @if ($payment->transaction_id != null && $payment->amount != $acceptedAmount)
+                                            <td><del>{{$payment->amount}}</del>  {{$acceptedAmount}}</td>
+                                        @else
+                                            <td>{{ $payment->amount }}</td>
+                                        @endif
                                         @if ($payment->accepted == null)
                                             <td>قيد المراجعة</td>
                                         @else
