@@ -48,7 +48,7 @@ class HomeController extends Controller
                 return view('student.form')->with(compact('user'));
             }
             if (count($user->student->orders) < 1) {
-                return view('student.orders.form')->with(compact('user'));
+                return redirect(route('orderForm'));
             }
             return view('home')->with(compact('user'));
         }
