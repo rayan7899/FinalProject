@@ -25,6 +25,10 @@ class OrderController extends Controller
       $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
       $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
                                                    ->where("private_doc_verified", "!=", false)->count();
+      if($user->student->level == 1 && $user->student->credit_hours != 0){
+         return redirect(route("home"))->with("error", "اضافة المقررات غير متاح للمتدربين في المستوى الاول");
+      }
+
       if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
          return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
       }
@@ -33,7 +37,7 @@ class OrderController extends Controller
          ->get();
       $major_courses = null;
 
-      if ($user->student->studentState != false) {
+      if ($user->student->studentState != false && $user->student->credit_hours == 0) {
          $courses_id = array_map(
             function ($c) {
                return $c['id'];

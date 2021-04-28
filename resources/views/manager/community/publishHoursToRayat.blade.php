@@ -79,14 +79,14 @@
                                 }
                                 
                             @endphp
-                            <tr>
+                            <tr data-row_order_id="{{ $user->student->order->id ?? 'لا يوجد' }}">
                                 <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->phone ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                                <td data-program_id="{{$user->student->program->id ?? 0}}">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
+                                <td data-department_id="{{$user->student->department->id ?? 0}}">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
+                                <td data-major_id="{{$user->student->major->id ?? 0}}">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->order->id ?? 'لا يوجد' }} </td>
                                 <td><input type="number" min="1" max="{{ $maxHours ?? 0 }}" class="p-0" name="requested_hours"
                                         id="requested_hours" value="{{ $requested_hours ?? 0 }}"><small> الحد الاعلى

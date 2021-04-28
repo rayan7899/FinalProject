@@ -232,6 +232,113 @@
             {{-- @if ($user->student->final_accepted == true) --}}
             <div class="col-12">
 
+                {{-- transactions --}}
+                <div class="card my-4">
+                    <div class="card-header">
+
+
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="h5">
+                                جميع العمليات المالية
+                            </div>
+                            {{-- <div>
+                                <p class="h5 d-inline"> الرصيد الحالي : </p>
+                                <p class="h5 d-inline">
+                                    {{ $user->student->wallet ?? 'لا يوجد' }}
+                                </p>
+                            </div> --}}
+
+                        </div>
+
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered m-0">
+                            <thead>
+                                <tr style="background-color: rgba(0, 0, 0, 0.03);">
+                                    <th scope="row">الرصيد الحالي</th>
+                                    <th scope="row" colspan="5">{{ $user->student->wallet ?? 'لا يوجد' }}</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">رقم العملية</th>
+                                    <th class="text-center">نوع العملية</th>
+                                    <th class="text-center">رقم الطلب (شحن / اضافة مقررات)</th>
+                                    <th class="text-center">المبلغ</th>
+                                    <th>الملاحظات</th>
+                                    <th class="text-center">ايصال السداد</th>
+                                </tr>
+                                
+                                
+                            </thead>
+                            <tbody>
+                                @forelse ($user->student->transactions as $transaction)
+                                    @php
+                                        $hoursNote = '';
+                                        if ($transaction->payment != null) {
+                                            $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $transaction->payment->receipt_file_id)[0];
+                                        }
+                                    @endphp
+                                    <tr class="text-center">
+                                        <td>{{ $transaction->id ?? 'Error' }}</td>
+                                        @if ($transaction->type == 'deduction')
+                                            @php
+                                                $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                            @endphp
+                                            <td class="text-danger"> خصم (اضافة مقررات)</td>
+                                            <td>{{ $transaction->order->id ?? 'Error' }}</td>
+                                        @endif
+                                        @if ($transaction->type == 'recharge')
+                                            <td class="text-success"> اضافة (شحن المحفظة) </td>
+                                            <td>{{ $transaction->payment->id ?? 'Error' }}</td>
+                                        @endif
+                                        @if ($transaction->type == 'manager_recharge')
+                                            <td class="text-success"> اضافة (من الادارة) </td>
+                                            <td>لا يوجد</td>
+                                        @endif
+                                        <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
+                                        <td class="text-right">
+                                            @if ($transaction->type == 'deduction')
+                                                {{ $hoursNote ?? '' }}
+                                                <br>
+                                                {{ $transaction->note ?? '' }}
+                                                @else
+                                                {{ $transaction->note ?? 'لا يوجد' }}
+                                            @endif
+                                            
+                                        </td>
+
+                                        @if ($transaction->type == 'recharge' || ($transaction->type == 'manager_recharge' && $transaction->payment != null))
+                                            <td>
+                                                @php
+                                                    $splitByDot = explode('.', $receipt);
+                                                    $fileExtantion = end($splitByDot);
+                                                @endphp
+                                                @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
+                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','pdf')">
+                                                        <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
+                                                    </a>
+                                                @else
+                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','img')">
+                                                        <img src=" {{ asset('/images/camera_img_icon.png') }}"
+                                                            style="width:25px;" alt="Image File">
+                                                    </a>
+                                                @endif
+                                            </td>
+                                        @else
+                                            <td></td>
+                                        @endif
+
+                                    </tr>
+                                @empty
+
+                                @endforelse
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
 
                 {{-- payments --}}
                 <div class="card">
@@ -321,9 +428,11 @@
                     <div class="card-header">
                         <div class="d-flex flex-row justify-content-between">
                             <p class="h5">طلبات اضافة المقررات</p>
+                            @if($user->student->level > 1)
                             <a href="{{ route('orderForm') }}" class="btn btn-primary rounded">
                                 اضافة مقررات
                             </a>
+                            @endif
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -378,114 +487,6 @@
                 </div>
 
 
-
-                {{-- transactions --}}
-                <div class="card my-4">
-                    <div class="card-header">
-
-
-                        <div class="d-flex flex-row justify-content-between">
-                            <div class="h5">
-                                جميع العمليات المالية
-                            </div>
-                            {{-- <div>
-                                <p class="h5 d-inline"> الرصيد الحالي : </p>
-                                <p class="h5 d-inline">
-                                    {{ $user->student->wallet ?? 'لا يوجد' }}
-                                </p>
-                            </div> --}}
-
-                        </div>
-
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-bordered m-0">
-                            <thead>
-                                <tr class="bg-light">
-                                    <th>الرصيد الحالي</th>
-                                    <th colspan="5">{{ $user->student->wallet ?? 'لا يوجد' }}</th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">رقم العملية</th>
-                                    <th class="text-center">نوع العملية</th>
-                                    <th class="text-center">رقم الطلب (شحن / اضافة مقررات)</th>
-                                    <th class="text-center">المبلغ</th>
-                                    <th>الملاحظات</th>
-                                    <th class="text-center">ايصال السداد</th>
-                                </tr>
-                                
-                                
-                            </thead>
-                            <tbody>
-                                @forelse ($user->student->transactions as $transaction)
-                                    @php
-                                        $hoursNote = '';
-                                        if ($transaction->payment != null) {
-                                            $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $transaction->payment->receipt_file_id)[0];
-                                        }
-                                    @endphp
-                                    <tr class="text-center">
-                                        <td>{{ $transaction->id ?? 'Error' }}</td>
-
-                                        @if ($transaction->type == 'deduction')
-                                            @php
-                                                $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
-                                            @endphp
-                                            <td class="text-danger"> خصم (اضافة مقررات)</td>
-                                            <td>{{ $transaction->order->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'recharge')
-                                            <td class="text-success"> اضافة (شحن المحفظة) </td>
-                                            <td>{{ $transaction->payment->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'manager_recharge')
-                                            <td class="text-success"> اضافة (من الادارة) </td>
-                                            <td>لا يوجد</td>
-                                        @endif
-                                        <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
-                                        <td class="text-right">
-                                            @if ($transaction->type == 'deduction')
-                                                {{ $hoursNote ?? '' }}
-                                                <br>
-                                                {{ $transaction->note ?? '' }}
-                                                @else
-                                                {{ $transaction->note ?? 'لا يوجد' }}
-                                            @endif
-                                            
-                                        </td>
-
-                                        @if ($transaction->type == 'recharge' || ($transaction->type == 'manager_recharge' && $transaction->payment != null))
-                                            <td>
-                                                @php
-                                                    $splitByDot = explode('.', $receipt);
-                                                    $fileExtantion = end($splitByDot);
-                                                @endphp
-                                                @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','pdf')">
-                                                        <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
-                                                    </a>
-                                                @else
-                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt]) }}','img')">
-                                                        <img src=" {{ asset('/images/camera_img_icon.png') }}"
-                                                            style="width:25px;" alt="Image File">
-                                                    </a>
-                                                @endif
-                                            </td>
-                                        @else
-                                            <td></td>
-                                        @endif
-
-                                    </tr>
-                                @empty
-
-                                @endforelse
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
 
             </div>

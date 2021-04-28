@@ -149,18 +149,26 @@ class StudentController extends Controller
 
     public function agreement_form()
     {
-        $user = Auth::user();
-        $student = $user->student;
-
-        // if (Hash::check("bct12345", $user['password'])) {
-        //     return redirect(route('UpdatePasswordForm'))->with('info', 'يرجى تغيير كلمة المرور الافتراضية');
-        // }
-        if ($student->agreement == 1) {
-            return redirect(route('EditOneStudent'));
-        } else {
-            $error =  'يجب الموافقة لإكمال التسجيل';
-            return view("student.agreement_from")->with(compact('error'));
+        try{
+            $user = Auth::user();
+            
+            if($user->student == null){
+                return view('error')->with('error','حدث خطأ غير معروف');
+            }
+            $student = $user->student;
+    
+            if ($student->agreement == 1) {
+                return redirect(route('EditOneStudent'));
+            } else {
+                $error =  'يجب الموافقة لإكمال التسجيل';
+                return view("student.agreement_from")->with(compact('error'));
+            }
+        }catch(Exception $e){
+            Log::error($e);
+            return view('error')->with('error','حدث خطأ غير معروف');
+            
         }
+       
     }
 
     public function agreement_submit(Request $request)
