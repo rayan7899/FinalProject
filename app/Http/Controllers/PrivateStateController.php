@@ -91,7 +91,7 @@ class PrivateStateController extends Controller
             DB::commit();
             return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
         }

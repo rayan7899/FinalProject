@@ -91,7 +91,7 @@ class UsersImport implements ToCollection
                 ]);
                 DB::commit();
             } catch (QueryException $e) {
-                Log::error($e);
+               Log::error($e->getMessage().$e);
                 DB::rollback();
 
                 if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {

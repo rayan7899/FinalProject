@@ -25,7 +25,7 @@ class FalteringStudentsController extends Controller
             }
         } catch (Exception $e) {
             return view("error")->with("error", "حدث خطأ غير معروف");
-            Log::error($e);
+           Log::error($e->getMessage().$e);
         }
     }
 }

@@ -123,7 +123,7 @@ class OldUsers implements ToCollection
                     continue;
                 }
             } catch (Exception $e) {
-                Log::error($e);
+               Log::error($e->getMessage().$e);
                 array_push($errorsArr, ['message' => ' خطأ غير معروف ' . $e->getCode(), 'userinfo' => $userinfo]);
                 continue;
             }
@@ -183,7 +183,7 @@ class OldUsers implements ToCollection
                     continue;
                 }
             } catch (Exception $e) {
-                Log::error($e);
+               Log::error($e->getMessage().$e);
                 if ($row[TRAINEE_STATE] != 'privateState') {
                     array_push($errorsArr, ['message' => " تعذر تحميل صورة الايصال " . $e->getCode(), 'userinfo' => $userinfo]);
                 } else {
@@ -270,7 +270,7 @@ class OldUsers implements ToCollection
                 // ]);
                 DB::commit();
             } catch (QueryException $e) {
-                Log::error($e);
+               Log::error($e->getMessage().$e);
                 DB::rollback();
                 try {
                     $dir = Storage::disk('studentDocuments')->exists($userinfo['national_id']);
@@ -278,7 +278,7 @@ class OldUsers implements ToCollection
                         Storage::disk('studentDocuments')->deleteDirectory($userinfo['national_id']);
                     }
                 } catch (Exception $e) {
-                    Log::error($e);
+                   Log::error($e->getMessage().$e);
                 }
                 if ($e->errorInfo[1] == "1062") {
                     array_push($duplicate, $userinfo);

@@ -60,7 +60,7 @@ class PaymentController extends Controller
             DB::commit();
             return redirect(route("home"))->with("success", "تم ارسال الطلب بنجاح");
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }
