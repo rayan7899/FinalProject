@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Permission;
 use App\Models\Program;
+use App\Models\RefundOrder;
 use App\Models\Role;
 use App\Models\Student;
 use App\Models\Transaction;
@@ -79,6 +80,10 @@ class CommunityController extends Controller
             (object) [
                 "name" => "العمليات المالية حسب التخصص",
                 "url" => route("reportFilterdForm")
+            ],
+            (object) [
+                "name" => "طلبات الاسترداد",
+                "url" => route("refundOrdersForm")
             ],
             // (object) [
             //     "name" => "المتدربين المدققة ايصالاتهم",
@@ -964,5 +969,70 @@ class CommunityController extends Controller
         //     return back()->with("error","تعذر ارسال الطلب حدث خطا غير معروف");
 
         // }
+    }
+
+    public function refundOrdersForm()
+    {
+        try {
+            $orders = RefundOrder::where('accepted', null)->get();
+            return view('manager.community.refundOrders')->with(compact('orders'));
+        } catch (\Throwable $th) {
+            Log::error();
+            throw $th;
+        }
+    }
+
+    public function refundOrdersUpdate(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "refund_id"         => "required|numeric",
+            "national_id"       => "required|numeric",
+            "accepted"          => "required"
+        ]);
+
+        try {
+            $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
+            $user = User::where('national_id', $requestData['national_id'])->first();
+            switch($refund->reason){
+                case 'drop-out':
+                    $reason = 'انسحاب';
+                    break;
+                case 'graduate':
+                    $reason = 'خريج';
+                    break;
+                case 'exception':
+                    $reason = 'استثناء';
+                    break;
+                defaul:
+                $reason = 'لا يوجد';
+            }
+            
+            DB::beginTransaction();
+                if($requestData['accepted']){
+                    $transaction = $user->student->transactions()->create([
+                        "refund_id"     => $refund->id,
+                        "amount"        => $refund->amount,
+                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                        "type"          => "refund",
+                        "by_user"       => Auth::user()->id,
+                    ]);
+                    $refund->update([
+                        'transaction_id'    => $transaction->id,
+                        'accepted'          => $requestData['accepted']
+                    ]);
+                    $refund->student->wallet -= $refund->amount;
+                    $refund->student->save();
+                }else{
+                    $refund->update([
+                        'accepted'          => $requestData['accepted']
+                    ]);
+                }
+            DB::commit();
+            return response(['message'=>'تمت معالجة طلب الاسترداد بنجاح'], 200);
+        } catch (Exception $e) {
+            Log::error($e);
+            DB::rollBack();
+            return response(['message'=>$e], 422);
+        }
     }
 }
