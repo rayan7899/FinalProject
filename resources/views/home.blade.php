@@ -302,6 +302,10 @@
                                             <td class="text-success"> اضافة (شحن المحفظة) </td>
                                             <td>{{ $transaction->payment->id ?? 'Error' }}</td>
                                         @endif
+                                        @if ($transaction->type == 'refund')
+                                            <td class="text-danger"> خصم (استرداد المبلغ) </td>
+                                            <td>{{ $transaction->refund->id ?? 'Error' }}</td>
+                                        @endif
                                         @if ($transaction->type == 'manager_recharge')
                                             <td class="text-success"> اضافة (من الادارة) </td>
                                             <td>لا يوجد</td>
@@ -365,7 +369,6 @@
                                 المحفظة
                             </div>
 
-
                             <a href="{{ route('paymentForm') }}" class="btn btn-primary rounded">
                                 شحن المحفظة
                             </a>
@@ -403,7 +406,7 @@
                                     <tr class="text-center">
                                         <td>{{ $payment->id }}</td>
                                         @if ($payment->transaction_id != null && $payment->amount != $acceptedAmount)
-                                            <td><del>{{ $payment->amount }}</del> {{ $acceptedAmount }}</td>
+                                            <td><del class="text-muted">{{$payment->amount}}</del>  {{$acceptedAmount}}</td>
                                         @else
                                             <td>{{ $payment->amount }}</td>
                                         @endif
@@ -519,6 +522,69 @@
                 </div>
 
 
+
+
+                {{-- refunds --}}
+                <div class="card my-4">
+                    <div class="card-header">
+                        <div class="d-flex flex-row justify-content-between">
+                            <p class="h5">طلبات الاسترداد</p>
+                            <a href="{{ route('refundOrderForm') }}" class="btn btn-primary rounded">
+                                طلب استرداد
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered p-0 m-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">رقم الطلب</th>
+                                    <th class="text-center">المبلغ</th>
+                                    <th class="text-center">حالة الطلب</th>
+                                    <th class="text-center">السبب</th>
+                                    <th class="text-center">تاريخ الطلب</th>
+                                    <th>الملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @forelse ($user->student->refunds as $refund)
+                                    @php
+                                    @endphp
+                                    <tr class="text-center">
+                                        <td>{{ $refund->id ?? 'Error' }}</td>
+                                        <td>{{ $refund->amount ?? 'Error' }}</td>
+                                        @if ($refund->accepted == null)
+                                            <td>قيد المراجعة</td>
+                                        @elseif($refund->accepted)
+                                            <td class="text-success">مقبول</td>
+                                        @else
+                                            <td class="text-danger">مرفوض</td>
+                                        @endif
+                                        @switch($refund->reason)
+                                            @case('drop-out')
+                                                <td>انسحاب</td>
+                                                @break
+                                            @case('graduate')
+                                                <td>خريج</td>
+                                                @break
+                                            @case('exception')
+                                                <td>استثناء</td>
+                                                @break
+                                            @default
+                                                <td>لا يوجد</td>
+                                        @endswitch
+                                        <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }}</td>
+                                        <td>{{ $refund->note ?? 'لا يوجد'}}</td>
+                                    </tr>
+                                @empty
+
+                                @endforelse
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
 
             </div>

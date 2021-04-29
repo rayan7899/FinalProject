@@ -50,7 +50,7 @@ class Student extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function courses()
@@ -71,6 +71,11 @@ class Student extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function refunds()
+    {
+        return $this->hasMany(RefundOrder::class);
     }
 
     public function departmentRoleId()
