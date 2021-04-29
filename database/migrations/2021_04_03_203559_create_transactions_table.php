@@ -18,6 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('payment_id')->nullable();
             $table->unsignedBigInteger('order_id')->nullable();
+            $table->unsignedBigInteger('refund_id')->nullable();
             $table->integer("amount");
             $table->string("note")->nullable();
             $table->string("type");
@@ -26,6 +27,7 @@ class CreateTransactionsTable extends Migration
             $table->foreign('by_user')->references('id')->on('users')->onDelete("set null");
             $table->foreign("payment_id")->references("id")->on("payments");
             $table->foreign("order_id")->references("id")->on("orders");
+            $table->foreign("refund_id")->references("id")->on("refund_orders");
             $table->timestamps();
         });
     }
