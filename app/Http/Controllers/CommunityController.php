@@ -110,7 +110,7 @@ class CommunityController extends Controller
             $users = User::with("manager.permissions")->whereHas("manager")->where("id", ">", 1)->get();
             return view("manager.community.users.manage")->with(compact('users'));
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -137,7 +137,7 @@ class CommunityController extends Controller
                 return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -158,7 +158,7 @@ class CommunityController extends Controller
                 return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -176,7 +176,7 @@ class CommunityController extends Controller
                 return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }
@@ -199,7 +199,7 @@ class CommunityController extends Controller
                 return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }
@@ -212,7 +212,7 @@ class CommunityController extends Controller
             // return back()->with('success', 'تم حذف المستخدم بنجاح');
             return back()->with('error', 'تم ايقاف هذا الامر ');
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -223,7 +223,7 @@ class CommunityController extends Controller
             $permission->delete();
             return back()->with('success', 'تم ازالة الصلاحية بنجاح');
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -252,14 +252,14 @@ class CommunityController extends Controller
                             break;
                         }
                     } catch (Exception $e) {
-                        Log::error($e);
+                       Log::error($e->getMessage().$e);
                         array_push($fetch_errors, $users[$i]->name);
                         continue;
                     }
                 }
             }
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return view('manager.community.paymentsReview')->with('error', "تعذر جلب المتدربين");
         }
         return view('manager.community.paymentsReview')->with(compact('users'));
@@ -298,6 +298,10 @@ class CommunityController extends Controller
                     "note"          => $reviewedPayment["note"],
                     "accepted"       => true
                 ]);
+
+                $user->student->wallet += $reviewedPayment["amount"];
+                $user->student->save();
+                
             } else {
                 $payment->update([
                     "note"          => $reviewedPayment["note"],
@@ -305,12 +309,11 @@ class CommunityController extends Controller
                 ]);
             }
 
-            $user->student->wallet += $reviewedPayment["amount"];
-            $user->student->save();
+           
             DB::commit();
             return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
         }
@@ -360,7 +363,7 @@ class CommunityController extends Controller
             DB::commit();
             return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
         }
@@ -404,7 +407,7 @@ class CommunityController extends Controller
             DB::commit();
             return redirect(route("communityDashboard"))->with("success", "تم معالجة الطلب بنجاح");
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return back()->with('error', 'حدث خطأ غير معروف');
         }
@@ -486,13 +489,15 @@ class CommunityController extends Controller
                 default:
                     $discount = 1; // = %0 discount
             }
-
-            $hoursCost = $requestData['requested_hours'] * ($user->student->program->hourPrice * $discount);
+            $origAmount = $requestData['requested_hours'] * $user->student->program->hourPrice;
+            $amount = $origAmount * $discount;
+            $discountAmount = $origAmount - $amount; 
+            
             $canAddHours = $requestData['requested_hours'];
             $note = null;
 
             if ($user->student->traineeState != 'privateState') {
-                if ($hoursCost >= $user->student->wallet) {
+                if ($amount >= $user->student->wallet) {
                     $canAddHours = floor($user->student->wallet / ($user->student->program->hourPrice * $discount));
                 }
             }
@@ -511,28 +516,30 @@ class CommunityController extends Controller
                     " الى " . $requestData['requested_hours'] .
                     " لعدم امكانية اضافتها الى رايات او عدم كفاية الرصيد ";
             }
-
+            DB::beginTransaction();
             $transaction = $user->student->transactions()->create([
                 "order_id"    => $order->id,
-                "amount"        => $hoursCost,
+                "amount"        => $amount,
                 "type"          => "deduction",
                 "by_user"       => Auth::user()->id,
             ]);
 
             $order->update([
-                "amount" => $hoursCost,
+                "amount" => $amount,
+                "discount" => $discountAmount,
                 "requested_hours" => $requestData['requested_hours'],
                 "note"          => $note,
                 "transaction_id" => $transaction->id,
             ]);
 
-            $user->student->wallet -= $hoursCost;
+            $user->student->wallet -= $amount;
             $user->student->credit_hours += $requestData['requested_hours'];
             $user->student->save();
-
+            DB::commit();
             return response(['message' => 'تم قبول الطلب بنجاح'], 200);
         } catch (Exception $e) {
-            Log::error($e);
+            DB::rollBack();
+           Log::error($e->getMessage().$e);
             return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
         }
     }
@@ -594,7 +601,7 @@ class CommunityController extends Controller
             }
         } catch (Exception $e) {
             return view("error")->with("error", "حدث خطأ غير معروف");
-            Log::error($e);
+           Log::error($e->getMessage().$e);
         }
     }
 
@@ -612,7 +619,7 @@ class CommunityController extends Controller
             }
         } catch (Exception $e) {
             return view("error")->with("error", "حدث خطأ غير معروف");
-            Log::error($e);
+           Log::error($e->getMessage().$e);
         }
     }
 
@@ -642,7 +649,7 @@ class CommunityController extends Controller
             ]);
             return redirect(route("coursesIndex"))->with("success", "تم انشاء المقرر بنجاح");
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with("error", "حدث خطأ غير معروف تعذر انشاء المقرر");
         }
     }
@@ -654,7 +661,7 @@ class CommunityController extends Controller
             $course->delete();
             return response()->json(["message" => "تم حذف المقرر بنجاح"], 200);
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return response()->json(["message" => "حدث خطأ غير معروف تعذر حذف المقرر"], 422);
         }
     }
@@ -690,7 +697,7 @@ class CommunityController extends Controller
             ]);
             return redirect(route("coursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
         }
     }
@@ -750,7 +757,7 @@ class CommunityController extends Controller
                 ]
             ));
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
         }
     }
@@ -822,7 +829,7 @@ class CommunityController extends Controller
                 ]
             ));
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
         }
     }
@@ -844,7 +851,7 @@ class CommunityController extends Controller
             }
             return response()->json($user, 200);
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
         }
@@ -912,7 +919,7 @@ class CommunityController extends Controller
             DB::commit();
             return  back()->with("success", "تم اضافة المبلغ الي محفظة المتدرب بنجاح");
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             DB::rollBack();
             return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }
@@ -959,7 +966,7 @@ class CommunityController extends Controller
         //     DB::commit();
         //     return back()->with("success","تم اضافة المبلغ في محفظة المتدرب بنجاح");
         // } catch (Exception $e) {
-        //     Log::error($e);
+        //    Log::error($e->getMessage().$e);
         //     DB::rollBack();
         //     return back()->with("error","تعذر ارسال الطلب حدث خطا غير معروف");
 
