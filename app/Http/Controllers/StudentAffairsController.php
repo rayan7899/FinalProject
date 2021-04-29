@@ -67,7 +67,7 @@ class StudentAffairsController extends Controller
             //     "url" => route("studentsStates")
             // ],
         ];
-        return view("manager.studentsAffairs.dashboard")->with(compact("links","title"));
+        return view("manager.studentsAffairs.dashboard")->with(compact("links", "title"));
     }
 
     public function checkedStudents()
@@ -85,10 +85,24 @@ class StudentAffairsController extends Controller
             $users = User::with('student')->whereHas('student', function ($result) {
                 $result->where('level', 1)
                     ->where('data_updated', true)
-                    ->whereHas('payments', function ($res) {
-                        $res->where('accepted', true);
+                    ->whereHas('orders', function ($res) {
+                        $res->where('transaction_id', null)
+                            ->where('private_doc_verified', true);
                     });
             })->get();
+
+            $usersCount = count($users);
+            for ($i = 0; $i < $usersCount; $i++) {
+                for ($j = 0; $j < count($users[$i]->student->orders); $j++) {
+                    if ($users[$i]->student->traineeState != "privateState") {
+                        $order = $users[$i]->student->orders[$j];
+                        if ($order->transaction_id == null && $users[$i]->student->wallet < $order->amount) {
+                            unset($users[$i]);
+                            break;
+                        }
+                    }
+                }
+            }
 
             $fetch_errors = [];
             for ($i = 0; $i < count($users); $i++) {
@@ -127,7 +141,7 @@ class StudentAffairsController extends Controller
 
             return response(json_encode(['message' => 'تم تغيير الحالة بنجاح']), 200);
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }
@@ -142,7 +156,7 @@ class StudentAffairsController extends Controller
             })->get();
             return $users;
         } catch (Exception $e) {
-            Log::error($e);
+           Log::error($e->getMessage().$e);
             return null;
         }
     }
@@ -171,33 +185,33 @@ class StudentAffairsController extends Controller
         }
     }
 
-    public function publishToRayatForm()
-    {
+    // public function publishToRayatForm()
+    // {
 
-        try {
-            $users = User::with("student.orders")->whereHas("student", function ($res) {
-                $res->where("traineeState", "!=", "privateState")
-                    ->where('level', '1')
-                    ->whereHas("orders", function ($res) {
-                        $res->where("transaction_id", null);
-                    })
-                    ->whereDoesntHave('payments', function ($res) {
-                        $res->where('accepted', null);
-                    });
-            })->get();
+    //     try {
+    //         $users = User::with("student.orders")->whereHas("student", function ($res) {
+    //             $res->where("traineeState", "!=", "privateState")
+    //                 ->where('level', '1')
+    //                 ->whereHas("orders", function ($res) {
+    //                     $res->where("transaction_id", null);
+    //                 })
+    //                 ->whereDoesntHave('payments', function ($res) {
+    //                     $res->where('accepted', null);
+    //                 });
+    //         })->get();
 
-            if (isset($users)) {
-                return view('manager.studentsAffairs.publishHoursToRayat')
-                    ->with(compact('users'));
-            } else {
-                return view('manager.studentsAffairs.publishHoursToRayat')
-                    ->with('error', "تعذر جلب المتدربين");
-            }
-        } catch (\Throwable $th) {
-            return view('manager.studentsAffairs.publishHoursToRayat')
-                ->with('error', $th);
-        }
-    }
+    //         if (isset($users)) {
+    //             return view('manager.studentsAffairs.publishHoursToRayat')
+    //                 ->with(compact('users'));
+    //         } else {
+    //             return view('manager.studentsAffairs.publishHoursToRayat')
+    //                 ->with('error', "تعذر جلب المتدربين");
+    //         }
+    //     } catch (\Throwable $th) {
+    //         return view('manager.studentsAffairs.publishHoursToRayat')
+    //             ->with('error', $th);
+    //     }
+    // }
 
     public function publishToRayat(Request $request)
     {
