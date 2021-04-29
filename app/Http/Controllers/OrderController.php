@@ -24,8 +24,8 @@ class OrderController extends Controller
       $user = Auth::user();
       $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
       $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
-                                                   ->where("private_doc_verified", "!=", false)->count();
-      if($user->student->level == 1 && $user->student->credit_hours != 0){
+         ->where("private_doc_verified", "!=", false)->count();
+      if ($user->student->level == 1 && $user->student->credit_hours != 0) {
          return redirect(route("home"))->with("error", "اضافة المقررات غير متاح للمتدربين في المستوى الاول");
       }
 
@@ -81,47 +81,49 @@ class OrderController extends Controller
 
 
       try {
-         switch($requestData["traineeState"]){
-            
+         switch ($requestData["traineeState"]) {
+
             case 'employee':
-                $discount = 0.25;
-                break;
+               $discount = 0.25;
+               break;
             case 'employeeSon':
-                $discount=0.5;
-                break;
+               $discount = 0.5;
+               break;
             default:
-                $discount = 1;
-                break;
-        }
+               $discount = 1;
+               break;
+         }
          $total_hours = array_sum(array_map(
             function ($c) {
                return $c['credit_hours'];
             },
             Course::whereIn('id', $requestData['courses'])->get()->toArray()
          ));
-         $amount = $total_hours * $user->student->program->hourPrice;
-         $amount = $amount * $discount;
+         $origAmount = $total_hours * $user->student->program->hourPrice;
+         $amount = $origAmount  * $discount;
+         $discountAmount = $origAmount - $amount;
          $walletAfterCalc = $user->student->wallet - $amount;
 
          if ($walletAfterCalc < 0 && !isset($requestData["payment_receipt"]) && $requestData["traineeState"] != "privateState") {
             return back()->with('error', ' ايصال السداد حقل مطلوب');
          }
 
-         if ($total_hours < 12 || $total_hours > 21) {
-            return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 12 و 21');
-         }
-         
+         // if ($total_hours < 12 || $total_hours > 21) {
+         //    return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 12 و 21');
+         // }
+
          DB::beginTransaction();
-         $courses = $requestData['courses'];
-         if ($user->student->level < 2) {
-            $courses = [];
-            foreach (Course::where('suggested_level', $user->student->level)
-               ->where('major_id', $user->student->major_id)
-               ->get()
-               as $course) {
-               $courses[] = $course->id;
-            }
-         }
+
+         // $courses = $requestData['courses'];
+         // if ($user->student->level < 2) {
+         //    $courses = [];
+         //    foreach (Course::where('suggested_level', $user->student->level)
+         //       ->where('major_id', $user->student->major_id)
+         //       ->get()
+         //       as $course) {
+         //       $courses[] = $course->id;
+         //    }
+         // }
          // foreach ($courses as $course) {
          //    $user->student->studentCourses()->create([
          //       'course_id' => $course,
@@ -137,14 +139,15 @@ class OrderController extends Controller
             Storage::disk('studentDocuments')->put('/' . $user->national_id . '/privateStateDocs/' . $randomId . '/' . $doc_name, File::get($requestData['privateStateDoc']));
             $user->student->traineeState = "privateState";
             $user->student->save();
-            $order = $user->student->orders()->create(
+
+            $user->student->orders()->create(
                [
-                  "amount" => 0,
+                  "amount" => $amount,
+                  "discount" => $discountAmount,
                   "requested_hours" => $total_hours,
                   "private_doc_file_id" => $randomId,
                ]
             );
-
          } else {
 
 
@@ -164,9 +167,10 @@ class OrderController extends Controller
                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($requestData['payment_receipt']));
             }
 
-            $order = $user->student->orders()->create(
+            $user->student->orders()->create(
                [
                   "amount" => $amount,
+                  "discount" => $discountAmount,
                   "requested_hours" => $total_hours,
                   "private_doc_verified" => true
                ]
@@ -174,18 +178,17 @@ class OrderController extends Controller
 
             $user->student->traineeState = $requestData["traineeState"];
             $user->student->save();
-
          }
          $user->student()->update(
             array(
-                'data_updated' => true,
+               'data_updated' => true,
             )
          );
          DB::commit();
          return redirect(route('home'))->with('success', ' تم تقديم الطلب بنجاح');
       } catch (\Throwable $e) {
          DB::rollback();
-         Log::error($e);
+         Log::error($e->getMessage() . $e);
          return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
       }
    }
