@@ -31,8 +31,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button onclick="privateDocDecision('accept','modal')" class="btn btn-primary btn-md">قبول</button>
-                        <button onclick="privateDocDecision('reject','modal')" class="btn btn-danger btn-md">رفض</button>
+                        <button id="acceptBtnModal" onclick="privateDocDecision('accept','modal')"
+                            class="btn btn-primary btn-md">قبول</button>
+                        <button id="rejectBtnModal" onclick="privateDocDecision('reject','modal')"
+                            class="btn btn-danger btn-md">رفض</button>
                     </div>
                 </div>
             </div>
@@ -69,9 +71,9 @@
                         <th scope="col">التخصص</th>
                         <th scope="col">الحالة</th>
                         <th scope="col">وثائق الحالة</th>
-                        <th scope="col">حالة التدقيق</th>
-                        <th scope="col">ملاحظات المدقق</th>
-                        <th scope="col"> </th>
+                        {{-- <th scope="col">ملاحظات المدقق</th> --}}
+                        <th scope="col">الاجراء</th>
+                        {{-- <th scope="col"> </th> --}}
                     </tr>
                     <tr>
                         <th class="filterhead" scope="col"></th>
@@ -83,15 +85,15 @@
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
+                        {{-- <th class="filterhead" scope="col"></th> --}}
                         <th class="filterhead" scope="col"></th>
-                        <th class="filterhead" scope="col"></th>
-                        <th class="filterhead" scope="col"></th>
+                        {{-- <th class="filterhead" scope="col"></th> --}}
                     </tr>
                 </thead>
                 <tbody>
                     @if (isset($users))
                         @forelse ($users as $user)
-                            <tr id="{{$user->national_id ?? 0}}"> 
+                            <tr id="{{ $user->national_id ?? 0 }}">
                                 <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
@@ -114,8 +116,8 @@
                                         @else
                                             <a data-toggle="modal" data-target="#pdfModal" href="#"
                                                 onclick="showPdf('{{ route('GetStudentDocument', ['path' => $doc]) }}','img')">
-                                                <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
-                                                    alt="Image File">
+                                                <img src=" {{ asset('/images/camera_img_icon.png') }}"
+                                                    style="width:25px;" alt="Image File">
                                             </a>
                                         @endif
 
@@ -123,20 +125,27 @@
                                         لايوجد
                                     @endforelse
                                 </td>
+                                {{-- <td id="note_{{ $user->national_id }}">{{ $user->student->order->note ?? '' }} </td> --}}
                                 <td class="text-center">
-                                   <button onclick="window.privateDocDecision('accept','direct',{{$user->national_id ?? 0}},{{$user->student->order->id ?? 0}},event)" class="btn btn-primary btn-sm">قبول</button>
-                                   <button onclick="window.privateDocDecision('reject','direct',{{$user->national_id ?? 0}},{{$user->student->order->id ?? 0}},event)" class="btn btn-danger btn-sm">رفض</button>
+                                    {{-- <button onclick="window.privateDocDecision('accept','direct',{{$user->national_id ?? 0}},{{$user->student->order->id ?? 0}},event)" class="btn btn-primary btn-sm">قبول</button>
+                                   <button onclick="window.privateDocDecision('reject','direct',{{$user->national_id ?? 0}},{{$user->student->order->id ?? 0}},event)" class="btn btn-danger btn-sm">رفض</button> --}}
+                                    <button data-toggle="modal" data-target="#editModal"
+                                        onclick="window.showPrivateModal('accept','{{ $user->national_id ?? '' }}','{{ $user->name ?? '' }}','{{ $user->student->order->id ?? 0 }}','{{ $user->student->order->note ?? '' }}',event)"
+                                        class="btn btn-primary btn-sm">قبول</button>
+                                    <button data-toggle="modal" data-target="#editModal"
+                                        onclick="window.showPrivateModal('reject','{{ $user->national_id ?? '' }}','{{ $user->name ?? '' }}','{{ $user->student->order->id ?? 0 }}','{{ $user->student->order->note ?? '' }}',event)"
+                                        class="btn btn-danger btn-sm">رفض</button>
                                 </td>
-                                <td id="note_{{ $user->national_id }}">{{ $user->student->order->note ?? '' }} </td>
-                                <td class="text-center">
+
+                                {{-- <td class="text-center">
                                     <a data-toggle="modal" data-target="#editModal" href="#"
                                         onclick="window.showPrivateModal('{{ $user->national_id ?? ''}}','{{ $user->name ?? ''}}','{{ $user->student->order->id ?? 0 }}','{{$user->student->order->note ?? ''}}',event)">
                                         <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                                     </a>
-                                </td>
+                                </td> --}}
                             </tr>
-                    @empty
-                    @endforelse
+                        @empty
+                        @endforelse
                     @endif
                 </tbody>
                 <tfoot>
@@ -150,15 +159,16 @@
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
+                        {{-- <th scope="col"></th> --}}
                         <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
+                        {{-- <th scope="col"></th> --}}
                     </tr>
                 </tfoot>
             </table>
         </div>
         <script defer>
             var privateDocDecisionRoute = "{{ route('privateDocDecision') }}";
+
         </script>
     </div>
 @stop

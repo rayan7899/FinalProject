@@ -190,8 +190,17 @@ window.popup = function () {
     });
 };
 
-window.showModal = function (national_id, payment_id, name, amount) {
+window.showModal = function (callFrom = "edit",national_id, payment_id, name, amount) {
 
+    if(callFrom == "reject"){
+        $("#amountFormGroup").hide();
+        $("#acceptBtnModal").hide();
+        $("#rejectBtnModal").show();
+    }else{
+        $("#amountFormGroup").show();
+        $("#acceptBtnModal").show();
+        $("#rejectBtnModal").hide();
+    }
     window.national_id.value = national_id;
     window.sname.value = name;
     window.note.value = "";

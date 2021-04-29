@@ -57,3 +57,28 @@ axios.post(window.publishToRayat, form)
         });
     });
 }
+
+window.changeHoursInputs = function(){
+    let rows = document.getElementsByTagName("tr");
+    if(rows == null || rows == undefined || rows.length <= 4){
+        return;
+    }
+    let counter = 0;
+    let allHours = document.getElementById("allHoursValue").value;
+    for(var i=3;i<rows.length;i++){
+        if(allHours <= rows[i].children[8].children[0].max){
+            rows[i].children[8].children[0].value = allHours;
+        }else{
+            counter++;
+        }
+        if(counter > 0){
+            Swal.fire({
+                position: "center",
+                // html: "<h6 dir='rtl'>  " +counter+" متدربين لم يتم تغيرر ساعاتهم بسبب تجاوز الرفم المطلب للحد الاعلى </h6>",
+                html: '<h6 dir="rtl">لم يتم تغيير الساعات لعدد ('+counter+') متدربين بسبب تجاوز الحد الاعلى</h6>',
+                icon: "warning",
+                showConfirmButton: true,
+            });
+        }
+    }
+}

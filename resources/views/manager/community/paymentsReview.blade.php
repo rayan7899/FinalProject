@@ -38,7 +38,7 @@
                                 <label for="name">الاسم</label>
                                 <input type="text" class="form-control" id="sname" aria-describedby="name" disabled="true">
                             </div>
-                            <div class="form-group">
+                            <div id="amountFormGroup" class="form-group" style="display:block">
                                 <label for="amount">المبلغ المدفوع</label>
                                 <input required type="number" class="form-control" id="amount" aria-describedby="amount">
                             </div>
@@ -51,8 +51,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button onclick="window.sendStudentUpdate('accept')" class="btn btn-primary btn-md">قبول</button>
-                        <button onclick="window.sendStudentUpdate('reject')" class="btn btn-danger btn-md">رفض</button>
+                        <button id="acceptBtnModal" onclick="window.sendStudentUpdate('accept')"
+                            class="btn btn-primary btn-md" style="display:block">قبول</button>
+                        <button id="rejectBtnModal" onclick="window.sendStudentUpdate('reject')"
+                            class="btn btn-danger btn-md" style="display:block">رفض</button>
                     </div>
                 </div>
             </div>
@@ -90,9 +92,9 @@
                         <th scope="col">الحالة</th>
                         <th scope="col">ايصالات السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
-                        <th scope="col">قبول الطلب</th>
                         <th scope="col">ملاحظات المدقق</th>
-                        <th scope="col"> </th>
+                        <th scope="col">الاجراء </th>
+                        {{-- <th scope="col"> </th> --}}
                     </tr>
                     <tr>
                         <th class="filterhead" scope="col"></th>
@@ -107,69 +109,75 @@
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
-                        <th class="filterhead" scope="col"></th>
+                        {{-- <th class="filterhead" scope="col"></th> --}}
                     </tr>
                 </thead>
                 <tbody>
                     @if (isset($users))
-                    @forelse ($users as $user)
-                        @if (isset($user->student->receipt))
-                            <tr id="{{$user->national_id ?? 0}}">
-                                <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
-                                <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->name ?? 'لا يوجد' }} </td>
-                                <td class="text-center">{{ $user->phone ?? 'لا يوجد' }} </td>
-                                <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-                                <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
-                                <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                                <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-                                <td class="text-center">
+                        @forelse ($users as $user)
+                            @if (isset($user->student->receipt))
+                                <tr id="{{ $user->national_id ?? 0 }}">
+                                    <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
+                                    <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
+                                    <td>{{ $user->name ?? 'لا يوجد' }} </td>
+                                    <td class="text-center">{{ $user->phone ?? 'لا يوجد' }} </td>
+                                    <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
+                                    <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
+                                    <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                                    <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
+                                    <td class="text-center">
 
-                                    @php
-                                        $splitByDot = explode('.', $user->student->receipt);
-                                        $fileExtantion = end($splitByDot);
-                                    @endphp
-                                    @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                                        <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','pdf')">
-                                            <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
-                                        </a>
-                                    @else
-                                        <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','img')">
-                                            <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
-                                                alt="Image File">
-                                        </a>
-                                    @endif
+                                        @php
+                                            $splitByDot = explode('.', $user->student->receipt);
+                                            $fileExtantion = end($splitByDot);
+                                        @endphp
+                                        @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
+                                            <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','pdf')">
+                                                <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
+                                            </a>
+                                        @else
+                                            <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                onclick="showPdf('{{ route('GetStudentDocument', ['path' => $user->student->receipt]) }}','img')">
+                                                <img src=" {{ asset('/images/camera_img_icon.png') }}"
+                                                    style="width:25px;" alt="Image File">
+                                            </a>
+                                        @endif
 
-                                </td>
+                                    </td>
 
-                                <td class="text-center" id="amount_{{ $user->student->payment->id ?? 0 }}">
-                                    {{ $user->student->payment->amount ?? 'لا يوجد' }}
-                                </td>
+                                    <td class="text-center" id="amount_{{ $user->student->payment->id ?? 0 }}">
+                                        {{ $user->student->payment->amount ?? 'لا يوجد' }}
+                                    </td>
+                                    <td id="note_{{ $user->student->payment->id ?? 0 }}"></td>
+
+                                    <td class="text-center">
+                                        {{-- <button class="btn btn-primary px-2 py-0"
+                                        onclick="window.okClicked('accept','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">قبول</button> --}}
+                                        {{-- <button class="btn btn-danger px-2 py-0"
+                                    onclick="window.okClicked('reject','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">رفض</button> --}}
+                                        <button data-toggle="modal" data-target="#editModal"
+                                            class="btn btn-primary px-2 py-0"
+                                            onclick="window.showModal('accept','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}','{{ $user->name ?? 0 }}','{{ $user->student->payment->amount ?? 0 }}')">قبول</button>
+                                        <button data-toggle="modal" data-target="#editModal"
+                                            class="btn btn-danger px-2 py-0"
+                                            onclick="window.showModal('reject','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}','{{ $user->name ?? 0 }}','{{ $user->student->payment->amount ?? 0 }}')">رفض</button>
+                                    </td>
 
 
-                                <td class="text-center">
-                                    <button class="btn btn-primary px-2 py-0"
-                                        onclick="window.okClicked('accept','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">قبول</button>
-                                    <button class="btn btn-danger px-2 py-0"
-                                    onclick="window.okClicked('reject','{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}',event)">رفض</button>
-                                </td>
 
 
-                                <td id="note_{{ $user->student->payment->id ?? 0 }}"></td>
-
-                                <td class="text-center">
+                                    {{-- <td class="text-center">
                                     <a data-toggle="modal" data-target="#editModal" href="#"
                                         onclick="window.showModal('{{ $user->national_id ?? 0 }}','{{ $user->student->payment->id ?? 0 }}','{{ $user->name ?? 0 }}','{{ $user->student->payment->amount ?? 0 }}')">
                                         <img style="width: 20px" src="{{ asset('/images/edit.png') }}" />
                                     </a>
-                                </td>
-                            </tr>
-                        @endif
-                    @empty
-                @endforelse
-                @endif
+                                </td> --}}
+                                </tr>
+                            @endif
+                        @empty
+                        @endforelse
+                    @endif
 
 
                 </tbody>
@@ -187,7 +195,7 @@
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
-                        <th scope="col"></th>
+                        {{-- <th scope="col"></th> --}}
 
                     </tr>
                 </tfoot>

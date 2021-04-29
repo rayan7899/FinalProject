@@ -250,10 +250,7 @@
             </div>
         </footer>
     </div>
-
-
-
-    <!-- <script>
+    {{-- <script>
             // Automatic Slideshow - change image every 3 seconds
             var myIndex = 0;
             carousel();
@@ -271,7 +268,7 @@
                 x[myIndex - 1].style.display = "block";
                 setTimeout(carousel, 4000);
             }
-        </script> -->
+        </script> --}}
 </body>
 
 

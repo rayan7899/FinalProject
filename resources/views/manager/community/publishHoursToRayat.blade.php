@@ -17,14 +17,25 @@
                 @endif
             </div>
         @endif
+
         <div class="table-responsive p-2 bg-white rounded border">
-            <table id="mainTable" class="table nowrap display cell-border">
+            <table onloadeddata="window.injectAllHoursInput()" id="mainTable" class="table nowrap display cell-border">
+
                 <thead>
                     <tr>
-                        <p class="text-center">
-                            الرفع الى رايات 
-                        </p>
+                        <th colspan="8">
+                        </th>
+                        <th colspan="2">
+                            <div id="allHoursContainer" class="d-inline">
+                                <label for="allHoursValue">تعديل جميع الساعات:</label>
+                                <input type="number" name="allHoursValue" id="allHoursValue" class="d-inline" placeholder=""
+                                    aria-describedby="helpId">
+                                <button onclick="window.changeHoursInputs()" class="btn btn-primary btn-sm">تعديل</button>
+                            </div>
+                        </th>
 
+                    </tr>
+                    <tr>
                         <th>#</th>
                         <th>رقم الهوية</th>
                         <th>اسم المتقدم رباعي </th>
@@ -70,7 +81,7 @@
                                 $hoursCost = $user->student->order->requested_hours * $user->student->program->hourPrice;
                                 $hoursCost = $hoursCost * $discount;
                                 $requested_hours = $user->student->order->requested_hours;
-                                $maxHours =  $requested_hours;
+                                $maxHours = $requested_hours;
                                 if ($user->student->traineeState != 'privateState') {
                                     if ($hoursCost >= $user->student->wallet) {
                                         $maxHours = floor($user->student->wallet / $user->student->program->hourPrice);
@@ -84,12 +95,16 @@
                                 <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->phone ?? 'لا يوجد' }} </td>
-                                <td data-program_id="{{$user->student->program->id ?? 0}}">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-                                <td data-department_id="{{$user->student->department->id ?? 0}}">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
-                                <td data-major_id="{{$user->student->major->id ?? 0}}">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                                <td data-program_id="{{ $user->student->program->id ?? 0 }}">
+                                    {{ $user->student->program->name ?? 'لا يوجد' }} </td>
+                                <td data-department_id="{{ $user->student->department->id ?? 0 }}">
+                                    {{ $user->student->department->name ?? 'لا يوجد' }} </td>
+                                <td data-major_id="{{ $user->student->major->id ?? 0 }}">
+                                    {{ $user->student->major->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->order->id ?? 'لا يوجد' }} </td>
-                                <td><input type="number" min="1" max="{{ $maxHours ?? 0 }}" class="p-0" name="requested_hours"
-                                        id="requested_hours" value="{{ $requested_hours ?? 0 }}"><small> الحد الاعلى
+                                <td><input type="number" min="1" max="{{ $maxHours ?? 0 }}" class="p-0"
+                                        name="requested_hours" id="requested_hours"
+                                        value="{{ $requested_hours ?? 0 }}"><small> الحد الاعلى
                                         {{ $maxHours ?? 0 }}</small></td>
                                 <td class="text-center"><button class="btn btn-primary btn-sm px-3"
                                         onclick="publishToRayatStore({{ $user->national_id }},{{ $user->student->order->id }},event)">تم</button>
@@ -97,7 +112,7 @@
                             </tr>
                         @empty
                             لايوجد
-                    @endforelse
+                        @endforelse
                     @endif
                 </tbody>
             </table>

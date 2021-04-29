@@ -9,8 +9,14 @@ window.popup = function () {
     });
 };
 
-window.showPrivateModal = function (national_id, name, order_id,note) {
-
+window.showPrivateModal = function (callFrom = "edit", national_id, name, order_id,note) {
+    if(callFrom == "reject"){
+        $("#acceptBtnModal").hide();
+        $("#rejectBtnModal").show();
+    }else{
+        $("#acceptBtnModal").show();
+        $("#rejectBtnModal").hide();
+    }
     window.national_id.value = national_id;
     window.sname.value = name;
     window.order_id = order_id;
