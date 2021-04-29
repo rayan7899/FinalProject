@@ -18,6 +18,7 @@ use App\Http\Controllers\StudentCoursesController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PrivateStateController;
+use App\Http\Controllers\RefundOrderController;
 use App\Http\Controllers\TransactionController;
 use App\Models\User;
 
@@ -92,6 +93,12 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/reports/all', [CommunityController::class, 'reportAllForm'])->name('reportAllForm');
     Route::get('/community/reports/filterd', [CommunityController::class, 'reportFilterdForm'])->name('reportFilterdForm');
     Route::post('/community/reports/filterd', [CommunityController::class, 'reportFilterd'])->name('reportFilterd');
+
+    //refunds
+    Route::get('/community/refund-orders', [CommunityController::class, 'refundOrdersForm'])->name('refundOrdersForm');
+    Route::post('/api/community/refund-orders', [CommunityController::class, 'refundOrdersUpdate'])->name('apiRefundOrdersUpdate');
+
+
 });
 
 
@@ -171,6 +178,11 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     //UserControllaer New passwprd
     Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
     Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
+
+    //refund
+    Route::get('/student/refund_order', [RefundOrderController::class, 'form'])->name('refundOrderForm');
+    Route::post('/student/refund_order', [RefundOrderController::class, 'store'])->name('refundOrder');
+    
 });
 
 //الإرشاد

@@ -9,6 +9,7 @@ require("./publishToRayat");
 require("./privateOrderReview");
 require("./manageCourses");
 require("./wallet");
+require("./refundOrders");
 
 
 import Swal from "sweetalert2";

@@ -19,4 +19,9 @@ class Transaction extends Model
     {
         return $this->hasOne(Order::class);
     }
+
+    public function refund()
+    {
+        return $this->hasOne(RefundOrder::class);
+    }
 }
