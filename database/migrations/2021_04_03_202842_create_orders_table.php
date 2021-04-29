@@ -18,7 +18,8 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('transaction_id')->nullable();
             $table->integer("requested_hours");
-            $table->integer("amount");
+            $table->double("amount");
+            $table->double("discount");
             $table->text("note")->nullable();
             // for private state only
             $table->string("private_doc_file_id")->nullable();

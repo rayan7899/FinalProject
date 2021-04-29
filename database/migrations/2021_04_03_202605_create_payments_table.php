@@ -17,7 +17,7 @@ class CreatePaymentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('transaction_id')->nullable();
-            $table->integer("amount");
+            $table->double("amount");
             $table->boolean("accepted")->nullable();
             $table->text("note")->nullable();
             $table->string("receipt_file_id");
