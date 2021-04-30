@@ -995,7 +995,7 @@ class CommunityController extends Controller
             "refund_id"         => "required|numeric",
             "national_id"       => "required|numeric",
             "note"              => "nullable|string",
-            "range"             => "required|in:1,0.4,0",
+            "range"             => "nullable|in:1,0.4,0",
             "accepted"          => "required"
         ]);
 
