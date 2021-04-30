@@ -18,16 +18,19 @@ class RefundOrderController extends Controller
     public function form()
     {
         $user = Auth::user();
+        if($user->student->wallet <= 0){
+            return back()->with(['error'=>'لا يوجد رصيد لاسترداده']);
+        }
         $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
         $isHasActivePayment = $user->student->payments->where('accepted', null)->first() !== null;
         $isHasActiveOrder = $user->student->orders->where('transaction_id', null)->first() !== null;
         
         if($isHasActiveRefund){
-            return back()->with(['error'=>'لا يمكن طلب استرداد مع وجود طلب استرداد اخر معلق']);
+            return back()->with(['error'=>'لا يمكن طلب استرداد مع وجود طلب استرداد اخر قيد المراجعة']);
         }else if($isHasActivePayment){
             return back()->with(['error'=>'لا يمكن طلب استرداد مع وجود دفع معلق']);
         }else if($isHasActiveOrder){
-            return back()->with(['error'=>'لا يمكن طلب استرداد مع وجود طلب اضافة مقررات معلق']);
+            return back()->with(['error'=>'لا يمكن طلب استرداد مع وجود طلب اضافة مقررات قيد المراجعة']);
         }
         else{
             return view('student/refund_order')->with(compact('user'));

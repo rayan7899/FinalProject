@@ -90,7 +90,7 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">رقم الهوية</th>
-                    <th scope="col">الرقم الاكاديمي</th>
+                    <th scope="col">الرقم التدريبي</th>
                     <th scope="col">الاسم</th>
                     <th scope="col">رقم الجوال</th>
                     <th scope="col">رقم الايبان</th>

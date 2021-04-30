@@ -983,9 +983,9 @@ class CommunityController extends Controller
         try {
             $orders = RefundOrder::where('accepted', null)->get();
             return view('manager.community.refundOrders')->with(compact('orders'));
-        } catch (\Throwable $th) {
-            Log::error();
-            throw $th;
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("error","تعذر ارسال الطلب حدث خطا غير معروف");
         }
     }
 
@@ -1010,7 +1010,7 @@ class CommunityController extends Controller
                 case 'exception':
                     $reason = 'استثناء';
                     break;
-                defaul:
+                default:
                 $reason = 'لا يوجد';
             }
             
