@@ -498,7 +498,7 @@
                                             <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                         @else
                                             @if ($order->transaction_id == null)
-                                                @if ($hasEnoughMoney == true)
+                                                @if ($hasEnoughMoney == true || $user->student->traineeState == 'privateState')
                                                     <td>قيد المراجعة</td>
                                                     <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                                 @else
