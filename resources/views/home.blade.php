@@ -539,11 +539,12 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">رقم الطلب</th>
-                                    <th class="text-center">المبلغ</th>
+                                    <th class="text-center">المبلغ المستحق</th>
                                     <th class="text-center">حالة الطلب</th>
                                     <th class="text-center">السبب</th>
                                     <th class="text-center">تاريخ الطلب</th>
-                                    <th>الملاحظات</th>
+                                    <th class="text-center">ملاحظة المتدرب</th>
+                                    <th class="text-center">ملاحظة المشرف</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -553,7 +554,11 @@
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $refund->id ?? 'Error' }}</td>
-                                        <td>{{ $refund->amount ?? 'Error' }}</td>
+                                        @if ($refund->accepted == null)
+                                            <td>قيد المراجعة</td>
+                                        @else
+                                            <td>{{ $refund->amount ?? 'Error' }}</td>
+                                        @endif
                                         @if ($refund->accepted == null)
                                             <td>قيد المراجعة</td>
                                         @elseif($refund->accepted)
@@ -575,7 +580,8 @@
                                                 <td>لا يوجد</td>
                                         @endswitch
                                         <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }}</td>
-                                        <td>{{ $refund->note ?? 'لا يوجد'}}</td>
+                                        <td class="text-right">{{ $refund->student_note ?? 'لا يوجد'}}</td>
+                                        <td class="text-right">{{ $refund->manager_note ?? 'لا يوجد'}}</td>
                                     </tr>
                                 @empty
 

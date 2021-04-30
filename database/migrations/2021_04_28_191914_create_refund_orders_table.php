@@ -21,7 +21,8 @@ class CreateRefundOrdersTable extends Migration
             $table->text("reason");
             $table->text("IBAN");
             $table->text("bank");
-            $table->text("note")->nullable();
+            $table->text("student_note")->nullable();
+            $table->text("manager_note")->nullable();
 
             // refund order accepted state
             // null = waiting

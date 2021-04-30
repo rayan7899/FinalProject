@@ -58,7 +58,7 @@ class RefundOrderController extends Controller
                     'reason'    => $requestData['reason'],
                     'IBAN'  => $requestData['IBAN'],
                     'bank'  => $requestData['bank'],
-                    'note'  => $requestData['note'],
+                    'student_note'  => $requestData['note'],
                 ]);
             DB::commit();
 
