@@ -297,18 +297,21 @@
                                             @endphp
                                             <td class="text-danger"> خصم (اضافة مقررات)</td>
                                             <td>{{ $transaction->order->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'recharge')
+                                        @elseif ($transaction->type == 'recharge')
                                             <td class="text-success"> اضافة (شحن المحفظة) </td>
                                             <td>{{ $transaction->payment->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'refund')
-                                            <td class="text-danger"> خصم (استرداد المبلغ) </td>
+                                        @elseif ($transaction->type == 'refund-to-bank')
+                                            <td class="text-danger"> خصم (استرداد الى البنك) </td>
                                             <td>{{ $transaction->refund->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'manager_recharge')
+                                        @elseif ($transaction->type == 'refund-to-wallet')
+                                            <td class="text-success"> اضافة (استرداد الى المحفظة) </td>
+                                            <td>لا يوجد</td>
+                                        @elseif ($transaction->type == 'manager_recharge')
                                             <td class="text-success"> اضافة (من الادارة) </td>
                                             <td>لا يوجد</td>
+                                        @else
+                                            <td>لا يوجد</td>
+                                            <td>{{$transaction->refund_id ?? 'Error'}}</td>
                                         @endif
                                         <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
                                         <td class="text-right">
