@@ -3,6 +3,8 @@ window.accept = function () {
     axios.post(window.refundOrdersUpdate, {
         refund_id: window.order_id,
         national_id: window.national_id.value,
+        note: window.acceptNote.value,
+        range: window.range.value,
         accepted: true,
     })
     .then((response) => {
@@ -33,10 +35,10 @@ window.reject = function () {
     axios.post(window.refundOrdersUpdate, {
         refund_id: window.order_id,
         national_id: window.national_id.value,
+        note: window.rejectNote.value,
         accepted: false,
     })
     .then((response) => {
-        console.log(response);
         if (row !== null) {
             row.remove();
         }
@@ -62,8 +64,8 @@ window.reject = function () {
 
 window.fillModal = function (national_id, order_id, name, amount) {
     window.national_id.value = national_id;
+    window.requestDate.value = document.getElementById(national_id).cells[9].innerHTML;
     window.sname.value = name;
-    window.note.value = "";
     window.order_id = order_id;
     if (window.amount !== null) {
         window.amount.value = amount;

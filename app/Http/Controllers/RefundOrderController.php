@@ -51,14 +51,31 @@ class RefundOrderController extends Controller
          ]);
 
         try {
+            $user = Auth::user();
+            switch ($user->student->traineeState) {
+                case 'privateState':
+                    $discount = 0; // = %100 discount
+                    break;
+                case 'employee':
+                    $discount = 0.25; // = %75 discount
+                    break;
+                case 'employeeSon':
+                    $discount = 0.5; // = %50 discount
+                    break;
+                default:
+                    $discount = 1; // = %0 discount
+            }
+            
+            $creditHoursCost = $user->student->credit_hours*$user->student->program->hourPrice*$discount;
+
             DB::beginTransaction();
                 $user = Auth::user();
                 $user->student->refunds()->create([
-                    'amount'    => $user->student->wallet,
+                    'amount'    => $requestData['reason'] == 'drop-out' ? $creditHoursCost : $user->student->wallet,
                     'reason'    => $requestData['reason'],
                     'IBAN'  => $requestData['IBAN'],
                     'bank'  => $requestData['bank'],
-                    'note'  => $requestData['note'],
+                    'student_note'  => $requestData['note'],
                 ]);
             DB::commit();
 

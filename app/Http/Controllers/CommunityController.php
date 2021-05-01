@@ -981,8 +981,8 @@ class CommunityController extends Controller
     public function refundOrdersForm()
     {
         try {
-            $orders = RefundOrder::where('accepted', null)->get();
-            return view('manager.community.refundOrders')->with(compact('orders'));
+            $refunds = RefundOrder::where('accepted', null)->get();
+            return view('manager.community.refundOrders')->with(compact('refunds'));
         } catch (Exception $e) {
             Log::error($e);
             return back()->with("error","تعذر ارسال الطلب حدث خطا غير معروف");
@@ -994,12 +994,15 @@ class CommunityController extends Controller
         $requestData = $this->validate($request, [
             "refund_id"         => "required|numeric",
             "national_id"       => "required|numeric",
+            "note"              => "nullable|string",
+            "range"             => "nullable|in:1,0.4,0",
             "accepted"          => "required"
         ]);
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
             $user = User::where('national_id', $requestData['national_id'])->first();
+            
             switch($refund->reason){
                 case 'drop-out':
                     $reason = 'انسحاب';
@@ -1011,26 +1014,46 @@ class CommunityController extends Controller
                     $reason = 'استثناء';
                     break;
                 default:
-                $reason = 'لا يوجد';
+                    $reason = 'لا يوجد';
             }
             
             DB::beginTransaction();
+                $amount = 0;
                 if($requestData['accepted']){
-                    $transaction = $user->student->transactions()->create([
-                        "refund_id"     => $refund->id,
-                        "amount"        => $refund->amount,
-                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                        "type"          => "refund",
-                        "by_user"       => Auth::user()->id,
-                    ]);
+                    if($refund->reason == 'drop-out'){
+                        $amount = $requestData['range'] == 0 ? 0 : $refund->amount * $requestData['range'] - 300;
+                        $transaction = $refund->student->transactions()->create([
+                            "refund_id"     => $refund->id,
+                            "amount"        => $amount,
+                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                            "type"          => "refund-to-wallet",
+                            "by_user"       => Auth::user()->id,
+                        ]);
+                        $refund->student->wallet += $amount;
+                        $refund->student->credit_hours = 0;
+                        $refund->student->save();
+                    }else{
+                        $amount = $refund->amount;
+                        $transaction = $refund->student->transactions()->create([
+                            "refund_id"     => $refund->id,
+                            "amount"        => $amount,
+                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                            "type"          => "refund-to-bank",
+                            "by_user"       => Auth::user()->id,
+                        ]);
+                        $refund->student->wallet -= $amount;
+                        $refund->student->save();
+                    }
+
                     $refund->update([
                         'transaction_id'    => $transaction->id,
+                        'manager_note'      => $requestData['note'],
+                        'amount'            => $amount,
                         'accepted'          => $requestData['accepted']
                     ]);
-                    $refund->student->wallet -= $refund->amount;
-                    $refund->student->save();
                 }else{
                     $refund->update([
+                        'manager_note'      => $requestData['note'],
                         'accepted'          => $requestData['accepted']
                     ]);
                 }
