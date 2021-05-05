@@ -28,7 +28,6 @@
                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                 <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
                 <td class="text-center">{{ $user->student->wallet ?? 'لا يوجد' }} </td>
-                <td class="text-center">{{ $user->student->documents_verified == true ? 'TRUE' : 'FALSE' ?? '' }}</td>
                 <td>{{ $user->student->not }}</td>
             </tr>
         @endforeach

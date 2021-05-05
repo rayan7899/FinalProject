@@ -16,16 +16,16 @@
             </div>
         @endif
         <div class="table-responsive p-2 bg-white rounded border">
-            <table id="mainTable" class="table nowrap display cell-border">
+            <table id="rayatReportTbl" class="table nowrap display cell-border">
                 <thead>
                     <tr>
                         <p class="text-center">
-                            تقرير رايات - خدمة المجتمع
+                            تقرير رايات 
                         </p>
 
                         <th>#</th>
                         <th>رقم الهوية</th>
-                        <th>اسم المتقدم رباعي </th>
+                        <th>اسم المتدرب </th>
                         <th>رقم الجوال</th>
                         <th>البرنامج</th>
                         <th>القسم</th>
@@ -46,7 +46,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (isset($users))
+                    {{-- @if (isset($users))
                         @forelse ($users as $user)
                             <tr>
                                 <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
@@ -62,9 +62,13 @@
                         @empty
                             لايوجد
                     @endforelse
-                    @endif
+                    @endif --}}
                 </tbody>
             </table>
         </div>
     </div>
+    <script>
+            var rayatReportApi = "{{$type == 'community' ? route('rayatReportCommunityApi',['type' => $type]) : route('rayatReportAffairsApi',['type' => $type])}}"
+
+    </script>
 @stop

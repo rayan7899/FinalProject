@@ -1,4 +1,17 @@
+jQuery(function () {
 
+    $("#excel_submit").on("click", function (e) {
+        e.preventDefault();
+        Swal.fire({
+            html: "<h4> جاري ارسال الطلب</h4>",
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading();
+                setTimeout(function () { $("#excel_form").submit(); }, 500);
+            },
+        });
+    });
+});
 
 window.findMajor = function (programs, program_id, department_id) {
     for (var i = 0; i < programs.length; i++) {
@@ -14,10 +27,10 @@ window.findMajor = function (programs, program_id, department_id) {
 };
 
 window.findDepartment = function (programs, program_id) {
-    if(programs !== undefined && programs !== null){
+    if (programs !== undefined && programs !== null) {
         for (var i = 0; i < programs.length; i++) {
             if (programs[i].id == program_id) {
-                
+
                 return programs[i].departments;
             }
         }
@@ -26,22 +39,22 @@ window.findDepartment = function (programs, program_id) {
 
 window.fillDepartments = function () {
     var prog = document.getElementById("program").value;
-    
-    if(prog == undefined){
-        return ;
+
+    if (prog == undefined) {
+        return;
     }
 
     var dept = document.getElementById("department");
     dept.innerHTML = '<option value="0" disabled selected>أختر</option>';
     var departments = findDepartment(window.programs, prog);
-if(departments === undefined){
-    return;
-}
+    if (departments === undefined) {
+        return;
+    }
     for (var i = 0; i < departments.length; i++) {
         var option = document.createElement("option");
         option.innerHTML = departments[i].name;
         option.value = departments[i].id;
-        dept.appendChild(option);   
+        dept.appendChild(option);
     }
     fillMajors();
 };
@@ -61,16 +74,4 @@ window.fillMajors = function () {
             mjr.appendChild(option);
         }
     }
-};
-
-window.onload = function () {
-    $("#excel_form").on("submit", function (e) {
-        Swal.fire({
-            html: "<h4>جاري تحديث البيانات</h4>",
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-        });
-    });
 };

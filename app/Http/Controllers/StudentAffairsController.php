@@ -28,15 +28,15 @@ class StudentAffairsController extends Controller
             ],
             (object) [
                 "name" => "تقرير القبول النهائي",
-                "url" => route("finalAcceptedList")
+                "url" => route("finalAcceptedReport")
             ],
             (object) [
                 "name" => "الرفع لرايات",
-                "url" => route("publishToRayatForm", ["type" => "affairs"])
+                "url" => route("publishToRayatFormAffairs", ["type" => "affairs"])
             ],
             (object) [
                 "name" => "تقرير رايات",
-                "url" => route("rayatReportForm")
+                "url" => route("rayatReportFormAffairs", ["type" => "affairs"])
             ],
             (object) [
                 "name" => "الجداول المقترحة",
@@ -44,7 +44,7 @@ class StudentAffairsController extends Controller
             ],
             (object) [
                 "name" => " تقرير المتدربين المستجدين",
-                "url" => route("NewStudents")
+                "url" => route("NewStudents",["type" => "Affairs"])
             ],
 
 
@@ -122,7 +122,49 @@ class StudentAffairsController extends Controller
             return view('manager.studentsAffairs.studentFinalAccepted')->with('error', "تعذر جلب المتدربين");;
         }
     }
+    public function finalAcceptedJson()
+    {
+        try {
+            $users = User::with(['student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
+                $result->where('level', 1)
+                    ->where('data_updated', true)
+                    ->whereHas('orders', function ($res) {
+                        $res->where('transaction_id', null)
+                            ->where('private_doc_verified', true);
+                    });
+            })->get();
 
+            $usersCount = count($users);
+            for ($i = 0; $i < $usersCount; $i++) {
+                for ($j = 0; $j < count($users[$i]->student->orders); $j++) {
+                    if ($users[$i]->student->traineeState != "privateState") {
+                        $order = $users[$i]->student->orders[$j];
+                        if ($order->transaction_id == null && $users[$i]->student->wallet < $order->amount) {
+                            unset($users[$i]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $fetch_errors = [];
+            for ($i = 0; $i < count($users); $i++) {
+                try {
+                    $files = Storage::disk('studentDocuments')->files($users[$i]->national_id);
+                    $users[$i]->student->identity = $files[array_key_first(preg_grep('/identity/', $files))];
+                    $users[$i]->student->degree = $files[array_key_first(preg_grep('/degree/', $files))];
+                } catch (Exception $err) {
+                    Log::error($err);
+                    array_push($fetch_errors, $users[$i]->name);
+                    continue;
+                }
+            }
+            return response()->json(["data" => $users->toArray()], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('manager.studentsAffairs.studentFinalAccepted')->with('error', "تعذر جلب المتدربين");;
+        }
+    }
     public function finalAcceptedUpdate(Request $request)
     {
 
@@ -141,23 +183,8 @@ class StudentAffairsController extends Controller
 
             return response(json_encode(['message' => 'تم تغيير الحالة بنجاح']), 200);
         } catch (Exception $e) {
-           Log::error($e->getMessage().$e);
+            Log::error($e->getMessage() . ' ' . $e);
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
-        }
-    }
-
-    public function getFinalAcceptedStudents()
-    {
-        try {
-            $users = User::with('student')->whereHas('student', function ($result) {
-                $result->where('final_accepted', true)
-                    ->where('student_docs_verified', true)
-                    ->where("level", 1);
-            })->get();
-            return $users;
-        } catch (Exception $e) {
-           Log::error($e->getMessage().$e);
-            return null;
         }
     }
 
@@ -174,120 +201,23 @@ class StudentAffairsController extends Controller
         }
     }
 
-    public function finalAcceptedList()
+    public function finalAcceptedReport()
     {
-        $users = $this->getFinalAcceptedStudents();
-        if (isset($users)) {
-            return view('manager.studentsAffairs.studentFinalAcceptedList')
-                ->with(compact('users'));
-        } else {
-            return view('manager.studentsAffairs.studentFinalAcceptedList')->with('error', "تعذر جلب المتدربين");;
-        }
+        return view('manager.studentsAffairs.studentFinalAcceptedReport');
     }
 
-    // public function publishToRayatForm()
-    // {
-
-    //     try {
-    //         $users = User::with("student.orders")->whereHas("student", function ($res) {
-    //             $res->where("traineeState", "!=", "privateState")
-    //                 ->where('level', '1')
-    //                 ->whereHas("orders", function ($res) {
-    //                     $res->where("transaction_id", null);
-    //                 })
-    //                 ->whereDoesntHave('payments', function ($res) {
-    //                     $res->where('accepted', null);
-    //                 });
-    //         })->get();
-
-    //         if (isset($users)) {
-    //             return view('manager.studentsAffairs.publishHoursToRayat')
-    //                 ->with(compact('users'));
-    //         } else {
-    //             return view('manager.studentsAffairs.publishHoursToRayat')
-    //                 ->with('error', "تعذر جلب المتدربين");
-    //         }
-    //     } catch (\Throwable $th) {
-    //         return view('manager.studentsAffairs.publishHoursToRayat')
-    //             ->with('error', $th);
-    //     }
-    // }
-
-    public function publishToRayat(Request $request)
+    public function finalAcceptedReportJson()
     {
-        $studentData = $this->validate($request, [
-            "national_id"        => "required|numeric",
-            'hours'              => 'required',
-        ]);
         try {
-            $user = User::with('student.orders')->where('national_id', $studentData['national_id'])->first();
-            switch ($user->student->traineeState) {
-                case 'employee':
-                    $discount = 0.25;
-                    break;
-                case 'employeeSon':
-                    $discount = 0.5;
-                    break;
-                case 'privateState':
-                    $discount = 0.0;
-                    break;
-                default:
-                    $discount = 1.0;
-                    break;
-            }
-            $order = $user->student->orders->where("transaction_id", null)->first();
-
-            if ($order->requested_hours < $studentData['hours']) {
-                return response(['message' => 'لا يمكن ادخال ساعات اكثر من الساعات في الطلب'], 422);
-            }
-
-            $amountAfterEdit = $studentData['hours'] * $user->student->program->hourPrice * $discount;
-            $amountbeforeEdit = $order->amount * $user->student->program->hourPrice * $discount;
-
-            DB::beginTransaction();
-            $transaction = $user->student->transactions()->create([
-                "order_id"      => $order->id,
-                "amount"        => $amountAfterEdit,
-                "type"          => "deduction",
-                "by_user"       => Auth::user()->id,
-            ]);
-            $order->update([
-                "transaction_id" => $transaction->id,
-                "requested_hours" => $studentData['hours'],
-            ]);
-
-            $user->student->credit_hours += $studentData['hours'];
-            $user->student->wallet -= $amountAfterEdit;
-            $user->student->save();
-            DB::commit();
-            return response(['message' => 'تم رفع الساعات بنجاح'], 200);
+            $users = User::with(['student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
+                $result->where('final_accepted', true)
+                    ->where('student_docs_verified', true)
+                    ->where("level", 1);
+            })->get();
+            return response()->json(["data" => $users->toArray()], 200);
         } catch (Exception $e) {
-            DB::rollback();
-            return response(['message' => 'حدث خطأ غير معروف' . $e->getCode()], 422);
-        }
-    }
-
-    public function rayatReportForm()
-    {
-        // $payments = Payment::where("transaction_id", "!=", null)->get();
-        // $paymentIds = $payments->pluck('student_id')->toArray();
-        // $users = User::with("student")->whereHas("student", function ($res) use ($paymentIds) {
-        //     $res->where("traineeState", "!=", "privateState")
-        //         ->where('final_accepted', true)
-        //         ->where('level', '1')
-        //         ->where("published", true)
-        //         ->whereIn("id", $paymentIds);
-        // })->get();
-        $users = User::with("student")->whereHas("student", function ($res) {
-            $res->where('level', '1')
-                ->where('credit_hours', '>', 0);
-        })->get();
-        if (isset($users)) {
-            return view('manager.studentsAffairs.rayatReport')
-                ->with(compact('users'));
-        } else {
-            return view('manager.studentsAffairs.rayatReport')
-                ->with('error', "تعذر جلب المتدربين");
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('manager.studentsAffairs.studentFinalAcceptedReport')->with('error', "تعذر جلب المتدربين");
         }
     }
 }

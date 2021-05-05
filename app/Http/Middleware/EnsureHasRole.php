@@ -51,7 +51,7 @@ class EnsureHasRole
        
             return $next($request);
         } catch (Exception $e) {
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             return back()->with("errer","حدث خطأ غير معروف");
         }
     }

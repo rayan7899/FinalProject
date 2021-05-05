@@ -10,6 +10,8 @@ require("./privateOrderReview");
 require("./manageCourses");
 require("./wallet");
 require("./refundOrders");
+require("./studentsReport");
+
 
 
 import Swal from "sweetalert2";

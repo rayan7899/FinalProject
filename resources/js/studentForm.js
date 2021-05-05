@@ -1,22 +1,183 @@
 
+jQuery(function () {
+    if ($("#mainTable tr").length > 0) {
+        var table = $("#mainTable").DataTable({
+            orderCellsTop: true,
+            deferLoading: true,
+            language: {
+                emptyTable: "ليست هناك بيانات متاحة في الجدول",
+                loadingRecords: "جارٍ التحميل...",
+                processing: "جارٍ التحميل...",
+                lengthMenu: "أظهر _MENU_ مدخلات",
+                zeroRecords: "لم يعثر على أية سجلات",
+                info: "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                infoEmpty: "يعرض 0 إلى 0 من أصل 0 سجل",
+                infoFiltered: "(منتقاة من مجموع _MAX_ مُدخل)",
+                search: "ابحث:",
+                paginate: {
+                    first: "الأول",
+                    previous: "السابق",
+                    next: "التالي",
+                    last: "الأخير",
+                },
+                aria: {
+                    sortAscending: ": تفعيل لترتيب العمود تصاعدياً",
+                    sortDescending: ": تفعيل لترتيب العمود تنازلياً",
+                },
+                select: {
+                    rows: {
+                        _: "%d قيمة محددة",
+                        0: "",
+                        1: "1 قيمة محددة",
+                    },
+                    1: "%d سطر محدد",
+                    _: "%d أسطر محددة",
+                    cells: {
+                        1: "1 خلية محددة",
+                        _: "%d خلايا محددة",
+                    },
+                    columns: {
+                        1: "1 عمود محدد",
+                        _: "%d أعمدة محددة",
+                    },
+                },
+                buttons: {
+                    print: "طباعة",
+                    copyKeys:
+                        "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
+                    copySuccess: {
+                        _: "%d قيمة نسخت",
+                        1: "1 قيمة نسخت",
+                    },
+                    pageLength: {
+                        "-1": "اظهار الكل",
+                        _: "إظهار %d أسطر",
+                    },
+                    collection: "مجموعة",
+                    copy: "نسخ",
+                    copyTitle: "نسخ إلى الحافظة",
+                    csv: "CSV",
+                    excel: "Excel",
+                    pdf: "PDF",
+                    colvis: "إظهار الأعمدة",
+                    colvisRestore: "إستعادة العرض",
+                },
+                autoFill: {
+                    cancel: "إلغاء",
+                    info: "مثال عن الملئ التلقائي",
+                    fill: "املأ جميع الحقول بـ <i>%d&lt;\\/i&gt;</i>",
+                    fillHorizontal: "تعبئة الحقول أفقيًا",
+                    fillVertical: "تعبئة الحقول عموديا",
+                },
+                searchBuilder: {
+                    add: "اضافة شرط",
+                    clearAll: "ازالة الكل",
+                    condition: "الشرط",
+                    data: "المعلومة",
+                    logicAnd: "و",
+                    logicOr: "أو",
+                    title: ["منشئ البحث"],
+                    value: "القيمة",
+                    conditions: {
+                        date: {
+                            after: "بعد",
+                            before: "قبل",
+                            between: "بين",
+                            empty: "فارغ",
+                            equals: "تساوي",
+                            not: "ليس",
+                            notBetween: "ليست بين",
+                            notEmpty: "ليست فارغة",
+                        },
+                        number: {
+                            between: "بين",
+                            empty: "فارغة",
+                            equals: "تساوي",
+                            gt: "أكبر من",
+                            gte: "أكبر وتساوي",
+                            lt: "أقل من",
+                            lte: "أقل وتساوي",
+                            not: "ليست",
+                            notBetween: "ليست بين",
+                            notEmpty: "ليست فارغة",
+                        },
+                        string: {
+                            contains: "يحتوي",
+                            empty: "فاغ",
+                            endsWith: "ينتهي ب",
+                            equals: "يساوي",
+                            not: "ليست",
+                            notEmpty: "ليست فارغة",
+                            startsWith: " تبدأ بـ ",
+                        },
+                    },
+                    button: {
+                        0: "فلاتر البحث",
+                        _: "فلاتر البحث (%d)",
+                    },
+                    deleteTitle: "حذف فلاتر",
+                },
+                searchPanes: {
+                    clearMessage: "ازالة الكل",
+                    collapse: {
+                        0: "بحث",
+                        _: "بحث (%d)",
+                    },
+                    count: "عدد",
+                    countFiltered: "عدد المفلتر",
+                    loadMessage: "جارِ التحميل ...",
+                    title: "الفلاتر النشطة",
+                },
+                searchPlaceholder: "ابحث ...",
+            },
+            initComplete: function () {
+                var api = this.api();
+                $(".filterhead", api.table().header()).each(function (i) {
+                    if (i > 3 && i < 7) {
+                        var column = api.column(i);
+                        var select = $(
+                            '<select><option value="">الكل</option></select>'
+                        )
+                            .appendTo($(this).empty())
+                            .on("change", function () {
+                                // FIXME: error dataTable undefined
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
 
+                                column
+                                    .search(
+                                        val ? "^" + val + "$" : "",
+                                        true,
+                                        false
+                                    )
+                                    .draw();
+                            });
+
+                        column
+                            .data()
+                            .unique()
+                            .sort()
+                            .each(function (d, j) {
+                                select.append(
+                                    '<option value="' +
+                                    d +
+                                    '">' +
+                                    d +
+                                    "</option>"
+                                );
+                            });
+                    }
+                });
+            },
+        });
+    }
+});
 window.toggleChecked = function (event) {
     let row = event.target.parentNode.parentNode;
     let cost = parseInt(row.dataset.cost);
     if (event.currentTarget.checked == true) {
         window.new_cost += cost;
-        // if (window.t_cost + window.new_cost > window.wallet) {
-        //     window.new_cost
-        //     event.currentTarget.checked = false;
-        //     Swal.fire({
-        //         position: "center",
-        //         html: "<h4>الرصيد لا يكفي</h4>",
-        //         icon: "warning",
-        //         showConfirmButton: true,
-        //     });
-        //     window.new_cost -= cost;
-        //     return;
-        // }
     } else {
         window.new_cost -= cost;
     }
@@ -67,16 +228,16 @@ window.calcCost = function (firstLoad = false) {
             window.total_hours += parseInt(course.dataset.hours);
         }
     }
-    if (!firstLoad) {
-        if (window.total_hours < 12 || window.total_hours > 21) {
-            $("#courses-error").html("يجب ان يكون مجموع الساعات بين 12 و 21 ساعة");
-            $("#courses-error").show();
-        } else {
-            $("#courses-error").html("");
-            $("#courses-error").hide();
+    // if (!firstLoad) {
+    //     if (window.total_hours < 12 || window.total_hours > 21) {
+    //         $("#courses-error").html("يجب ان يكون مجموع الساعات بين 12 و 21 ساعة");
+    //         $("#courses-error").show();
+    //     } else {
+    //         $("#courses-error").html("");
+    //         $("#courses-error").hide();
 
-        }
-    }
+    //     }
+    // }
 
 
 

@@ -22,4 +22,8 @@ class FileController extends Controller
     public function get_student_document($path){
         return response()->file(Storage::disk('studentDocuments')->path($path));
     }
+
+    public function get_student_document_api($national_id,$filename){
+        return response()->file(Storage::disk('studentDocuments')->path('/'.$national_id.'/receipts/'.$filename));
+    }
 }

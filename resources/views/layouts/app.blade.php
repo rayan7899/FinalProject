@@ -22,7 +22,7 @@
 
 <body>
     <div id="app">
-        <div class="position-absolute w-100 h-100 p-0 m-0" id="loading"
+        <div class="position-absolute w-100 h-100 p-0 m-0" id="loadingSpin"
             style="background-color: #0002;z-index: 10; display: none;">
             <div class="spinner-border text-success position-absolute h3"
                 style="width: 3rem; height: 3rem; top: 50%; left: 50%; z-index: 10;" role="status">
@@ -64,7 +64,7 @@
                                                     href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                        document.getElementById('logout-form').submit();">
+                                                                                                                document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -113,9 +113,9 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('rayatReportFormCommunity') }}">تقرير رايات</a>
+                                                        href="{{ route('rayatReportFormCommunity', ["type" => "community"]) }}">تقرير رايات</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('publishToRayatForm', ['type' => 'community']) }}">الرفع
+                                                        href="{{ route('publishToRayatFormCommunity', ['type' => 'community']) }}">الرفع
                                                         لرايات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
@@ -125,10 +125,13 @@
                                                         المقررات</a>
                                                     <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع
                                                         المتدربين المستمرين</a>
-                                                    <a class="dropdown-item" href="{{ route('newStudentsReport') }}">جميع
+                                                    <a class="dropdown-item" href="{{ route('newStudentsReport',["type" => "community"]) }}">جميع
                                                         المتدربين المستجدين</a>
-                                                        <a class="dropdown-item" href="{{ route('reportAllForm') }}">جميع العمليات المالية</a>
-                                                        <a class="dropdown-item" href="{{ route('reportFilterdForm') }}">العمليات المالية حسب التخصص</a>
+                                                    <a class="dropdown-item" href="{{ route('reportAllForm') }}">جميع
+                                                        العمليات المالية</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('reportFilterdForm') }}">العمليات المالية حسب
+                                                        التخصص</a>
 
                                                     <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة
                                                         متدرب</a>
@@ -155,14 +158,14 @@
                                                         القبول
                                                         النهائي </a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('finalAcceptedList') }}">تقرير
+                                                        href="{{ route('finalAcceptedReport') }}">تقرير
                                                         القبول النهائي</a>
-                                                    <a class="dropdown-item" href="{{ route('NewStudents') }}">المتدربين
+                                                    <a class="dropdown-item" href="{{ route('NewStudents',["type" => "Affairs"]) }}">المتدربين
                                                         المستجدين </a>
-                                                    <a class="dropdown-item" href="{{ route('rayatReportForm') }}">تقرير
+                                                    <a class="dropdown-item" href="{{ route("rayatReportFormAffairs",["type" => "affairs"]) }}">تقرير
                                                         رايات</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('publishToRayatForm', ['type' => 'affairs']) }}">الرفع
+                                                        href="{{ route('publishToRayatFormAffairs', ['type' => 'affairs']) }}">الرفع
                                                         لرايات</a>
                                                     <a class="dropdown-item" href="{{ route('AddExcelForm') }}">اضافة
                                                         اكسل

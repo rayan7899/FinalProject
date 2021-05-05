@@ -37,30 +37,34 @@ class PaymentController extends Controller
 
     public function store(Request $request)
     {
-        $paymentRequest = $this->validate($request, [
-            "amount"            => "required|numeric|min:0|max:50000",
-            "payment_receipt"   => "required|mimes:pdf,png,jpg,jpeg|max:4000",
-        ]);
         $user = Auth::user();
         $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
         if ($waitingPaymentssCount > 0) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
         }
+        
+        $paymentRequest = $this->validate($request, [
+            "amount"            => "required|numeric|min:0|max:50000",
+            "payment_receipt"   => "required|mimes:pdf,png,jpg,jpeg|max:4000",
+        ]);
+       
         try {
             DB::beginTransaction();
             $randomId =  uniqid();
+            
+            // $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
+            $doc_name =  $randomId .'.'. $paymentRequest['payment_receipt']->getClientOriginalExtension();
             $user->student->payments()->create(
                 [
                     "amount"            => $paymentRequest["amount"],
-                    "receipt_file_id"   => $randomId
+                    "receipt_file_id"   => $doc_name
                 ]
             );
-            $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($paymentRequest['payment_receipt']));
+            Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $doc_name, File::get($paymentRequest['payment_receipt']));
             DB::commit();
             return redirect(route("home"))->with("success", "تم ارسال الطلب بنجاح");
         } catch (Exception $e) {
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             DB::rollBack();
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }

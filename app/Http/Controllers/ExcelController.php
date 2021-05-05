@@ -10,7 +10,9 @@ use App\Imports\OldUsersImport;
 use App\Models\Department;
 use App\Models\Program;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Validators\ValidationException;
+use Throwable;
 
 class ExcelController extends Controller
 {
@@ -44,8 +46,14 @@ class ExcelController extends Controller
 
 
         // Extaract users from Excel file and add them to the DB
-        Excel::import(new UsersImport($deptMjr),  $request->file('excel_file'));
+        try{
+            Excel::import(new UsersImport($deptMjr),  $request->file('excel_file'));
+        }catch(Exception $e){
+            Log::error($e);
+            return back()->with('error',"حدث خطأ غير معروف");
+        }
         return back();
+       
         //return back()->with('success', 'تم أضافة المتدربين بنجاح');
 
     }
@@ -64,37 +72,15 @@ class ExcelController extends Controller
 
     public function importOldUsers(Request $request)
     {
-       $request->validate([
-        "excel_file" => "mimes:xls,xlsx,ods",
-       ]);
-        try {
-            Excel::import(new OldUsersImport, $request->file('excel_file'));
-            return back();
-        } catch (Exception $e) {
-            return redirect(route('OldForm'))->with('error',$e->getMessage());
-         // dd($e);
-            // $js = json_decode($e->getMessage(), true);
-            // $duplicate = $js['duplicate'] ?? null;
-            // $errorsArr = $js['errorsArr'] ?? null;
-            // $addedCount = $js['addedCount'] ?? null;
-            // $countOfUsers = $js['countOfUsers'] ?? null;
-            // return redirect(route('OldForm'))->with([
-            //     'duplicate' => $duplicate,
-            //     'addedCount' => $addedCount,
-            //     'countOfUsers' => $countOfUsers,
-            //     'errorsArr'    => $errorsArr
-            // ]);
-        }
+        $request->validate([
+            "excel_file" => "mimes:xls,xlsx,ods",
+        ]);
+        Excel::import(new OldUsersImport, $request->file('excel_file'));
+        return back();
     }
 
     public function exportOldUsers()
     {
     }
 
-    static function hanError($errors)
-    {
-       
-        return redirect(route('OldForm'))->with($errors);
-    }
-    
 }

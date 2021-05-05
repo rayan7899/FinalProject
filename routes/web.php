@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/show/{path?}', [FileController::class, 'get_student_document'])
         ->where('path', '(.*)')
         ->name('GetStudentDocument');
+        Route::get('api/documents/show/{national_id}/{filename}', [FileController::class, 'get_student_document_api'])
+        ->name('GetStudentDocumentApi');
 
     // TODO: disable this in release
     //Logs Viewer
@@ -57,16 +59,20 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community', [CommunityController::class, 'dashboard'])->name('communityDashboard');
     Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
+    Route::get('/api/community/student/payments/review', [CommunityController::class, 'paymentsReviewJson'])->name('paymentsReviewJson');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
-    // Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    // Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
-    Route::get('/community/rayat-report', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
+    Route::get('community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');
+    Route::get('api/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatJson'])->name('getStudentForRayatCommunityApi');
+    Route::post('community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStoreCommunity');
+    Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
+    Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
     Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
     Route::get('/community/old-students-report', [CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
-    Route::get('/community/new-students-report', [CommunityController::class, 'newStudentsReport'])->name('newStudentsReport');
+    Route::get('api/community/students-report/{type}', [CommunityController::class, 'studentsReportJson'])->name('studentsReportCommunityJson');
+    Route::get('/community/new-students-report/{type}', [CommunityController::class, 'newStudentsReport'])->name('newStudentsReport');
     Route::get('/community/users/create', [CommunityController::class, 'createUserForm'])->name('createUserForm');
     Route::post('/community/users/store', [CommunityController::class, 'createUserStore'])->name('createUserStore');
     Route::get('/community/users/edit/{user}', [CommunityController::class, 'editUserForm'])->name('editUserForm');
@@ -102,21 +108,25 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
 });
 
 
-// FIXME: these routes are shard between `شؤون المتدربين` and `خدمة المجتمع`,
-//        and I cannot find way to tell our middleware `role` that.
-Route::middleware(['auth', 'agreement'])->group(function () {
-    Route::get('/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    Route::post('/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
-});
-
 // شؤون المتدربين
 Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function () {
     Route::get('/affairs/dashboard', [StudentAffairsController::class, 'dashboard'])->name('affairsDashboard');
     Route::get('/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
-    Route::post('/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
-    Route::get('/affairs/finalaccepted/list', [StudentAffairsController::class, 'finalAcceptedList'])->name('finalAcceptedList');
+    Route::get('api/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedJson'])->name('finalAcceptedJson');
+    Route::post('/affairs/finalaccepted/update', [StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
+    
+    Route::get('/affairs/finalaccepted/report', [StudentAffairsController::class, 'finalAcceptedReport'])->name('finalAcceptedReport');
+    Route::get('api/affairs/finalaccepted/report', [StudentAffairsController::class, 'finalAcceptedReportJson'])->name('finalAcceptedReportJson');
+
     Route::get('/affairs/checked', [StudentAffairsController::class, 'checkedStudents'])->name('CheckedStudents');
-    Route::get('/affairs/new', [StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
+    // Route::get('/affairs/new', [StudentAffairsController::class, 'NewStudents'])->name('NewStudents');
+    Route::get('/affairs/new-students-report/{type}', [CommunityController::class, 'newStudentsReport'])->name('NewStudents');
+    Route::get('api/affairs/students-report/{type}', [CommunityController::class, 'studentsReportJson'])->name('studentsReportAffairsJson');
+
+    //Rayat - thos routes is dupicate to use deffrent roles
+    Route::get('affairs/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormAffairs');
+    Route::get('api/affairs/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatJson'])->name('getStudentForRayatAffairsApi');
+    Route::post('affairs/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStoreAffairs');
     // ExcelController
     Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
     //Route::get('/excel/new/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
@@ -125,10 +135,8 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
     // //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
-    Route::get('/affairs/rayat-report', [StudentAffairsController::class, 'rayatReportForm'])->name('rayatReportForm');
-    // Route::get('/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatForm');
-    // Route::post('/community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStore');
-
+    Route::get('/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormAffairs');
+    Route::get('api/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportAffairsApi');
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
 });
 

@@ -39,7 +39,7 @@
         @endif
         <div class="table-responsive p-2 bg-white rounded border">
             <h6 class="text-center" style="position: relative; top:10px"> القبول النهائي-شؤون المتدربين</h6>
-            <table class="table nowrap display cell-border" id="mainTable">
+            <table class="table nowrap display cell-border" id="finalAcceptedFormTbl">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
@@ -72,7 +72,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (isset($users))
+                    {{-- @if (isset($users))
                         @forelse ($users as $user)
                             <tr>
                                 <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
@@ -148,13 +148,13 @@
                             </tr>
                         @empty
                     @endforelse
-                    @endif
+                    @endif --}}
                 </tbody>
             </table>
         </div>
         <script>
             var finalAcceptedRoute = "{{ route('finalAcceptedUpdate') }}";
-
+            var finalStudentDataApi = "{{ route('finalAcceptedJson') }}";
         </script>
     </div>
 @stop

@@ -34,7 +34,7 @@ class DepartmentBossController extends Controller
             }
         } catch (Exception $e) {
             return view("error")->with("error", "حدث خطأ غير معروف");
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
         }
     }
 
@@ -66,7 +66,7 @@ class DepartmentBossController extends Controller
                 return response($programs, 200);
             }
         } catch (QueryException $e) {
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
         }
     }
@@ -82,7 +82,7 @@ class DepartmentBossController extends Controller
             $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
             return response(['message' => 'تم تحديث الجدول المقترح بنجاح', 'programs' => $programs], 200);
         } catch (QueryException $e) {
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             return response(['message' => 'حدث خطأ غير معروف اثناء تحديث الجدول المقترح'], 422);
         }
     }

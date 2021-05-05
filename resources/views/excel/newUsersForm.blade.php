@@ -26,14 +26,14 @@
                 </ul>
             </div>
         @endif
-        {{-- @if (session()->has('error'))
-        <div class="alert alert-warning">
-            {{ session()->get('error') }}
-        </div>
-     @endif --}}
+        @if (session()->has('error'))
+            <div class="alert alert-danger">
+                {{ session()->get('error') }}
+            </div>
+        @endif
         @if (session()->has('errorsArr'))
             <div class="alert alert-danger" role="alert">
-                حدث خطأ اثناء اضافة المتدربين التالية بياناتهم
+                لم يتم اضافة المتدربين في الجدول ادناه بسبب وجود اخطاء في بياناتهم
             </div>
             <table class="table table-sm table-hover bg-white">
                 <thead>
@@ -54,9 +54,9 @@
                             <td class="text-danger">خطأ غير معروف رقم: {{ $error['code'] ?? 'null' }} </td>
                         </tr>
                     @empty
-        @endforelse
-        </tbody>
-        </table>
+                    @endforelse
+                </tbody>
+            </table>
         @endif
         @if (session()->has('duplicate'))
             <div class="alert alert-warning" role="alert">
@@ -81,9 +81,9 @@
                             <td class="text-danger">مكرر </td>
                         </tr>
                     @empty
-        @endforelse
-        </tbody>
-        </table>
+                    @endforelse
+                </tbody>
+            </table>
         @endif
 
         <div class="card">
@@ -139,11 +139,12 @@
                     </div>
                     <div class="form-group">
                         <label for="excel_file">أختر الملف</label>
-                        <input required type="file" accept=".xls,.xlsx,.ods" class="form-control-file" id="excel_file" name="excel_file">
+                        <input required type="file" accept=".xls,.xlsx,.ods" class="form-control-file" id="excel_file"
+                            name="excel_file">
                     </div>
                     <div class="form-group">
-                        <input type="submit" name="excel_submit" id="excel_submit" value="أرسال"
-                            class="btn btn-sm btn-primary">
+                        <button type="button" name="excel_submit" id="excel_submit" 
+                            class="btn btn-sm btn-primary">أرسال</button>
                         @error('excel_file')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -153,8 +154,7 @@
                 </form>
             </div>
             <script>
-
-            var programs = @php echo $programs; @endphp;
+                var programs = @php echo $programs; @endphp;
 
             </script>
         </div>

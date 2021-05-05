@@ -1,35 +1,26 @@
 @extends('layouts.app')
 @section('content')
-    {{-- @dd($user->student->final_accepted); --}}
-    {{-- {{ $user->student->documents_verified == true && $user->student->final_accepted == true ? 'border-success text-success' : '' }} --}}
     @php
-    $total_cost = 0;
-    $total_hours = 0;
-    $paymentsState = true;
-    foreach ($user->student->courses as $course) {
-        $total_hours += $course->credit_hours;
-        $total_cost += $course->credit_hours * $user->student->program->hourPrice;
+    $stringLevel = '';
+    switch ($user->student->level) {
+        case 1:
+            $stringLevel = 'الاول';
+            break;
+        case 2:
+            $stringLevel = 'الثاني';
+            break;
+        case 3:
+            $stringLevel = 'الثالث';
+            break;
+        case 4:
+            $stringLevel = 'الرابع';
+            break;
+        case 5:
+            $stringLevel = 'الخامس';
+            break;
+        default:
+            $stringLevel = 'Error';
     }
-    $paymentsCount = count($user->student->payments);
-    // dd($user->student->payments[$paymentsCount - 1]);
-    if ($paymentsCount > 0) {
-        if ($user->student->payments[$paymentsCount - 1]->transaction_id == null) {
-            $total_hours = 0;
-            $paymentsState = false;
-        }
-    } else {
-        $total_hours = 0;
-        $paymentsState = false;
-    }
-
-    $step_1 = $paymentsState == true ? 'border-success text-success' : '';
-    $line_1 = $paymentsState == true ? 'bg-success' : '';
-
-    $step_2 = $user->student->published == true ? 'border-success text-success' : '';
-    $line_2 = $user->student->published == true ? 'bg-success' : '';
-
-    // $step_3 = $user->student->final_accepted == true ? 'border-success text-success' : '';
-
     @endphp
     <div class="container">
         @if (session()->has('error') || isset($error))
@@ -173,7 +164,7 @@
                         <div class="col-6">
                             <div dir="ltr" class="input-group mb-1">
                                 <input readonly type="text" class="form-control text-right bg-white"
-                                    value="{{ $user->student->level ?? 'لا يوجد' }}">
+                                    value="{{ $stringLevel ?? 'Error' }}">
                                 <div class="input-group-append">
                                     <span class="input-group-text text-center" style="width: 120px;"><label
                                             class="text-center m-0 p-0 w-100">المستوى</label></span>
@@ -280,14 +271,6 @@
                                 @forelse ($user->student->transactions as $transaction)
                                     @php
                                         $hoursNote = '';
-                                        if ($transaction->payment != null) {
-                                            $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $transaction->payment->receipt_file_id);
-                                            if (count($receipt) > 0) {
-                                                $receipt = $receipt[0];
-                                            } else {
-                                                $receipt = null;
-                                            }
-                                        }
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $transaction->id ?? 'Error' }}</td>
@@ -319,25 +302,23 @@
                                             @else
                                                 {{ $transaction->note ?? 'لا يوجد' }}
                                             @endif
-
                                         </td>
-
-                                        @if ($transaction->type == 'recharge' || $transaction->type == 'manager_recharge')
-                                            @if ($transaction->payment != null && isset($receipt))
+                                        @if ($transaction->type == 'recharge')
+                                            @if ($transaction->payment != null)
                                                 <td>
                                                     @php
-                                                        $splitByDot = explode('.', $receipt);
+                                                        $splitByDot = explode('.', $transaction->payment->receipt_file_id);
                                                         $fileExtantion = end($splitByDot);
                                                     @endphp
                                                     @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
                                                         <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt ?? '0']) }}','pdf')">
+                                                            onclick="showPdf('{{ route('GetStudentDocumentApi', ['national_id' => $user->national_id, 'filename' => $transaction->payment->receipt_file_id]) }}','pdf')">
                                                             <img style="width: 20px"
                                                                 src="{{ asset('/images/pdf.png') }}" />
                                                         </a>
                                                     @else
                                                         <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                            onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt ?? '0']) }}','img')">
+                                                            onclick="showPdf('{{ route('GetStudentDocumentApi', ['national_id' => $user->national_id, 'filename' => $transaction->payment->receipt_file_id]) }}','img')">
                                                             <img src=" {{ asset('/images/camera_img_icon.png') }}"
                                                                 style="width:25px;" alt="Image File">
                                                         </a>
@@ -391,13 +372,6 @@
                                 @endphp
                                 @forelse ($user->student->payments as $payment)
                                     @php
-                                        $receipt = Storage::disk('studentDocuments')->files($user->national_id . '/receipts/' . $payment->receipt_file_id);
-                                        if (count($receipt) > 0) {
-                                            $receipt = $receipt[0];
-                                        } else {
-                                            $receipt = null;
-                                        }
-                                        
                                         if ($payment->accepted == null) {
                                             $countWaitingPayment++;
                                         }
@@ -406,7 +380,9 @@
                                     <tr class="text-center">
                                         <td>{{ $payment->id }}</td>
                                         @if ($payment->transaction_id != null && $payment->amount != $acceptedAmount)
-                                            <td><del class="text-muted">{{$payment->amount}}</del>  {{$acceptedAmount}}</td>
+                                            <td><del class="text-muted">{{ $payment->amount }}</del>
+                                                {{ $acceptedAmount }}
+                                            </td>
                                         @else
                                             <td>{{ $payment->amount }}</td>
                                         @endif
@@ -420,29 +396,26 @@
                                             @endif
                                         @endif
                                         <td class="text-right">{{ $payment->note ?? 'لا يوجد' }}</td>
-                                        @if (isset($receipt))
-                                            <td class="">
 
-                                                @php
-                                                    $splitByDot = explode('.', $receipt);
-                                                    $fileExtantion = end($splitByDot);
-                                                @endphp
-                                                @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt ?? '0']) }}','pdf')">
-                                                        <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
-                                                    </a>
-                                                @else
-                                                    <a data-toggle="modal" data-target="#pdfModal" href="#"
-                                                        onclick="showPdf('{{ route('GetStudentDocument', ['path' => $receipt ?? '0']) }}','img')">
-                                                        <img src=" {{ asset('/images/camera_img_icon.png') }}"
-                                                            style="width:25px;" alt="Image File">
-                                                    </a>
-                                                @endif
-                                            </td>
-                                        @else
-                                            <td></td>
-                                        @endif
+                                        <td class="">
+
+                                            @php
+                                                $splitByDot = explode('.', $payment->receipt_file_id);
+                                                $fileExtantion = end($splitByDot);
+                                            @endphp
+                                            @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
+                                                <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                    onclick="showPdf('{{ route('GetStudentDocumentApi', ['national_id' => $user->national_id, 'filename' => $payment->receipt_file_id]) }}','pdf')">
+                                                    <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
+                                                </a>
+                                            @else
+                                                <a data-toggle="modal" data-target="#pdfModal" href="#"
+                                                    onclick="showPdf('{{ route('GetStudentDocumentApi', ['national_id' => $user->national_id, 'filename' => $payment->receipt_file_id]) }}','img')">
+                                                    <img src=" {{ asset('/images/camera_img_icon.png') }}"
+                                                        style="width:25px;" alt="Image File">
+                                                </a>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
 
@@ -564,63 +537,63 @@
                                         @switch($refund->reason)
                                             @case('drop-out')
                                                 <td>انسحاب</td>
-                                                @break
+                                            @break
                                             @case('graduate')
                                                 <td>خريج</td>
-                                                @break
+                                            @break
                                             @case('exception')
                                                 <td>استثناء</td>
-                                                @break
+                                            @break
                                             @default
                                                 <td>لا يوجد</td>
                                         @endswitch
                                         <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }}</td>
-                                        <td>{{ $refund->note ?? 'لا يوجد'}}</td>
+                                        <td>{{ $refund->note ?? 'لا يوجد' }}</td>
                                     </tr>
-                                @empty
+                                    @empty
 
-                                @endforelse
+                                    @endforelse
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+
+
                 </div>
 
-
+                {{-- @endif --}}
             </div>
-
-            {{-- @endif --}}
         </div>
-    </div>
-    <style>
-        .stepState {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            align-items: center;
-        }
+        <style>
+            .stepState {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-content: center;
+                align-items: center;
+            }
 
-        .line {
-            height: 3px;
-            width: 5%;
-            background: #b4b4b4;
-        }
+            .line {
+                height: 3px;
+                width: 5%;
+                background: #b4b4b4;
+            }
 
-        .flag {
-            display: flex;
-            width: 120px;
-            padding: 5px;
-            justify-content: center;
-            align-content: center;
-            align-items: center;
-            border-radius: 5px;
-            border: 3px solid #b4b4b4;
-            background-color: #f3f3f3;
-            font-weight: bold;
-            margin-left: 2%;
-            margin-right: 2%;
-        }
+            .flag {
+                display: flex;
+                width: 120px;
+                padding: 5px;
+                justify-content: center;
+                align-content: center;
+                align-items: center;
+                border-radius: 5px;
+                border: 3px solid #b4b4b4;
+                background-color: #f3f3f3;
+                font-weight: bold;
+                margin-left: 2%;
+                margin-right: 2%;
+            }
 
-    </style>
-@endsection
+        </style>
+    @endsection

@@ -18,9 +18,9 @@
                         <th scope="col">الاسم</th>
                         <th scope="col">رقم الجوال</th>
                         <th scope="col">البرنامج</th>
-                        <th scope="col">المستوى</th>
                         <th scope="col">القسم</th>
                         <th scope="col">التخصص</th>
+                        <th scope="col">المستوى</th>
                         {{-- <th scope="col">الهوية</th>
                         <th scope="col">المؤهل</th> --}}
                         {{-- <th scope="col">المؤهل مستورد</th> --}}
@@ -52,9 +52,9 @@
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->phone ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-                                <td class="text-center">{{ $user->student->level ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                                <td class="text-center">{{ $user->student->level ?? 'لا يوجد' }} </td>
 
                                 <!-- get ideentity -->
                                 {{-- <td class="text-center">

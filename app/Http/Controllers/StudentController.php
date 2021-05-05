@@ -30,6 +30,9 @@ class StudentController extends Controller
     public function edit()
     {
         $user = Auth::user();
+        if($user->student->data_updated){
+            return redirect(route('home'));
+        }
         $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
             ->get();
@@ -117,7 +120,7 @@ class StudentController extends Controller
             return redirect(route('orderForm'))->with('success', ' تم تحديث البيانات بنجاح');
         } catch (\Throwable $e) {
             DB::rollback();
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             return back()->with('error', ' تعذر تحديث البيانات حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -129,7 +132,6 @@ class StudentController extends Controller
         $user = Auth::user();
         $user->student()->update([
             'wallet'                => 0,
-            'documents_verified'    => false,
             'traineeState'          => 'trainee',
             'note'                  => null,
             'data_updated'          => false
@@ -164,7 +166,7 @@ class StudentController extends Controller
                 return view("student.agreement_from")->with(compact('error'));
             }
         }catch(Exception $e){
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             return view('error')->with('error','حدث خطأ غير معروف');
             
         }
@@ -240,7 +242,7 @@ class StudentController extends Controller
                 return response()->json(['message' => 'لا يوجد متدربين', 'students' => $students], 480);
             }
         } catch (Exception $e) {
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             return response()->json(['message' => ' حدث خطأ غير معروف, تعذر جلب بيانات المتدربين ' . "<p>" . $e->getCode() . "</p>"], 422);
         }
     }

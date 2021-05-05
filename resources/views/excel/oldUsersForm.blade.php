@@ -12,8 +12,24 @@
                 تم اضافة {{ session()->get('addedCount') }} من {{ session()->get('countOfUsers') }} متدرب
             </div>
         @endif
-
         @if ($errors->any())
+        @php
+            $errArr = array_unique($errors->all());
+            // dd(count($errArr));
+        @endphp
+        {{-- <div class="alert alert-danger">
+           الاخطاء ادناه لدى واحد او اكثر من المتدربين
+        </div> --}}
+        <div class="alert alert-danger">
+            <ul>
+               
+                @foreach ($errArr as $message)
+                    <li>{{ $message }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+        {{-- @if ($errors->any())
             @php
                 $errArr = $errors->all();
                 // dd(count($errors->all());
@@ -33,7 +49,7 @@
                     @endphp
                 </ul>
             </div>
-        @endif
+        @endif --}}
         @if (session()->has('error'))
         <div class="alert alert-danger">
             {{ session()->get('error') }}
@@ -41,7 +57,7 @@
      @endif
         @if (session()->has('errorsArr'))
             <div class="alert alert-danger" role="alert">
-                حدث خطأ اثناء اضافة المتدربين التالية بياناتهم
+                لم يتم اضافة المتدربين في الجدول ادناه بسبب وجود اخطاء في بياناتهم 
             </div>
             <table class="table table-sm table-hover bg-white">
                 <thead>
@@ -106,8 +122,8 @@
                         <input required type="file" accept=".xls,.xlsx,.ods" class="form-control-file" id="excel_file" name="excel_file">
                     </div>
                     <div class="form-group">
-                        <input type="submit" name="excel_submit" id="excel_submit" value="أرسال"
-                            class="btn btn-sm btn-primary">
+                        <button type="button" name="excel_submit" id="excel_submit" 
+                        class="btn btn-sm btn-primary">أرسال</button>
                         @error('excel_file')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>

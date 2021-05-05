@@ -50,6 +50,12 @@ class UsersImport implements ToCollection
         $duplicate = [];
         $errorsArr = [];
 
+        if (!isset($rows[7][NATIONAL_ID]) || !isset($rows[7][NAME])) {
+            return redirect(route('AddExcelForm'))->with('error', 'تعذر الحصول على الاسم او رقم الهوية يرجى التآكد من صحة الملف');
+        } elseif (strlen((string) $rows[7][NATIONAL_ID]) < 10  || !is_numeric($rows[7][NATIONAL_ID]) || strlen((string) $rows[7][NAME]) < 10) {
+            return redirect(route('AddExcelForm'))->with('error', ' تعذر الحصول على الاسم او رقم الهوية يرجى التآكد من صحة الملف');
+        }
+
         Validator::make($rows->toArray(), [
             '*.' . NATIONAL_ID => 'required|digits:10',
             '*.' . NAME => 'required|string|max:100', 
@@ -61,8 +67,11 @@ class UsersImport implements ToCollection
             '*.' . BIRTHDATE . '.digits'           => 'يجب ان ان يكون تاريخ الميلاد 4 ارقام',
             '*.' . NATIONAL_ID . '.digits'           => ' يجب ان يكون رقم الهوية 10 ارقام',
             '*.' . NAME . '.max'              => 'يجب ان لا يتجاوز الاسم 255 حرف',
-            '*.' . PHONE . '.digits_between'    => 'يجب ان يكون رقم الجوال بين 10 و 14 رقماَ',
+            '*.' . PHONE . '.digits_between'    => 'يجب ان يكون رقم الجوال بين 9 و 14 رقماَ',
+            '*.' . HAS_IMPORTED_DOCS . '.required'    => 'المؤهل مستورد حقل مطلوب',
+
         ])->validate();
+        
         foreach ($rows as $row) {
             $studentDocsVerified = false;
             if(trim($row[HAS_IMPORTED_DOCS]) == "نعم")
@@ -91,10 +100,10 @@ class UsersImport implements ToCollection
                 ]);
                 DB::commit();
             } catch (QueryException $e) {
-               Log::error($e->getMessage().$e);
+               Log::error($e->getMessage().' '.$e);
                 DB::rollback();
 
-                if ($e->errorInfo[0] == "23000" && $e->errorInfo[1] == "1062") {
+                if ($e->errorInfo[0] == "23000" || $e->errorInfo[1] == "1062") {
                     array_push($duplicate, $userinfo);
                 } else {
                     array_push($errorsArr, ['code' => $e->getCode(), 'userinfo' => $userinfo]);
@@ -106,7 +115,7 @@ class UsersImport implements ToCollection
         $addedCount = count($rows) - (count($duplicate) + count($errorsArr));
         if (count($duplicate) > 0  && count($errorsArr) > 0) {
             return redirect(route('AddExcelForm'))->with([
-                'error' => ' تم أضافة جميع المتدربين بنجاح, ماعدا المتدربين التالية بياناتهم ',
+                // 'error' => ' تم أضافة جميع المتدربين بنجاح, ماعدا المتدربين التالية بياناتهم ',
                 'duplicate' => $duplicate,
                 'errorsArr' => $errorsArr,
                 'addedCount' => $addedCount,
@@ -123,7 +132,7 @@ class UsersImport implements ToCollection
 
         if (count($errorsArr) > 0) {
             return redirect(route('AddExcelForm'))->with([
-                'error' => ' حدثت الاخطاء التالية اثناء اضافة المتدربين ',
+                // 'error' => ' حدثت الاخطاء التالية اثناء اضافة المتدربين ',
                 'errorsArr' => $errorsArr,
                 'addedCount' => $addedCount,
                 'countOfUsers' => $countOfUsers

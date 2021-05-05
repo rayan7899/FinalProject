@@ -25,6 +25,7 @@ class OrderController extends Controller
       $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
       $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
          ->where("private_doc_verified", "!=", false)->count();
+
       if ($user->student->level == 1 && $user->student->credit_hours != 0) {
          return redirect(route("home"))->with("error", "اضافة المقررات غير متاح للمتدربين في المستوى الاول");
       }
@@ -68,6 +69,13 @@ class OrderController extends Controller
    public function store(Request $request)
    {
       $user = Auth::user();
+      $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
+      $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
+         ->where("private_doc_verified", "!=", false)->count();
+
+      if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
+         return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+      }
 
       $requestData = $this->validate($request, [
          "courses"      => "required|array|min:1",
@@ -157,14 +165,14 @@ class OrderController extends Controller
             if ($walletAfterCalc < 0) {
                $cost = abs($walletAfterCalc);
                $randomId =  uniqid();
+               $doc_name =  $randomId . '.' . $requestData['payment_receipt']->getClientOriginalExtension();
                $user->student->payments()->create(
                   [
                      "amount"            => $cost,
-                     "receipt_file_id"   => $randomId
+                     "receipt_file_id"   => $doc_name
                   ]
                );
-               $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $requestData['payment_receipt']->getClientOriginalExtension();
-               Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($requestData['payment_receipt']));
+               Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $doc_name, File::get($requestData['payment_receipt']));
             }
 
             $user->student->orders()->create(

@@ -1,18 +1,7 @@
-
-
-window.national_id = document.getElementById("national_id");
-window.sname = document.getElementById("sname");
-window.amount = document.getElementById("amount");
-window.note = document.getElementById("note");
-window.payment_id = 0;
-
-
-
 jQuery(function () {
-    let paymentsReviewTbl = $('#paymentsReviewTbl').DataTable({
-        ajax: window.paymentsReviewJson,
+    let studentsReportTbl = $('#studentsReportTbl').DataTable({
+        ajax: window.studentsReportJson,
         dataSrc: "data",
-        rowId: 'student.user.national_id',
         columnDefs: [{
             searchable: false,
             orderable: false,
@@ -20,75 +9,27 @@ jQuery(function () {
         }],
         columns: [
             { data: null },
-            { data: "student.user.national_id" },
-            { data: "student.user.name", },
-            { data: "student.user.phone" },
+            { data: "national_id" },
+            { data: "name", },
+            { data: "phone" },
             { data: "student.program.name" },
             { data: "student.department.name" },
             { data: "student.major.name" },
             {
-                data: "student.traineeState",
-                render: function (data) {
-                    switch (data) {
-                        case 'employee':
-                            return "منسوب ";
-                            break;
-
-                        case 'employeeSon':
-                            return "ابن منسوب";
-                            break;
-
-                        case 'privateState':
-                            return "حالة خاصة";
-                            break;
-
-                        // case 'trainee':
-                        default:
-                            return "متدرب";
-                            break;
-                    }
-                }
-
-            },
-            {
-                data: "receipt_file_id",
-                className: "text-center",
-                render: function (data, type, row) {
-                    let ext = data.split('.')[1];
-                    if (ext == 'pdf' || ext == 'PDF') {
-                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
-                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','pdf')">
-                        <img style="width: 20px" src="/images/pdf.png" />
-                    </a>`;
-                    } else {
-                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
-                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','img')">
-                        <img style="width: 20px" src="/images/camera_img_icon.png" />
-                    </a>`;
-                    }
-                }
-            },
-            { data: "amount" },
-
-
-            {
                 data: "student.level",
                 className: "text-center",
-                render: function (data, type, row) {
-                return `<button data-toggle="modal" data-target="#editModal"
-                class="btn btn-primary px-2 py-0"
-                onclick="window.showModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.amount}')">
-                قبول</button>
-                
-                <button data-toggle="modal" data-target="#editModal"
-                class="btn btn-danger px-2 py-0"
-                onclick="window.showModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.amount}')">
-                رفض</button>
-                `;
-                }
-
             },
-
+            {
+                data: "student.final_accepted",
+                className: "text-center",
+                render: function (data) {
+                    if (data === '1') {
+                        return '<i class="text-secondary fa fa-check-square fa-lg"></i>';
+                    } else {
+                        return '<i class="text-secondary fa fa-lg fa-square-o" aria-hidden="true"></i>';
+                    }
+                }
+            }
 
         ],
         order: [[0, "asc"]],
@@ -221,7 +162,7 @@ jQuery(function () {
         initComplete: function () {
             var api = this.api();
             $(".filterhead", api.table().header()).each(function (i) {
-                if (i > 3 && i < 7) {
+                if (i > 3 && i < 8) {
                     var column = api.column(i);
                     var select = $(
                         '<select><option value="">الكل</option></select>'
@@ -259,149 +200,30 @@ jQuery(function () {
             });
         },
     });
-    
-    paymentsReviewTbl.on('order.dt search.dt', function () {
-        paymentsReviewTbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+    studentsReportTbl.on('order.dt search.dt', function () {
+        studentsReportTbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
             cell.innerHTML = i + 1;
         });
     }).draw();
 
 });
 
-
-
-
-
-window.popup = function () {
-    $('[data-toggle="popover"]').popover({
-        html: true,
-    });
-};
-
-window.showModal = function (callFrom = "edit", national_id, payment_id, name, amount) {
-
-    if (callFrom == "reject") {
-        $("#amountFormGroup").hide();
-        $("#acceptBtnModal").hide();
-        $("#rejectBtnModal").show();
-    } else {
-        $("#amountFormGroup").show();
-        $("#acceptBtnModal").show();
-        $("#rejectBtnModal").hide();
+function stringLevel(level) {
+    switch (level) {
+        case '1':
+            return "الاول"
+            break;
+        case '2':
+            return "الثاني"
+            break;
+        case '3':
+            return "الثالث"
+            break;
+        case '4':
+            return "الرابع"
+            break;
+        case '5':
+            return "الخامس"
+            break;
     }
-    window.national_id.value = national_id;
-    window.sname.value = name;
-    window.note.value = "";
-    window.payment_id = payment_id;
-    if (window.amount !== null) {
-        window.amount.value = amount;
-    }
-};
-
-window.sendStudentUpdate = function (decision) {
-    let national_id = window.national_id.value;
-    let amount = window.amount.value;
-    let payment_id = window.payment_id;
-    let note = window.note.value;
-
-    if (amount == "" || amount <= 0) {
-        amount = 0;
-    }
-    let form = {
-        national_id: national_id,
-        amount: amount,
-        decision: decision,
-        payment_id: payment_id,
-        note: note,
-    };
-
-    Swal.fire({
-        html: "<h4>جاري تحديث البيانات</h4>",
-        timerProgressBar: true,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-
-
-    axios.post(window.paymentWithNote, form)
-        .then((response) => {
-            if (document.getElementById(national_id) !== null) {
-                document.getElementById(national_id).remove();
-            }
-
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + response.data.message + "</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1000,
-            });
-            $("#editModal").modal("hide");
-        })
-        .catch((error) => {
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + error.response.data.message + "</h4>",
-                icon: "error",
-                showConfirmButton: true,
-            });
-        });
-
-    Swal.close();
-
-};
-
-window.okClicked = function (decision, national_id, payment_id, event) {
-    let row = event.currentTarget.parentNode.parentNode;
-    Swal.fire({
-        html: "<h4>جاري تحديث البيانات</h4>",
-        timerProgressBar: true,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-
-    var form = {
-        national_id: national_id,
-        payment_id: payment_id,
-        decision: decision
-    };
-
-    axios.post(window.paymentVerified, form)
-        .then((response) => {
-            row.remove();
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + response.data.message + "</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1000,
-            });
-            $("#editModal").modal("hide");
-        })
-        .catch((error) => {
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + error.response.data.message + "</h4>",
-                icon: "error",
-                showConfirmButton: true,
-            });
-        });
-
-    Swal.close();
-
-};
-window.showPdf = function (url, type) {
-    if (type == "pdf") {
-        $("#modalImage").hide();
-        $("#pdfIfreme").show();
-        $("#pdfIfreme").attr("src", "");
-        $("#pdfIfreme").attr("src", url);
-    } else {
-        $("#pdfIfreme").hide();
-        $("#modalImage").show();
-        $("#modalImage").attr("src", "");
-        $("#modalImage").attr("src", url);
-    }
-};
+}

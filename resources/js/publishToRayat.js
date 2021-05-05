@@ -1,81 +1,495 @@
-// window.publishStudentHours = function (national_id, event) {
-//     let row = event.currentTarget.parentNode.parentNode;
-//     axios.post(window.publishToRayat, {
-//         national_id: national_id,
-//         hours: document.getElementById('hours').value,
-//     })
-//         .then((response) => {
-//             console.log(response);
-//             row.remove();
-//             Swal.fire({
-//                 position: "center",
-//                 html: "<h4>"+response.data.message+"</h4>",
-//                 icon: "success",
-//                 showConfirmButton: false,
-//                 timer: 1000,
-//             });
-//         })
-//         .catch((error) => {
-//             Swal.fire({
-//                 position: "center",
-//                 html: "<h4>" + error.response.data.message + "</h4>",
-//                 icon: "error",
-//                 showConfirmButton: true,
-//             });
-//         });
-// }
 
 
-window.publishToRayatStore = function(national_id,order_id,event){
+jQuery(function () {
+    if (document.getElementById("publishToRayatTbl") != undefined && document.getElementById("publishToRayatTbl") != null) {
+        let publishToRayatTbl = $('#publishToRayatTbl').DataTable({
+            ajax: window.getStudentForRayatApi,
+            dataSrc: "data",
+            rowId: 'id',
+            columnDefs: [{
+                searchable: false,
+                orderable: false,
+                targets: 0
+            }],
+            columns: [
+                { data: null },
+                { data: "student.user.national_id" },
+                { data: "student.user.name", },
+                { data: "student.user.phone" },
+                { data: "student.program.name" },
+                { data: "student.department.name" },
+                { data: "student.major.name" },
+                {
+                    data: "id",
+                    className: "text-center",
+
+                },
+                {
+                    data: "requested_hours",
+                    className: "text-center",
+                    render: function (requested_hours, type, row) {
+                        return `<input type="number" min="1" max="${requested_hours}" class="p-0"
+                    name="requested_hours" id="requested_hours"
+                    value="${requested_hours}">`;
+                    }
+                },
+
+
+                {
+                    data: "student",
+                    className: "text-center",
+                    render: function (student, type, row) {
+                        return `<button class="btn btn-primary btn-sm px-3"
+                    onclick="publishToRayatStore('${row.student.user.national_id}','${row.id}',event)">تم</button>`;
+                    }
+
+                },
+
+
+            ],
+            order: [[0, "asc"]],
+            language: {
+                emptyTable: "ليست هناك بيانات متاحة في الجدول",
+                loadingRecords: "جارٍ التحميل...",
+                processing: "جارٍ التحميل...",
+                lengthMenu: "أظهر _MENU_ مدخلات",
+                zeroRecords: "لم يعثر على أية سجلات",
+                info: "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                infoEmpty: "يعرض 0 إلى 0 من أصل 0 سجل",
+                infoFiltered: "(منتقاة من مجموع _MAX_ مُدخل)",
+                search: "ابحث:",
+                paginate: {
+                    first: "الأول",
+                    previous: "السابق",
+                    next: "التالي",
+                    last: "الأخير",
+                },
+                aria: {
+                    sortAscending: ": تفعيل لترتيب العمود تصاعدياً",
+                    sortDescending: ": تفعيل لترتيب العمود تنازلياً",
+                },
+                select: {
+                    rows: {
+                        _: "%d قيمة محددة",
+                        0: "",
+                        1: "1 قيمة محددة",
+                    },
+                    1: "%d سطر محدد",
+                    _: "%d أسطر محددة",
+                    cells: {
+                        1: "1 خلية محددة",
+                        _: "%d خلايا محددة",
+                    },
+                    columns: {
+                        1: "1 عمود محدد",
+                        _: "%d أعمدة محددة",
+                    },
+                },
+                buttons: {
+                    print: "طباعة",
+                    copyKeys:
+                        "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
+                    copySuccess: {
+                        _: "%d قيمة نسخت",
+                        1: "1 قيمة نسخت",
+                    },
+                    pageLength: {
+                        "-1": "اظهار الكل",
+                        _: "إظهار %d أسطر",
+                    },
+                    collection: "مجموعة",
+                    copy: "نسخ",
+                    copyTitle: "نسخ إلى الحافظة",
+                    csv: "CSV",
+                    excel: "Excel",
+                    pdf: "PDF",
+                    colvis: "إظهار الأعمدة",
+                    colvisRestore: "إستعادة العرض",
+                },
+                autoFill: {
+                    cancel: "إلغاء",
+                    info: "مثال عن الملئ التلقائي",
+                    fill: "املأ جميع الحقول بـ <i>%d&lt;\\/i&gt;</i>",
+                    fillHorizontal: "تعبئة الحقول أفقيًا",
+                    fillVertical: "تعبئة الحقول عموديا",
+                },
+                searchBuilder: {
+                    add: "اضافة شرط",
+                    clearAll: "ازالة الكل",
+                    condition: "الشرط",
+                    data: "المعلومة",
+                    logicAnd: "و",
+                    logicOr: "أو",
+                    title: ["منشئ البحث"],
+                    value: "القيمة",
+                    conditions: {
+                        date: {
+                            after: "بعد",
+                            before: "قبل",
+                            between: "بين",
+                            empty: "فارغ",
+                            equals: "تساوي",
+                            not: "ليس",
+                            notBetween: "ليست بين",
+                            notEmpty: "ليست فارغة",
+                        },
+                        number: {
+                            between: "بين",
+                            empty: "فارغة",
+                            equals: "تساوي",
+                            gt: "أكبر من",
+                            gte: "أكبر وتساوي",
+                            lt: "أقل من",
+                            lte: "أقل وتساوي",
+                            not: "ليست",
+                            notBetween: "ليست بين",
+                            notEmpty: "ليست فارغة",
+                        },
+                        string: {
+                            contains: "يحتوي",
+                            empty: "فاغ",
+                            endsWith: "ينتهي ب",
+                            equals: "يساوي",
+                            not: "ليست",
+                            notEmpty: "ليست فارغة",
+                            startsWith: " تبدأ بـ ",
+                        },
+                    },
+                    button: {
+                        0: "فلاتر البحث",
+                        _: "فلاتر البحث (%d)",
+                    },
+                    deleteTitle: "حذف فلاتر",
+                },
+                searchPanes: {
+                    clearMessage: "ازالة الكل",
+                    collapse: {
+                        0: "بحث",
+                        _: "بحث (%d)",
+                    },
+                    count: "عدد",
+                    countFiltered: "عدد المفلتر",
+                    loadMessage: "جارِ التحميل ...",
+                    title: "الفلاتر النشطة",
+                },
+                searchPlaceholder: "ابحث ...",
+            },
+            initComplete: function () {
+                var api = this.api();
+                $(".filterhead", api.table().header()).each(function (i) {
+                    if (i > 3 && i < 7) {
+                        var column = api.column(i);
+                        var select = $(
+                            '<select><option value="">الكل</option></select>'
+                        )
+                            .appendTo($(this).empty())
+                            .on("change", function () {
+                                // FIXME: error dataTable undefined
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(
+                                        val ? "^" + val + "$" : "",
+                                        true,
+                                        false
+                                    )
+                                    .draw();
+                            });
+
+                        column
+                            .data()
+                            .unique()
+                            .sort()
+                            .each(function (d, j) {
+                                select.append(
+                                    '<option value="' +
+                                    d +
+                                    '">' +
+                                    d +
+                                    "</option>"
+                                );
+                            });
+                    }
+                });
+            },
+        });
+        publishToRayatTbl.on('order.dt search.dt', function () {
+            publishToRayatTbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+    }
+
+    if (document.getElementById("rayatReportTbl") != undefined && document.getElementById("rayatReportTbl") != null) {
+        let rayatReportTbl = $('#rayatReportTbl').DataTable({
+            ajax: window.rayatReportApi,
+            dataSrc: "data",
+            rowId: 'id',
+            columnDefs: [{
+                searchable: false,
+                orderable: false,
+                targets: 0
+            }],
+            columns: [
+                { data: null },
+                { data: "national_id" },
+                { data: "name", },
+                { data: "phone" },
+                { data: "student.program.name" },
+                { data: "student.department.name" },
+                { data: "student.major.name" },
+                {
+                    data: "student.credit_hours",
+                    className: "text-center",
+                },
+                {
+                    data: "student.credit_hours",
+                    className: "text-center",
+                    render: function (student, type, row) {
+                        return `<p class="text-success">مسجل في رايات</p>`
+                    }
+
+                },
+
+
+            ],
+            order: [[0, "asc"]],
+            language: {
+                emptyTable: "ليست هناك بيانات متاحة في الجدول",
+                loadingRecords: "جارٍ التحميل...",
+                processing: "جارٍ التحميل...",
+                lengthMenu: "أظهر _MENU_ مدخلات",
+                zeroRecords: "لم يعثر على أية سجلات",
+                info: "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                infoEmpty: "يعرض 0 إلى 0 من أصل 0 سجل",
+                infoFiltered: "(منتقاة من مجموع _MAX_ مُدخل)",
+                search: "ابحث:",
+                paginate: {
+                    first: "الأول",
+                    previous: "السابق",
+                    next: "التالي",
+                    last: "الأخير",
+                },
+                aria: {
+                    sortAscending: ": تفعيل لترتيب العمود تصاعدياً",
+                    sortDescending: ": تفعيل لترتيب العمود تنازلياً",
+                },
+                select: {
+                    rows: {
+                        _: "%d قيمة محددة",
+                        0: "",
+                        1: "1 قيمة محددة",
+                    },
+                    1: "%d سطر محدد",
+                    _: "%d أسطر محددة",
+                    cells: {
+                        1: "1 خلية محددة",
+                        _: "%d خلايا محددة",
+                    },
+                    columns: {
+                        1: "1 عمود محدد",
+                        _: "%d أعمدة محددة",
+                    },
+                },
+                buttons: {
+                    print: "طباعة",
+                    copyKeys:
+                        "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
+                    copySuccess: {
+                        _: "%d قيمة نسخت",
+                        1: "1 قيمة نسخت",
+                    },
+                    pageLength: {
+                        "-1": "اظهار الكل",
+                        _: "إظهار %d أسطر",
+                    },
+                    collection: "مجموعة",
+                    copy: "نسخ",
+                    copyTitle: "نسخ إلى الحافظة",
+                    csv: "CSV",
+                    excel: "Excel",
+                    pdf: "PDF",
+                    colvis: "إظهار الأعمدة",
+                    colvisRestore: "إستعادة العرض",
+                },
+                autoFill: {
+                    cancel: "إلغاء",
+                    info: "مثال عن الملئ التلقائي",
+                    fill: "املأ جميع الحقول بـ <i>%d&lt;\\/i&gt;</i>",
+                    fillHorizontal: "تعبئة الحقول أفقيًا",
+                    fillVertical: "تعبئة الحقول عموديا",
+                },
+                searchBuilder: {
+                    add: "اضافة شرط",
+                    clearAll: "ازالة الكل",
+                    condition: "الشرط",
+                    data: "المعلومة",
+                    logicAnd: "و",
+                    logicOr: "أو",
+                    title: ["منشئ البحث"],
+                    value: "القيمة",
+                    conditions: {
+                        date: {
+                            after: "بعد",
+                            before: "قبل",
+                            between: "بين",
+                            empty: "فارغ",
+                            equals: "تساوي",
+                            not: "ليس",
+                            notBetween: "ليست بين",
+                            notEmpty: "ليست فارغة",
+                        },
+                        number: {
+                            between: "بين",
+                            empty: "فارغة",
+                            equals: "تساوي",
+                            gt: "أكبر من",
+                            gte: "أكبر وتساوي",
+                            lt: "أقل من",
+                            lte: "أقل وتساوي",
+                            not: "ليست",
+                            notBetween: "ليست بين",
+                            notEmpty: "ليست فارغة",
+                        },
+                        string: {
+                            contains: "يحتوي",
+                            empty: "فاغ",
+                            endsWith: "ينتهي ب",
+                            equals: "يساوي",
+                            not: "ليست",
+                            notEmpty: "ليست فارغة",
+                            startsWith: " تبدأ بـ ",
+                        },
+                    },
+                    button: {
+                        0: "فلاتر البحث",
+                        _: "فلاتر البحث (%d)",
+                    },
+                    deleteTitle: "حذف فلاتر",
+                },
+                searchPanes: {
+                    clearMessage: "ازالة الكل",
+                    collapse: {
+                        0: "بحث",
+                        _: "بحث (%d)",
+                    },
+                    count: "عدد",
+                    countFiltered: "عدد المفلتر",
+                    loadMessage: "جارِ التحميل ...",
+                    title: "الفلاتر النشطة",
+                },
+                searchPlaceholder: "ابحث ...",
+            },
+            initComplete: function () {
+                var api = this.api();
+                $(".filterhead", api.table().header()).each(function (i) {
+                    if (i > 3 && i < 7) {
+                        var column = api.column(i);
+                        var select = $(
+                            '<select><option value="">الكل</option></select>'
+                        )
+                            .appendTo($(this).empty())
+                            .on("change", function () {
+                                // FIXME: error dataTable undefined
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(
+                                        val ? "^" + val + "$" : "",
+                                        true,
+                                        false
+                                    )
+                                    .draw();
+                            });
+
+                        column
+                            .data()
+                            .unique()
+                            .sort()
+                            .each(function (d, j) {
+                                select.append(
+                                    '<option value="' +
+                                    d +
+                                    '">' +
+                                    d +
+                                    "</option>"
+                                );
+                            });
+                    }
+                });
+            },
+        });
+        rayatReportTbl.on('order.dt search.dt', function () {
+            rayatReportTbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+    }
+});
+
+
+
+
+
+
+
+
+
+
+window.publishToRayatStore = function (national_id, order_id, event) {
     let row = event.currentTarget.parentNode.parentNode;
     let requested_hours = document.getElementById('requested_hours').value;
 
-let form = {
-    national_id:national_id,
-    requested_hours:requested_hours,
-    order_id:order_id
+    let form = {
+        national_id: national_id,
+        requested_hours: requested_hours,
+        order_id: order_id
+    }
+
+    axios.post(window.publishToRayat, form)
+        .then((response) => {
+            row.remove();
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + response.data.message + "</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1000,
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
 }
 
-axios.post(window.publishToRayat, form)
-    .then((response) => {
-        row.remove();
-        Swal.fire({
-            position: "center",
-            html: "<h4>"+response.data.message+"</h4>",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 1000,
-        });
-    })
-    .catch((error) => {
-        console.log(error);
-        Swal.fire({
-            position: "center",
-            html: "<h4>" + error.response.data.message + "</h4>",
-            icon: "error",
-            showConfirmButton: true,
-        });
-    });
-}
-
-window.changeHoursInputs = function(){
+window.changeHoursInputs = function () {
     let rows = document.getElementsByTagName("tr");
-    if(rows == null || rows == undefined || rows.length <= 4){
+    if (rows == null || rows == undefined || rows.length <= 3) {
         return;
     }
     let counter = 0;
     let allHours = document.getElementById("allHoursValue").value;
-    for(var i=3;i<rows.length;i++){
-        if(allHours <= rows[i].children[8].children[0].max){
+    for (var i = 3; i < rows.length; i++) {
+        if (allHours <= rows[i].children[8].children[0].max) {
             rows[i].children[8].children[0].value = allHours;
-        }else{
+        } else {
             counter++;
         }
-        if(counter > 0){
+        if (counter > 0) {
             Swal.fire({
                 position: "center",
                 // html: "<h6 dir='rtl'>  " +counter+" متدربين لم يتم تغيرر ساعاتهم بسبب تجاوز الرفم المطلب للحد الاعلى </h6>",
-                html: '<h6 dir="rtl">لم يتم تغيير الساعات لعدد ('+counter+') متدربين بسبب تجاوز الحد الاعلى</h6>',
+                html: '<h6 dir="rtl">لم يتم تغيير الساعات لعدد (' + counter + ') متدربين بسبب تجاوز الحد الاعلى</h6>',
                 icon: "warning",
                 showConfirmButton: true,
             });

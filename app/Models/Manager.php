@@ -27,7 +27,7 @@ class Manager extends Model
             }
             return false;
         } catch (Exception $e) {
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
             return false;
         }
 
@@ -75,7 +75,7 @@ class Manager extends Model
             }
             return $programs;
         } catch (Exception $e) {
-           Log::error($e->getMessage().$e);
+           Log::error($e->getMessage().' '.$e);
         }
     }
 }
