@@ -29,8 +29,11 @@ class PaymentController extends Controller
         $user = Auth::user();
         $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
         $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)->count();
+        $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
         if ($waitingPaymentssCount > 0) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+        }elseif ($isHasActiveRefund) {
+         return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
         }
         return view("student.wallet.payment");
     }

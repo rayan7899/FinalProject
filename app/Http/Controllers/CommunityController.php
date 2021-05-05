@@ -993,8 +993,8 @@ class CommunityController extends Controller
     public function refundOrdersForm()
     {
         try {
-            $orders = RefundOrder::where('accepted', null)->get();
-            return view('manager.community.refundOrders')->with(compact('orders'));
+            $refunds = RefundOrder::where('accepted', null)->get();
+            return view('manager.community.refundOrders')->with(compact('refunds'));
         } catch (Exception $e) {
             Log::error($e);
             return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
@@ -1006,13 +1006,16 @@ class CommunityController extends Controller
         $requestData = $this->validate($request, [
             "refund_id"         => "required|numeric",
             "national_id"       => "required|numeric",
-            "accepted"          => "required"
+            "note"              => "nullable|string",
+            "range"             => "nullable|in:1,0.6,0",
+            "accepted"          => "required|boolean"
         ]);
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
-            $user = User::where('national_id', $requestData['national_id'])->first();
-            switch ($refund->reason) {
+            // return response(['message'=>$refund->student->orders()->orderBy('created_at', 'asc')->get(), 200]);
+            
+            switch($refund->reason){
                 case 'drop-out':
                     $reason = 'انسحاب';
                     break;
@@ -1025,27 +1028,46 @@ class CommunityController extends Controller
                 default:
                     $reason = 'لا يوجد';
             }
-
             DB::beginTransaction();
-            if ($requestData['accepted']) {
-                $transaction = $user->student->transactions()->create([
-                    "refund_id"     => $refund->id,
-                    "amount"        => $refund->amount,
-                    "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                    "type"          => "refund",
-                    "by_user"       => Auth::user()->id,
-                ]);
-                $refund->update([
-                    'transaction_id'    => $transaction->id,
-                    'accepted'          => $requestData['accepted']
-                ]);
-                $refund->student->wallet -= $refund->amount;
-                $refund->student->save();
-            } else {
-                $refund->update([
-                    'accepted'          => $requestData['accepted']
-                ]);
-            }
+                $amount = 0;
+                if($requestData['accepted'] && $requestData['range'] != 0){
+                    if($refund->reason == 'drop-out' || $refund->reason == 'exception'){
+                        $amount = $requestData['range'] == '1' ? $refund->amount - 300 : $refund->amount * 0.6;
+                        $transaction = $refund->student->transactions()->create([
+                            "refund_id"     => $refund->id,
+                            "amount"        => $amount,
+                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                            "type"          => "refund-to-wallet",
+                            "by_user"       => Auth::user()->id,
+                        ]);
+                        $refund->student->wallet += $amount;
+                        $refund->student->credit_hours = 0;
+                        $refund->student->save();
+                    }else{
+                        $amount = $refund->amount;
+                        $transaction = $refund->student->transactions()->create([
+                            "refund_id"     => $refund->id,
+                            "amount"        => $amount,
+                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                            "type"          => "refund-to-bank",
+                            "by_user"       => Auth::user()->id,
+                        ]);
+                        $refund->student->wallet -= $amount;
+                        $refund->student->save();
+                    }
+
+                    $refund->update([
+                        'transaction_id'    => $transaction->id,
+                        'manager_note'      => $requestData['note'],
+                        'amount'            => $amount,
+                        'accepted'          => true
+                    ]);
+                }else{
+                    $refund->update([
+                        'manager_note'      => $requestData['note'],
+                        'accepted'          => false
+                    ]);
+                }
             DB::commit();
             return response(['message' => 'تمت معالجة طلب الاسترداد بنجاح'], 200);
         } catch (Exception $e) {

@@ -280,18 +280,21 @@
                                             @endphp
                                             <td class="text-danger"> خصم (اضافة مقررات)</td>
                                             <td>{{ $transaction->order->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'recharge')
+                                        @elseif ($transaction->type == 'recharge')
                                             <td class="text-success"> اضافة (شحن المحفظة) </td>
                                             <td>{{ $transaction->payment->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'refund')
-                                            <td class="text-danger"> خصم (استرداد المبلغ) </td>
+                                        @elseif ($transaction->type == 'refund-to-bank')
+                                            <td class="text-danger"> خصم (استرداد الى البنك) </td>
                                             <td>{{ $transaction->refund->id ?? 'Error' }}</td>
-                                        @endif
-                                        @if ($transaction->type == 'manager_recharge')
+                                        @elseif ($transaction->type == 'refund-to-wallet')
+                                            <td class="text-success"> اضافة (استرداد الى المحفظة) </td>
+                                            <td>{{ $transaction->refund->id ?? 'Error' }}</td>
+                                        @elseif ($transaction->type == 'manager_recharge')
                                             <td class="text-success"> اضافة (من الادارة) </td>
                                             <td>لا يوجد</td>
+                                        @else
+                                            <td>لا يوجد</td>
+                                            <td>{{$transaction->refund_id ?? 'Error'}}</td>
                                         @endif
                                         <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
                                         <td class="text-right">
@@ -471,7 +474,7 @@
                                             <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                         @else
                                             @if ($order->transaction_id == null)
-                                                @if ($hasEnoughMoney == true)
+                                                @if ($hasEnoughMoney == true || $user->student->traineeState == 'privateState')
                                                     <td>قيد المراجعة</td>
                                                     <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                                 @else
@@ -512,11 +515,12 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">رقم الطلب</th>
-                                    <th class="text-center">المبلغ</th>
+                                    <th class="text-center">المبلغ المستحق</th>
                                     <th class="text-center">حالة الطلب</th>
                                     <th class="text-center">السبب</th>
                                     <th class="text-center">تاريخ الطلب</th>
-                                    <th>الملاحظات</th>
+                                    <th class="text-center">ملاحظة المتدرب</th>
+                                    <th class="text-center">ملاحظة المشرف</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -526,7 +530,11 @@
                                     @endphp
                                     <tr class="text-center">
                                         <td>{{ $refund->id ?? 'Error' }}</td>
-                                        <td>{{ $refund->amount ?? 'Error' }}</td>
+                                        @if ($refund->accepted == null)
+                                            <td>قيد المراجعة</td>
+                                        @else
+                                            <td>{{ $refund->amount ?? 'Error' }}</td>
+                                        @endif
                                         @if ($refund->accepted == null)
                                             <td>قيد المراجعة</td>
                                         @elseif($refund->accepted)
@@ -548,7 +556,8 @@
                                                 <td>لا يوجد</td>
                                         @endswitch
                                         <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }}</td>
-                                        <td>{{ $refund->note ?? 'لا يوجد' }}</td>
+                                        <td class="text-right">{{ $refund->student_note ?? 'لا يوجد'}}</td>
+                                        <td class="text-right">{{ $refund->manager_note ?? 'لا يوجد'}}</td>
                                     </tr>
                                     @empty
 
