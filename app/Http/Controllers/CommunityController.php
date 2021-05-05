@@ -995,13 +995,13 @@ class CommunityController extends Controller
             "refund_id"         => "required|numeric",
             "national_id"       => "required|numeric",
             "note"              => "nullable|string",
-            "range"             => "nullable|in:1,0.4,0",
-            "accepted"          => "required"
+            "range"             => "nullable|in:1,0.6,0",
+            "accepted"          => "required|boolean"
         ]);
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
-            $user = User::where('national_id', $requestData['national_id'])->first();
+            // return response(['message'=>$refund->student->orders()->orderBy('created_at', 'asc')->get(), 200]);
             
             switch($refund->reason){
                 case 'drop-out':
@@ -1016,12 +1016,11 @@ class CommunityController extends Controller
                 default:
                     $reason = 'لا يوجد';
             }
-            
             DB::beginTransaction();
                 $amount = 0;
-                if($requestData['accepted']){
-                    if($refund->reason == 'drop-out'){
-                        $amount = $requestData['range'] == 0 ? 0 : $refund->amount * $requestData['range'] - 300;
+                if($requestData['accepted'] && $requestData['range'] != 0){
+                    if($refund->reason == 'drop-out' || $refund->reason == 'exception'){
+                        $amount = $requestData['range'] == '1' ? $refund->amount - 300 : $refund->amount * 0.6;
                         $transaction = $refund->student->transactions()->create([
                             "refund_id"     => $refund->id,
                             "amount"        => $amount,
@@ -1049,12 +1048,12 @@ class CommunityController extends Controller
                         'transaction_id'    => $transaction->id,
                         'manager_note'      => $requestData['note'],
                         'amount'            => $amount,
-                        'accepted'          => $requestData['accepted']
+                        'accepted'          => true
                     ]);
                 }else{
                     $refund->update([
                         'manager_note'      => $requestData['note'],
-                        'accepted'          => $requestData['accepted']
+                        'accepted'          => false
                     ]);
                 }
             DB::commit();

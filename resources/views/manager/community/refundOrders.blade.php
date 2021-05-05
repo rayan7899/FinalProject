@@ -51,7 +51,7 @@
                             <select required class="form-control" name="range" id="range">
                               <option disabled>حدد الفترة</option>
                               <option value="1">قبل بداية التدريب</option>
-                              <option value="0.4">قبل الاسبوع الرابع</option>
+                              <option value="0.6">قبل الاسبوع الرابع</option>
                               <option value="0">انتهت فترة الاسترداد</option>
                             </select>
                         </div>
@@ -85,7 +85,7 @@
                     <form class="row">
                         <div class="form-group col-lg-12">
                             <label for="" class="col-form-label">ملاحظات</label>
-                            <textarea class="form-control" id="rejectNote"></textarea>
+                            <textarea class="form-control" id="rejectNote">انتهت فترة الاسترداد</textarea>
                         </div>
                     </form>
                 </div>

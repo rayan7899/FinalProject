@@ -18,8 +18,8 @@ class RefundOrderController extends Controller
     public function form()
     {
         $user = Auth::user();
-        if($user->student->wallet <= 0){
-            return back()->with(['error'=>'لا يوجد رصيد لاسترداده']);
+        if ($user->student->credit_hours <= 0 && $user->student->wallet <= 0) {
+            return back()->with(['error'=>'لا يوجد ساعات معتمدة ولا رصيد لاسترداده']);
         }
         $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
         $isHasActivePayment = $user->student->payments->where('accepted', null)->first() !== null;
@@ -41,17 +41,22 @@ class RefundOrderController extends Controller
     {
         $requestData = $this->validate($request, [
             "reason"           => "required|in:drop-out,exception,graduate",
-            "IBAN"             => "required|digits:22",
-            "bank"             => "required|string",
-            "note"               => "string|nullable"
-         ], [
+            "IBAN"             => "required_if:reason,graduate|digits:22",
+            "bank"             => "required_if:reason,graduate|string",
+            "note"             => "string|nullable"
+        ], [
             'IBAN.digits' => 'رقم الايبان غير صحيح',
+            'IBAN.required_if' => 'رقم الايبان مطلوب',
+            'bank.required_if' => 'اسم البنك مطلوب',
             'reason.required' => 'يجبب تحديد سبب الاسترداد',
             'reason.in' => 'سبب الاسترداد غير معروف',
-         ]);
-
+            ]);
+            
         try {
             $user = Auth::user();
+            if ($user->student->wallet <= 0 && $requestData['reason'] == 'graduate') {
+                return back()->with(['error' => 'خطآ غير معروف']);
+            }
             switch ($user->student->traineeState) {
                 case 'privateState':
                     $discount = 0; // = %100 discount
@@ -69,12 +74,11 @@ class RefundOrderController extends Controller
             $creditHoursCost = $user->student->credit_hours*$user->student->program->hourPrice*$discount;
 
             DB::beginTransaction();
-                $user = Auth::user();
                 $user->student->refunds()->create([
-                    'amount'    => $requestData['reason'] == 'drop-out' ? $creditHoursCost : $user->student->wallet,
+                    'amount'    => $requestData['reason'] == 'graduate' ? $user->student->wallet : $creditHoursCost,
                     'reason'    => $requestData['reason'],
-                    'IBAN'  => $requestData['IBAN'],
-                    'bank'  => $requestData['bank'],
+                    'IBAN'  => $requestData['IBAN'] ?? null,
+                    'bank'  => $requestData['bank'] ?? null,
                     'student_note'  => $requestData['note'],
                 ]);
             DB::commit();
@@ -83,7 +87,7 @@ class RefundOrderController extends Controller
         } catch (\Throwable $th) {
             Log::error($th);
             DB::rollBack();
-            return back()->with(['error' => $th]);
+            return back()->with(['error' => 'خطآ غير معروف']);
         }
     }
 }

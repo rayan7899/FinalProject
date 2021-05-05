@@ -305,7 +305,7 @@
                                             <td>{{ $transaction->refund->id ?? 'Error' }}</td>
                                         @elseif ($transaction->type == 'refund-to-wallet')
                                             <td class="text-success"> اضافة (استرداد الى المحفظة) </td>
-                                            <td>لا يوجد</td>
+                                            <td>{{ $transaction->refund->id ?? 'Error' }}</td>
                                         @elseif ($transaction->type == 'manager_recharge')
                                             <td class="text-success"> اضافة (من الادارة) </td>
                                             <td>لا يوجد</td>
