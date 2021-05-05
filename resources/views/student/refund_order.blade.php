@@ -23,11 +23,28 @@
                 @csrf
                 <div class="row">
                     <!-- amount -->
+                    @php
+                        switch ($user->student->traineeState) {
+                            case 'privateState':
+                                $discount = 0; // = %100 discount
+                                break;
+                            case 'employee':
+                                $discount = 0.25; // = %75 discount
+                                break;
+                            case 'employeeSon':
+                                $discount = 0.5; // = %50 discount
+                                break;
+                            default:
+                                $discount = 1; // = %0 discount
+                        }
+                        
+                        $creditHoursCost = $user->student->credit_hours*$user->student->program->hourPrice*$discount;
+                    @endphp
                     <div class="form-group col-lg-6">
                         <label for="amount">المبلغ</label>
                         <input required disabled="true" type="text" class="form-control" id="amount" name="amount"
-                            value="{{ $user->student->wallet }} ">
-                        <span class="text-danger">*سيتم خصم ٣٠٠ ريال من المبغ مقابل الأتعاب الادارية</span>
+                            value="{{ $creditHoursCost }} ">
+                        <span class="text-danger">*سيتم خصم ٣٠٠ ريال من المبغ مقابل المصاريف الادارية</span>
                     </div>
 
                     <!-- reason -->
@@ -43,22 +60,25 @@
                         </div>
                     </div>
 
-                    <!-- IBAN -->
-                    <div class="form-group col-lg-6" dir="ltr">
-                        <label for="IBAN">الآيبان</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">SA</span>
+                    {{-- bank info --}}
+                    <div class="col-12 row" id="bankInfo">
+                        <!-- IBAN -->
+                        <div class="form-group col-lg-6" dir="ltr">
+                            <label for="IBAN">الآيبان</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">SA</span>
+                                </div>
+                                <input type="text" class="form-control" id="IBAN" name="IBAN">
                             </div>
-                            <input required type="text" class="form-control" id="IBAN" name="IBAN">
                         </div>
-                    </div>
-
-                    <!-- bank -->
-                    <div class="form-group col-lg-6">
-                        <div class="form-group">
-                            <label for="bank">البنك</label>
-                            <input required type="text" class="form-control" id="bank" name="bank">
+    
+                        <!-- bank -->
+                        <div class="form-group col-lg-6">
+                            <div class="form-group">
+                                <label for="bank">البنك</label>
+                                <input type="text" class="form-control" id="bank" name="bank">
+                            </div>
                         </div>
                     </div>
 

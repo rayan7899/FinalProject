@@ -8,6 +8,7 @@ window.accept = function () {
         accepted: true,
     })
     .then((response) => {
+        console.log(response);
         if (row !== null) {
             row.remove();
         }
@@ -61,6 +62,20 @@ window.reject = function () {
         });
     });
 }
+
+// window.toggleBankInfo = function () {
+//     if (window.reason.value == 'graduate') {
+//         // window.bankInfo.show;
+//         $('#IBAN').prop('disabled', false);
+//         $('#bank').prop('disabled', false);
+//         $('#bankInfo').show();
+//     }else{
+//         // window.bankInfo.hide;
+//         $('#IBAN').prop('disabled', true);
+//         $('#bank').prop('disabled', true);
+//         $('#bankInfo').hide();
+//     }
+// }
 
 window.fillModal = function (national_id, order_id, name, amount) {
     window.national_id.value = national_id;
