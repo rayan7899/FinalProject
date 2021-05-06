@@ -160,6 +160,7 @@ jQuery(function () {
             searchPlaceholder: "ابحث ...",
         },
         initComplete: function () {
+            Swal.close();
             var api = this.api();
             $(".filterhead", api.table().header()).each(function (i) {
                 if (i > 3 && i < 8) {

@@ -19,7 +19,7 @@
         @endif
 
         <div class="table-responsive p-2 bg-white rounded border">
-            <table onloadeddata="window.changeHoursInputs()" id="publishToRayatTbl" class="table nowrap display cell-border">
+            <table id="publishToRayatTbl" class="table nowrap display cell-border">
 
                 <thead>
                     <tr>
@@ -67,7 +67,24 @@
         <script>
             var publishToRayat = "{{$type == 'community' ? route('publishToRayatStoreCommunity') : route('publishToRayatStoreAffairs')}}"
             var getStudentForRayatApi = "{{$type == 'community' ? route('getStudentForRayatCommunityApi',['type' => $type]) : route('getStudentForRayatAffairsApi',['type' => $type])}}"
-
+            
+            window.addEventListener('DOMContentLoaded', (event) => {
+                window.changeHoursInputs();
+                Swal.fire({
+                    html: "<h4>جاري جلب البيانات</h4>",
+                    timerProgressBar: true,
+                    showClass: {
+                        popup: '',
+                        icon: ''
+                    },
+                    hideClass: {
+                        popup: '',
+                    },
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+            });
         </script>
 
     </div>

@@ -15,9 +15,8 @@ class CreateStudentsTable extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-
-            $table->integer('birthdate')->nullable();
             $table->string('rayat_id')->unique()->nullable();
+            $table->integer('birthdate')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('program_id');
             $table->unsignedBigInteger('department_id');
@@ -30,10 +29,9 @@ class CreateStudentsTable extends Migration
             $table->boolean('student_docs_verified')->default(false); // verified degree , identity documents.
             $table->string('has_imported_docs'); 
             $table->boolean('final_accepted')->default(false);
-            $table->boolean('published')->default(false); // published to rayat
             $table->double('wallet')->default(0);
+            $table->boolean('walletUpdated')->default(false);
             $table->string('traineeState')->default('trainee');
-            $table->text('note')->nullable();
             $table->timestamps();
             $table->foreign('program_id')->references('id')->on('programs');
             $table->foreign('department_id')->references('id')->on('departments');

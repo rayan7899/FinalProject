@@ -134,6 +134,10 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     // Old users
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
+    //Update Students wallet
+    Route::get('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletForm'])->name('UpdateStudentsWalletForm');
+    Route::post('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletStore'])->name('UpdateStudentsWalletStore');
+
     // //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
     Route::get('/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormAffairs');
     Route::get('api/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportAffairsApi');

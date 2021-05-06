@@ -42,7 +42,24 @@
         </div>
     </div>
     <script>
-        var studentsReportJson = "{{$type == 'community' ? route('studentsReportCommunityJson',['type' => 'new']) : route('studentsReportAffairsJson',['type' => 'new'])}}"
+        var studentsReportJson =
+            "{{ $type == 'community' ? route('studentsReportCommunityJson', ['type' => 'new']) : route('studentsReportAffairsJson', ['type' => 'new']) }}"
+        window.addEventListener('DOMContentLoaded', (event) => {
+            Swal.fire({
+                html: "<h4>جاري جلب البيانات</h4>",
+                timerProgressBar: true,
+                showClass: {
+                    popup: '',
+                    icon: ''
+                },
+                hideClass: {
+                    popup: '',
+                },
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        });
 
     </script>
 @stop

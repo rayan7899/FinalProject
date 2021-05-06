@@ -172,6 +172,8 @@
                                                         مستجدين</a>
                                                     <a class="dropdown-item" href="{{ route('OldForm') }}">
                                                         اضافة اكسل مستمرين </a>
+                                                        <a class="dropdown-item" href="{{ route('UpdateStudentsWalletForm') }}">
+                                                            اضافة الفائض / العجز للمستمرين </a>
                                                     {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a> --}}
                                                     <a class="dropdown-item"
                                                         href="{{ route('coursesPerLevel') }}">الجداول المقترحة</a>

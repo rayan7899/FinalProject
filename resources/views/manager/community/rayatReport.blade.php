@@ -20,7 +20,7 @@
                 <thead>
                     <tr>
                         <p class="text-center">
-                            تقرير رايات 
+                            تقرير رايات
                         </p>
 
                         <th>#</th>
@@ -68,7 +68,25 @@
         </div>
     </div>
     <script>
-            var rayatReportApi = "{{$type == 'community' ? route('rayatReportCommunityApi',['type' => $type]) : route('rayatReportAffairsApi',['type' => $type])}}"
+        var rayatReportApi =
+            "{{ $type == 'community' ? route('rayatReportCommunityApi', ['type' => $type]) : route('rayatReportAffairsApi', ['type' => $type]) }}"
+        window.addEventListener('DOMContentLoaded', (event) => {
+            window.changeHoursInputs();
+            Swal.fire({
+                html: "<h4>جاري جلب البيانات</h4>",
+                timerProgressBar: true,
+                showClass: {
+                    popup: '',
+                    icon: ''
+                },
+                hideClass: {
+                    popup: '',
+                },
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        });
 
     </script>
 @stop

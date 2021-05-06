@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
 use App\Imports\OldUsersImport;
+use App\Imports\UpdateStudentsWallet;
+use App\Imports\UpdateWalletImport;
 use App\Models\Department;
 use App\Models\Program;
 use Exception;
@@ -82,5 +84,23 @@ class ExcelController extends Controller
     public function exportOldUsers()
     {
     }
+
+    function updateStudentsWalletForm()
+    {
+        return view('excel.updateStudentsWallet');
+    }
+
+    function updateStudentsWalletStore(Request $request)
+    {
+        try{
+            Excel::import(new UpdateStudentsWallet(),  $request->file('excel_file'));
+        }catch(Exception $e){
+            Log::error($e->getMessage().' '.$e);
+            return back()->with('error',"حدث خطأ غير معروف");
+        }
+        return back();
+    }
+
+
 
 }

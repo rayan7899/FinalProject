@@ -108,7 +108,7 @@ class MajorSeeder extends Seeder
 
     "تقنية ادارية"  =>  [
       [
-        'name' => "إدارة مكتبية",
+        'name' => "ادارة مكتبية",
         'hours' => 16
       ],
       [

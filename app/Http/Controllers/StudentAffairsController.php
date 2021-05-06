@@ -56,6 +56,10 @@ class StudentAffairsController extends Controller
                 "name" => "اضافة اكسل مستمرين",
                 "url" => route("OldForm")
             ],
+            (object) [
+                "name" => "اضافة الفائض / العجز للمستمرين",
+                "url" => route("UpdateStudentsWalletForm")
+            ],
 
             // (object) [
             //     "name" => "شحن محفظة متدرب",

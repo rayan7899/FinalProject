@@ -175,6 +175,7 @@ jQuery(function () {
                 searchPlaceholder: "ابحث ...",
             },
             initComplete: function () {
+                Swal.close();
                 var api = this.api();
                 $(".filterhead", api.table().header()).each(function (i) {
                     if (i > 3 && i < 7) {
@@ -221,6 +222,12 @@ jQuery(function () {
             });
         }).draw();
     }
+
+
+
+
+
+    
 
     if (document.getElementById("rayatReportTbl") != undefined && document.getElementById("rayatReportTbl") != null) {
         let rayatReportTbl = $('#rayatReportTbl').DataTable({
@@ -383,6 +390,7 @@ jQuery(function () {
                 searchPlaceholder: "ابحث ...",
             },
             initComplete: function () {
+            Swal.close();
                 var api = this.api();
                 $(".filterhead", api.table().header()).each(function (i) {
                     if (i > 3 && i < 7) {
