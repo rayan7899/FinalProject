@@ -24,4 +24,9 @@ class Transaction extends Model
     {
         return $this->hasOne(RefundOrder::class);
     }
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

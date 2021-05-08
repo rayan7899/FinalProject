@@ -294,7 +294,7 @@
                                             <td>لا يوجد</td>
                                         @else
                                             <td>لا يوجد</td>
-                                            <td>{{$transaction->refund_id ?? 'Error'}}</td>
+                                            <td>{{$transaction->refund_order_id ?? 'Error'}}</td>
                                         @endif
                                         <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
                                         <td class="text-right">

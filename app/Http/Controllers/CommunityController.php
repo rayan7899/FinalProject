@@ -85,6 +85,10 @@ class CommunityController extends Controller
                 "name" => "طلبات الاسترداد",
                 "url" => route("refundOrdersForm")
             ],
+            (object) [
+                "name" => "تقرير طلبات الاسترداد",
+                "url" => route("refundOrdersReport")
+            ],
             // (object) [
             //     "name" => "المتدربين المدققة ايصالاتهم",
             //     "url" => route("CheckedStudents")
@@ -278,7 +282,7 @@ class CommunityController extends Controller
                     "amount"        => $reviewedPayment["amount"],
                     "note"          => $reviewedPayment["note"],
                     "type"          => "recharge",
-                    "by_user"       => Auth::user()->id,
+                    "manager_id"       => Auth::user()->id,
                 ]);
                 $payment->update([
                     "transaction_id" => $transaction->id,
@@ -331,7 +335,7 @@ class CommunityController extends Controller
                     "payment_id"    => $payment->id,
                     "amount"    => $payment->amount,
                     "type"    => "recharge",
-                    "by_user"    => Auth::user()->id,
+                    "manager_id"    => Auth::user()->id,
                 ]);
                 $payment->update([
                     "transaction_id" => $transaction->id,
@@ -514,7 +518,7 @@ class CommunityController extends Controller
                 "order_id"    => $order->id,
                 "amount"        => $amount,
                 "type"          => "deduction",
-                "by_user"       => Auth::user()->id,
+                "manager_id"       => Auth::user()->id,
             ]);
 
             $order->update([
@@ -920,7 +924,7 @@ class CommunityController extends Controller
                 "amount"        => $paymentRequest["amount"],
                 "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
                 "type"          => "manager_recharge",
-                "by_user"       => Auth::user()->id,
+                "manager_id"       => Auth::user()->id,
             ]);
 
             $payment->update([
@@ -950,7 +954,7 @@ class CommunityController extends Controller
         //     "amount"        => $reviewedPayment["amount"],
         //     "note"          => $reviewedPayment["note"],
         //     "type"          => "recharge",
-        //     "by_user"       => Auth::user()->id,
+        //     "manager_id"       => Auth::user()->id,
         // ]);
         // $payment->update([
         //     "transaction_id" => $transaction->id,
@@ -974,7 +978,7 @@ class CommunityController extends Controller
         //             "amount"        => $paymentRequest["amount"],
         //             "note"          => 'اضافة رصيد من قبل الادارة',
         //             "type"          => "manager_recharge",
-        //             "by_user"       => Auth::user()->id,
+        //             "manager_id"       => Auth::user()->id,
         //         ]);
 
         //         $user->student->wallet += $paymentRequest["amount"];
@@ -995,6 +999,17 @@ class CommunityController extends Controller
         try {
             $refunds = RefundOrder::where('accepted', null)->get();
             return view('manager.community.refundOrders')->with(compact('refunds'));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+
+    public function refundOrdersReport()
+    {
+        try {
+            $refunds = RefundOrder::where('accepted', '!=', null)->get();
+            return view('manager.community.reports.refund')->with(compact('refunds'));
         } catch (Exception $e) {
             Log::error($e);
             return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
@@ -1054,11 +1069,11 @@ class CommunityController extends Controller
                     }
                     
                     $transaction = $refund->student->transactions()->create([
-                        "refund_id"     => $refund->id,
+                        "refund_order_id"     => $refund->id,
                         "amount"        => $amount,
                         "note"          => ' مبلغ مسترد - السبب ' . $reason,
                         "type"          => $refund->refund_to == 'wallet' ? "refund-to-wallet" : "refund-to-bank",
-                        "by_user"       => Auth::user()->id,
+                        "manager_id"       => Auth::user()->id,
                     ]);
 
                     if ($refund->refund_to == 'wallet') {
