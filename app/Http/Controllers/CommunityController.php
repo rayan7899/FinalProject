@@ -1005,15 +1005,15 @@ class CommunityController extends Controller
     {
         $requestData = $this->validate($request, [
             "refund_id"         => "required|numeric",
-            "national_id"       => "required|numeric",
             "note"              => "nullable|string",
-            "range"             => "nullable|in:1,0.6,0",
+            "range"             => "exclude_if:accepted,false|required|in:before-training,before-4th-week,refund-all-amount",
             "accepted"          => "required|boolean"
         ]);
+        // return response(['message'=>$requestData, 200]);
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
-            // return response(['message'=>$refund->student->orders()->orderBy('created_at', 'asc')->get(), 200]);
+            // return response(['message'=>$refund->refund_to, 200]);
             
             switch($refund->reason){
                 case 'drop-out':
@@ -1025,36 +1025,53 @@ class CommunityController extends Controller
                 case 'exception':
                     $reason = 'استثناء';
                     break;
+                case 'not-opened-class':
+                    $reason = 'لم تتاح الشعبة';
+                    break;
+                case 'get-wallet-amount':
+                    $reason = 'استرداد مبلغ المحفظة';
+                    break;
                 default:
                     $reason = 'لا يوجد';
             }
+
+            
             DB::beginTransaction();
-                $amount = 0;
-                if($requestData['accepted'] && $requestData['range'] != 0){
-                    if($refund->reason == 'drop-out' || $refund->reason == 'exception'){
-                        $amount = $requestData['range'] == '1' ? $refund->amount - 300 : $refund->amount * 0.6;
-                        $transaction = $refund->student->transactions()->create([
-                            "refund_id"     => $refund->id,
-                            "amount"        => $amount,
-                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                            "type"          => "refund-to-wallet",
-                            "by_user"       => Auth::user()->id,
-                        ]);
-                        $refund->student->wallet += $amount;
-                        $refund->student->credit_hours = 0;
-                        $refund->student->save();
-                    }else{
-                        $amount = $refund->amount;
-                        $transaction = $refund->student->transactions()->create([
-                            "refund_id"     => $refund->id,
-                            "amount"        => $amount,
-                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                            "type"          => "refund-to-bank",
-                            "by_user"       => Auth::user()->id,
-                        ]);
-                        $refund->student->wallet -= $amount;
-                        $refund->student->save();
+            if($requestData['accepted']){
+                    switch ($requestData['range']) {
+                        case 'before-training':
+                            $amount = $refund->amount - 300;
+                            break;
+                        case 'before-4th-week':
+                            $amount = $refund->amount * 0.6;
+                            break;
+                        case 'refund-all-amount':
+                            $amount = $refund->amount;
+                            break;
+                        
+                        default:
+                            break;
                     }
+                    
+                    $transaction = $refund->student->transactions()->create([
+                        "refund_id"     => $refund->id,
+                        "amount"        => $amount,
+                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                        "type"          => $refund->refund_to == 'wallet' ? "refund-to-wallet" : "refund-to-bank",
+                        "by_user"       => Auth::user()->id,
+                    ]);
+
+                    if ($refund->refund_to == 'wallet') {
+                        $refund->student->wallet += $amount;
+                    }else{
+                        $refund->student->wallet -= $amount;
+                    }
+
+                    if (in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
+                        $refund->student->credit_hours = 0;
+                    }
+
+                    $refund->student->save();
 
                     $refund->update([
                         'transaction_id'    => $transaction->id,

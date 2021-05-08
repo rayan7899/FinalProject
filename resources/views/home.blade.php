@@ -552,6 +552,12 @@
                                             @case('exception')
                                                 <td>استثناء</td>
                                             @break
+                                            @case('not-opened-class')
+                                                <td>لم تتاح الشعبة</td>
+                                            @break
+                                            @case('get-wallet-amount')
+                                                <td>استرداد مبلغ المحفظة</td>
+                                            @break
                                             @default
                                                 <td>لا يوجد</td>
                                         @endswitch
