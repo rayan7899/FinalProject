@@ -63,6 +63,11 @@ class RefundOrderController extends Controller
                 return back()->with(['error' => 'خطآ غير معروف']);
             }
 
+            $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
+            if ($isHasActiveRefund) {
+                return redirect(route('home'))->with(['error' => 'خطآ غير معروف']);
+            }
+
             switch ($user->student->traineeState) {
                 case 'privateState':
                     $discount = 0; // = %100 discount
