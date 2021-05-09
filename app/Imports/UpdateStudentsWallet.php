@@ -50,7 +50,6 @@ class UpdateStudentsWallet implements ToCollection
                 Validator::make($replaceKeys, [
                     "national_id"  => 'required|digits:10',
                     "name"         => 'required|string|max:100',
-                    "rayat_id"    => 'required|digits_between:9,10',
                     "wallet"       => 'required:traineState|numeric',
                 ], [
                     'national_id.digits'   => '  يجب ان يكون رقم الهوية 10 ارقام',
@@ -80,7 +79,6 @@ class UpdateStudentsWallet implements ToCollection
                 $user->student->walletUpdated = true;
                 $user->student->save();
                 DB::commit();
-                dump($user->student->wallet);
                 $updatedCount++;
             } catch (Exception $e) {
                 DB::rollBack();

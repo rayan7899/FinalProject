@@ -1,7 +1,7 @@
 require("./bootstrap");
 require("./paymentsReview");
 require("./studentFinalAccepted");
-require("./studentForm");
+require("./students");
 require("./excelForm");
 require("./deptBoss");
 require("./studentCourses");

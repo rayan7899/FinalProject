@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\UsersExport;
+use App\Imports\AddRayatId;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
@@ -94,6 +95,24 @@ class ExcelController extends Controller
     {
         try{
             Excel::import(new UpdateStudentsWallet(),  $request->file('excel_file'));
+        }catch(Exception $e){
+            Log::error($e->getMessage().' '.$e);
+            return back()->with('error',"حدث خطأ غير معروف");
+        }
+        return back();
+    }
+
+
+
+    function addRayatIdForm()
+    {
+        return view('excel.addRayatId');
+    }
+
+    function addRayatIdStore(Request $request)
+    {
+        try{
+            Excel::import(new AddRayatId(),  $request->file('excel_file'));
         }catch(Exception $e){
             Log::error($e->getMessage().' '.$e);
             return back()->with('error',"حدث خطأ غير معروف");

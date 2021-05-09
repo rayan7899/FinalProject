@@ -64,6 +64,14 @@ class CommunityController extends Controller
                 "name" => "ادارة المستخدمين",
                 "url" => route("manageUsersForm")
             ],
+            (object) [
+                "name" => "اضافة متدرب",
+                "url" => route("createStudentForm")
+            ],
+            (object) [
+                "name" => "تعديل بيانات متدرب",
+                "url" => route("editStudentForm")
+            ],
 
             (object) [
                 "name" => "ادارة المقررات",
@@ -109,6 +117,158 @@ class CommunityController extends Controller
 
 
 
+    public function manageStudentsForm()
+    {
+        try {
+            return view("manager.community.students.manage");
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+    public function createStudentForm()
+    {
+        $programs = json_encode(Program::with("departments.majors.courses")->get());
+        return view("manager.community.students.create")->with(compact('programs'));
+    }
+
+
+
+
+    public function createStudentStore(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            'national_id' => 'required|digits:10|unique:users,national_id',
+            "rayat_id"    => 'nullable|digits_between:9,10|unique:students,rayat_id',
+            'name'     => 'required|string|min:3|max:100',
+            "phone"        => 'required|digits_between:9,14|unique:users,phone',
+            "major"         => "required|numeric|exists:majors,id",
+            "level"         => "required|numeric|min:1|max:5",
+        ]);
+
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+
+                $password = Hash::make("bct12345");
+                $major = Major::find($requestData['major']) ?? null;
+                $prog_id = $major->department->program->id;
+                $dept_id = $major->department->id;
+                if ($major == null) {
+                    return back()->with("error", "لا يوجد قسم حسب المعلومات المرسله");
+                }
+                DB::beginTransaction();
+                User::create([
+                    "national_id" => $requestData['national_id'],
+                    "name" => $requestData['name'],
+                    "phone" => $requestData['phone'],
+                    "password" => $password
+                ])->student()->create([
+                    "rayat_id" => $requestData['rayat_id'],
+                    "program_id" => $prog_id,
+                    "department_id" => $dept_id,
+                    "has_imported_docs" => false,
+                    "major_id" => $requestData['major'],
+                    "level"    => $requestData['level'],
+                ]);
+                DB::commit();
+                return redirect(route("createStudentForm"))->with('success', 'تم اضافة المتدرب بنجاح');
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+
+    public function editStudentForm()
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+                return view("manager.community.students.edit")->with(compact('programs'));
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+
+
+    public function editStudentUpdate(Request $request, User $user)
+    {
+        $requestData = $this->validate($request, [
+            'national_id' => 'required|digits:10|unique:users,national_id'.$user->id,
+            "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id'.$user->id,
+            'name'     => 'required|string|min:3|max:100',
+            "phone"        => 'required|digits_between:9,14|unique:users,phone'.$user->id,
+            "major"         => "required|numeric|exists:majors,id",
+            "level"         => "required|numeric|min:1|max:5",
+        ]);
+
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+
+                $major = Major::find($requestData['major']) ?? null;
+                $prog_id = $major->department->program->id;
+                $dept_id = $major->department->id;
+                if ($major == null) {
+                    return back()->with("error", "لا يوجد قسم حسب المعلومات المرسله");
+                }
+                DB::beginTransaction();
+                $user->update([
+                    "national_id" => $requestData['national_id'],
+                    "name" => $requestData['name'],
+                    "phone" => $requestData['phone'],
+                ]);
+                $user->student()->update([
+                    "rayat_id" => $requestData['rayat_id'],
+                    "program_id" => $prog_id,
+                    "department_id" => $dept_id,
+                    "has_imported_docs" => true,
+                    "final_accepted"    => true,
+                    "major_id" => $requestData['major'],
+                    "level"    => $requestData['level'],
+                ]);
+                DB::commit();
+                return redirect(route("editStudentForm"))->with('success', 'تم تحديث بيانات المتدرب بنجاح');
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+    public function getStudentById($id)
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                $user = User::with("student")->whereHas('student', function ($res) use ($id) {
+                    $res->where('national_id', $id)
+                        ->orWhere('rayat_id', $id);
+                })->first() ?? null;
+                if ($user == null) {
+                    return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
+                }
+                return response()->json($user, 200);
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return response()->json(["message" => "خطأ غير معروف"]);
+        }
+    }
+
+
     public function manageUsersForm()
     {
         try {
@@ -124,6 +284,7 @@ class CommunityController extends Controller
     {
         return view("manager.community.users.create");
     }
+
 
     public function createUserStore(Request $request)
     {
@@ -146,6 +307,24 @@ class CommunityController extends Controller
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
     }
+
+
+    public function editUserForm(User $user)
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                $permissions = $user->manager->permissions->pluck('role_id');
+                $roles = Role::whereNotin('id', $permissions)->get();
+                return view("manager.community.users.edit")->with(compact('roles', 'user'));
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+
 
     public function editUserUpdate(Request $request, User $user)
     {
@@ -170,22 +349,8 @@ class CommunityController extends Controller
 
 
 
-    public function editUserForm(User $user)
-    {
-        try {
-            if (Auth::user()->hasRole("خدمة المجتمع")) {
-                $permissions = $user->manager->permissions->pluck('role_id');
-                $roles = Role::whereNotin('id', $permissions)->get();
-                return view("manager.community.users.edit")->with(compact('roles', 'user'));
-            } else {
-                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
-            }
-        } catch (Exception $e) {
-            Log::error($e->getMessage() . ' ' . $e);
-            DB::rollBack();
-            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
-        }
-    }
+
+
 
     public function editUserPermissionsUpdate(Request $request, User $user)
     {
@@ -266,8 +431,8 @@ class CommunityController extends Controller
                 $decision = true;
             }
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
-            $payment = Payment::where("id", $reviewedPayment["payment_id"])->where("accepted" , null)->first() ?? null;
-            if($payment == null){
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])->where("accepted", null)->first() ?? null;
+            if ($payment == null) {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
             }
             DB::beginTransaction();
@@ -553,7 +718,7 @@ class CommunityController extends Controller
                     $cond = ">";
                 }
             }
-            $users = User::with(['student.program','student.department','student.major'])->whereHas('student', function ($result) use($cond) {
+            $users = User::with(['student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond) {
                 $result->where('level', $cond, '1')
                     ->where('credit_hours', '>', 0);
             })->get();
@@ -589,7 +754,7 @@ class CommunityController extends Controller
             return response()->json(["data" => $users->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
-            return redirect(route('home'))->with('error','تعذر جلب المتدربين حدث خطأ غير معروف');
+            return redirect(route('home'))->with('error', 'تعذر جلب المتدربين حدث خطأ غير معروف');
         }
     }
 
@@ -1014,8 +1179,8 @@ class CommunityController extends Controller
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
             // return response(['message'=>$refund->student->orders()->orderBy('created_at', 'asc')->get(), 200]);
-            
-            switch($refund->reason){
+
+            switch ($refund->reason) {
                 case 'drop-out':
                     $reason = 'انسحاب';
                     break;
@@ -1029,45 +1194,45 @@ class CommunityController extends Controller
                     $reason = 'لا يوجد';
             }
             DB::beginTransaction();
-                $amount = 0;
-                if($requestData['accepted'] && $requestData['range'] != 0){
-                    if($refund->reason == 'drop-out' || $refund->reason == 'exception'){
-                        $amount = $requestData['range'] == '1' ? $refund->amount - 300 : $refund->amount * 0.6;
-                        $transaction = $refund->student->transactions()->create([
-                            "refund_id"     => $refund->id,
-                            "amount"        => $amount,
-                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                            "type"          => "refund-to-wallet",
-                            "by_user"       => Auth::user()->id,
-                        ]);
-                        $refund->student->wallet += $amount;
-                        $refund->student->credit_hours = 0;
-                        $refund->student->save();
-                    }else{
-                        $amount = $refund->amount;
-                        $transaction = $refund->student->transactions()->create([
-                            "refund_id"     => $refund->id,
-                            "amount"        => $amount,
-                            "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                            "type"          => "refund-to-bank",
-                            "by_user"       => Auth::user()->id,
-                        ]);
-                        $refund->student->wallet -= $amount;
-                        $refund->student->save();
-                    }
-
-                    $refund->update([
-                        'transaction_id'    => $transaction->id,
-                        'manager_note'      => $requestData['note'],
-                        'amount'            => $amount,
-                        'accepted'          => true
+            $amount = 0;
+            if ($requestData['accepted'] && $requestData['range'] != 0) {
+                if ($refund->reason == 'drop-out' || $refund->reason == 'exception') {
+                    $amount = $requestData['range'] == '1' ? $refund->amount - 300 : $refund->amount * 0.6;
+                    $transaction = $refund->student->transactions()->create([
+                        "refund_id"     => $refund->id,
+                        "amount"        => $amount,
+                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                        "type"          => "refund-to-wallet",
+                        "by_user"       => Auth::user()->id,
                     ]);
-                }else{
-                    $refund->update([
-                        'manager_note'      => $requestData['note'],
-                        'accepted'          => false
+                    $refund->student->wallet += $amount;
+                    $refund->student->credit_hours = 0;
+                    $refund->student->save();
+                } else {
+                    $amount = $refund->amount;
+                    $transaction = $refund->student->transactions()->create([
+                        "refund_id"     => $refund->id,
+                        "amount"        => $amount,
+                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                        "type"          => "refund-to-bank",
+                        "by_user"       => Auth::user()->id,
                     ]);
+                    $refund->student->wallet -= $amount;
+                    $refund->student->save();
                 }
+
+                $refund->update([
+                    'transaction_id'    => $transaction->id,
+                    'manager_note'      => $requestData['note'],
+                    'amount'            => $amount,
+                    'accepted'          => true
+                ]);
+            } else {
+                $refund->update([
+                    'manager_note'      => $requestData['note'],
+                    'accepted'          => false
+                ]);
+            }
             DB::commit();
             return response(['message' => 'تمت معالجة طلب الاسترداد بنجاح'], 200);
         } catch (Exception $e) {

@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/show/{path?}', [FileController::class, 'get_student_document'])
         ->where('path', '(.*)')
         ->name('GetStudentDocument');
-        Route::get('api/documents/show/{national_id}/{filename}', [FileController::class, 'get_student_document_api'])
+    Route::get('api/documents/show/{national_id}/{filename}', [FileController::class, 'get_student_document_api'])
         ->name('GetStudentDocumentApi');
 
     // TODO: disable this in release
@@ -73,15 +73,28 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/old-students-report', [CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
     Route::get('api/community/students-report/{type}', [CommunityController::class, 'studentsReportJson'])->name('studentsReportCommunityJson');
     Route::get('/community/new-students-report/{type}', [CommunityController::class, 'newStudentsReport'])->name('newStudentsReport');
+    // Users manage create,edit,delete
+    Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');
     Route::get('/community/users/create', [CommunityController::class, 'createUserForm'])->name('createUserForm');
     Route::post('/community/users/store', [CommunityController::class, 'createUserStore'])->name('createUserStore');
     Route::get('/community/users/edit/{user}', [CommunityController::class, 'editUserForm'])->name('editUserForm');
     Route::post('/community/users/update/{user}', [CommunityController::class, 'editUserUpdate'])->name('editUserUpdate');
     // Route::get('/community/users/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+    // Manage permissions
     Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
-    Route::get('/community/users/manage', [CommunityController::class, 'manageUsersForm'])->name('manageUsersForm');
-    
+
+    // Users manage create,edit,delete
+    Route::get('/community/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
+    Route::get('/community/students/create', [CommunityController::class, 'createStudentForm'])->name('createStudentForm');
+    Route::post('/community/students/store', [CommunityController::class, 'createStudentStore'])->name('createStudentStore');
+    Route::get('/community/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
+    Route::post('/community/students/update/{user}', [CommunityController::class, 'editStudentUpdate'])->name('editStudentUpdate');
+    Route::get('/api/community/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
+    // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+
+
+
     //Manage Courses
     Route::get('/community/courses', [CommunityController::class, 'coursesIndex'])->name('coursesIndex');
     Route::get('/community/courses/create', [CommunityController::class, 'createCourseForm'])->name('createCourseForm');
@@ -89,7 +102,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
     Route::post('/community/courses/update', [CommunityController::class, 'editCourse'])->name('editCourse');
     Route::get('/community/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
-    
+
     //charge student wallet direct
     Route::get('/api/community/student/{id}', [CommunityController::class, 'getStudent'])->name('apiCommunityGetStudent');
     Route::get('/community/charge', [CommunityController::class, 'chargeForm'])->name('chargeForm');
@@ -103,8 +116,6 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     //refunds
     Route::get('/community/refund-orders', [CommunityController::class, 'refundOrdersForm'])->name('refundOrdersForm');
     Route::post('/api/community/refund-orders', [CommunityController::class, 'refundOrdersUpdate'])->name('apiRefundOrdersUpdate');
-
-
 });
 
 
@@ -114,7 +125,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::get('/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedForm'])->name('finalAcceptedForm');
     Route::get('api/affairs/finalaccepted', [StudentAffairsController::class, 'finalAcceptedJson'])->name('finalAcceptedJson');
     Route::post('/affairs/finalaccepted/update', [StudentAffairsController::class, 'finalAcceptedUpdate'])->name('finalAcceptedUpdate');
-    
+
     Route::get('/affairs/finalaccepted/report', [StudentAffairsController::class, 'finalAcceptedReport'])->name('finalAcceptedReport');
     Route::get('api/affairs/finalaccepted/report', [StudentAffairsController::class, 'finalAcceptedReportJson'])->name('finalAcceptedReportJson');
 
@@ -137,6 +148,10 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     //Update Students wallet
     Route::get('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletForm'])->name('UpdateStudentsWalletForm');
     Route::post('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletStore'])->name('UpdateStudentsWalletStore');
+
+    //Add rayat_id to new students
+    Route::get('/excel/rayat/update', [ExcelController::class, 'addRayatIdForm'])->name('addRayatIdForm');
+    Route::post('/excel/rayat/update', [ExcelController::class, 'addRayatIdStore'])->name('addRayatIdStore');
 
     // //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
     Route::get('/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormAffairs');
@@ -194,7 +209,6 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     //refund
     Route::get('/student/refund_order', [RefundOrderController::class, 'form'])->name('refundOrderForm');
     Route::post('/student/refund_order', [RefundOrderController::class, 'store'])->name('refundOrder');
-    
 });
 
 //الإرشاد

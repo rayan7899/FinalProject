@@ -45,7 +45,7 @@
                                     class="col-md-4 col-form-label text-md-right">{{ __('أسم المستخدم') }}</label>
 
                                 <div class="col">
-                                    <input id="national_id" type="text"
+                                    <input id="national_id" minlength="10" maxlength="10" type="text"
                                         class="form-control @error('national_id') is-invalid @enderror" name="national_id"
                                         value="{{ old('national_id') }}" required autocomplete="number" autofocus>
 

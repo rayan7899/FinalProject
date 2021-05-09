@@ -73,7 +73,7 @@ class OldUsers implements ToCollection
                     "program"      => 'required|string|max:100',
                     "department"   => 'required|string|max:100',
                     "major"        => 'required|string|max:100',
-                    "rayat_id"    => 'required|digits_between:9,10',
+                    "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id',
                     "phone"        => 'required|digits_between:9,14',
                 ], [
                     'national_id.digits'   => '  يجب ان يكون رقم الهوية 10 ارقام',

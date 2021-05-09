@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 
 jQuery(function () {
     if ($("#mainTable tr").length > 0) {
@@ -309,6 +310,63 @@ window.calcCost = function (firstLoad = false) {
         document.getElementById("cost").value = cost;
     }
 
+}
+
+async function getUserInfo() {
+    let id = document.getElementById("searchId").value;
+    if (id == undefined || id == null || id == "") {
+        console.error("searchId is undefined or null");
+        return;
+    }
+    var data = null;
+    Swal.fire({
+        html: "<h4>جاري البحث </h4>",
+        timerProgressBar: true,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    await axios.get('/api/community/student-info/' + id)
+        .then((response) => {
+            data = response.data;
+        })
+        .catch(async (error) => {
+            await Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+
+    Swal.close();
+    return data;
+}
+
+window.findStudent = async function () {
+
+    var user = await getUserInfo();
+    if (user == null) {
+        console.error("user is null");
+        return;
+    }
+
+    document.getElementById("editStudentForm").action = "/community/students/update/" + user.id;
+    document.getElementById("national_id").value = user.national_id;
+    document.getElementById("rayat_id").value = user.student.rayat_id;
+    document.getElementById("name").value = user.name;
+    document.getElementById("phone").value = user.phone;
+    document.getElementById("level").value = user.student.level;
+
+
+    $("#editStudentForm").show();
+    $("#searchSection").hide();
+    level
+    document.getElementById("program").value = user.student.program_id;
+    window.fillDepartments();
+    document.getElementById("department").value = user.student.department_id;
+    window.fillMajors();
+    document.getElementById("major").value = user.student.major_id;
 }
 
 

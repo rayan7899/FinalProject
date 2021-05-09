@@ -28,7 +28,7 @@
                 <div class="form-inline m-3">
                     <div class="form-group" id="searchContainer">
                         <input type="text" class="form-control" name="search" id="search"
-                            placeholder="ادخل رقم الطالب المدني او الاكاديمي" value="">
+                            placeholder="ادخل رقم الهوية او الرقم التدريبي" value="">
                         <input type="button" onclick="getStudentInfo()" value="بحث" class="btn btn-primary">
                     </div>
                 </div>

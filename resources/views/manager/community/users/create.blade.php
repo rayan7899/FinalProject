@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        {{-- @if ($errors->any())
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
                     @foreach ($errors->all() as $message)
@@ -9,7 +9,7 @@
                     @endforeach
                 </ul>
             </div>
-        @endif --}}
+        @endif
         @if (session()->has('error') || isset($error))
             <div class="alert alert-danger">
                 {{ session()->get('error') ?? $error }}
@@ -28,8 +28,9 @@
                     {{-- username (national_id) --}}
                     <div class="form-group">
                         <label for="national_id">اسم المستخدم ( رقم الهوية )</label>
-                        <input id="national_id" type="text" class="form-control @error('national_id') is-invalid @enderror"
-                            name="national_id" value="{{ old('national_id') ?? '' }}" required>
+                        <input id="national_id" minlength="10" maxlength="10" type="text"
+                            class="form-control @error('national_id') is-invalid @enderror" name="national_id"
+                            value="{{ old('national_id') ?? '' }}" required>
                         @error('national_id')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>

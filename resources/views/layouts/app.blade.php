@@ -121,6 +121,8 @@
                                                         href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
                                                     <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة
                                                         المستخدمين</a>
+                                                        <a class="dropdown-item" href="{{ route('manageStudentsForm') }}">ادارة
+                                                            المستخدمين</a>
                                                     <a class="dropdown-item" href="{{ route('coursesIndex') }}">ادارة
                                                         المقررات</a>
                                                     <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع

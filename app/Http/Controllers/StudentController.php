@@ -30,7 +30,7 @@ class StudentController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        if($user->student->data_updated){
+        if ($user->student->data_updated) {
             return redirect(route('home'));
         }
         $courses = Course::where('suggested_level', $user->student->level)
@@ -120,7 +120,7 @@ class StudentController extends Controller
             return redirect(route('orderForm'))->with('success', ' تم تحديث البيانات بنجاح');
         } catch (\Throwable $e) {
             DB::rollback();
-           Log::error($e->getMessage().' '.$e);
+            Log::error($e->getMessage() . ' ' . $e);
             return back()->with('error', ' تعذر تحديث البيانات حدث خطأ غير معروف ' . $e->getCode());
         }
     }
@@ -151,26 +151,24 @@ class StudentController extends Controller
 
     public function agreement_form()
     {
-        try{
+        try {
             $user = Auth::user();
-            
-            if($user->student == null){
-                return view('error')->with('error','حدث خطأ غير معروف');
+
+            if ($user->student == null) {
+                return view('error')->with('error', 'حدث خطأ غير معروف');
             }
             $student = $user->student;
-    
+
             if ($student->agreement == 1) {
                 return redirect(route('EditOneStudent'));
             } else {
                 $error =  'يجب الموافقة لإكمال التسجيل';
                 return view("student.agreement_from")->with(compact('error'));
             }
-        }catch(Exception $e){
-           Log::error($e->getMessage().' '.$e);
-            return view('error')->with('error','حدث خطأ غير معروف');
-            
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('error')->with('error', 'حدث خطأ غير معروف');
         }
-       
     }
 
     public function agreement_submit(Request $request)
@@ -242,7 +240,7 @@ class StudentController extends Controller
                 return response()->json(['message' => 'لا يوجد متدربين', 'students' => $students], 480);
             }
         } catch (Exception $e) {
-           Log::error($e->getMessage().' '.$e);
+            Log::error($e->getMessage() . ' ' . $e);
             return response()->json(['message' => ' حدث خطأ غير معروف, تعذر جلب بيانات المتدربين ' . "<p>" . $e->getCode() . "</p>"], 422);
         }
     }
@@ -278,15 +276,14 @@ class StudentController extends Controller
             //     Auth::user()->manager->permissions->toArray()
             //  );
             $roles = Auth::user()->manager->getPermissionRoleIds();
-             
-             $userInfo = User::whereHas('student', function($res) use ($id, $roles) {
+            $userInfo = User::whereHas('student', function ($res) use ($id, $roles) {
                 $res->where('national_id', $id)
                     ->orWhere('rayat_id', $id);
-             })->first();
+            })->first();
             if (isset($userInfo)) {
-                if(in_array($userInfo->student->departmentRoleId(), $roles)){
+                if (in_array($userInfo->student->departmentRoleId(), $roles)) {
                     return response()->json($userInfo, 200);
-                }else {
+                } else {
                     return response()->json(["message" => "هذا المتدرب في قسم آخر"], 422);
                 }
             } else {
