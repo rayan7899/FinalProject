@@ -177,6 +177,7 @@
                                                         <a class="dropdown-item" href="{{ route('UpdateStudentsWalletForm') }}">
                                                             اضافة الفائض / العجز للمستمرين </a>
                                                     {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a> --}}
+                                                    <a class="dropdown-item" href="{{ route('addRayatIdForm') }}">اضافة الرقم التدريبي للمستجدين</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('coursesPerLevel') }}">الجداول المقترحة</a>
 
