@@ -63,6 +63,15 @@
                     @csrf
                     <input hidden required type="number" class="form-control" id="id" name="id">
 
+                    <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons" dir="ltr">
+                        <label class="btn btn-outline-primary">
+                          <input type="radio" value="deduction" name="action" id="deduction" onclick="receiptToggle('hide')"> خصم من المحفظة
+                        </label>
+                        <label class="btn btn-outline-primary">
+                          <input required type="radio" value="charge" name="action" id="charge" checked onclick="receiptToggle('show')"> اضافة الى المحفضة
+                        </label>
+                    </div>
+
                     <div class="form-group">
                         <label for="amount">المبلغ</label>
                         <input required type="number" class="form-control" id="amount" name="amount">

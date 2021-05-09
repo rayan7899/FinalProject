@@ -279,6 +279,9 @@
                                     <td>{{ $transaction->refund->id ?? 'Error' }}</td>
                                 @elseif ($transaction->type == 'manager_recharge')
                                     <td class="text-success"> اضافة (من الادارة) </td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد'}}</td>
+                                @elseif ($transaction->type == 'manager_deduction')
+                                    <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
                                 @else
                                     <td>لا يوجد</td>
@@ -294,7 +297,7 @@
                                         {{ $transaction->note ?? 'لا يوجد' }}
                                     @endif
                                 </td>
-                                @if ($transaction->type == 'recharge')
+                                @if (in_array($transaction->type, ['recharge', 'manager_recharge']))
                                     @if ($transaction->payment != null)
                                         <td>
                                             @php
