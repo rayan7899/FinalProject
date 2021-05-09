@@ -46,18 +46,19 @@
                             <label for="requestDate">تاريخ الطلب</label>
                             <input type="text" class="form-control" id="requestDate" aria-describedby="requestDate" disabled>
                         </div>
-                        <div class="form-group col-lg">
+                        
+                        <div class="form-group col-lg-12" id="rangeSection">
                             <label for="range">فترة الطلب</label>
                             <select required class="form-control" name="range" id="range">
-                              <option disabled>حدد الفترة</option>
-                              <option value="1">قبل بداية التدريب</option>
-                              <option value="0.6">قبل الاسبوع الرابع</option>
-                              <option value="0">انتهت فترة الاسترداد</option>
+                            <option value="" disabled>حدد الفترة</option>
+                            <option value="before-training">قبل بداية التدريب</option>
+                            <option value="before-4th-week">قبل الاسبوع الرابع</option>
+                            <option value="refund-all-amount">استرداد كامل المبلغ</option>
                             </select>
                         </div>
 
                         <div class="form-group col-lg-12">
-                            <label for="" class="col-form-label">ملاحظات</label>
+                            <label for="acceptNote" class="col-form-label">ملاحظات</label>
                             <textarea class="form-control" id="acceptNote"></textarea>
                         </div>
                     </form>
@@ -147,20 +148,26 @@
                                 @switch($refund->reason)
                                     @case('drop-out')
                                         <td>انسحاب</td>
-                                        @break
+                                    @break
                                     @case('graduate')
                                         <td>خريج</td>
-                                        @break
+                                    @break
                                     @case('exception')
                                         <td>استثناء</td>
-                                        @break
+                                    @break
+                                    @case('not-opened-class')
+                                        <td>لم تتاح الشعبة</td>
+                                    @break
+                                    @case('get-wallet-amount')
+                                        <td>استرداد مبلغ المحفظة</td>
+                                    @break
                                     @default
                                         <td>لا يوجد</td>
                                 @endswitch
                                 <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }} - {{ date_diff(date_create(date('y-m-d')), $refund->created_at)->format('منذ %d ايام') ?? 'لا يوجد' }}</td>
                                 <td>{{ $refund->student_note ?? 'لا يوجد' }}</td>
                                 <td class="text-center">
-                                    <button class="btn btn-primary px-2 py-0" data-toggle="modal" data-target="#acceptModal" onclick="fillModal('{{ $refund->student->user->national_id ?? 0 }}','{{ $refund->id ?? 0 }}','{{ $refund->student->user->name ?? 0 }}','{{ $refund->amount ?? 0 }}')">قبول</button>
+                                    <button class="btn btn-primary px-2 py-0" data-toggle="modal" data-target="#acceptModal" onclick="fillModal('{{ $refund->student->user->national_id ?? 0 }}','{{ $refund->id ?? 0 }}','{{ $refund->student->user->name ?? 0 }}','{{ $refund->amount ?? 0 }}','{{ $refund->reason ?? 0 }}')">قبول</button>
                                     <button class="btn btn-danger px-2 py-0" data-toggle="modal" data-target="#rejectModal" onclick="fillModal('{{ $refund->student->user->national_id ?? 0 }}','{{ $refund->id ?? 0 }}','{{ $refund->student->user->name ?? 0 }}','{{ $refund->amount ?? 0 }}')">رفض</button>
                                 </td>
                                 {{-- <td class="text-center">

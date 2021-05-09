@@ -289,7 +289,7 @@ class OldUsers implements ToCollection
                     "amount"        => $row[WALLET],
                     "type"          => "manager_recharge",
                     "note"          => "رصيد سابق",
-                    "by_user"       => Auth::user()->id,
+                    "manager_id"       => Auth::user()->id,
                 ]);
                 // $transaction = Transaction::create([
 

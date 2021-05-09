@@ -41,44 +41,65 @@
                         $creditHoursCost = $user->student->credit_hours*$user->student->program->hourPrice*$discount;
                     @endphp
                     <div class="form-group col-lg-6">
-                        <label for="amount">المبلغ</label>
+                        <label for="amount">المبلغ المتوقع استرداده</label>
                         <input required disabled="true" type="text" class="form-control" id="amount" name="amount"
-                            value="{{ $creditHoursCost }} ">
-                        <span class="text-danger">*سيتم خصم ٣٠٠ ريال من المبغ مقابل المصاريف الادارية</span>
+                            value="حدد السبب اولا">
+                        <span class="text-danger" id="discountMsg" style="display: none">*قد يتم خصم ٣٠٠ ريال مقابل المصاريف الادارية او ٤٠٪ من المبلغ</span>
                     </div>
 
                     <!-- reason -->
                     <div class="form-group col-lg-6">
-                        <div class="form-group">
-                            <label for="reason">السبب</label>
-                            <select class="form-control" name="reason" id="reason">
-                                <option disabled selected>حدد السبب</option>
-                                <option value="drop-out">انسحاب</option>
-                                <option value="exception">استثناء</option>
-                                <option value="graduate">خريج</option>
-                            </select>
+                        <label for="reason">السبب</label>
+                        <select required class="form-control" name="reason" id="reason" onchange="changeAmount()">
+                            <option value="" disabled>حدد سبب الاسترداد</option>
+                            <option value="drop-out" @if ($user->student->credit_hours == 0) disabled @endif>انسحاب</option>
+                            @if($user->student->level == 1) 
+                                <option value="not-opened-class" @if ($user->student->credit_hours == 0) disabled @endif>لم تتاح الشعبة</option> 
+                            @endif
+                            <option value="exception" @if ($user->student->credit_hours == 0) disabled @endif>استثناء</option>
+                            <option value="graduate" @if ($user->student->level < 5) disabled @endif>خريج</option>
+                            <option value="get-wallet-amount" @if ($user->student->wallet == 0) disabled @endif>استرداد مبلغ المحفظة</option>
+                        </select>
+                    </div>
+
+                    {{-- refund to ? --}}
+                    <div class="btn-group btn-group-toggle col-lg-6 mb-3" data-toggle="buttons" dir="ltr">
+                        <label class="btn btn-outline-primary">
+                          <input type="radio" value="bank" name="refund_to" id="radioBank" onclick="changeAmount()"> استرداد المبلغ الى البنك
+                        </label>
+                        <label class="btn btn-outline-primary">
+                          <input required type="radio" value="wallet" name="refund_to" id="radioWallet" onclick="changeAmount()" @if ($user->student->credit_hours == 0) disabled @endif> استرداد المبلغ الى المحفظة
+                        </label>
+                    </div>
+
+                    {{-- checkbox --}}
+                    <div class="input-group mb-3 col-lg-6" dir="ltr">
+                        <label class="form-control" aria-label="Text input with checkbox">
+                            اتعهد بتقديم الطلب عبر موقع رايات
+                        </label>
+                        <div class="input-group-append">
+                          <div class="input-group-text">
+                            <input required type="checkbox" aria-label="Checkbox for following text input">
+                          </div>
                         </div>
                     </div>
 
-                    {{-- bank info --}}
-                    <div class="col-12 row" id="bankInfo">
-                        <!-- IBAN -->
-                        <div class="form-group col-lg-6" dir="ltr">
-                            <label for="IBAN">الآيبان</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">SA</span>
-                                </div>
-                                <input type="text" class="form-control" id="IBAN" name="IBAN">
+                    <!-- IBAN -->
+                    <div class="form-group col-lg-6" dir="ltr">
+                        <label for="IBAN">الآيبان</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">SA</span>
                             </div>
+                            <input required type="text" class="form-control" id="IBAN" name="IBAN">
                         </div>
-    
-                        <!-- bank -->
-                        <div class="form-group col-lg-6">
-                            <div class="form-group">
-                                <label for="bank">البنك</label>
-                                <input type="text" class="form-control" id="bank" name="bank">
-                            </div>
+                    </div>
+                
+                    <!-- bank -->
+                    <div class="form-group col-lg-6">
+                        <div class="form-group">
+                            <label for="bank">البنك</label>
+                            <input required type="text" class="form-control" id="bank" name="bank">
                         </div>
                     </div>
 
@@ -94,5 +115,9 @@
             </form>
         </div>
     </div>
+    <script>
+        var wallet = {{ $user->student->wallet }};
+        var creditHoursCost = {{ $creditHoursCost }};
+    </script>
 </div>
 @endsection

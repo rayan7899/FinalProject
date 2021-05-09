@@ -16,18 +16,18 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger("manager_id");
             $table->unsignedBigInteger('payment_id')->nullable();
             $table->unsignedBigInteger('order_id')->nullable();
-            $table->unsignedBigInteger('refund_id')->nullable();
+            $table->unsignedBigInteger('refund_order_id')->nullable();
             $table->double("amount");
             $table->string("note")->nullable();
             $table->string("type");
-            $table->unsignedBigInteger("by_user");
             $table->foreign('student_id')->references('id')->on('students');
-            $table->foreign('by_user')->references('id')->on('users')->onDelete("set null");
+            $table->foreign('manager_id')->references('id')->on('managers')->onDelete("set null");
             $table->foreign("payment_id")->references("id")->on("payments");
             $table->foreign("order_id")->references("id")->on("orders");
-            $table->foreign("refund_id")->references("id")->on("refund_orders");
+            $table->foreign("refund_order_id")->references("id")->on("refund_orders");
             $table->timestamps();
         });
     }
