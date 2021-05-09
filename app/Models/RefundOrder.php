@@ -13,7 +13,7 @@ class RefundOrder extends Model
 
     public function transaction()
     {
-        return $this->hasOne(Transaction::class);
+        return $this->belongsTo(Transaction::class);
     }
 
     public function student()

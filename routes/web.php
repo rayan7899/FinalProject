@@ -115,6 +115,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
 
     //refunds
     Route::get('/community/refund-orders', [CommunityController::class, 'refundOrdersForm'])->name('refundOrdersForm');
+    Route::get('/community/report/refund-orders', [CommunityController::class, 'refundOrdersReport'])->name('refundOrdersReport');
     Route::post('/api/community/refund-orders', [CommunityController::class, 'refundOrdersUpdate'])->name('apiRefundOrdersUpdate');
 });
 

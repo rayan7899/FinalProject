@@ -93,6 +93,10 @@ class CommunityController extends Controller
                 "name" => "طلبات الاسترداد",
                 "url" => route("refundOrdersForm")
             ],
+            (object) [
+                "name" => "تقرير طلبات الاسترداد",
+                "url" => route("refundOrdersReport")
+            ],
             // (object) [
             //     "name" => "المتدربين المدققة ايصالاتهم",
             //     "url" => route("CheckedStudents")
@@ -443,7 +447,7 @@ class CommunityController extends Controller
                     "amount"        => $reviewedPayment["amount"],
                     "note"          => $reviewedPayment["note"],
                     "type"          => "recharge",
-                    "by_user"       => Auth::user()->id,
+                    "manager_id"       => Auth::user()->id,
                 ]);
                 $payment->update([
                     "transaction_id" => $transaction->id,
@@ -496,7 +500,7 @@ class CommunityController extends Controller
                     "payment_id"    => $payment->id,
                     "amount"    => $payment->amount,
                     "type"    => "recharge",
-                    "by_user"    => Auth::user()->id,
+                    "manager_id"    => Auth::user()->id,
                 ]);
                 $payment->update([
                     "transaction_id" => $transaction->id,
@@ -679,7 +683,7 @@ class CommunityController extends Controller
                 "order_id"    => $order->id,
                 "amount"        => $amount,
                 "type"          => "deduction",
-                "by_user"       => Auth::user()->id,
+                "manager_id"       => Auth::user()->id,
             ]);
 
             $order->update([
@@ -1085,7 +1089,7 @@ class CommunityController extends Controller
                 "amount"        => $paymentRequest["amount"],
                 "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
                 "type"          => "manager_recharge",
-                "by_user"       => Auth::user()->id,
+                "manager_id"       => Auth::user()->id,
             ]);
 
             $payment->update([
@@ -1115,7 +1119,7 @@ class CommunityController extends Controller
         //     "amount"        => $reviewedPayment["amount"],
         //     "note"          => $reviewedPayment["note"],
         //     "type"          => "recharge",
-        //     "by_user"       => Auth::user()->id,
+        //     "manager_id"       => Auth::user()->id,
         // ]);
         // $payment->update([
         //     "transaction_id" => $transaction->id,
@@ -1139,7 +1143,7 @@ class CommunityController extends Controller
         //             "amount"        => $paymentRequest["amount"],
         //             "note"          => 'اضافة رصيد من قبل الادارة',
         //             "type"          => "manager_recharge",
-        //             "by_user"       => Auth::user()->id,
+        //             "manager_id"       => Auth::user()->id,
         //         ]);
 
         //         $user->student->wallet += $paymentRequest["amount"];
@@ -1166,21 +1170,32 @@ class CommunityController extends Controller
         }
     }
 
+    public function refundOrdersReport()
+    {
+        try {
+            $refunds = RefundOrder::where('accepted', '!=', null)->get();
+            return view('manager.community.reports.refund')->with(compact('refunds'));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+
     public function refundOrdersUpdate(Request $request)
     {
         $requestData = $this->validate($request, [
             "refund_id"         => "required|numeric",
-            "national_id"       => "required|numeric",
             "note"              => "nullable|string",
-            "range"             => "nullable|in:1,0.6,0",
+            "range"             => "exclude_if:accepted,false|required|in:before-training,before-4th-week,refund-all-amount",
             "accepted"          => "required|boolean"
         ]);
+        // return response(['message'=>$requestData, 200]);
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
-            // return response(['message'=>$refund->student->orders()->orderBy('created_at', 'asc')->get(), 200]);
-
-            switch ($refund->reason) {
+            // return response(['message'=>$refund->refund_to, 200]);
+            
+            switch($refund->reason){
                 case 'drop-out':
                     $reason = 'انسحاب';
                     break;
@@ -1190,49 +1205,66 @@ class CommunityController extends Controller
                 case 'exception':
                     $reason = 'استثناء';
                     break;
+                case 'not-opened-class':
+                    $reason = 'لم تتاح الشعبة';
+                    break;
+                case 'get-wallet-amount':
+                    $reason = 'استرداد مبلغ المحفظة';
+                    break;
                 default:
                     $reason = 'لا يوجد';
             }
-            DB::beginTransaction();
-            $amount = 0;
-            if ($requestData['accepted'] && $requestData['range'] != 0) {
-                if ($refund->reason == 'drop-out' || $refund->reason == 'exception') {
-                    $amount = $requestData['range'] == '1' ? $refund->amount - 300 : $refund->amount * 0.6;
-                    $transaction = $refund->student->transactions()->create([
-                        "refund_id"     => $refund->id,
-                        "amount"        => $amount,
-                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                        "type"          => "refund-to-wallet",
-                        "by_user"       => Auth::user()->id,
-                    ]);
-                    $refund->student->wallet += $amount;
-                    $refund->student->credit_hours = 0;
-                    $refund->student->save();
-                } else {
-                    $amount = $refund->amount;
-                    $transaction = $refund->student->transactions()->create([
-                        "refund_id"     => $refund->id,
-                        "amount"        => $amount,
-                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                        "type"          => "refund-to-bank",
-                        "by_user"       => Auth::user()->id,
-                    ]);
-                    $refund->student->wallet -= $amount;
-                    $refund->student->save();
-                }
 
-                $refund->update([
-                    'transaction_id'    => $transaction->id,
-                    'manager_note'      => $requestData['note'],
-                    'amount'            => $amount,
-                    'accepted'          => true
-                ]);
-            } else {
-                $refund->update([
-                    'manager_note'      => $requestData['note'],
-                    'accepted'          => false
-                ]);
-            }
+            
+            DB::beginTransaction();
+            if($requestData['accepted']){
+                    switch ($requestData['range']) {
+                        case 'before-training':
+                            $amount = $refund->amount - 300;
+                            break;
+                        case 'before-4th-week':
+                            $amount = $refund->amount * 0.6;
+                            break;
+                        case 'refund-all-amount':
+                            $amount = $refund->amount;
+                            break;
+                        
+                        default:
+                            break;
+                    }
+                    
+                    $transaction = $refund->student->transactions()->create([
+                        "refund_order_id"     => $refund->id,
+                        "amount"        => $amount,
+                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                        "type"          => $refund->refund_to == 'wallet' ? "refund-to-wallet" : "refund-to-bank",
+                        "manager_id"       => Auth::user()->id,
+                    ]);
+
+                    if ($refund->refund_to == 'wallet') {
+                        $refund->student->wallet += $amount;
+                    }else{
+                        $refund->student->wallet -= $amount;
+                    }
+
+                    if (in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
+                        $refund->student->credit_hours = 0;
+                    }
+
+                    $refund->student->save();
+
+                    $refund->update([
+                        'transaction_id'    => $transaction->id,
+                        'manager_note'      => $requestData['note'],
+                        'amount'            => $amount,
+                        'accepted'          => true
+                    ]);
+                }else{
+                    $refund->update([
+                        'manager_note'      => $requestData['note'],
+                        'accepted'          => false
+                    ]);
+                }
             DB::commit();
             return response(['message' => 'تمت معالجة طلب الاسترداد بنجاح'], 200);
         } catch (Exception $e) {

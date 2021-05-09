@@ -19,8 +19,9 @@ class CreateRefundOrdersTable extends Migration
             $table->unsignedBigInteger('transaction_id')->nullable();
             $table->integer("amount");
             $table->text("reason");
-            $table->text("IBAN")->nullable();
-            $table->text("bank")->nullable();
+            $table->text("refund_to");
+            $table->text("IBAN");
+            $table->text("bank");
             $table->text("student_note")->nullable();
             $table->text("manager_note")->nullable();
 

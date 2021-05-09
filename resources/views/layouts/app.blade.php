@@ -36,6 +36,10 @@
                     <div class="col-12">
                         <nav class="navbar navbar-expand-md navbar-light px-0">
 
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
                             <div class="collapse navbar-collapse " id="navbarSupportedContent">
                                 <ul class="navbar-nav mr-auto">
                                     <!-- Authentication Links -->
@@ -60,8 +64,6 @@
                                                 {{ Auth::user()->name }}
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
-                                                <a class="dropdown-item  text-right"
-                                                    href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
                                                                                                                 document.getElementById('logout-form').submit();">
@@ -109,9 +111,6 @@
                                                 المجتمع</li>
                                             <li class="nav-item dropdown">
                                                 <div class="dropdown-menu dropdown-menu-right">
-
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('rayatReportFormCommunity', ["type" => "community"]) }}">تقرير رايات</a>
                                                     <a class="dropdown-item"
@@ -134,12 +133,14 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('reportFilterdForm') }}">العمليات المالية حسب
                                                         التخصص</a>
-
                                                     <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة
                                                         متدرب</a>
                                                     <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل
                                                         دراسي جديد</a>
                                                 </div>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                             </li>
                                         </ul>
                                     @endif
@@ -212,34 +213,21 @@
                                     {{-- ---------  student ----------- --}}
                                     @if (Auth::user()->hasRole('متدرب'))
                                         <ul class="navbar-nav">
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                             </li>
                                         </ul>
                                     @endif
                                 @endauth
-
-                                <a class="navbar-brand py-0" href="https://www.tvtc.gov.sa/" target="_blank">
-                                    <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo1.svg') }}"
-                                        alt="" />
-                                </a>
-                                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                                    aria-expanded="false" aria-label="Toggle navigation">
-                                    <span class="navbar-toggler-icon"></span>
-                                </button>
+                            </div>
+                            <a class="navbar-brand py-0" href="{{route('home')}}">
+                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo1.svg') }}"/>
+                            </a>
                         </nav>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Slide Show -->
-        <!-- <section>
-                <img class="mySlides" src="/images/G20.jpg" style="width:100%;  height:758px;">
-                <img class="mySlides" src="/images/25.png" style="width:100%; height:758px;">
-                <img class="mySlides" src="/images/31.png" style="width:100%; height:758px;">
-            </section> -->
 
         <main class="py-4 my-4 p-2" style="text-align: right !important; min-height: 550px;" dir="rtl">
             @yield('content')
@@ -258,25 +246,6 @@
             </div>
         </footer>
     </div>
-    {{-- <script>
-            // Automatic Slideshow - change image every 3 seconds
-            var myIndex = 0;
-            carousel();
-
-            function carousel() {
-                var i;
-                var x = document.getElementsByClassName("mySlides");
-                for (i = 0; i < x.length; i++) {
-                    x[i].style.display = "none";
-                }
-                myIndex++;
-                if (myIndex > x.length) {
-                    myIndex = 1
-                }
-                x[myIndex - 1].style.display = "block";
-                setTimeout(carousel, 4000);
-            }
-        </script> --}}
 </body>
 
 
