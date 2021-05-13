@@ -17,6 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('transaction_id')->nullable();
+            $table->unsignedBigInteger('semester_id');
             $table->integer("requested_hours");
             $table->double("amount");
             $table->double("discount");
@@ -32,7 +33,7 @@ class CreateOrdersTable extends Migration
             $table->timestamps();
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign("transaction_id")->references("id")->on("transactions");
-            
+            $table->foreign('semester_id')->references('id')->on('semesters');
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\User;
 use Exception;
@@ -27,6 +28,7 @@ class UpdateStudentsWallet implements ToCollection
 
     public function collection(Collection $rows)
     {
+        $semester = Semester::latest()->first();
         $rows = $rows->slice(1);
         $errorsArr = [];
         $updatedCount = 0;
@@ -74,6 +76,7 @@ class UpdateStudentsWallet implements ToCollection
                     "type"          => "manager_recharge",
                     "note"          => "رصيد سابق",
                     "by_user"       => Auth::user()->id,
+                    "semester_id"   => $semester->id,
                 ]);
                 $user->student->wallet += $row[WALLET];
                 $user->student->walletUpdated = true;

@@ -40,6 +40,7 @@ class OldUsers implements ToCollection
         $programs =  Program::with('departments.majors')->get(['id', 'name']);
         $duplicate = [];
         $errorsArr = [];
+        $addedCount = 0;
         $rows = $rows->slice(2);
         if (!isset($rows[2][NATIONAL_ID]) || !isset($rows[2][NAME])) {
             return redirect(route('OldForm'))->with('error', 'تعذر الحصول على الاسم او رقم الهوية يرجى التآكد من صحة الملف');
@@ -52,7 +53,9 @@ class OldUsers implements ToCollection
                     'hasOtherMessage' => true,
                     'error' => '  تم ايقاف عملية الاضافة لوجود اكثر من ٥٠ خطأ يرجى التآكد من صحة الملف',
                     'errorsArr' => $errorsArr,
-                    'countOfUsers' => count($rows)
+                    'countOfUsers' => count($rows),
+                    'addedCount' => $addedCount,
+
                 ]);
             }
 
@@ -73,7 +76,7 @@ class OldUsers implements ToCollection
                     "program"      => 'required|string|max:100',
                     "department"   => 'required|string|max:100',
                     "major"        => 'required|string|max:100',
-                    "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id',
+                    "rayat_id"    => 'required|digits_between:9,10',
                     "phone"        => 'required|digits_between:9,14',
                 ], [
                     'national_id.digits'   => '  يجب ان يكون رقم الهوية 10 ارقام',
@@ -139,14 +142,24 @@ class OldUsers implements ToCollection
 
             if ($deptId != 0) {
                 $mjrExplodeDash = explode("-", $row[MAJOR])[0] ?? null;
-                $mjrExplode = explode(" ", $mjrExplodeDash[0]);
-                $mjrSplit = trim($mjrExplode[0]);
-
+                $mjrSplit = trim($mjrExplodeDash);
                 foreach ($programs[$progKey]->departments[$deptKey]->majors as $key => $mjr) {
                     if (stristr(trim($mjr['name']), $mjrSplit) === false) {
                         //echo "not found";
                     } else {
                         $mjrId = $mjr->id;
+                    }
+                }
+                if ($mjrId == 0) {
+                    $mjrExplodeDash = explode("-", $row[MAJOR])[0] ?? null;
+                    $mjrExplode = explode(" ", $mjrExplodeDash);
+                    $mjrSplit = trim($mjrExplode[0]);
+                    foreach ($programs[$progKey]->departments[$deptKey]->majors as $key => $mjr) {
+                        if (stristr(trim($mjr['name']), $mjrSplit) === false) {
+                            //echo "not found";
+                        } else {
+                            $mjrId = $mjr->id;
+                        }
                     }
                 }
             } elseif ($progId != 0) {
@@ -177,12 +190,7 @@ class OldUsers implements ToCollection
                     'agreement'             => false,
                     'level'                 => 2,
                 ]);
-                // $user->student->transactions()->create([
-                //     "amount"        => $row[WALLET],
-                //     "type"          => "manager_recharge",
-                //     "note"          => "رصيد سابق",
-                //     "by_user"       => Auth::user()->id,
-                // ]);
+                $addedCount++;
                 DB::commit();
             } catch (QueryException $e) {
                 Log::error($e->getMessage() . $e);
@@ -203,9 +211,7 @@ class OldUsers implements ToCollection
                 continue;
             }
         }
-
         $countOfUsers = count($rows);
-        $addedCount = count($rows) - (count($duplicate) + count($errorsArr));
 
         if (count($duplicate) > 0  || count($errorsArr) > 0) {
             return redirect(route('OldForm'))->with([

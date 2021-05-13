@@ -217,38 +217,48 @@
             </div>
         </div>
 
-
+        <ul class="nav nav-tabs border rounded bg-white p-0">
+            <li class="nav-item">
+                <a onclick="tabClicked('transactions',event)" class="nav-link h5 active" href="#">جميع العمليات المالية</a>
+            </li>
+            <li class="nav-item">
+                <a onclick="tabClicked('payments',event)" class="nav-link h5" href="#">المحفظة</a>
+            </li>
+            <li class="nav-item">
+                <a onclick="tabClicked('orders',event)" class="nav-link h5" href="#">اضافة المقررات</a>
+            </li>
+            <li class="nav-item">
+                <a onclick="tabClicked('refunds',event)" class="nav-link h5" href="#">طلبات الاسترداد</a>
+            </li>
+        </ul>
         {{-- transactions --}}
-        <div class="card my-4">
-            <div class="card-header">
-
-
+        <div id="transactions" class="card tables">
+            {{-- <div class="card-header">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="h5">
                         جميع العمليات المالية
                     </div>
-                    {{-- <div>
+                    <div>
                         <p class="h5 d-inline"> الرصيد الحالي : </p>
                         <p class="h5 d-inline">
                             {{ $user->student->wallet ?? 'لا يوجد' }}
                         </p>
-                    </div> --}}
-
+                    </div>
                 </div>
-
-            </div>
+            </div> --}}
             <div class="card-body table-responsive p-0">
                 <table class="table text-nowrap table-striped table-hover table-bordered p-0 m-0">
                     <thead>
                         <tr style="background-color: rgba(0, 0, 0, 0.03);">
                             <th scope="row">الرصيد الحالي</th>
-                            <th scope="row" colspan="5">{{ $user->student->wallet ?? 'لا يوجد' }}</th>
+                            <th scope="row" colspan="6">{{ $user->student->wallet ?? 'لا يوجد' }}</th>
                         </tr>
                         <tr>
                             <th class="text-center" scope="col">رقم العملية</th>
                             <th class="text-center" scope="col">نوع العملية</th>
                             <th class="text-center" scope="col">رقم الطلب (شحن / اضافة مقررات)</th>
                             <th class="text-center" scope="col">المبلغ</th>
+                            <th class="text-center" scope="col">التاريخ</th>
                             <th class="text-center" scope="col">الملاحظات</th>
                             <th class="text-center" scope="col">ايصال السداد</th>
                         </tr>
@@ -282,9 +292,12 @@
                                     <td>لا يوجد</td>
                                 @else
                                     <td>لا يوجد</td>
-                                    <td>{{$transaction->refund_order_id ?? 'Error'}}</td>
+                                    <td>{{ $transaction->refund_order_id ?? 'Error' }}</td>
                                 @endif
                                 <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
+                                <td style="min-width: 100px">{{ $transaction->created_at->toDateString() ?? 'Error' }}
+                                </td>
+
                                 <td class="text-right">
                                     @if ($transaction->type == 'deduction')
                                         {{ $hoursNote ?? '' }}
@@ -304,8 +317,7 @@
                                             @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
                                                 <a data-toggle="modal" data-target="#pdfModal" href="#"
                                                     onclick="showPdf('{{ route('GetStudentDocumentApi', ['national_id' => $user->national_id, 'filename' => $transaction->payment->receipt_file_id]) }}','pdf')">
-                                                    <img style="width: 20px"
-                                                        src="{{ asset('/images/pdf.png') }}" />
+                                                    <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                                                 </a>
                                             @else
                                                 <a data-toggle="modal" data-target="#pdfModal" href="#"
@@ -332,13 +344,12 @@
             </div>
         </div>
 
-
         {{-- payments --}}
-        <div class="card">
-            <div class="card-header">
+        <div id="payments" style="display: none;" class="card tables">
+            <div class="card-header bg-white">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="h5">
-                        المحفظة
+                        {{-- المحفظة --}}
                     </div>
 
                     <a href="{{ route('paymentForm') }}" class="btn btn-primary rounded">
@@ -353,6 +364,7 @@
                             <th class="text-center">رقم الطلب</th>
                             <th class="text-center">المبلغ</th>
                             <th class="text-center">حالة السداد</th>
+                            <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
                             <th class="text-center">ايصال السداد</th>
                         </tr>
@@ -386,6 +398,7 @@
                                         <td class="text-danger">مرفوض</td>
                                     @endif
                                 @endif
+                                <td style="min-width: 100px">{{ $payment->created_at->toDateString() ?? 'Error' }}</td>
                                 <td class="text-right">{{ $payment->note ?? 'لا يوجد' }}</td>
 
                                 <td class="">
@@ -402,8 +415,8 @@
                                     @else
                                         <a data-toggle="modal" data-target="#pdfModal" href="#"
                                             onclick="showPdf('{{ route('GetStudentDocumentApi', ['national_id' => $user->national_id, 'filename' => $payment->receipt_file_id]) }}','img')">
-                                            <img src=" {{ asset('/images/camera_img_icon.png') }}"
-                                                style="width:25px;" alt="Image File">
+                                            <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
+                                                alt="Image File">
                                         </a>
                                     @endif
                                 </td>
@@ -417,15 +430,12 @@
             </div>
         </div>
 
-
-
-
-
         {{-- orders --}}
-        <div class="card my-4">
-            <div class="card-header">
+        <div id="orders" style="display: none;" class="card tables">
+            <div class="card-header  bg-white">
                 <div class="d-flex flex-row justify-content-between">
-                    <p class="h5">طلبات اضافة المقررات</p>
+                    {{-- <p class="h5">طلبات اضافة المقررات</p> --}}
+                    <p></p>
                     {{-- @if ($user->student->level > 1) --}}
                     <a href="{{ route('orderForm') }}" class="btn btn-primary rounded">
                         اضافة مقررات
@@ -441,6 +451,7 @@
                             <th class="text-center">عدد الساعات</th>
                             <th class="text-center">المبلغ</th>
                             <th class="text-center">حالة تسجيل الساعات في رايات</th>
+                            <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
                         </tr>
                     </thead>
@@ -459,11 +470,15 @@
                                 <td>{{ $order->amount ?? 'Error' }}</td>
                                 @if ($order->private_doc_verified === false || $order->private_doc_verified === '0')
                                     <td class="text-danger">مرفوض</td>
+                                    <td style="min-width: 100px">{{ $order->created_at->toDateString() ?? 'Error' }}
+                                    </td>
                                     <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                 @else
                                     @if ($order->transaction_id == null)
                                         @if ($hasEnoughMoney == true || $user->student->traineeState == 'privateState')
                                             <td>قيد المراجعة</td>
+                                            <td style="min-width: 100px">
+                                                {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                         @else
                                             <td>معلق</td>
@@ -472,6 +487,8 @@
                                         @endif
                                     @else
                                         <td class="text-success">مقبول</td>
+                                        <td style="min-width: 100px">
+                                            {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                         <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
                                     @endif
                                 @endif
@@ -485,14 +502,12 @@
             </div>
         </div>
 
-
-
-
         {{-- refunds --}}
-        <div class="card my-4">
+        <div id="refunds" style="display: none;" class="card tables">
             <div class="card-header">
                 <div class="d-flex flex-row justify-content-between">
-                    <p class="h5">طلبات الاسترداد</p>
+                    {{-- <p class="h5">طلبات الاسترداد</p> --}}
+                    <p></p>
                     <a href="{{ route('refundOrderForm') }}" class="btn btn-primary rounded">
                         طلب استرداد
                     </a>
@@ -549,50 +564,35 @@
                                         <td>لا يوجد</td>
                                 @endswitch
                                 <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }}</td>
-                                <td class="text-right">{{ $refund->student_note ?? 'لا يوجد'}}</td>
-                                <td class="text-right">{{ $refund->manager_note ?? 'لا يوجد'}}</td>
+                                <td class="text-right">{{ $refund->student_note ?? 'لا يوجد' }}</td>
+                                <td class="text-right">{{ $refund->manager_note ?? 'لا يوجد' }}</td>
                             </tr>
-                        @empty
+                            @empty
 
-                        @endforelse
-                    </tbody>
-                </table>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+
+
+
         </div>
 
-
-                
-
-    </div>
-        <style>
-            .stepState {
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                align-content: center;
-                align-items: center;
+        <script>
+            function tabClicked(id,event){
+                event.preventDefault();
+                let cards = document.getElementsByClassName('tables');
+                let navLinks = document.getElementsByClassName('nav-link');
+                for(let link of navLinks){
+                    link.classList.remove('active');
+               }
+               for(let card of cards){
+                   card.style.display = 'none';
+               }
+               document.getElementById(id).style.display = 'block';
+               event.target.classList.add('active');
             }
-
-            .line {
-                height: 3px;
-                width: 5%;
-                background: #b4b4b4;
-            }
-
-            .flag {
-                display: flex;
-                width: 120px;
-                padding: 5px;
-                justify-content: center;
-                align-content: center;
-                align-items: center;
-                border-radius: 5px;
-                border: 3px solid #b4b4b4;
-                background-color: #f3f3f3;
-                font-weight: bold;
-                margin-left: 2%;
-                margin-right: 2%;
-            }
-
-        </style>
+        </script>
     @endsection

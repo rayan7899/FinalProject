@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Semester;
 use App\Models\StudentCourse;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -29,7 +30,7 @@ class PrivateStateController extends Controller
             //     "url" => route("studentsStates")
             // ],
         ];
-        return view("manager.private.dashboard")->with(compact("links","title"));
+        return view("manager.private.dashboard")->with(compact("links", "title"));
     }
 
 
@@ -37,11 +38,11 @@ class PrivateStateController extends Controller
     {
         $users = User::with('student.orders')->whereHas('student', function ($result) {
             $result->where('traineeState', 'privateState')
-            ->whereHas('orders', function ($result) {
-                $result->where('private_doc_verified', null);
-            });
+                ->whereHas('orders', function ($result) {
+                    $result->where('private_doc_verified', null);
+                });
         })->get();
-       
+
         foreach ($users as $user) {
             foreach ($user->student->orders as $order) {
                 if ($order->private_doc_verified == null) {
@@ -52,7 +53,7 @@ class PrivateStateController extends Controller
         }
 
         for ($i = 0; $i < count($users); $i++) {
-            $users[$i]->student->docs = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/privateStateDocs/'.$users[$i]->student->order->private_doc_file_id);
+            $users[$i]->student->docs = Storage::disk('studentDocuments')->files($users[$i]->national_id . '/privateStateDocs/' . $users[$i]->student->order->private_doc_file_id);
         }
 
         return view('manager.private.private_student')->with(compact('users'));
@@ -73,7 +74,7 @@ class PrivateStateController extends Controller
         ]);
 
         $decision = false;
-        if($reviewedOrder["decision"] == "accept"){
+        if ($reviewedOrder["decision"] == "accept") {
             $decision = true;
         }
         try {
@@ -83,18 +84,17 @@ class PrivateStateController extends Controller
             // if($decision == false){
             //   $user->student->studentCourses()->delete();
             // }
-                $order->update([
-                    "private_doc_verified" => $decision,
-                    "note"                 => $reviewedOrder["note"]
-                ]);
+            $order->update([
+                "private_doc_verified" => $decision,
+                "note"                 => $reviewedOrder["note"],
+            ]);
 
             DB::commit();
             return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
         } catch (Exception $e) {
-           Log::error($e->getMessage().' '.$e);
+            Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
         }
     }
-
 }

@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Department;
 use App\Models\Program;
 use App\Models\Role;
+use App\Models\Semester;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,7 +25,9 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             MajorSeeder::class,
             CourseSeeder::class,
-            UserSeeder::class
+            UserSeeder::class,
+            SemesterSeeder::class,
+
             
             //StudentSeeder::class,
             ]);

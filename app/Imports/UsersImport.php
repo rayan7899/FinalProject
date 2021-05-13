@@ -57,7 +57,7 @@ class UsersImport implements ToCollection
         }
 
         Validator::make($rows->toArray(), [
-            '*.' . NATIONAL_ID => 'required|digits:10',
+            '*.' . NATIONAL_ID => 'required|digits:10|unique:users,national_id',
             '*.' . NAME => 'required|string|max:100', 
             '*.' . BIRTHDATE => 'required|digits:4', 
             '*.' . PHONE => 'required|digits_between:9,14',

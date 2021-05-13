@@ -36,7 +36,8 @@
                     <div class="col-12">
                         <nav class="navbar navbar-expand-md navbar-light px-0">
 
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                data-target="#navbarSupportedContent">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
 
@@ -66,7 +67,7 @@
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                                document.getElementById('logout-form').submit();">
+                                                                                                                    document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -112,7 +113,8 @@
                                             <li class="nav-item dropdown">
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item"
-                                                        href="{{ route('rayatReportFormCommunity', ["type" => "community"]) }}">تقرير رايات</a>
+                                                        href="{{ route('rayatReportFormCommunity', ['type' => 'community']) }}">تقرير
+                                                        رايات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('publishToRayatFormCommunity', ['type' => 'community']) }}">الرفع
                                                         لرايات</a>
@@ -120,13 +122,15 @@
                                                         href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
                                                     <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة
                                                         المستخدمين</a>
-                                                        <a class="dropdown-item" href="{{ route('manageStudentsForm') }}">ادارة
-                                                            المستخدمين</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('manageStudentsForm') }}">ادارة
+                                                        المستخدمين</a>
                                                     <a class="dropdown-item" href="{{ route('coursesIndex') }}">ادارة
                                                         المقررات</a>
                                                     <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع
                                                         المتدربين المستمرين</a>
-                                                    <a class="dropdown-item" href="{{ route('newStudentsReport',["type" => "community"]) }}">جميع
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('newStudentsReport', ['type' => 'community']) }}">جميع
                                                         المتدربين المستجدين</a>
                                                     <a class="dropdown-item" href="{{ route('reportAllForm') }}">جميع
                                                         العمليات المالية</a>
@@ -163,9 +167,11 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('finalAcceptedReport') }}">تقرير
                                                         القبول النهائي</a>
-                                                    <a class="dropdown-item" href="{{ route('NewStudents',["type" => "Affairs"]) }}">المتدربين
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('NewStudents', ['type' => 'Affairs']) }}">المتدربين
                                                         المستجدين </a>
-                                                    <a class="dropdown-item" href="{{ route("rayatReportFormAffairs",["type" => "affairs"]) }}">تقرير
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('rayatReportFormAffairs', ['type' => 'affairs']) }}">تقرير
                                                         رايات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('publishToRayatFormAffairs', ['type' => 'affairs']) }}">الرفع
@@ -175,10 +181,12 @@
                                                         مستجدين</a>
                                                     <a class="dropdown-item" href="{{ route('OldForm') }}">
                                                         اضافة اكسل مستمرين </a>
-                                                        <a class="dropdown-item" href="{{ route('UpdateStudentsWalletForm') }}">
-                                                            اضافة الفائض / العجز للمستمرين </a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('UpdateStudentsWalletForm') }}">
+                                                        اضافة الفائض / العجز للمستمرين </a>
                                                     {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a> --}}
-                                                    <a class="dropdown-item" href="{{ route('addRayatIdForm') }}">اضافة الرقم التدريبي للمستجدين</a>
+                                                    <a class="dropdown-item" href="{{ route('addRayatIdForm') }}">اضافة
+                                                        الرقم التدريبي للمستجدين</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('coursesPerLevel') }}">الجداول المقترحة</a>
 
@@ -220,8 +228,8 @@
                                     @endif
                                 @endauth
                             </div>
-                            <a class="navbar-brand py-0" href="{{route('home')}}">
-                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo1.svg') }}"/>
+                            <a class="navbar-brand py-0" href="{{ route('home') }}">
+                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo1.svg') }}" />
                             </a>
                         </nav>
                     </div>

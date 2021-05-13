@@ -11,9 +11,11 @@ use App\Models\Permission;
 use App\Models\Program;
 use App\Models\RefundOrder;
 use App\Models\Role;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -207,10 +209,10 @@ class CommunityController extends Controller
     public function editStudentUpdate(Request $request, User $user)
     {
         $requestData = $this->validate($request, [
-            'national_id' => 'required|digits:10|unique:users,national_id'.$user->id,
-            "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id'.$user->id,
+            'national_id' => 'required|digits:10|unique:users,national_id' . $user->id,
+            "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id' . $user->id,
             'name'     => 'required|string|min:3|max:100',
-            "phone"        => 'required|digits_between:9,14|unique:users,phone'.$user->id,
+            "phone"        => 'required|digits_between:9,14|unique:users,phone' . $user->id,
             "major"         => "required|numeric|exists:majors,id",
             "level"         => "required|numeric|min:1|max:5",
         ]);
@@ -421,6 +423,8 @@ class CommunityController extends Controller
 
     public function paymentsReviewUpdate(Request $request)
     {
+        $semester = Semester::latest()->first();
+
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
             "payment_id"         => "required|numeric|exists:payments,id",
@@ -447,12 +451,15 @@ class CommunityController extends Controller
                     "amount"        => $reviewedPayment["amount"],
                     "note"          => $reviewedPayment["note"],
                     "type"          => "recharge",
-                    "manager_id"       => Auth::user()->id,
+                    "manager_id"    => Auth::user()->id,
+                    "semester_id"   => $semester->id,
+
                 ]);
                 $payment->update([
                     "transaction_id" => $transaction->id,
                     "note"          => $reviewedPayment["note"],
-                    "accepted"       => true
+                    "accepted"       => true,
+
                 ]);
 
                 $user->student->wallet += $reviewedPayment["amount"];
@@ -460,7 +467,8 @@ class CommunityController extends Controller
             } else {
                 $payment->update([
                     "note"          => $reviewedPayment["note"],
-                    "accepted"       => false
+                    "accepted"       => false,
+
                 ]);
             }
 
@@ -477,6 +485,7 @@ class CommunityController extends Controller
 
     public function paymentsReviewVerifiyDocs(Request $request)
     {
+        $semester = Semester::latest()->first();
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
             "payment_id"         => "required|numeric|exists:payments,id",
@@ -501,16 +510,20 @@ class CommunityController extends Controller
                     "amount"    => $payment->amount,
                     "type"    => "recharge",
                     "manager_id"    => Auth::user()->id,
+                    "semester_id"        => $semester->id,
+
                 ]);
                 $payment->update([
                     "transaction_id" => $transaction->id,
-                    "accepted"       => $decision
+                    "accepted"       => $decision,
+
                 ]);
                 $user->student->wallet += $payment->amount;
                 $user->student->save();
             } else {
                 $payment->update([
-                    "accepted"       => false
+                    "accepted"       => false,
+
                 ]);
             }
 
@@ -533,30 +546,42 @@ class CommunityController extends Controller
 
     public function newSemester(Request $request)
     {
+
         $requestData = $this->validate($request, [
             "national_id"        => "required|digits:10",
             'password' => 'required|string|min:8',
+            'start_date' => 'required|date_format:Y-m-d',
+            'end_date' => 'required|date_format:Y-m-d',
+            'isSummerSemester' => "boolean"
 
         ]);
-
         try {
+            $user = Auth::user();
+            if (!$user->hasRole("خدمة المجتمع")) {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
 
-
-            if (!Hash::check($requestData["password"], Auth::user()->password) && $requestData["national_id"] != Auth::user()->national_id) {
+            if (!Hash::check($requestData["password"], Auth::user()->password) || $requestData["national_id"] != Auth::user()->national_id) {
                 return  back()->with('error', 'البيانات المدخلة لا تتطابق مع سجلاتنا');
             }
-            DB::beginTransaction();
 
+            DB::beginTransaction();
+            Semester::create([
+                "start_date" => $requestData["start_date"],
+                "end_date" => $requestData["end_date"],
+            ]);
             DB::table('students')
                 ->update([
                     'credit_hours' => 0,
                 ]);
+            if (isset($requestData['isSummerSemester']) &&  $requestData['isSummerSemester'] == false) {
+                DB::table('students')
+                    ->where('level', "<", 5)
+                    ->update([
+                        'level' => DB::raw('level + 1'),
+                    ]);
+            }
 
-            DB::table('students')
-                ->where('level', "<", 5)
-                ->update([
-                    'level' => DB::raw('level + 1'),
-                ]);
 
             DB::commit();
             return redirect(route("communityDashboard"))->with("success", "تم معالجة الطلب بنجاح");
@@ -617,6 +642,8 @@ class CommunityController extends Controller
     }
     public function publishToRayat(Request $request)
     {
+
+        $semester = Semester::latest()->first();
         $requestData = $this->validate($request, [
             "national_id"        => "required|digits:10",
             "requested_hours"    => "required|numeric|min:0|max:21",
@@ -684,6 +711,8 @@ class CommunityController extends Controller
                 "amount"        => $amount,
                 "type"          => "deduction",
                 "manager_id"       => Auth::user()->id,
+                "semester_id"   => $semester->id,
+
             ]);
 
             $order->update([
@@ -1052,6 +1081,7 @@ class CommunityController extends Controller
 
     public function charge(Request $request)
     {
+        $semester = Semester::latest()->first();
         $paymentRequest = $this->validate($request, [
             "id"            => 'required|string|max:10|min:10',
             "amount"            => "required|numeric|min:0|max:20000",
@@ -1080,7 +1110,9 @@ class CommunityController extends Controller
             $payment = $user->student->payments()->create(
                 [
                     "amount"            => $paymentRequest["amount"],
-                    "receipt_file_id"   => $randomId
+                    "receipt_file_id"   => $randomId,
+                    "semester_id"        => $semester->id,
+
                 ]
             );
 
@@ -1090,11 +1122,14 @@ class CommunityController extends Controller
                 "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
                 "type"          => "manager_recharge",
                 "manager_id"       => Auth::user()->id,
+                "semester_id"   => $semester->id,
+
             ]);
 
             $payment->update([
                 "transaction_id" => $transaction->id,
                 "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
+
             ]);
 
             $user->student->wallet += $paymentRequest["amount"];
@@ -1183,6 +1218,7 @@ class CommunityController extends Controller
 
     public function refundOrdersUpdate(Request $request)
     {
+        $semester = Semester::latest()->first();
         $requestData = $this->validate($request, [
             "refund_id"         => "required|numeric",
             "note"              => "nullable|string",
@@ -1194,8 +1230,8 @@ class CommunityController extends Controller
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
             // return response(['message'=>$refund->refund_to, 200]);
-            
-            switch($refund->reason){
+
+            switch ($refund->reason) {
                 case 'drop-out':
                     $reason = 'انسحاب';
                     break;
@@ -1215,56 +1251,59 @@ class CommunityController extends Controller
                     $reason = 'لا يوجد';
             }
 
-            
+
             DB::beginTransaction();
-            if($requestData['accepted']){
-                    switch ($requestData['range']) {
-                        case 'before-training':
-                            $amount = $refund->amount - 300;
-                            break;
-                        case 'before-4th-week':
-                            $amount = $refund->amount * 0.6;
-                            break;
-                        case 'refund-all-amount':
-                            $amount = $refund->amount;
-                            break;
-                        
-                        default:
-                            break;
-                    }
-                    
-                    $transaction = $refund->student->transactions()->create([
-                        "refund_order_id"     => $refund->id,
-                        "amount"        => $amount,
-                        "note"          => ' مبلغ مسترد - السبب ' . $reason,
-                        "type"          => $refund->refund_to == 'wallet' ? "refund-to-wallet" : "refund-to-bank",
-                        "manager_id"       => Auth::user()->id,
-                    ]);
+            if ($requestData['accepted']) {
+                switch ($requestData['range']) {
+                    case 'before-training':
+                        $amount = $refund->amount - 300;
+                        break;
+                    case 'before-4th-week':
+                        $amount = $refund->amount * 0.6;
+                        break;
+                    case 'refund-all-amount':
+                        $amount = $refund->amount;
+                        break;
 
-                    if ($refund->refund_to == 'wallet') {
-                        $refund->student->wallet += $amount;
-                    }else{
-                        $refund->student->wallet -= $amount;
-                    }
-
-                    if (in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
-                        $refund->student->credit_hours = 0;
-                    }
-
-                    $refund->student->save();
-
-                    $refund->update([
-                        'transaction_id'    => $transaction->id,
-                        'manager_note'      => $requestData['note'],
-                        'amount'            => $amount,
-                        'accepted'          => true
-                    ]);
-                }else{
-                    $refund->update([
-                        'manager_note'      => $requestData['note'],
-                        'accepted'          => false
-                    ]);
+                    default:
+                        break;
                 }
+
+                $transaction = $refund->student->transactions()->create([
+                    "refund_order_id"     => $refund->id,
+                    "amount"        => $amount,
+                    "note"          => ' مبلغ مسترد - السبب ' . $reason,
+                    "type"          => $refund->refund_to == 'wallet' ? "refund-to-wallet" : "refund-to-bank",
+                    "manager_id"       => Auth::user()->id,
+                    "semester_id"        => $semester->id,
+
+                ]);
+
+                if ($refund->refund_to == 'wallet') {
+                    $refund->student->wallet += $amount;
+                } else {
+                    $refund->student->wallet -= $amount;
+                }
+
+                if (in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
+                    $refund->student->credit_hours = 0;
+                }
+
+                $refund->student->save();
+
+                $refund->update([
+                    'transaction_id'    => $transaction->id,
+                    'manager_note'      => $requestData['note'],
+                    'amount'            => $amount,
+                    'accepted'          => true,
+
+                ]);
+            } else {
+                $refund->update([
+                    'manager_note'      => $requestData['note'],
+                    'accepted'          => false,
+                ]);
+            }
             DB::commit();
             return response(['message' => 'تمت معالجة طلب الاسترداد بنجاح'], 200);
         } catch (Exception $e) {

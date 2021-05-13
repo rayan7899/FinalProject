@@ -20,6 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('payment_id')->nullable();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->unsignedBigInteger('refund_order_id')->nullable();
+            $table->unsignedBigInteger('semester_id');
             $table->double("amount");
             $table->string("note")->nullable();
             $table->string("type");
@@ -28,6 +29,7 @@ class CreateTransactionsTable extends Migration
             $table->foreign("payment_id")->references("id")->on("payments");
             $table->foreign("order_id")->references("id")->on("orders");
             $table->foreign("refund_order_id")->references("id")->on("refund_orders");
+            $table->foreign('semester_id')->references('id')->on('semesters');
             $table->timestamps();
         });
     }

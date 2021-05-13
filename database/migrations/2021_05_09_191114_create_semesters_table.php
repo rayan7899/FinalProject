@@ -15,6 +15,8 @@ class CreateSemestersTable extends Migration
     {
         Schema::create('semesters', function (Blueprint $table) {
             $table->id();
+            $table->date("start_date");
+            $table->date("end_date")->nullable();
             $table->timestamps();
         });
     }
