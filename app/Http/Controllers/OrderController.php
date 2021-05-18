@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Semester;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +73,7 @@ class OrderController extends Controller
    public function store(Request $request)
    {
       $user = Auth::user();
+      $semester = Semester::latest()->first();
       $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
       $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
          ->where("private_doc_verified", "!=", false)->count();
@@ -141,7 +144,7 @@ class OrderController extends Controller
          // }
 
          // privateState ------------------------------------------------------------
-
+         
          if ($requestData["traineeState"] == "privateState") {
 
             $randomId =  uniqid();
@@ -156,6 +159,7 @@ class OrderController extends Controller
                   "discount" => $discountAmount,
                   "requested_hours" => $total_hours,
                   "private_doc_file_id" => $randomId,
+                  "semester_id"        => $semester->id,
                ]
             );
          } else {
@@ -171,7 +175,9 @@ class OrderController extends Controller
                $user->student->payments()->create(
                   [
                      "amount"            => $cost,
-                     "receipt_file_id"   => $doc_name
+                     "receipt_file_id"   => $doc_name,
+                     "semester_id"        => $semester->id,
+
                   ]
                );
                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $doc_name, File::get($requestData['payment_receipt']));
@@ -182,7 +188,8 @@ class OrderController extends Controller
                   "amount" => $amount,
                   "discount" => $discountAmount,
                   "requested_hours" => $total_hours,
-                  "private_doc_verified" => true
+                  "private_doc_verified" => true,
+                  "semester_id"        => $semester->id,
                ]
             );
 

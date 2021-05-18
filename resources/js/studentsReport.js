@@ -12,6 +12,7 @@ jQuery(function () {
             { data: "national_id" },
             { data: "name", },
             { data: "phone" },
+            { data: "student.wallet" },
             { data: "student.program.name" },
             { data: "student.department.name" },
             { data: "student.major.name" },
@@ -160,6 +161,7 @@ jQuery(function () {
             searchPlaceholder: "ابحث ...",
         },
         initComplete: function () {
+            Swal.close();
             var api = this.api();
             $(".filterhead", api.table().header()).each(function (i) {
                 if (i > 3 && i < 8) {

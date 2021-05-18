@@ -131,7 +131,23 @@
         <script defer>
             var paymentVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
             var paymentWithNote = "{{ route('paymentsReviewUpdate') }}";
-            var paymentsReviewJson = "{{ route('paymentsReviewJson')}}"
+            var paymentsReviewJson = "{{ route('paymentsReviewJson') }}"
+            window.addEventListener('DOMContentLoaded', (event) => {
+                Swal.fire({
+                    html: "<h4>جاري جلب البيانات</h4>",
+                    timerProgressBar: true,
+                    showClass: {
+                        popup: '',
+                        icon: ''
+                    },
+                    hideClass: {
+                        popup: '',
+                    },
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+            });
 
         </script>
     </div>

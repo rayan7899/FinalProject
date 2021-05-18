@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="container-fluid">
-    المتدربين المستمرين
+        المتدربين المستمرين
         @if (isset($error) || !empty($fetch_errors))
             <div class="alert alert-danger">
                 @if (isset($error))
@@ -17,6 +17,7 @@
                         <th scope="col">رقم الهوية</th>
                         <th scope="col">الاسم</th>
                         <th scope="col">رقم الجوال</th>
+                        <th scope="col">رصيد المحفظة</th>
                         <th scope="col">البرنامج</th>
                         <th scope="col">القسم</th>
                         <th scope="col">التخصص</th>
@@ -25,6 +26,7 @@
                     </tr>
                     <tr>
 
+                        <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
@@ -43,6 +45,24 @@
         </div>
     </div>
     <script>
-        var studentsReportJson = "{{route('studentsReportCommunityJson',['type' => 'old'])}}"
+        var studentsReportJson = "{{ route('studentsReportCommunityJson', ['type' => 'old']) }}"
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            Swal.fire({
+                html: "<h4>جاري جلب البيانات</h4>",
+                timerProgressBar: true,
+                showClass: {
+                    popup: '',
+                    icon: ''
+                },
+                hideClass: {
+                    popup: '',
+                },
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        });
+
     </script>
 @stop

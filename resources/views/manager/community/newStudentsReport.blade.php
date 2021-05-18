@@ -17,6 +17,7 @@
                         <th scope="col">رقم الهوية</th>
                         <th scope="col">الاسم</th>
                         <th scope="col">رقم الجوال</th>
+                        <th scope="col">رصيد المحفظة</th>
                         <th scope="col">البرنامج</th>
                         <th scope="col">القسم</th>
                         <th scope="col">التخصص</th>
@@ -24,6 +25,7 @@
                         <th scope="col">القبول النهائي</th>
                     </tr>
                     <tr>
+                        <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
@@ -42,7 +44,24 @@
         </div>
     </div>
     <script>
-        var studentsReportJson = "{{$type == 'community' ? route('studentsReportCommunityJson',['type' => 'new']) : route('studentsReportAffairsJson',['type' => 'new'])}}"
+        var studentsReportJson =
+            "{{ $type == 'community' ? route('studentsReportCommunityJson', ['type' => 'new']) : route('studentsReportAffairsJson', ['type' => 'new']) }}"
+        window.addEventListener('DOMContentLoaded', (event) => {
+            Swal.fire({
+                html: "<h4>جاري جلب البيانات</h4>",
+                timerProgressBar: true,
+                showClass: {
+                    popup: '',
+                    icon: ''
+                },
+                hideClass: {
+                    popup: '',
+                },
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        });
 
     </script>
 @stop

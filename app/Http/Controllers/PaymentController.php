@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Semester;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,42 +33,44 @@ class PaymentController extends Controller
         $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
         if ($waitingPaymentssCount > 0) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-        }elseif ($isHasActiveRefund) {
-         return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
+        } elseif ($isHasActiveRefund) {
+            return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
         }
         return view("student.wallet.payment");
     }
 
     public function store(Request $request)
     {
+        $semester = Semester::latest()->first();
         $user = Auth::user();
         $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
         if ($waitingPaymentssCount > 0) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
         }
-        
+
         $paymentRequest = $this->validate($request, [
             "amount"            => "required|numeric|min:0|max:50000",
             "payment_receipt"   => "required|mimes:pdf,png,jpg,jpeg|max:4000",
         ]);
-       
+
         try {
             DB::beginTransaction();
             $randomId =  uniqid();
-            
+
             // $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
-            $doc_name =  $randomId .'.'. $paymentRequest['payment_receipt']->getClientOriginalExtension();
+            $doc_name =  $randomId . '.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
             $user->student->payments()->create(
                 [
                     "amount"            => $paymentRequest["amount"],
-                    "receipt_file_id"   => $doc_name
+                    "receipt_file_id"   => $doc_name,
+                    "semester_id"        => $semester->id,
                 ]
             );
             Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $doc_name, File::get($paymentRequest['payment_receipt']));
             DB::commit();
             return redirect(route("home"))->with("success", "تم ارسال الطلب بنجاح");
         } catch (Exception $e) {
-           Log::error($e->getMessage().' '.$e);
+            Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }

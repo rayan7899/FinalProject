@@ -41,6 +41,7 @@ window.fillDepartments = function () {
     var prog = document.getElementById("program").value;
 
     if (prog == undefined) {
+        console.error(`program id ${prog} is undefined`);
         return;
     }
 

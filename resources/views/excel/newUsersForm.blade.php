@@ -88,7 +88,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h6>اضافة المتدربين من ملف Excel</h6>
+                <h6>اضافة المتدربين مستجدين من ملف Excel</h6>
             </div>
             <div class="card-body">
                 <form id="excel_form" class="form" method="POST" action="{{ route('importExcel') }}"

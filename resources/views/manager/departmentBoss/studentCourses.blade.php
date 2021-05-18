@@ -5,7 +5,7 @@
         <div class="form-inline m-3">
             <div class="form-group">
                 <input type="text" class="form-control" name="search" id="search"
-                    placeholder="ادخل رقم الطالب المدني او الاكاديمي" value="">
+                    placeholder="ادخل رقم الهوية او الرقم التدريبي" value="">
                 <input type="button" onclick="getStudentCourses()" value="بحث" class="btn btn-primary">
             </div>
         </div>
