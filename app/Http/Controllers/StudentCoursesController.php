@@ -79,7 +79,7 @@ class StudentCoursesController extends Controller
             StudentCourse::where('course_id', $request->studentCourseId)->delete();
             return response(['message' => 'تم حذف المقرر بنجاح'], 200);
         } catch (QueryException $e) {
-            return response(['message' => $e->getMessage()], 422);
+            return response(['message' => $e->getCode()], 422);
         }
     }
 }

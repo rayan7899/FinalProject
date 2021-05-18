@@ -478,7 +478,7 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }
 
@@ -532,7 +532,7 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }
 
@@ -617,8 +617,12 @@ class CommunityController extends Controller
         try {
             $orders = Order::with(["student", "student.user", "student.program", "student.department", "student.major", "student.payments"])
                 ->where("transaction_id", null)
-                ->where("private_doc_verified", true)->whereDoesntHave("student.payments", function ($res) {
+                ->where("private_doc_verified", true)
+                ->whereDoesntHave("student.payments", function ($res) use ($cond) {
                     $res->where("accepted", null);
+                })->whereHas("student", function ($res) use ($cond) {
+                    $res->where("level", $cond, 1)
+                        ->where("final_accepted", true);
                 })->get();
             return response()->json(["data" => $orders->toArray()], 200);
         } catch (Exception $e) {
@@ -710,7 +714,7 @@ class CommunityController extends Controller
                 "order_id"    => $order->id,
                 "amount"        => $amount,
                 "type"          => "deduction",
-                "manager_id"       => Auth::user()->id,
+                "manager_id"       => Auth::user()->manager->id,
                 "semester_id"   => $semester->id,
 
             ]);
@@ -1121,13 +1125,14 @@ class CommunityController extends Controller
                 "amount"        => $paymentRequest["amount"],
                 "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
                 "type"          => "manager_recharge",
-                "manager_id"       => Auth::user()->id,
+                "manager_id"       => Auth::user()->manager->id,
                 "semester_id"   => $semester->id,
 
             ]);
 
             $payment->update([
                 "transaction_id" => $transaction->id,
+                "accepted"       => true,
                 "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
 
             ]);
@@ -1274,7 +1279,7 @@ class CommunityController extends Controller
                     "amount"        => $amount,
                     "note"          => ' مبلغ مسترد - السبب ' . $reason,
                     "type"          => $refund->refund_to == 'wallet' ? "refund-to-wallet" : "refund-to-bank",
-                    "manager_id"       => Auth::user()->id,
+                    "manager_id"       => Auth::user()->manager->id,
                     "semester_id"        => $semester->id,
 
                 ]);

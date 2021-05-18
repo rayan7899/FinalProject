@@ -289,7 +289,7 @@
                                     <td>{{ $transaction->refund->id ?? 'Error' }}</td>
                                 @elseif ($transaction->type == 'manager_recharge')
                                     <td class="text-success"> اضافة (من الادارة) </td>
-                                    <td>لا يوجد</td>
+                                    <td>{{ $transaction->payment->id ?? 'Error' }}</td>
                                 @else
                                     <td>لا يوجد</td>
                                     <td>{{ $transaction->refund_order_id ?? 'Error' }}</td>

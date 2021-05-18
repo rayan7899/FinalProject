@@ -12,6 +12,7 @@ jQuery(function () {
             { data: "national_id" },
             { data: "name", },
             { data: "phone" },
+            { data: "student.wallet" },
             { data: "student.program.name" },
             { data: "student.department.name" },
             { data: "student.major.name" },

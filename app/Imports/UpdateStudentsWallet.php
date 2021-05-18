@@ -75,7 +75,7 @@ class UpdateStudentsWallet implements ToCollection
                     "amount"        => $row[WALLET],
                     "type"          => "manager_recharge",
                     "note"          => "رصيد سابق",
-                    "by_user"       => Auth::user()->id,
+                    "manager_id"       => Auth::user()->manager->id,
                     "semester_id"   => $semester->id,
                 ]);
                 $user->student->wallet += $row[WALLET];
@@ -88,7 +88,7 @@ class UpdateStudentsWallet implements ToCollection
                 if (isset($e->validator)) {
                     array_push($errorsArr, ['message' => implode(", ", $e->validator->errors()->all()), 'userinfo' => $replaceKeys]);
                 } else {
-                    array_push($errorsArr, ['message' =>  $e->getMessage(), 'userinfo' => $replaceKeys]);
+                    array_push($errorsArr, ['message' =>  $e->getCode(), 'userinfo' => $replaceKeys]);
                 }
                 continue;
             }

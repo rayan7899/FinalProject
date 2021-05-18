@@ -94,7 +94,7 @@ class PrivateStateController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getMessage()]), 422);
+            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }
 }

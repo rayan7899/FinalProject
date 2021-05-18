@@ -17,6 +17,7 @@
                         <th scope="col">رقم الهوية</th>
                         <th scope="col">الاسم</th>
                         <th scope="col">رقم الجوال</th>
+                        <th scope="col">رصيد المحفظة</th>
                         <th scope="col">البرنامج</th>
                         <th scope="col">القسم</th>
                         <th scope="col">التخصص</th>
@@ -25,6 +26,7 @@
                     </tr>
                     <tr>
 
+                        <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>

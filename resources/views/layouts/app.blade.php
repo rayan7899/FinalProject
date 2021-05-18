@@ -101,6 +101,9 @@
                                                         المقترحة</a>
                                                 </div>
                                             </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                            </li>
                                         </ul>
                                     @endif
 
@@ -193,6 +196,9 @@
 
                                                 </div>
                                             </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                            </li>
 
                                         </ul>
                                     @endif
@@ -215,6 +221,9 @@
                                                         خاصة</a>
                                                 </div>
                                             </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                            </li>
                                         </ul>
                                     @endif
 
@@ -226,6 +235,7 @@
                                             </li>
                                         </ul>
                                     @endif
+                                    
                                 @endauth
                             </div>
                             <a class="navbar-brand py-0" href="{{ route('home') }}">
