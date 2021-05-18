@@ -25,7 +25,6 @@ window.getStudentInfo = function () {
 }
 
 function fillUsetInfo(user) {
-console.log(user);
     document.getElementById("name").value = user.name;
     document.getElementById("national_id").value = user.national_id;
     document.getElementById("wallet").value = user.student.wallet;
@@ -38,4 +37,16 @@ console.log(user);
     $("#chargeForm").show();
 
 
+}
+
+window.receiptToggle = function(action){
+    if(action == 'show'){
+        $('#receipt').show();
+        $('#receiptImg').removeAttr('disabled');
+        $('#receiptImg').attr('required', true);
+    }else{
+        $('#receipt').hide();
+        $('#receiptImg').attr('disabled', true);
+        $('#receiptImg').removeAttr('required');
+    }
 }

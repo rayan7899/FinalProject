@@ -1087,11 +1087,11 @@ class CommunityController extends Controller
     {
         $semester = Semester::latest()->first();
         $paymentRequest = $this->validate($request, [
-            "id"            => 'required|string|max:10|min:10',
+            "id"                => 'required|string|max:10|min:10',
             "amount"            => "required|numeric|min:0|max:20000",
-            "note"               => "string|nullable",
-            "payment_receipt"   => "required|mimes:pdf,png,jpg,jpeg|max:4000",
-
+            "note"              => "string|nullable",
+            "payment_receipt"   => "required_if:action,charge|mimes:pdf,png,jpg,jpeg|max:4000",
+            "action"            => "required|in:deduction,charge",
 
         ]);
 
@@ -1109,41 +1109,43 @@ class CommunityController extends Controller
             }
 
             DB::beginTransaction();
-
-            $randomId =  uniqid();
-            $payment = $user->student->payments()->create(
-                [
-                    "amount"            => $paymentRequest["amount"],
-                    "receipt_file_id"   => $randomId,
-                    "semester_id"        => $semester->id,
-
-                ]
-            );
+            if($paymentRequest['action'] == "charge"){
+                $randomId =  uniqid();
+                $payment = $user->student->payments()->create(
+                    [
+                        "amount"            => $paymentRequest["amount"],
+                        "receipt_file_id"   => $randomId,
+                        "semester_id"        => $semester->id,
+                    ]
+                );
+            }
 
             $transaction = $user->student->transactions()->create([
-                "payment_id"    => $payment->id,
+                "payment_id"    => $payment->id ?? null,
                 "amount"        => $paymentRequest["amount"],
-                "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
-                "type"          => "manager_recharge",
-                "manager_id"       => Auth::user()->manager->id,
+                "note"          => $paymentRequest['action'] == "charge" ? ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"] : ' ( خصم رصيد من قبل الادارة ) ' . $paymentRequest["note"],
+                "type"          => $paymentRequest['action'] == "charge" ? "manager_recharge" : "manager_deduction",
+                "manager_id"    => Auth::user()->id,
                 "semester_id"   => $semester->id,
-
             ]);
 
-            $payment->update([
-                "transaction_id" => $transaction->id,
-                "accepted"       => true,
-                "note"          => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
+            if($paymentRequest['action'] == "charge"){
+                $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
+                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($paymentRequest['payment_receipt']));
+                $payment->update([
+                    "transaction_id" => $transaction->id,
+                    "accepted"       => true,
+                    "note"           => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
+                ]);
+                $user->student->wallet += $paymentRequest["amount"];
+            }else{
+                $user->student->wallet -= $paymentRequest["amount"];
+            }
 
-            ]);
-
-            $user->student->wallet += $paymentRequest["amount"];
             $user->student->save();
 
-            $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($paymentRequest['payment_receipt']));
             DB::commit();
-            return  back()->with("success", "تم اضافة المبلغ الي محفظة المتدرب بنجاح");
+            return  back()->with("success", "تمت المعالجة بنجاح");
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
