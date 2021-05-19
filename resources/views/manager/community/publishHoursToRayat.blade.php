@@ -43,6 +43,8 @@
                         <th>البرنامج</th>
                         <th>القسم</th>
                         <th>التخصص</th>
+                        <th>الحالة</th>
+
                         <th>رقم الطلب</th>
                         <th> عدد الساعات</th>
                         <th class="text-center">التسجيل في رايات</th>
@@ -52,6 +54,8 @@
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
+                        <th class="filterhead"></th>
+
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>

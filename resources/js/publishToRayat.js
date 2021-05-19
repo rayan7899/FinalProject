@@ -20,6 +20,31 @@ jQuery(function () {
                 { data: "student.department.name" },
                 { data: "student.major.name" },
                 {
+                    data: "student.traineeState",
+                    render: function (data) {
+                        switch (data) {
+                            case 'employee':
+                                return "منسوب ";
+                                break;
+    
+                            case 'employeeSon':
+                                return "ابن منسوب";
+                                break;
+    
+                            case 'privateState':
+                                return "حالة خاصة";
+                                break;
+    
+                            // case 'trainee':
+                            default:
+                                return "متدرب";
+                                break;
+                        }
+                    }
+    
+                },
+
+                {
                     data: "id",
                     className: "text-center",
 
