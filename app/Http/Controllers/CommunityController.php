@@ -41,7 +41,7 @@ class CommunityController extends Controller
                 "url" => route("paymentsReviewForm")
             ],
             (object) [
-                "name" => "شحن محفظة متدرب",
+                "name" => " محفظة المتدرب (خصم/اضافة)",
                 "url" => route("chargeForm")
             ],
 

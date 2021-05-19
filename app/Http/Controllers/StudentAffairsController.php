@@ -57,7 +57,7 @@ class StudentAffairsController extends Controller
                 "url" => route("OldForm")
             ],
             (object) [
-                "name" => "اضافة الفائض / العجز للمستمرين",
+                "name" => "اضافة الفائض/العجز للمستمرين",
                 "url" => route("UpdateStudentsWalletForm")
             ],
             (object) [

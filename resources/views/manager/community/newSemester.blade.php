@@ -101,9 +101,10 @@
                                 aria-describedby="end_date"  placeholder="yyyy-mm-dd">
                         </div>
 
-                        <div class="input-group my-3" dir="ltr">
+                        <div class="input-group mt-4 mb-3" dir="ltr">
                             <label class="form-control">
-                                فصل صيفي
+                                فصل صيفي |
+                                <small> لن يتم نقل المتدربين الى المستوى التالي </small>
                             </label>
                             <div class="input-group-append">
                                 <div class="input-group-text">
@@ -118,7 +119,7 @@
                             <input id="national_id" minlength="10" maxlength="10" type="text"
                                 class="form-control @error('national_id') is-invalid @enderror" name="national_id"
                                 value="{{ old('national_id') ?? '' }}" required>
-                            <small id="helpId" class="text-muted">مطلوب رقم الهوية وكلمة المرور لتأكيد الاجراء</small>
+                            {{-- <small id="helpId" class="text-muted">مطلوب رقم الهوية وكلمة المرور لتأكيد الاجراء</small> --}}
                             @error('national_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
