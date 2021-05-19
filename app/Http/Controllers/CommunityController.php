@@ -1111,13 +1111,15 @@ class CommunityController extends Controller
             DB::beginTransaction();
             if ($paymentRequest['action'] == "charge") {
                 $randomId =  uniqid();
+                $doc_name =  $randomId . '.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
                 $payment = $user->student->payments()->create(
                     [
                         "amount"            => $paymentRequest["amount"],
-                        "receipt_file_id"   => $randomId,
                         "semester_id"        => $semester->id,
+                        "receipt_file_id"   => $doc_name,
                     ]
                 );
+                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $doc_name, File::get($paymentRequest['payment_receipt']));
             }
 
             $transaction = $user->student->transactions()->create([
@@ -1130,17 +1132,10 @@ class CommunityController extends Controller
             ]);
 
             if ($paymentRequest['action'] == "charge") {
-                $randomId =  uniqid();
-                $doc_name =  $randomId . '.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
-                $user->student->payments()->create(
-                    [
-                        "amount"            => $paymentRequest["amount"],
-                        "receipt_file_id"   => $doc_name,
-                        "semester_id"        => $semester->id,
-                        "accepted"           => true,
-                    ]
-                );
-                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $doc_name, File::get($paymentRequest['payment_receipt']));
+                $payment->update([
+                    "accepted"           => true,
+                    "transaction_id"     => $transaction->id,
+                ]);
                 $user->student->wallet += $paymentRequest["amount"];
             } else {
                 $user->student->wallet -= $paymentRequest["amount"];
