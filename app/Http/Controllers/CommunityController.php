@@ -451,7 +451,7 @@ class CommunityController extends Controller
                     "amount"        => $reviewedPayment["amount"],
                     "note"          => $reviewedPayment["note"],
                     "type"          => "recharge",
-                    "manager_id"    => Auth::user()->id,
+                    "manager_id"    => Auth::user()->manager->id,
                     "semester_id"   => $semester->id,
 
                 ]);
@@ -509,7 +509,7 @@ class CommunityController extends Controller
                     "payment_id"    => $payment->id,
                     "amount"    => $payment->amount,
                     "type"    => "recharge",
-                    "manager_id"    => Auth::user()->id,
+                    "manager_id"    => Auth::user()->manager->id,
                     "semester_id"        => $semester->id,
 
                 ]);
@@ -1109,7 +1109,7 @@ class CommunityController extends Controller
             }
 
             DB::beginTransaction();
-            if($paymentRequest['action'] == "charge"){
+            if ($paymentRequest['action'] == "charge") {
                 $randomId =  uniqid();
                 $payment = $user->student->payments()->create(
                     [
@@ -1125,20 +1125,24 @@ class CommunityController extends Controller
                 "amount"        => $paymentRequest["amount"],
                 "note"          => $paymentRequest['action'] == "charge" ? ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"] : ' ( خصم رصيد من قبل الادارة ) ' . $paymentRequest["note"],
                 "type"          => $paymentRequest['action'] == "charge" ? "manager_recharge" : "manager_deduction",
-                "manager_id"    => Auth::user()->id,
+                "manager_id"    => Auth::user()->manager->id,
                 "semester_id"   => $semester->id,
             ]);
 
-            if($paymentRequest['action'] == "charge"){
-                $doc_name =  date('Y-m-d-H-i') . '_payment_receipt.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
-                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $randomId . '/' . $doc_name, File::get($paymentRequest['payment_receipt']));
-                $payment->update([
-                    "transaction_id" => $transaction->id,
-                    "accepted"       => true,
-                    "note"           => ' ( اضافة رصيد من قبل الادارة ) ' . $paymentRequest["note"],
-                ]);
+            if ($paymentRequest['action'] == "charge") {
+                $randomId =  uniqid();
+                $doc_name =  $randomId . '.' . $paymentRequest['payment_receipt']->getClientOriginalExtension();
+                $user->student->payments()->create(
+                    [
+                        "amount"            => $paymentRequest["amount"],
+                        "receipt_file_id"   => $doc_name,
+                        "semester_id"        => $semester->id,
+                        "accepted"           => true,
+                    ]
+                );
+                Storage::disk('studentDocuments')->put('/' . $user->national_id . '/receipts/' . $doc_name, File::get($paymentRequest['payment_receipt']));
                 $user->student->wallet += $paymentRequest["amount"];
-            }else{
+            } else {
                 $user->student->wallet -= $paymentRequest["amount"];
             }
 
