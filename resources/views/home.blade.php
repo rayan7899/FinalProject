@@ -219,10 +219,10 @@
 
         <ul class="nav nav-tabs border rounded bg-white p-0">
             <li class="nav-item">
-                <a onclick="tabClicked('transactions',event)" class="nav-link h5 " href="#">جميع العمليات المالية</a>
+                <a onclick="tabClicked('transactions',event)" class="nav-link h5 {{ count($user->student->transactions) > 0 ? 'active' : '' }}" href="#">جميع العمليات المالية</a>
             </li>
             <li class="nav-item">
-                <a onclick="tabClicked('payments',event)" class="nav-link h5 active" href="#">المحفظة</a>
+                <a onclick="tabClicked('payments',event)" class="nav-link h5 {{ count($user->student->transactions) == 0 ? 'active' : '' }}" href="#">المحفظة</a>
             </li>
             <li class="nav-item">
                 <a onclick="tabClicked('orders',event)" class="nav-link h5" href="#">اضافة المقررات</a>
@@ -232,7 +232,7 @@
             </li>
         </ul>
         {{-- transactions --}}
-        <div id="transactions" style="display: none;" class="card tables">
+        <div id="transactions" style="display: {{ count($user->student->transactions) > 0 ? 'block' : 'none' }};" class="card tables">
             {{-- <div class="card-header">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="h5">
@@ -348,7 +348,7 @@
         </div>
 
         {{-- payments --}}
-        <div id="payments"  class="card tables">
+        <div id="payments" style="display: {{ count($user->student->transactions) == 0 ? 'block' : 'none' }};"  class="card tables">
             <div class="card-header bg-white">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="h5">
