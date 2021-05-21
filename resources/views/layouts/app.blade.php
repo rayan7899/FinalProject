@@ -239,7 +239,7 @@
                                 @endauth
                             </div>
                             <a class="navbar-brand py-0" href="{{ route('home') }}">
-                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo1.svg') }}" />
+                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo3.png') }}" />
                             </a>
                         </nav>
                     </div>
@@ -258,7 +258,7 @@
                 <img src="/images/background.jpg" style="height: 200px;" class="card-img" alt="...">
                 <div class="card-img-overlay">
                     <p class="text-center mt-5 pt-5">
-                        © جميع الحقوق محفوظة - المؤسسة العامة للتدريب التقني والمهني 2020 ( TVTC )
+                        © جميع الحقوق محفوظة - مكز خدمة المجتمع والتدريب المستمر 2021
                     </p>
                 </div>
             </div>
