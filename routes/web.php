@@ -187,6 +187,16 @@ Route::post('/department-boss/courses/store', [DepartmentBossController::class, 
 Route::get('/department-boss/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
 Route::post('/department-boss/courses/update', [DepartmentBossController::class, 'editCourse'])->name('deptEditCourse');
 Route::get('/department-boss/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
+
+// Users manage create,edit,delete
+Route::get('/department-boss/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
+Route::get('/department-boss/students/create', [DepartmentBossController::class, 'createStudentForm'])->name('deptCreateStudentForm');
+Route::post('/department-boss/students/store', [DepartmentBossController::class, 'createStudentStore'])->name('deptCreateStudentStore');
+// Route::get('/department-boss/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
+// Route::post('/department-boss/students/update/{user}', [CommunityController::class, 'editStudentUpdate'])->name('editStudentUpdate');
+// Route::get('/api/department-boss/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
+// Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+
 // });
 
 // المتدربين

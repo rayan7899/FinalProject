@@ -6,9 +6,12 @@ use App\Models\Course;
 use App\Models\Major;
 use Illuminate\Http\Request;
 use App\Models\Program;
+use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class DepartmentBossController extends Controller
@@ -54,6 +57,10 @@ class DepartmentBossController extends Controller
             (object) [
                 "name" => "ادارة المقررات",
                 "url" => route("deptCoursesIndex")
+            ],
+            (object) [
+                "name" => "اضافة متدرب",
+                "url" => route("deptCreateStudentForm")
             ],
         ];
         return view("manager.departmentBoss.dashboard")->with(compact("links","title"));
@@ -175,6 +182,59 @@ class DepartmentBossController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
+        }
+    }
+
+    public function createStudentForm()
+    {
+        $programs =  json_encode(Auth::user()->manager->getMyDepartment());
+        return view("manager.community.students.create")->with(compact('programs'));
+    }
+    
+    public function createStudentStore(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            'national_id' => 'required|digits:10|unique:users,national_id',
+            "rayat_id"    => 'nullable|digits_between:9,10|unique:students,rayat_id',
+            'name'     => 'required|string|min:3|max:100',
+            "phone"        => 'required|digits_between:9,14|unique:users,phone',
+            "major"         => "required|numeric|exists:majors,id",
+            "level"         => "required|numeric|min:1|max:5",
+        ]);
+
+        try {
+            if (Auth::user()->isDepartmentManager()) {
+
+                $password = Hash::make("bct12345");
+                $major = Major::find($requestData['major']) ?? null;
+                $prog_id = $major->department->program->id;
+                $dept_id = $major->department->id;
+                if ($major == null) {
+                    return back()->with("error", "لا يوجد قسم حسب المعلومات المرسله");
+                }
+                DB::beginTransaction();
+                User::create([
+                    "national_id" => $requestData['national_id'],
+                    "name" => $requestData['name'],
+                    "phone" => $requestData['phone'],
+                    "password" => $password
+                ])->student()->create([
+                    "rayat_id" => $requestData['rayat_id'],
+                    "program_id" => $prog_id,
+                    "department_id" => $dept_id,
+                    "has_imported_docs" => false,
+                    "major_id" => $requestData['major'],
+                    "level"    => $requestData['level'],
+                ]);
+                DB::commit();
+                return redirect(route("deptCreateStudentForm"))->with('success', 'تم اضافة المتدرب بنجاح');
+            } else {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
     }
 }
