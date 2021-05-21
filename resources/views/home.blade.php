@@ -135,7 +135,7 @@
                             value="{{ $user->email ?? 'لا يوجد' }}">
                         <div class="input-group-append">
                             <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">البريد الألكتروني</label></span>
+                                    class="text-center m-0 p-0 w-100">البريد الالكتروني</label></span>
                         </div>
                     </div>
                 </div>
@@ -392,7 +392,7 @@
                                 @else
                                     <td>{{ $payment->amount }}</td>
                                 @endif
-                                @if ($payment->accepted == null)
+                                @if ($payment->accepted === null)
                                     <td>قيد المراجعة</td>
                                 @else
                                     @if ($payment->accepted == true)
@@ -471,7 +471,7 @@
                                 <td>{{ $order->id ?? 'Error' }}</td>
                                 <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                 <td>{{ $order->amount ?? 'Error' }}</td>
-                                @if ($order->private_doc_verified === false || $order->private_doc_verified === '0')
+                                @if ($order->private_doc_verified === false || $order->private_doc_verified === '0' || $order->private_doc_verified === 0)
                                     <td class="text-danger">مرفوض</td>
                                     <td style="min-width: 100px">{{ $order->created_at->toDateString() ?? 'Error' }}
                                     </td>

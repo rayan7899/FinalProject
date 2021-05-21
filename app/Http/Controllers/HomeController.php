@@ -42,8 +42,8 @@ class HomeController extends Controller
             }
             return view("error")->with("error", "لا يوجد لديك اي صلاحيات");
         } else {
-            $user = User::with("student")->find(Auth::user()->id);
-
+            // $user = User::with("student")->find(Auth::user()->id);
+            $user = Auth::user();
             if (Hash::check("bct12345", $user->password)) {
                 return view('student.form')->with(compact('user'));
             }

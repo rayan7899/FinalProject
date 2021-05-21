@@ -43,12 +43,17 @@ jQuery(function () {
                     }
     
                 },
+                {
+                    data: "student.wallet",
+                    className: "text-center",
 
+                },
                 {
                     data: "id",
                     className: "text-center",
 
                 },
+
                 {
                     data: "requested_hours",
                     className: "text-center",

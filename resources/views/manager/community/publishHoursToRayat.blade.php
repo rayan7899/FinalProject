@@ -44,9 +44,9 @@
                         <th>القسم</th>
                         <th>التخصص</th>
                         <th>الحالة</th>
-
-                        <th>رقم الطلب</th>
-                        <th> عدد الساعات</th>
+                        <th class="text-center">المحفظة</th>
+                        <th class="text-center">رقم الطلب</th>
+                        <th class="text-center"> عدد الساعات</th>
                         <th class="text-center">التسجيل في رايات</th>
                     </tr>
                     <tr>
@@ -55,7 +55,7 @@
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
-
+                        <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>

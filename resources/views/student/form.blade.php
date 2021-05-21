@@ -142,7 +142,7 @@
                             required autocomplete="new-password">
                     </div>
 
-                    <!-- national id image -->
+                    {{-- <!-- national id image -->
                     <div class="form-group">
                         <label for="">صورة الهوية الوطنية </label>
                         <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="identity" class="form-control" value="">
@@ -152,7 +152,7 @@
                     <div class="form-group">
                         <label for="">صورة من المؤهل </label>
                         <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="degree" class="form-control" value="">
-                    </div>
+                    </div> --}}
 
                     <!-- submet button -->
                     <div class="form-group my-3">

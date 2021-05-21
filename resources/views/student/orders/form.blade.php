@@ -33,21 +33,23 @@
                                         <td class="text-center">{{ $course->name }}</td>
                                         <td class="text-center">{{ $course->level }}</td>
                                         <td class="text-center">{{ $course->credit_hours }}</td>
-                                        <td class="text-center">{{ $course->credit_hours * $user->student->program->hourPrice }}</td>
+                                        <td class="text-center">
+                                            {{ $course->credit_hours * $user->student->program->hourPrice }}</td>
                                         <td class="text-center @if ($user->student->level < 2) d-none @endif">
-                                                <input id="major_course_{{ $course->id }}" name="courses[]" type="checkbox"
-                                                    value="{{ $course->id }}" onclick="window.toggleChecked(event)" />
+                                                <input id="major_course_{{ $course->id }}" name="courses[]"
+                                                    type="checkbox" value="{{ $course->id }}"
+                                                    onclick="window.toggleChecked(event)" />
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
                                         <td colspan="6">لا يوجد مقررات</td>
                                     </tr>
-                            @endforelse
-                        @else
-                            <tr>
-                                <td colspan="6">لا يوجد مقررات</td>
-                            </tr>
+                                @endforelse
+                            @else
+                                <tr>
+                                    <td colspan="6">لا يوجد مقررات</td>
+                                </tr>
                             @endif
                         </tbody>
                     </table>
@@ -128,11 +130,11 @@
                                             <td class="text-center">{{ $course->name }}</td>
                                             <td class="text-center">{{ $course->level }}</td>
                                             <td class="text-center">{{ $course->credit_hours }}</td>
-                                            <td class="text-center">{{ $course->credit_hours * $user->student->program->hourPrice }}</td>
+                                            <td class="text-center">
+                                                {{ $course->credit_hours * $user->student->program->hourPrice }}</td>
                                             <td class="text-center @if ($user->student->level < 2) d-none @endif">
                                                     <input id="course_{{ $course->id }}" type="checkbox" name="courses[]"
-                                                        value="{{ $course->id }}" onclick="window.calcCost()"
-                                                        checked />
+                                                        value="{{ $course->id }}" onclick="window.calcCost()" checked />
                                             </td>
                                         </tr>
                                     @endforeach
@@ -168,18 +170,18 @@
                                 <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
                                     <a id="info-popup" data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة"
                                         class="h5 text-right mx-2" data-content="
-                                                                       <div class='text-right' dir='rtl' style='width: 30%;'>
-                                                                       ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
-                                                                       <br>
-                                                                       ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
-                                                                       <br>
-                                                                       ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
-                                                                       <br>
-                                                                       ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
-                                                                       <br>
-                                                                       ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
-                                                                       </div>
-                                                                       ">( ! )</a>
+                                                                               <div class='text-right' dir='rtl' style='width: 30%;'>
+                                                                               ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
+                                                                               <br>
+                                                                               ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
+                                                                               <br>
+                                                                               ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
+                                                                               <br>
+                                                                               ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
+                                                                               <br>
+                                                                               ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
+                                                                               </div>
+                                                                               ">( ! )</a>
                                     <input value="privateState" type="radio" onclick="window.calcCost()" id="privateState"
                                         name="traineeState" class="custom-control-input">
                                     <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
@@ -234,7 +236,14 @@
                             <!-- payment receipt image -->
                             <div class="form-group" id="receipt">
                                 <label for="receiptImg"> صورة إيصال السداد</label>
-                                <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="payment_receipt" class="form-control" id="receiptImg">
+                                <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="payment_receipt" class="form-control"
+                                    id="receiptImg">
+                                <div class="alert alert-info p-1 my-1" role="alert">
+                                    <p class="p-0 m-0">
+                                        رقم حساب خدمة المجتمع والتدريب المستمر (مصرف الراجحي)
+                                        252608010092653
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -246,8 +255,8 @@
                     <!-- requiered documents -->
                     <div class="form-group" id="privateStateDocGroup" style="display: none;">
                         <label for="privateStateDoc"> صور المستندات المطلوبة</label>
-                        <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="privateStateDoc" class="form-control" id="privateStateDoc" multiple
-                            disabled>
+                        <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="privateStateDoc" class="form-control"
+                            id="privateStateDoc" multiple disabled>
                     </div>
                     <!-- submet button -->
                     <div class="form-group my-3">
@@ -258,7 +267,7 @@
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', (event) => {
-                 window.calcCost(true);
+                window.calcCost(true);
             });
             var courses =
                 @php
