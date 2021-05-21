@@ -24,7 +24,14 @@
         <div class="card w-75 m-auto">
             <div class="card-header h5">{{ __('اضافة مقرر') }}</div>
             <div class="card-body p-3 px-5">
-                <form method="POST" action="{{ route('createCourse') }}">
+                @php
+                    if(Auth::user()->hasRole('خدمة المجتمع')){
+                        $route = route('createCourse');
+                    }else if (Auth::user()->isDepartmentManager()) {
+                        $route = route('deptCreateCourse');
+                    }
+                @endphp
+                <form method="POST" action="{{ $route }}">
                     @csrf
 
                     <div class="form-row mb-3">

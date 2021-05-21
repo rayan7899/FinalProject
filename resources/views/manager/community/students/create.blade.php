@@ -23,7 +23,14 @@
         <div class="card w-75 m-auto">
             <div class="card-header h5">{{ __('اضافة متدرب جديد') }}</div>
             <div class="card-body p-3 px-5">
-                <form method="POST" action="{{ route('createStudentStore') }}">
+                @php
+                    if(Auth::user()->hasRole('خدمة المجتمع')){
+                        $route = route('createStudentStore');
+                    }else if (Auth::user()->isDepartmentManager()) {
+                        $route = route('deptCreateStudentStore');
+                    }
+                @endphp
+                <form method="POST" action="{{ $route }}">
                     @csrf
                     {{-- username (national_id) --}}
                     <div class="form-group">

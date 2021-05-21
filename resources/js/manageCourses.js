@@ -46,7 +46,7 @@ window.fillManageCoursesTbl = function (courses) {
             ContactHours.innerHTML = course.contact_hours;
             deleteBtn.innerHTML = '<a href="#" onclick="window.deleteCourse(event,' + course.id + ')">' +
                 '<i class="fa fa-trash fa-lg text-danger" aria-hidden="true"></i></a>';
-            editBtn.innerHTML = '<a href="/community/courses/edit/' + course.id + '">' +
+            editBtn.innerHTML = '<a href="/department-boss/courses/edit/' + course.id + '">' +
                 '<i class="fa fa-edit fa-lg text-primary" aria-hidden="true"></i></a>';
 
         }
@@ -83,9 +83,10 @@ function deleteRequest(row, id) {
             Swal.showLoading();
         },
     });
-    axios.get('/community/courses/delete/' + id)
+    axios.get('/department-boss/courses/delete/' + id)
         .then((response) => {
             row.remove();
+            location.reload();
             Swal.fire({
                 position: "center",
                 html: "<h4>" + response.data.message + "</h4>",
