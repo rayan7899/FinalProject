@@ -25,7 +25,14 @@
                 <div class="card-header">
                     <div class="d-flex flex-row justify-content-between">
                         <h5>ادارة المقررات</h5>
-                        <a href="{{ route('createCourseForm') }}" class="btn btn-primary rounded">
+                        @php
+                            if(Auth::user()->hasRole('خدمة المجتمع')){
+                                $route = route('createCourseForm');
+                            }else if (Auth::user()->isDepartmentManager()) {
+                                $route = route('deptCreateCourseForm');
+                            }
+                        @endphp
+                        <a href="{{ $route }}" class="btn btn-primary rounded">
                             اضافة مقرر جديد
                         </a>
                     </div>

@@ -24,7 +24,14 @@
         <div class="card w-75 m-auto">
             <div class="card-header h5">{{ __('اضافة مقرر') }}</div>
             <div class="card-body p-3 px-5">
-                <form method="POST" action="{{ route('editCourse') }}">
+                @php
+                    if(Auth::user()->hasRole('خدمة المجتمع')){
+                        $route = route('editCourse');
+                    }else if (Auth::user()->isDepartmentManager()) {
+                        $route = route('deptEditCourse');
+                    }
+                @endphp
+                <form method="POST" action="{{ $route }}">
                     @csrf
 
                     <input name="id" value="{{$course->id}}" required hidden>
@@ -54,12 +61,11 @@
                     <div class="form-group">
                         <label for="level">{{ __('المستوى') }}</label>
                         <select class="form-control" name="level" class="ml-0 d-inline mx-3">
-                            <option value="0" disabled selected>أختر</option>
-                            <option value="1"> المستوى الاول</option>
-                            <option value="2"> المستوى الثاني</option>
-                            <option value="3"> المستوى الثالث</option>
-                            <option value="4"> المستوى الرابع</option>
-                            <option value="5"> المستوى الخامس</option>
+                            <option value="1" @if ($course->level == 1) selected @endif> المستوى الاول</option>
+                            <option value="2" @if ($course->level == 2) selected @endif> المستوى الثاني</option>
+                            <option value="3" @if ($course->level == 3) selected @endif> المستوى الثالث</option>
+                            <option value="4" @if ($course->level == 4) selected @endif> المستوى الرابع</option>
+                            <option value="5" @if ($course->level == 5) selected @endif> المستوى الخامس</option>
                         </select>
                         @error('level')
                             <span class="invalid-feedback" role="alert">

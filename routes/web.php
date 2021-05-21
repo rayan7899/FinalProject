@@ -102,9 +102,10 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/courses', [CommunityController::class, 'coursesIndex'])->name('coursesIndex');
     Route::get('/community/courses/create', [CommunityController::class, 'createCourseForm'])->name('createCourseForm');
     Route::post('/community/courses/store', [CommunityController::class, 'createCourse'])->name('createCourse');
-    Route::get('/community/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
+    ////// -------- I comment edit and delete becouse i'm using them in dept boss section
+    // Route::get('/community/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
     Route::post('/community/courses/update', [CommunityController::class, 'editCourse'])->name('editCourse');
-    Route::get('/community/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
+    // Route::get('/community/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
 
     //charge student wallet direct
     Route::get('/api/community/student/{id}', [CommunityController::class, 'getStudent'])->name('apiCommunityGetStudent');
@@ -177,6 +178,15 @@ Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCo
 Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
 // FIXME: use path-parameter instead of header key-value pairs (for consistency)
 Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');
+
+
+//Manage Courses
+Route::get('/department-boss/courses', [DepartmentBossController::class, 'coursesIndex'])->name('deptCoursesIndex');
+Route::get('/department-boss/courses/create', [DepartmentBossController::class, 'createCourseForm'])->name('deptCreateCourseForm');
+Route::post('/department-boss/courses/store', [DepartmentBossController::class, 'createCourse'])->name('deptCreateCourse');
+Route::get('/department-boss/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
+Route::post('/department-boss/courses/update', [DepartmentBossController::class, 'editCourse'])->name('deptEditCourse');
+Route::get('/department-boss/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
 // });
 
 // المتدربين
