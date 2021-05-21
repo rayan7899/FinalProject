@@ -7,62 +7,6 @@ use Illuminate\Database\Seeder;
 
 class CourseSeeder extends Seeder
 {
-    // static $majors = [
-    //     "برمجات" => [
-    //         [
-    //             'name' => "Mathematics -1",
-    //             'code' => "MATH 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "Physics",
-    //             'code' => "PHYS 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "English Language -1",
-    //             'code' => "ENGL 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "Principles Of Accounting",
-    //             'code' => "UACC 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "Advanced computer Programming",
-    //             'code' => "IPRG 313",
-    //             'hours' => 4
-    //         ],
-    //     ],
-    //     'دعم فني' => [
-    //         [
-    //             'name' => "Mathematics -1",
-    //             'code' => "MATH 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "Physics",
-    //             'code' => "PHYS 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "English Language -1",
-    //             'code' => "ENGL 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "Principles Of Accounting",
-    //             'code' => "UACC 301",
-    //             'hours' => 3
-    //         ],
-    //         [
-    //             'name' => "Advanced computer Programming",
-    //             'code' => "IPRG 313",
-    //             'hours' => 4
-    //         ],
-    //     ]
-    // ];
 
 
     static $baccDepts = [
@@ -277,14 +221,16 @@ class CourseSeeder extends Seeder
                         'contact_hours' => 4
                     ],
                     [
-                        'name' => "Elective Courses -3",
-                        'code' => "لا يوجد",
+                        'name' => "انترنت الاشياء",
+                        'code' => "نشبك 485",
                         'level' => 5,
                         'credit_hours' => 3,
                         'contact_hours' => 4
                     ],
                 ]
             ],
+
+
             [
                 'name' => "دعم أنظمة شبكات",
                'courses' => [
@@ -330,6 +276,8 @@ class CourseSeeder extends Seeder
                         'credit_hours' => 3,
                         'contact_hours' => 4
                     ],
+
+
                     [
                         'name' => "Discrete Math",
                         'code' => "MATH 303",
@@ -351,6 +299,8 @@ class CourseSeeder extends Seeder
                         'credit_hours' => 4,
                         'contact_hours' => 6
                     ],
+
+
                     [
                         'name' => "Statistics and Probability",
                         'code' => "STAT 303",
@@ -372,38 +322,276 @@ class CourseSeeder extends Seeder
                         'credit_hours' => 4,
                         'contact_hours' => 6
                     ],
+                    [
+                        'name' => "اخلاقيات العمل في تقنية المعلومات",
+                        'code' => "نشبك 482",
+                        'level' => 3,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+
+
+                    [
+                        'name' => "تصميم و تحليل الشبكات",
+                        'code' => "نشبك 443",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+
+
+                    
+                    [
+                        'name' => "افضل ممارسات البنية التحتية",
+                        'code' => "نشبك484",
+                        'level' => 5,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "الامن السبراني",
+                        'code' => "نشبك434",
+                        'level' => 5,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "انترنت الاشياء",
+                        'code' => "نشبك 485",
+                        'level' => 5,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
                 ]
             ],
         ],
 
-        // "تقنية كهربائية"  =>  [
-        //     [
-        //         'name' => "قوى وآلات كهربائية",
-        //         'hours' => 17
-        //     ],
-        // ],
 
-        // "تقنية ميكانيكية"  =>  [
-        //     [
-        //         'name' => "ميكانيكا سيارات",
-        //         'hours' => 18
-        //     ],
-        //     [
-        //         'name' =>   "محركات ومركبات",
-        //         'hours' => 18
-        //     ],
-        // ],
 
-        // "تقنية ادارية"  =>  [
-        //     [
-        //         'name' => "ادارة عامة",
-        //         'hours' => 16
-        //     ],
-        //     [
-        //         'name' => "محاسبة",
-        //         'hours' => 16
-        //     ],
-        // ]
+        "تقنية كهربائية"  =>  [
+            [
+                'name' => "قوى وآلات كهربائية",
+                'courses' => [
+                    [
+                        'name' => "التحكم الآلي",
+                        'code' => "كهرب442",
+                        'level' => 4,
+                        'credit_hours' => 2,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "حماية نظم",
+                        'code' => "كهرب462",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                    [
+                        'name' => "تسيير كهربائي",
+                        'code' => "كهرب444",
+                        'level' => 4,
+                        'credit_hours' => 4,
+                        'contact_hours' => 6
+                    ],
+                    [
+                        'name' => "مشروع التخرج",
+                        'code' => "كهرب491",
+                        'level' => 5,
+                        'credit_hours' => 4,
+                        'contact_hours' => 6
+                    ],
+                    [
+                        'name' => "التحويل الكهروميكانيكي للطاقة",
+                        'code' => "كهرب334",
+                        'level' => 2,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+                    [
+                        'name' => "الطاقة المتجددة",
+                        'code' => "كهرب471",
+                        'level' => 2,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+                    [
+                        'name' => "نظم التوزيع الكهربائي",
+                        'code' => "كهرب361",
+                        'level' => 2,
+                        'credit_hours' => 2,
+                        'contact_hours' => 3
+                    ],
+                    [
+                        'name' => "الجر الكهربائي",
+                        'code' => "كهرب445",
+                        'level' => 5,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+                    [
+                        'name' => "التحكم في نظم القوى الكهربائية",
+                        'code' => "كهرب443",
+                        'level' => 5,
+                        'credit_hours' => 2,
+                        'contact_hours' => 3
+                    ],
+                    [
+                        'name' => "التشغيل الاقتصادي لنظم القوى",
+                        'code' => "كهرب463",
+                        'level' => 4,
+                        'credit_hours' => 2,
+                        'contact_hours' => 3
+                    ],
+                ]
+            ],
+        ],
+        
+        "تقنية ميكانيكية"  =>  [
+            [
+                'name' => "ميكانيكا سيارات",
+                'courses' => [
+                    [
+                        'name' => "الطاقة المتجددة",
+                        'code' => "متمر461",
+                        'level' => 4,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+                    [
+                        'name' => "الشاحن التربيني",
+                        'code' => "متمر473",
+                        'level' => 5,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+                    [
+                        'name' => "تقنية الوقود البديلة",
+                        'code' => "متمر431",
+                        'level' => 5,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "ادارة ورش السيارات",
+                        'code' => "متمر483",
+                        'level' => 2,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+                    [
+                        'name' => "تطبيقات الموائع",
+                        'code' => "متمر443",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "تصميم اجزاء السياراة",
+                        'code' => "متمر434",
+                        'level' => 4,
+                        'credit_hours' => 2,
+                        'contact_hours' => 5
+                    ],
+                ]
+            ],
+            [
+                'name' =>   "محركات ومركبات",
+                'courses' => [
+                    // [
+                    //     'name' => "",
+                    //     'code' => "",
+                    //     'level' => ,
+                    //     'credit_hours' => 3,
+                    //     'contact_hours' => 
+                    // ],
+                ]
+            ],
+        ],
+
+
+        "التقنيةالإدارية"  =>  [
+            [
+                'name' => "ادارة عامة",
+               'courses' => [
+                    [
+                        'name' => "القيادةالادارية",
+                        'code' => "ادار435",
+                        'level' => 3,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                    [
+                        'name' => "تطوير المنظمات",
+                        'code' => "ادار464",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "ريادة الاعمال",
+                        'code' => "ادار473",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                    [
+                        'name' => "تمويل الشركات",
+                        'code' => "ادار462",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "الادارة الاستراتيجية",
+                        'code' => "ادار445",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                    [
+                        'name' => "مشروع التخرج",
+                        'code' => "ادار492",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                ]
+            ],
+            [
+                'name' => "محاسبة",
+               'courses' => [
+                    [
+                        'name' => "رقابة ومراجعة داخلية",
+                        'code' => "محسب463",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                    [
+                        'name' => "مشروع تخرج",
+                        'code' => "محسب492",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                    [
+                        'name' => "نظم معلومات محاسبية",
+                        'code' => "محسب 424",
+                        'level' => 4,
+                        'credit_hours' => 3,
+                        'contact_hours' => 5
+                    ],
+                    // [
+                    //     'name' => "",
+                    //     'code' => "",
+                    //     'level' => ,
+                    //     'credit_hours' => 3,
+                    //     'contact_hours' => 
+                    // ],
+               ]
+            ],
+
+        ],
     ];
 
 
@@ -731,28 +919,90 @@ class CourseSeeder extends Seeder
         ],
 
 
-    //     "تقنية كهربائية"  =>  [
-    //         [
-    //             'name' => "قوى كهربائية",
-    //             'hours' => 19
-    //         ],
-    //     ],
+        "تقنية كهربائية"  =>  [
+            [
+                'name' => "قوى كهربائية",
+                'courses' => [
+                    [
+                        'name' => "شبكات النقل الكهربائي",
+                        'code' => "كهرق262",
+                        'level' => 3,
+                        'credit_hours' => 2,
+                        'contact_hours' => 2
+                    ],
+                    [
+                        'name' => "دوائر كهربائية-2",
+                        'code' => "كهرب122",
+                        'level' => 2,
+                        'credit_hours' => 2,
+                        'contact_hours' => 3
+                    ],
+                    [
+                        'name' => "التحكم المبرمج",
+                        'code' => "كهرب141",
+                        'level' => 2,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "ورشة التركيبات الخاصة الوقاية",
+                        'code' => "كهرق253",
+                        'level' => 3,
+                        'credit_hours' => 2,
+                        'contact_hours' => 4
+                    ],
+                ]
+            ],
+        ],
 
 
-    //     "تقنية ادارية"  =>  [
-    //         [
-    //             'name' => "إدارة مكتبية",
-    //             'hours' => 16
-    //         ],
-    //         [
-    //             'name' => "تسويق",
-    //             'hours' => 16
-    //         ],
-    //         [
-    //             'name' => "محاسبة",
-    //             'hours' => 16
-    //         ],
-    //     ],
+        "تقنية ادارية"  =>  [
+            [
+                'name' => "إدارة مكتبية",
+               'courses' => [
+
+                    [
+                        'name' => "موضوعات مختارة",
+                        'code' => "ادار285",
+                        'level' => 4,
+                        'credit_hours' => 4,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "ادارة الجودة الشاملة",
+                        'code' => "ادار271",
+                        'level' => 4,
+                        'credit_hours' => 6,
+                        'contact_hours' => 6
+                    ],
+               ]
+            ],
+            // [
+            //     'name' => "تسويق",
+            //    'courses' => [
+
+            //         [
+            //             'name' => "",
+            //             'code' => "",
+            //             'level' => ,
+            //             'credit_hours' => 3,
+            //             'contact_hours' => 
+            //         ],
+            //    ]
+            // ],
+            // [
+            //     'name' => "محاسبة",
+            //    'courses' => [
+            //         [
+            //             'name' => "",
+            //             'code' => "",
+            //             'level' => ,
+            //             'credit_hours' => 3,
+            //             'contact_hours' => 
+            //         ],
+            //    ]
+            // ],
+        ],
 
 
     //     "التقنية الالكترونية"  =>  [
