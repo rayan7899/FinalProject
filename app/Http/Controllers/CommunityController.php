@@ -639,12 +639,15 @@ class CommunityController extends Controller
                     default:
                         $discount = 1; // = %0 discount
                 }
-                $canAddHours = floor($orders[$i]->student->wallet / ($orders[$i]->student->program->hourPrice * $discount));
-                if ($canAddHours > 0) {
-                    $orders[$i]->requested_hours = $canAddHours;
-                }else{
-                    unset($orders[$i]);
+                if($orders[$i]->student->traineeState != 'privateState'){
+                    $canAddHours = floor($orders[$i]->student->wallet / ($orders[$i]->student->program->hourPrice * $discount));
+                    if ($canAddHours > 0) {
+                        $orders[$i]->requested_hours = $canAddHours;
+                    }else{
+                        unset($orders[$i]);
+                    }
                 }
+               
             }
             return response()->json(["data" => $orders->toArray()], 200);
         } catch (Exception $e) {
