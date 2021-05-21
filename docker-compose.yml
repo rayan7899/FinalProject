@@ -17,8 +17,8 @@ services:
             - ".:/var/www/html"
         networks:
             - sail
-        #depends_on:
-            # - mysql
+        depends_on:
+            - mysql
             # - pgsql
             #- redis
             # - selenium
@@ -28,22 +28,22 @@ services:
     #         - '/dev/shm:/dev/shm'
     #     networks:
     #         - sail
-    # mysql:
-    #     image: "mysql:8.0"
-    #     ports:
-    #         - "${FORWARD_DB_PORT:-3306}:3306"
-    #     environment:
-    #         MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-    #         MYSQL_DATABASE: "${DB_DATABASE}"
-    #         MYSQL_USER: "${DB_USERNAME}"
-    #         MYSQL_PASSWORD: "${DB_PASSWORD}"
-    #         MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    #     volumes:
-    #         - "sailmysql:/var/lib/mysql"
-    #     networks:
-    #         - sail
-    #     healthcheck:
-    #         test: ["CMD", "mysqladmin", "ping"]
+    mysql:
+        image: "mysql:8.0"
+        ports:
+            - "${FORWARD_DB_PORT:-3306}:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_DATABASE: "${DB_DATABASE}"
+            MYSQL_USER: "${DB_USERNAME}"
+            MYSQL_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        volumes:
+            - "sailmysql:/var/lib/mysql"
+        networks:
+            - sail
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping"]
     #    pgsql:
     #        image: postgres:13
     #        ports:
@@ -85,9 +85,9 @@ services:
 networks:
     sail:
         driver: bridge
-# volumes:
-#     sailmysql:
-#         driver: local
+volumes:
+    sailmysql:
+        driver: local
     #    sailpostgresql:
     #        driver: local
     # sailredis:

@@ -624,6 +624,28 @@ class CommunityController extends Controller
                     $res->where("level", $cond, 1)
                         ->where("final_accepted", true);
                 })->get();
+                $countOfOrders =  count($orders);
+            for ($i = 0; $i < $countOfOrders; $i++) {
+                switch ($orders[$i]->student->traineeState) {
+                    case 'privateState':
+                        $discount = 0; // = %100 discount
+                        break;
+                    case 'employee':
+                        $discount = 0.25; // = %75 discount
+                        break;
+                    case 'employeeSon':
+                        $discount = 0.5; // = %50 discount
+                        break;
+                    default:
+                        $discount = 1; // = %0 discount
+                }
+                $canAddHours = floor($orders[$i]->student->wallet / ($orders[$i]->student->program->hourPrice * $discount));
+                if ($canAddHours > 0) {
+                    $orders[$i]->requested_hours = $canAddHours;
+                }else{
+                    unset($orders[$i]);
+                }
+            }
             return response()->json(["data" => $orders->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
@@ -650,7 +672,7 @@ class CommunityController extends Controller
         $semester = Semester::latest()->first();
         $requestData = $this->validate($request, [
             "national_id"        => "required|digits:10",
-            "requested_hours"    => "required|numeric|min:0|max:21",
+            "requested_hours"    => "required|numeric|min:0",
             "order_id"         => "required|numeric|exists:orders,id",
         ]);
 
@@ -699,9 +721,9 @@ class CommunityController extends Controller
                 return response(['message' => "عدد الساعات اكبر من الحد الاعلى"], 422);
             }
 
-            if ($requestData['requested_hours'] > $order->requested_hours) {
-                return response(['message' => "عدد الساعات اكبر من الحد الاعلى"], 422);
-            }
+            // if ($requestData['requested_hours'] > $order->requested_hours) {
+            //     return response(['message' => "عدد الساعات اكبر من الحد الاعلى"], 422);
+            // }
 
             if ($requestData['requested_hours'] < $order->requested_hours) {
                 $note = " تم تغيير عدد الساعات من " .

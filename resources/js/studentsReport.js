@@ -24,7 +24,7 @@ jQuery(function () {
                 data: "student.final_accepted",
                 className: "text-center",
                 render: function (data) {
-                    if (data === '1') {
+                    if (data == '1' || data == true) {
                         return '<i class="text-secondary fa fa-check-square fa-lg"></i>';
                     } else {
                         return '<i class="text-secondary fa fa-lg fa-square-o" aria-hidden="true"></i>';

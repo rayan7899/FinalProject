@@ -392,7 +392,7 @@
                                 @else
                                     <td>{{ $payment->amount }}</td>
                                 @endif
-                                @if ($payment->accepted == null)
+                                @if ($payment->accepted === null)
                                     <td>قيد المراجعة</td>
                                 @else
                                     @if ($payment->accepted == true)

@@ -80,8 +80,8 @@ class StudentController extends Controller
         $user = Auth::user();
         $studentData = $this->validate($request, [
             "email"             => "required|email|unique:users,email," . $user->id,
-            "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
-            "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
+            // "identity"          => "required|mimes:pdf,png,jpg,jpeg|max:4000",
+            // "degree"            => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             'password'          => 'required|string|min:8|confirmed',
 
         ]);
@@ -103,13 +103,13 @@ class StudentController extends Controller
             //     )
             // );
 
-            $national_id = Auth::user()->national_id;
+            // $national_id = Auth::user()->national_id;
 
-            $doc_name = 'identity.' . $studentData['identity']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['identity']));
+            // $doc_name = 'identity.' . $studentData['identity']->getClientOriginalExtension();
+            // Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['identity']));
 
-            $doc_name = 'degree.' . $studentData['degree']->getClientOriginalExtension();
-            Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['degree']));
+            // $doc_name = 'degree.' . $studentData['degree']->getClientOriginalExtension();
+            // Storage::disk('studentDocuments')->put('/' . $national_id . '/' . $doc_name, File::get($studentData['degree']));
 
             // if ($studentData['traineeState'] == 'privateState') {
             //     $doc_name =  date('Y-m-d-H-i') . '_privateStateDoc.' . $studentData['privateStateDoc']->getClientOriginalExtension();

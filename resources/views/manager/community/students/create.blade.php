@@ -146,7 +146,7 @@
                         @enderror
                     </div>
                     <div class="alert alert-info p-1" role="alert">
-                        <p class="p-0 m-0">يقوم المتدرب باكمال البيانات المطلوبة بعد تسجيل الدخول باستخدام رقم الهوية وكلمة الرور الافتراضية (bct12345)</p>
+                        <p class="p-0 m-0">يقوم المتدرب باكمال البيانات المطلوبة بعد تسجيل الدخول باستخدام رقم الهوية وكلمة المرور الافتراضية (bct12345)</p>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary px-5">
