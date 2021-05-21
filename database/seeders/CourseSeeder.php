@@ -221,8 +221,8 @@ class CourseSeeder extends Seeder
                         'contact_hours' => 4
                     ],
                     [
-                        'name' => "Elective Courses -3",
-                        'code' => "لا يوجد",
+                        'name' => "انترنت الاشياء",
+                        'code' => "نشبك 485",
                         'level' => 5,
                         'credit_hours' => 3,
                         'contact_hours' => 4
@@ -351,6 +351,13 @@ class CourseSeeder extends Seeder
                     [
                         'name' => "الامن السبراني",
                         'code' => "نشبك434",
+                        'level' => 5,
+                        'credit_hours' => 3,
+                        'contact_hours' => 4
+                    ],
+                    [
+                        'name' => "انترنت الاشياء",
+                        'code' => "نشبك 485",
                         'level' => 5,
                         'credit_hours' => 3,
                         'contact_hours' => 4
