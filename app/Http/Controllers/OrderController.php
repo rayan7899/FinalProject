@@ -34,9 +34,10 @@ class OrderController extends Controller
          return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
       }
 
-      // if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
+      if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
+         return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
       //    return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-      // }
+      }
       $courses = Course::where('suggested_level', $user->student->level)
          ->where('major_id', $user->student->major_id)
          ->get();
@@ -78,9 +79,10 @@ class OrderController extends Controller
       $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
          ->where("private_doc_verified", "!=", false)->count();
 
-      // if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
-      //    return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-      // }
+      if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
+         return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+         // return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+      }
 
       $requestData = $this->validate($request, [
          "courses"      => "required|array|min:1",

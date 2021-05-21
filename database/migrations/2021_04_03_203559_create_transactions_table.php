@@ -26,9 +26,9 @@ class CreateTransactionsTable extends Migration
             $table->string("type");
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('manager_id')->references('id')->on('managers')->onDelete("set null");
-            $table->foreign("payment_id")->references("id")->on("payments");
-            $table->foreign("order_id")->references("id")->on("orders");
-            $table->foreign("refund_order_id")->references("id")->on("refund_orders");
+            // $table->foreign("payment_id")->references("id")->on("payments");
+            // $table->foreign("order_id")->references("id")->on("orders");
+            // $table->foreign("refund_order_id")->references("id")->on("refund_orders");
             $table->foreign('semester_id')->references('id')->on('semesters');
             $table->timestamps();
         });
