@@ -170,18 +170,18 @@
                                 <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
                                     <a id="info-popup" data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة"
                                         class="h5 text-right mx-2" data-content="
-                                                                               <div class='text-right' dir='rtl' style='width: 30%;'>
-                                                                               ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
-                                                                               <br>
-                                                                               ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
-                                                                               <br>
-                                                                               ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
-                                                                               <br>
-                                                                               ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
-                                                                               <br>
-                                                                               ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
-                                                                               </div>
-                                                                               ">( ! )</a>
+                                                                                   <div class='text-right' dir='rtl' style='width: 30%;'>
+                                                                                   ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
+                                                                                   <br>
+                                                                                   ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
+                                                                                   <br>
+                                                                                   ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
+                                                                                   <br>
+                                                                                   ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
+                                                                                   <br>
+                                                                                   ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
+                                                                                   </div>
+                                                                                   ">( ! )</a>
                                     <input value="privateState" type="radio" onclick="window.calcCost()" id="privateState"
                                         name="traineeState" class="custom-control-input">
                                     <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
@@ -290,6 +290,7 @@
             var t_cost = 0;
             var total_hours = 0;
             var new_cost = 0;
+            var isSummer = "{{ $semester->isSummer }}"
 
         </script>
     </div>
