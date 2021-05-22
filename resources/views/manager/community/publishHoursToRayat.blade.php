@@ -23,9 +23,9 @@
 
                 <thead>
                     <tr>
-                        <th colspan="8">
+                        <th colspan="9">
                         </th>
-                        <th colspan="2">
+                        <th colspan="4">
                             <div id="allHoursContainer" class="d-inline">
                                 <label for="allHoursValue">تعديل جميع الساعات:</label>
                                 <input type="number" name="allHoursValue" id="allHoursValue" class="d-inline" placeholder=""
@@ -36,20 +36,22 @@
 
                     </tr>
                     <tr>
-                        <th>#</th>
-                        <th>رقم الهوية</th>
-                        <th>اسم المتدرب </th>
-                        <th>رقم الجوال</th>
-                        <th>البرنامج</th>
-                        <th>القسم</th>
-                        <th>التخصص</th>
-                        <th>الحالة</th>
+                        <th class="text-center">#</th>
+                        <th class="text-center">رقم الهوية</th>
+                        <th class="text-center">الرقم التدريبي</th>
+                        <th class="text-center">اسم المتدرب </th>
+                        <th class="text-center">رقم الجوال</th>
+                        <th class="text-center">البرنامج</th>
+                        <th class="text-center">القسم</th>
+                        <th class="text-center">التخصص</th>
+                        <th class="text-center">الحالة</th>
                         <th class="text-center">المحفظة</th>
                         <th class="text-center">رقم الطلب</th>
                         <th class="text-center"> عدد الساعات</th>
                         <th class="text-center">التسجيل في رايات</th>
                     </tr>
                     <tr>
+                        <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>

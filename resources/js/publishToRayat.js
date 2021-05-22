@@ -1,5 +1,3 @@
-
-
 jQuery(function () {
     if (document.getElementById("publishToRayatTbl") != undefined && document.getElementById("publishToRayatTbl") != null) {
         let publishToRayatTbl = $('#publishToRayatTbl').DataTable({
@@ -11,14 +9,36 @@ jQuery(function () {
                 orderable: false,
                 targets: 0
             }],
-            columns: [
-                { data: null },
-                { data: "student.user.national_id" },
-                { data: "student.user.name", },
-                { data: "student.user.phone" },
-                { data: "student.program.name" },
-                { data: "student.department.name" },
-                { data: "student.major.name" },
+            columns: [{
+                    data: null
+                },
+                {
+                    data: "student.user.national_id",
+                    className: "text-center",
+                },
+                {
+                    data: "student.rayat_id",
+                    className: "text-center",
+                },
+                {
+                    data: "student.user.name",
+                },
+                {
+                    data: "student.user.phone",
+                    className: "text-center",
+                },
+                {
+                    data: "student.program.name",
+                    className: "text-center",
+                },
+                {
+                    data: "student.department.name",
+                    className: "text-center",
+                },
+                {
+                    data: "student.major.name",
+                    className: "text-center",
+                },
                 {
                     data: "student.traineeState",
                     render: function (data) {
@@ -26,22 +46,22 @@ jQuery(function () {
                             case 'employee':
                                 return "منسوب ";
                                 break;
-    
+
                             case 'employeeSon':
                                 return "ابن منسوب";
                                 break;
-    
+
                             case 'privateState':
                                 return "حالة خاصة";
                                 break;
-    
-                            // case 'trainee':
+
+                                // case 'trainee':
                             default:
                                 return "متدرب";
                                 break;
                         }
                     }
-    
+
                 },
                 {
                     data: "student.wallet",
@@ -60,7 +80,7 @@ jQuery(function () {
                     render: function (requested_hours, type, row) {
                         return `<input type="number" min="1" max="${requested_hours}" class="p-0"
                     name="requested_hours" id="requested_hours"
-                    value="${requested_hours}">`;
+                    value="${requested_hours}"><smal> الحد الاعلى: ${row.canAddHours}</smal>`;
                     }
                 },
 
@@ -77,7 +97,9 @@ jQuery(function () {
 
 
             ],
-            order: [[0, "asc"]],
+            order: [
+                [0, "asc"]
+            ],
             language: {
                 emptyTable: "ليست هناك بيانات متاحة في الجدول",
                 loadingRecords: "جارٍ التحميل...",
@@ -117,8 +139,7 @@ jQuery(function () {
                 },
                 buttons: {
                     print: "طباعة",
-                    copyKeys:
-                        "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
+                    copyKeys: "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
                     copySuccess: {
                         _: "%d قيمة نسخت",
                         1: "1 قيمة نسخت",
@@ -211,8 +232,8 @@ jQuery(function () {
                     if (i > 3 && i < 7) {
                         var column = api.column(i);
                         var select = $(
-                            '<select><option value="">الكل</option></select>'
-                        )
+                                '<select><option value="">الكل</option></select>'
+                            )
                             .appendTo($(this).empty())
                             .on("change", function () {
                                 // FIXME: error dataTable undefined
@@ -247,7 +268,10 @@ jQuery(function () {
             },
         });
         publishToRayatTbl.on('order.dt search.dt', function () {
-            publishToRayatTbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+            publishToRayatTbl.column(0, {
+                search: 'applied',
+                order: 'applied'
+            }).nodes().each(function (cell, i) {
                 cell.innerHTML = i + 1;
             });
         }).draw();
@@ -257,7 +281,7 @@ jQuery(function () {
 
 
 
-    
+
 
     if (document.getElementById("rayatReportTbl") != undefined && document.getElementById("rayatReportTbl") != null) {
         let rayatReportTbl = $('#rayatReportTbl').DataTable({
@@ -269,14 +293,27 @@ jQuery(function () {
                 orderable: false,
                 targets: 0
             }],
-            columns: [
-                { data: null },
-                { data: "national_id" },
-                { data: "name", },
-                { data: "phone" },
-                { data: "student.program.name" },
-                { data: "student.department.name" },
-                { data: "student.major.name" },
+            columns: [{
+                    data: null
+                },
+                {
+                    data: "national_id"
+                },
+                {
+                    data: "name",
+                },
+                {
+                    data: "phone"
+                },
+                {
+                    data: "student.program.name"
+                },
+                {
+                    data: "student.department.name"
+                },
+                {
+                    data: "student.major.name"
+                },
                 {
                     data: "student.credit_hours",
                     className: "text-center",
@@ -292,7 +329,9 @@ jQuery(function () {
 
 
             ],
-            order: [[0, "asc"]],
+            order: [
+                [0, "asc"]
+            ],
             language: {
                 emptyTable: "ليست هناك بيانات متاحة في الجدول",
                 loadingRecords: "جارٍ التحميل...",
@@ -332,8 +371,7 @@ jQuery(function () {
                 },
                 buttons: {
                     print: "طباعة",
-                    copyKeys:
-                        "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
+                    copyKeys: "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
                     copySuccess: {
                         _: "%d قيمة نسخت",
                         1: "1 قيمة نسخت",
@@ -420,14 +458,14 @@ jQuery(function () {
                 searchPlaceholder: "ابحث ...",
             },
             initComplete: function () {
-            Swal.close();
+                Swal.close();
                 var api = this.api();
                 $(".filterhead", api.table().header()).each(function (i) {
                     if (i > 3 && i < 7) {
                         var column = api.column(i);
                         var select = $(
-                            '<select><option value="">الكل</option></select>'
-                        )
+                                '<select><option value="">الكل</option></select>'
+                            )
                             .appendTo($(this).empty())
                             .on("change", function () {
                                 // FIXME: error dataTable undefined
@@ -462,7 +500,10 @@ jQuery(function () {
             },
         });
         rayatReportTbl.on('order.dt search.dt', function () {
-            rayatReportTbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+            rayatReportTbl.column(0, {
+                search: 'applied',
+                order: 'applied'
+            }).nodes().each(function (cell, i) {
                 cell.innerHTML = i + 1;
             });
         }).draw();
