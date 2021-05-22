@@ -67,7 +67,7 @@
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                                            document.getElementById('logout-form').submit();">
+                                                                                                                                document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -218,8 +218,9 @@
 
                                                     <a class="dropdown-item"
                                                         href="{{ route('PrivateAllStudentsForm') }}">تدقيق المستندات</a>
-                                                        <a class="dropdown-item"
-                                                        href="{{ route('PrivateStudentsReport') }}">تقرير الطلبات المدققة</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('PrivateStudentsReport') }}">تقرير الطلبات
+                                                        المدققة</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
@@ -231,6 +232,9 @@
                                     {{-- ---------  student ----------- --}}
                                     @if (Auth::user()->hasRole('متدرب'))
                                         <ul class="navbar-nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
+                                            </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                             </li>
@@ -260,12 +264,12 @@
                 <div class="card-img-overlay">
                     <p class="text-center  pt-4">
                         للتواصل:
-Tvtc.brct.ctc@gmail.com
-<br>
-<br>
-تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة
-<br>
-©️ جميع الحقوق محفوظة -الكلية التقنية ببريدة 2021
+                        Tvtc.brct.ctc@gmail.com
+                        <br>
+                        <br>
+                        تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة
+                        <br>
+                        ©️ جميع الحقوق محفوظة -الكلية التقنية ببريدة 2021
                     </p>
                 </div>
             </div>

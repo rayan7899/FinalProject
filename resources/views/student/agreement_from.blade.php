@@ -9,6 +9,11 @@
                 {{ session()->get('success') }}
             </div>
             @endif
+            <div class="alert alert-info">
+                لمعرفة طريقة الاستخدام اضغط
+                <a target="_blank" href="{{asset('help.pdf')}}"> هنا</a>
+                 كما يمكنك الوصول الى التعليمات عبر الضغط على زر تعليمات الاستخدام في اعلى الصفحة 
+            </div>
             <div class="card">
                 <div class="card-header h5">تعليمات التسجيل والقبول بالفترة المسائية</div>
 
