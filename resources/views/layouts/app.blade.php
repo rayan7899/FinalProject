@@ -239,7 +239,7 @@
 
                                 @endauth
                             </div>
-                            <a class="navbar-brand py-0" href="{{ route('home') }}">
+                            <a class="navbar-brand py-0 pl-3" href="{{ route('home') }}">
                                 <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo2.png') }}" />
                             </a>
                         </nav>

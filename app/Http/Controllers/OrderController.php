@@ -27,6 +27,9 @@ class OrderController extends Controller
       try {
          $user = Auth::user();
          $semester = Semester::latest()->first();
+         if($semester == null){
+         return view('error')->with('error', 'حدث خطأ غير معروف');
+         }
          $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
          $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
             ->where("private_doc_verified", "!=", false)->count();

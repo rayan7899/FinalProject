@@ -110,6 +110,7 @@
                                     <th class="text-center">الساعات</th>
                                     <th class="text-center">المبلغ</th>
                                     <th class="text-center @if ($user->student->level < 2) d-none @endif">
+                                        اضافة/الغاء
                                     </th>
                                 </tr>
                             </thead>

@@ -78,7 +78,7 @@ jQuery(function () {
                     data: "requested_hours",
                     className: "text-center",
                     render: function (requested_hours, type, row) {
-                        return `<input type="number" min="1" max="${requested_hours}" class="p-0"
+                        return `<input type="number" min="1" max="${row.canAddHours}" class="p-0"
                     name="requested_hours" id="requested_hours"
                     value="${requested_hours}"><smal> الحد الاعلى: ${row.canAddHours}</smal>`;
                     }
@@ -559,8 +559,8 @@ window.changeHoursInputs = function () {
     let counter = 0;
     let allHours = document.getElementById("allHoursValue").value;
     for (var i = 3; i < rows.length; i++) {
-        if (allHours <= rows[i].children[8].children[0].max) {
-            rows[i].children[8].children[0].value = allHours;
+        if (parseInt(allHours) <= parseInt(rows[i].children[11].children[0].max)) {
+            rows[i].children[11].children[0].value = allHours;
         } else {
             counter++;
         }
