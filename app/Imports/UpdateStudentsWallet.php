@@ -29,6 +29,9 @@ class UpdateStudentsWallet implements ToCollection
     public function collection(Collection $rows)
     {
         $semester = Semester::latest()->first();
+        if($semester == null){
+            return back()->with('error',' يرجى انشاء فصل تدريبي');
+        }
         $rows = $rows->slice(1);
         $errorsArr = [];
         $updatedCount = 0;
