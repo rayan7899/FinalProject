@@ -43,6 +43,7 @@
 
                             <div class="collapse navbar-collapse " id="navbarSupportedContent">
                                 <ul class="navbar-nav mr-auto">
+                                  
                                     <!-- Authentication Links -->
                                     @guest
                                         @if (Route::has('login'))
@@ -78,6 +79,9 @@
                                             </div>
                                         </li>
                                     @endguest
+                                    <li class="nav-item">
+                                        <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
+                                    </li>
                                 </ul>
                                 @auth
 
@@ -232,9 +236,9 @@
                                     {{-- ---------  student ----------- --}}
                                     @if (Auth::user()->hasRole('متدرب'))
                                         <ul class="navbar-nav">
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
-                                            </li>
+                                            </li> --}}
                                             <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                             </li>
