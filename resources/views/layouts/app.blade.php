@@ -240,7 +240,7 @@
                                 @endauth
                             </div>
                             <a class="navbar-brand py-0" href="{{ route('home') }}">
-                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo1.svg') }}" />
+                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo2.png') }}" />
                             </a>
                         </nav>
                     </div>
@@ -256,10 +256,16 @@
         <footer class="justify-content-end" dir="rtl">
 
             <div class="card bg-dark text-white">
-                <img src="/images/background.jpg" style="height: 200px;" class="card-img" alt="...">
+                <img src="/images/background.jpg" style="height: 150px;" class="card-img" alt="...">
                 <div class="card-img-overlay">
-                    <p class="text-center mt-5 pt-5">
-                        © جميع الحقوق محفوظة - المؤسسة العامة للتدريب التقني والمهني 2020 ( TVTC )
+                    <p class="text-center  pt-4">
+                        للتواصل:
+Tvtc.brct.ctc@gmail.com
+<br>
+<br>
+تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة
+<br>
+©️ جميع الحقوق محفوظة -الكلية التقنية ببريدة 2021
                     </p>
                 </div>
             </div>

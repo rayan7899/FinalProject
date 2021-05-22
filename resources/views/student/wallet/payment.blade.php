@@ -30,6 +30,12 @@
                     <div class="form-group" id="receipt">
                         <label for="receiptImg"> صورة إيصال السداد</label>
                         <input required type="file" accept=".pdf,.png,.jpg,.jpeg" name="payment_receipt" class="form-control" id="receiptImg">
+                        <div class="alert alert-info p-1 my-1" role="alert">
+                            <p class="p-0 m-0">
+                                رقم حساب خدمة المجتمع والتدريب المستمر (مصرف الراجحي)
+                                252608010092653
+                            </p>
+                        </div>
                     </div>
                     <div class="form-group text-center">
                         <button class="btn btn-primary w-25" type="submit">أرسال</button>
