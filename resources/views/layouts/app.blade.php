@@ -239,7 +239,7 @@
                                 @endauth
                             </div>
                             <a class="navbar-brand py-0" href="{{ route('home') }}">
-                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo3.png') }}" />
+                                <img style="width: 250px;" class="" src="{{ asset('images/tvtclogo2.png') }}" />
                             </a>
                         </nav>
                     </div>
@@ -255,11 +255,12 @@
         <footer class="justify-content-end" dir="rtl">
 
             <div class="card bg-dark text-white">
-                <img src="/images/background.jpg" style="height: 200px;" class="card-img" alt="...">
+                <img src="/images/background.jpg" style="height: 150px;" class="card-img" alt="...">
                 <div class="card-img-overlay">
-                    <p class="text-center mt-5 pt-5">
+                    <p class="text-center  pt-4">
                         للتواصل:
 Tvtc.brct.ctc@gmail.com
+<br>
 <br>
 تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة
 <br>
