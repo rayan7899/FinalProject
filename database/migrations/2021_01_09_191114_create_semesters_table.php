@@ -17,6 +17,7 @@ class CreateSemestersTable extends Migration
             $table->id();
             $table->date("start_date");
             $table->date("end_date")->nullable();
+            $table->boolean("isSummer")->default(false);
             $table->timestamps();
         });
     }

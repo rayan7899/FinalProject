@@ -550,8 +550,8 @@ class CommunityController extends Controller
         $requestData = $this->validate($request, [
             "national_id"        => "required|digits:10",
             'password' => 'required|string|min:8',
-            'start_date' => 'required|date_format:Y-m-d',
-            'end_date' => 'required|date_format:Y-m-d',
+            'start_date' => 'required|date_format:Y-m-d|after:yesterday',
+            'end_date' => 'required|date_format:Y-m-d|after:today',
             'isSummerSemester' => "boolean"
 
         ]);
@@ -562,14 +562,16 @@ class CommunityController extends Controller
             }
 
             if (!Hash::check($requestData["password"], Auth::user()->password) || $requestData["national_id"] != Auth::user()->national_id) {
-                return  back()->with('error', 'البيانات المدخلة لا تتطابق مع سجلاتنا');
+                return  back()->with('error', 'اسم المستخدم او كلمة المرور غير صحيحة');
             }
 
             DB::beginTransaction();
             Semester::create([
                 "start_date" => $requestData["start_date"],
                 "end_date" => $requestData["end_date"],
+                "isSummer"  => $requestData["isSummerSemester"],
             ]);
+
             DB::table('students')
                 ->update([
                     'credit_hours' => 0,
@@ -624,7 +626,7 @@ class CommunityController extends Controller
                     $res->where("level", $cond, 1)
                         ->where("final_accepted", true);
                 })->get();
-                $countOfOrders =  count($orders);
+            $countOfOrders =  count($orders);
             for ($i = 0; $i < $countOfOrders; $i++) {
                 switch ($orders[$i]->student->traineeState) {
                     case 'privateState':
@@ -639,15 +641,23 @@ class CommunityController extends Controller
                     default:
                         $discount = 1; // = %0 discount
                 }
-                if($orders[$i]->student->traineeState != 'privateState'){
+                // FIXME: rewrite me
+                if ($orders[$i]->student->wallet > 0 && $orders[$i]->student->traineeState != 'privateState') {
+
                     $canAddHours = floor($orders[$i]->student->wallet / ($orders[$i]->student->program->hourPrice * $discount));
-                    if ($canAddHours > 0) {
+                } else {
+                    $canAddHours = 0;
+                }
+                if ($orders[$i]->student->traineeState != 'privateState') {
+                    if ($canAddHours < $orders[$i]->requested_hours) {
                         $orders[$i]->requested_hours = $canAddHours;
-                    }else{
+                    } elseif ($canAddHours == 0) {
                         unset($orders[$i]);
                     }
+                } else {
+                    $canAddHours = 'لا يوجد';
                 }
-               
+                $orders[$i]->canAddHours = $canAddHours;
             }
             return response()->json(["data" => $orders->toArray()], 200);
         } catch (Exception $e) {

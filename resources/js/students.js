@@ -239,6 +239,17 @@ window.calcCost = function (firstLoad = false) {
 
     //     }
     // }
+    
+     if (!firstLoad) {
+        if (window.total_hours > 12 && window.isSummer == '1' ) {
+            $("#courses-error").html("الحد الاعلى للفصل الصيفي هو 12 ساعة");
+            $("#courses-error").show();
+        } else {
+            $("#courses-error").html("");
+            $("#courses-error").hide();
+
+        }
+    }
 
 
 

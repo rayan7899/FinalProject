@@ -195,7 +195,7 @@
                 @if ($user->student->level == 1)
                     @php
                         $acceptMessage = 'مقبول مبدئي'; // default message
-                        if ($user->student->final_accepted == true) {
+                        if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
                             if ($user->student->credit_hours == 0) {
                                 $acceptMessage = 'مقبول نهائي - بانتظار اتاحة الساعات في رايات';
                             } else {
@@ -395,7 +395,7 @@
                                 @if ($payment->accepted === null)
                                     <td>قيد المراجعة</td>
                                 @else
-                                    @if ($payment->accepted == true)
+                                    @if ($payment->accepted == true || $payment->accepted == 1)
                                         <td class="text-success">مقبول</td>
                                     @else
                                         <td class="text-danger">مرفوض</td>

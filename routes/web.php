@@ -240,6 +240,8 @@ Route::middleware(['auth', 'role:الإرشاد'])->group(function () {
     Route::get('/privatestate', [PrivateStateController::class, 'privateDashboard'])->name('privateDashboard');
     Route::get('/privatestate/docs/review', [PrivateStateController::class, 'privateAllStudentsForm'])->name('PrivateAllStudentsForm');
     Route::post('/privatestate/docs/decision', [PrivateStateController::class, 'privateDocDecision'])->name('privateDocDecision');
+    Route::get('/privatestate/docs/report', [PrivateStateController::class, 'privateStudentsReport'])->name('PrivateStudentsReport');
+
     //Rayan ???????
     // Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
 

@@ -67,7 +67,7 @@
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                                    document.getElementById('logout-form').submit();">
+                                                                                                                            document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -217,8 +217,9 @@
                                                         href="{{ route('privateDashboard') }}">{{ __('Go Home') }}</a>
 
                                                     <a class="dropdown-item"
-                                                        href="{{ route('PrivateAllStudentsForm') }}">ظروف
-                                                        خاصة</a>
+                                                        href="{{ route('PrivateAllStudentsForm') }}">تدقيق المستندات</a>
+                                                        <a class="dropdown-item"
+                                                        href="{{ route('PrivateStudentsReport') }}">تقرير الطلبات المدققة</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
@@ -235,7 +236,7 @@
                                             </li>
                                         </ul>
                                     @endif
-                                    
+
                                 @endauth
                             </div>
                             <a class="navbar-brand py-0" href="{{ route('home') }}">
