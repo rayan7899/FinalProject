@@ -22,8 +22,12 @@ class PrivateStateController extends Controller
         $title = "الارشاد";
         $links = [
             (object) [
-                "name" => "تدقيق المستندات(ظروف خاصة)",
+                "name" => "تدقيق المستندات",
                 "url" => route("PrivateAllStudentsForm")
+            ],
+            (object) [
+                "name" => "تقرير الطلبات المدققة",
+                "url" => route("PrivateStudentsReport")
             ],
             // (object) [
             //     "name" => "متابعة حالات المتدربين",
@@ -57,6 +61,17 @@ class PrivateStateController extends Controller
         }
 
         return view('manager.private.private_student')->with(compact('users'));
+    }
+
+    public function privateStudentsReport()
+    {
+        $orders = Order::where("private_doc_verified", '!=', null)
+            ->where("private_doc_file_id", '!=', null)->get();
+
+        for ($i = 0; $i < count($orders); $i++) {
+            $orders[$i]->student->docs = Storage::disk('studentDocuments')->files($orders[$i]->student->user->national_id . '/privateStateDocs/' . $orders[$i]->private_doc_file_id);
+        }
+        return view('manager.private.private_student_report')->with(compact('orders'));
     }
 
 
