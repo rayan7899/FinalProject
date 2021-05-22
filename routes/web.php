@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // TODO: disable this in release
     //Logs Viewer
-    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    // Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 });
 
 // خدمة المجتمع
