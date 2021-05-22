@@ -258,7 +258,12 @@
                 <img src="/images/background.jpg" style="height: 200px;" class="card-img" alt="...">
                 <div class="card-img-overlay">
                     <p class="text-center mt-5 pt-5">
-                        © جميع الحقوق محفوظة - مكز خدمة المجتمع والتدريب المستمر 2021
+                        للتواصل:
+Tvtc.brct.ctc@gmail.com
+<br>
+تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة
+<br>
+©️ جميع الحقوق محفوظة -الكلية التقنية ببريدة 2021
                     </p>
                 </div>
             </div>
