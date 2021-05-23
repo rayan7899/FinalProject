@@ -45,9 +45,8 @@ jQuery(function () {
                     className: "text-center",
                 },
                 {
-                    data: "student.traineeState",
-                    render: function (data) {
-                        switch (data) {
+                    data: function (data) {
+                        switch (data.student.traineeState) {
                             case 'employee':
                                 return "منسوب ";
                                 break;
