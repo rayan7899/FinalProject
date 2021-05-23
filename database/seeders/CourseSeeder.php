@@ -857,164 +857,62 @@ class CourseSeeder extends Seeder
 
     static $diplomDepts = [
         "الحاسب وتقنية المعلومات"  =>  [
-            // [
-            //     'name' => "برمجات",
-            //     'courses' => [
+            [
+                'name' => "برمجات",
+                'courses' => [
 
-            //         ///  level 1
-            //         ///////////////////////
-            //         [
-            //             'name' => "الدراسات الإسلامية",
-            //             'code' => "101 سلم",
-            //             'level' => 1,
-            //             'credit_hours' => 2,
-            //             'contact_hours' => 2
+                    //         ///  level 1
+                    //         ///////////////////////
+                    //         [
+                    //             'name' => "الدراسات الإسلامية",
+                    //             'code' => "101 سلم",
+                    //             'level' => 1,
+                    //             'credit_hours' => 2,
+                    //             'contact_hours' => 2
 
-            //         ],
-            //         [
-            //             'name' => "لغة إنجليزية (1)",
-            //             'code' => "101 نجل",
-            //             'level' => 1,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 4
-            //         ],
-            //         [
-            //             'name' => "الرياضيات",
-            //             'code' => "101 ريض",
-            //             'level' => 1,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 4
-            //         ],
-            //         [
-            //             'name' => "الفيزياء",
-            //             'code' => "101 فيزي",
-            //             'level' => 1,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 5
-            //         ],
-            //         [
-            //             'name' => "التوجيه المهني والتميز",
-            //             'code' => "101 مهني",
-            //             'level' => 1,
-            //             'credit_hours' => 2,
-            //             'contact_hours' => 2
-            //         ],
-            //         [
-            //             'name' => "تجميع الحاسب وتشغيله",
-            //             'code' => "121 حاسب",
-            //             'level' => 1,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 8
-            //         ],
-            //         [
-            //             'name' => "الخوارزميات والمنطق",
-            //             'code' => "101 برمج",
-            //             'level' => 1,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 4
-            //         ],
-
-
-
-
-
-
-
-            //         ///  level 2
-            //         ///////////////////////
-            //         [
-            //             'name' => "الكتابة الفنية",
-            //             'code' => "101 عرب",
-            //             'level' => 2,
-            //             'credit_hours' => 2,
-            //             'contact_hours' => 2
-            //         ],
-            //         [
-            //             'name' => "لغة إنجليزية (2)",
-            //             'code' => "102 نجل",
-            //             'level' => 2,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 4
-            //         ],
-
-            //         [
-            //             'name' => "مقدمة تطبيقات الحاسب",
-            //             'code' => "101 حال",
-            //             'level' => 2,
-            //             'credit_hours' => 2,
-            //             'contact_hours' => 4
-            //         ],
-            //         [
-            //             'name' => "أساسيات برمجة الحاسب",
-            //             'code' => "111 برمج",
-            //             'level' => 2,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-            //         [
-            //             'name' => "مبادئ برمجة صفحات الانترنت",
-            //             'code' => "131 برمج",
-            //             'level' => 2,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-            //         [
-            //             'name' => "مبادئ قواعد البيانات",
-            //             'code' => "121 برمج",
-            //             'level' => 2,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-
-
-
-
-
-
-            //         ///  level 3
-            //         ///////////////////////
-            //         [
-            //             'name' => "لغة إنجليزية (3)",
-            //             'code' => "103 نجل",
-            //             'level' => 3,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 4
-            //         ],
-            //         [
-            //             'name' => "تطبيقات الحاسب المتقدمة",
-            //             'code' => "102 حال",
-            //             'level' => 3,
-            //             'credit_hours' => 2,
-            //             'contact_hours' => 4
-            //         ],
-            //         [
-            //             'name' => "برمجة الحاسب",
-            //             'code' => "212 برمج",
-            //             'level' => 3,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-            //         [
-            //             'name' => "برمجة الانترنت",
-            //             'code' => "232 برمج",
-            //             'level' => 3,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-            //         [
-            //             'name' => "برمجة قواعد البيانات",
-            //             'code' => "222 برمج",
-            //             'level' => 3,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-            //         [
-            //             'name' => "هندسة البرمجيات",
-            //             'code' => "241 برمج",
-            //             'level' => 3,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 4
-            //         ],
+                    //         ],
+                    //         [
+                    //             'name' => "لغة إنجليزية (1)",
+                    //             'code' => "101 نجل",
+                    //             'level' => 1,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 4
+                    //         ],
+                    //         [
+                    //             'name' => "الرياضيات",
+                    //             'code' => "101 ريض",
+                    //             'level' => 1,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 4
+                    //         ],
+                    //         [
+                    //             'name' => "الفيزياء",
+                    //             'code' => "101 فيزي",
+                    //             'level' => 1,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 5
+                    //         ],
+                    //         [
+                    //             'name' => "التوجيه المهني والتميز",
+                    //             'code' => "101 مهني",
+                    //             'level' => 1,
+                    //             'credit_hours' => 2,
+                    //             'contact_hours' => 2
+                    //         ],
+                    //         [
+                    //             'name' => "تجميع الحاسب وتشغيله",
+                    //             'code' => "121 حاسب",
+                    //             'level' => 1,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 8
+                    //         ],
+                    //         [
+                    //             'name' => "الخوارزميات والمنطق",
+                    //             'code' => "101 برمج",
+                    //             'level' => 1,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 4
+                    //         ],
 
 
 
@@ -1022,57 +920,101 @@ class CourseSeeder extends Seeder
 
 
 
-            //         ///  level 4
-            //         ///////////////////////
-            //         [
-            //             'name' => "مهارات التعلم",
-            //             'code' => "101 ماهر",
-            //             'level' => 4,
-            //             'credit_hours' => 2,
-            //             'contact_hours' => 2
-            //         ],
-            //         [
-            //             'name' => "لغة إنجليزية (4)",
-            //             'code' => "104 انجل",
-            //             'level' => 4,
-            //             'credit_hours' => 3,
-            //             'contact_hours' => 4
-            //         ],
-            //         [
-            //             'name' => "السلوي الوظيفي ومهارات الاتصال",
-            //             'code' => "101 اسلك",
-            //             'level' => 4,
-            //             'credit_hours' => 2,
-            //             'contact_hours' => 2
-            //         ],
-            //         [
-            //             'name' => "تقنيات الانترنت المتقدمة",
-            //             'code' => "234 برمج",
-            //             'level' => 4,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-            //         [
-            //             'name' => "برمجة الأجهزة الذكية",
-            //             'code' => "251 برمج",
-            //             'level' => 4,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
-            //         [
-            //             'name' => "التأهيل للشهادات الاحترافية",
-            //             'code' => "280 حاسب",
-            //             'level' => 4,
-            //             'credit_hours' => 1,
-            //             'contact_hours' => 2
-            //         ],
-            //         [
-            //             'name' => "مشروع",
-            //             'code' => "295 برمج",
-            //             'level' => 4,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 6
-            //         ],
+                    //         ///  level 2
+                    //         ///////////////////////
+                    //         [
+                    //             'name' => "الكتابة الفنية",
+                    //             'code' => "101 عرب",
+                    //             'level' => 2,
+                    //             'credit_hours' => 2,
+                    //             'contact_hours' => 2
+                    //         ],
+                    //         [
+                    //             'name' => "لغة إنجليزية (2)",
+                    //             'code' => "102 نجل",
+                    //             'level' => 2,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 4
+                    //         ],
+
+                    //         [
+                    //             'name' => "مقدمة تطبيقات الحاسب",
+                    //             'code' => "101 حال",
+                    //             'level' => 2,
+                    //             'credit_hours' => 2,
+                    //             'contact_hours' => 4
+                    //         ],
+                    //         [
+                    //             'name' => "أساسيات برمجة الحاسب",
+                    //             'code' => "111 برمج",
+                    //             'level' => 2,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+                    //         [
+                    //             'name' => "مبادئ برمجة صفحات الانترنت",
+                    //             'code' => "131 برمج",
+                    //             'level' => 2,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+                    //         [
+                    //             'name' => "مبادئ قواعد البيانات",
+                    //             'code' => "121 برمج",
+                    //             'level' => 2,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+
+
+
+
+
+
+                    //         ///  level 3
+                    //         ///////////////////////
+                    //         [
+                    //             'name' => "لغة إنجليزية (3)",
+                    //             'code' => "103 نجل",
+                    //             'level' => 3,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 4
+                    //         ],
+                    //         [
+                    //             'name' => "تطبيقات الحاسب المتقدمة",
+                    //             'code' => "102 حال",
+                    //             'level' => 3,
+                    //             'credit_hours' => 2,
+                    //             'contact_hours' => 4
+                    //         ],
+                    //         [
+                    //             'name' => "برمجة الحاسب",
+                    //             'code' => "212 برمج",
+                    //             'level' => 3,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+                    //         [
+                    //             'name' => "برمجة الانترنت",
+                    //             'code' => "232 برمج",
+                    //             'level' => 3,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+                    //         [
+                    //             'name' => "برمجة قواعد البيانات",
+                    //             'code' => "222 برمج",
+                    //             'level' => 3,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+                    //         [
+                    //             'name' => "هندسة البرمجيات",
+                    //             'code' => "241 برمج",
+                    //             'level' => 3,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 4
+                    //         ],
 
 
 
@@ -1080,21 +1022,79 @@ class CourseSeeder extends Seeder
 
 
 
-            //         ///  level 5
-            //         ///////////////////////
-            //         [
-            //             'name' => "التدريب التعاوني",
-            //             'code' => "299 برمج",
-            //             'level' => 5,
-            //             'credit_hours' => 4,
-            //             'contact_hours' => 0
-            //         ],
-            //     ]
-            // ],
-            // [
-            //     'name' => "دعم أنظمة شبكات",
-            //     'courses' => [
-            //         [
+                    //         ///  level 4
+                    //         ///////////////////////
+                    //         [
+                    //             'name' => "مهارات التعلم",
+                    //             'code' => "101 ماهر",
+                    //             'level' => 4,
+                    //             'credit_hours' => 2,
+                    //             'contact_hours' => 2
+                    //         ],
+                    //         [
+                    //             'name' => "لغة إنجليزية (4)",
+                    //             'code' => "104 انجل",
+                    //             'level' => 4,
+                    //             'credit_hours' => 3,
+                    //             'contact_hours' => 4
+                    //         ],
+                    //         [
+                    //             'name' => "السلوي الوظيفي ومهارات الاتصال",
+                    //             'code' => "101 اسلك",
+                    //             'level' => 4,
+                    //             'credit_hours' => 2,
+                    //             'contact_hours' => 2
+                    //         ],
+                    //         [
+                    //             'name' => "تقنيات الانترنت المتقدمة",
+                    //             'code' => "234 برمج",
+                    //             'level' => 4,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+                    //         [
+                    //             'name' => "برمجة الأجهزة الذكية",
+                    //             'code' => "251 برمج",
+                    //             'level' => 4,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+                    //         [
+                    //             'name' => "التأهيل للشهادات الاحترافية",
+                    //             'code' => "280 حاسب",
+                    //             'level' => 4,
+                    //             'credit_hours' => 1,
+                    //             'contact_hours' => 2
+                    //         ],
+                    //         [
+                    //             'name' => "مشروع",
+                    //             'code' => "295 برمج",
+                    //             'level' => 4,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 6
+                    //         ],
+
+
+
+
+
+
+
+                    //         ///  level 5
+                    //         ///////////////////////
+                    //         [
+                    //             'name' => "التدريب التعاوني",
+                    //             'code' => "299 برمج",
+                    //             'level' => 5,
+                    //             'credit_hours' => 4,
+                    //             'contact_hours' => 0
+                    //         ],
+                ]
+            ],
+            [
+                'name' => "دعم أنظمة شبكات",
+                'courses' => [
+                    // [
             //             'name' => "التوجيه المهني والتميز",
             //             'code' => "101 مهن",
             //             'level' => 1,
@@ -1169,8 +1169,8 @@ class CourseSeeder extends Seeder
             //             'credit_hours' => 3,
             //             'contact_hours' => 4
             //         ],
-            //     ]
-            // ],
+                ]
+            ],
             [
                 'name' => "دعم فني",
                 'courses' => [

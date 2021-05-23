@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+@dd($major_courses)
     <div class="modal fade" id="pick-courses" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
