@@ -300,6 +300,9 @@ jQuery(function () {
                     data: "national_id"
                 },
                 {
+                    data: "student.rayat_id"
+                },
+                {
                     data: "name",
                 },
                 {
