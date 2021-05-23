@@ -62,6 +62,10 @@ class DepartmentBossController extends Controller
                 "name" => "اضافة متدرب",
                 "url" => route("deptCreateStudentForm")
             ],
+            (object) [
+                "name" => "تقرير رايات",
+                "url" => route("rayatReportFormCommunity", ["type" => "community"])
+            ],
         ];
         return view("manager.departmentBoss.dashboard")->with(compact("links","title"));
     }

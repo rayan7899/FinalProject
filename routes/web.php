@@ -70,8 +70,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');
     Route::get('api/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatJson'])->name('getStudentForRayatCommunityApi');
     Route::post('community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStoreCommunity');
-    Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
-    Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
+    /// I moved rayat report to department boos
     Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
     Route::get('/community/old-students-report', [CommunityController::class, 'oldStudentsReport'])->name('oldStudentsReport');
     Route::get('api/community/students-report/{type}', [CommunityController::class, 'studentsReportJson'])->name('studentsReportCommunityJson');
@@ -196,6 +195,11 @@ Route::post('/department-boss/students/store', [DepartmentBossController::class,
 // Route::post('/department-boss/students/update/{user}', [CommunityController::class, 'editStudentUpdate'])->name('editStudentUpdate');
 // Route::get('/api/department-boss/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
 // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+
+
+/// rayat
+Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
+Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
 
 // });
 
