@@ -87,7 +87,7 @@ class OrderController extends Controller
          "courses"      => "required|array|min:1",
          "courses.*"    => "required|numeric|distinct|exists:courses,id",
          "traineeState"      => "required|string",
-         "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:4000",
+         "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:10000",
          "privateStateDoc"   => "required_if:traineeState,privateState",
       ], [
          'courses.required' => 'لم تقم باختيار المقررات',
