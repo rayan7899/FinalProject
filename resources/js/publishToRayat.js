@@ -230,7 +230,7 @@ jQuery(function () {
                 Swal.close();
                 var api = this.api();
                 $(".filterhead", api.table().header()).each(function (i) {
-                    if (i > 5 && i < 9) {
+                    if (i > 5 && i < 10) {
                         var column = api.column(i);
                         var select = $(
                                 '<select><option value="">الكل</option></select>'
