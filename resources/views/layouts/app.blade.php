@@ -104,6 +104,12 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('coursesPerLevel') }}">الجداول
                                                         المقترحة</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('deptCoursesIndex') }}">ادارة المقررات</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('deptCreateStudentForm') }}">اضافة متدرب</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route("rayatReportFormCommunity", ["type" => "community"]) }}">تقرير رايات</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
