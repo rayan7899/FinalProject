@@ -1,5 +1,3 @@
-
-
 window.national_id = document.getElementById("national_id");
 window.sname = document.getElementById("sname");
 window.amount = document.getElementById("amount");
@@ -18,14 +16,27 @@ jQuery(function () {
             orderable: false,
             targets: 0
         }],
-        columns: [
-            { data: null },
-            { data: "student.user.national_id" },
-            { data: "student.user.name", },
-            { data: "student.user.phone" },
-            { data: "student.program.name" },
-            { data: "student.department.name" },
-            { data: "student.major.name" },
+        columns: [{
+                data: null
+            },
+            {
+                data: "student.user.national_id"
+            },
+            {
+                data: "student.user.name",
+            },
+            {
+                data: "student.user.phone"
+            },
+            {
+                data: "student.program.name"
+            },
+            {
+                data: "student.department.name"
+            },
+            {
+                data: "student.major.name"
+            },
             {
                 data: "student.traineeState",
                 render: function (data) {
@@ -42,7 +53,7 @@ jQuery(function () {
                             return "حالة خاصة";
                             break;
 
-                        // case 'trainee':
+                            // case 'trainee':
                         default:
                             return "متدرب";
                             break;
@@ -68,14 +79,16 @@ jQuery(function () {
                     }
                 }
             },
-            { data: "amount" },
+            {
+                data: "amount"
+            },
 
 
             {
                 data: "student.level",
                 className: "text-center",
                 render: function (data, type, row) {
-                return `<button data-toggle="modal" data-target="#editModal"
+                    return `<button data-toggle="modal" data-target="#editModal"
                 class="btn btn-primary px-2 py-0"
                 onclick="window.showModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.amount}')">
                 قبول</button>
@@ -91,7 +104,9 @@ jQuery(function () {
 
 
         ],
-        order: [[0, "asc"]],
+        order: [
+            [0, "asc"]
+        ],
         language: {
             emptyTable: "ليست هناك بيانات متاحة في الجدول",
             loadingRecords: "جارٍ التحميل...",
@@ -131,8 +146,7 @@ jQuery(function () {
             },
             buttons: {
                 print: "طباعة",
-                copyKeys:
-                    "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
+                copyKeys: "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
                 copySuccess: {
                     _: "%d قيمة نسخت",
                     1: "1 قيمة نسخت",
@@ -220,14 +234,14 @@ jQuery(function () {
         },
         initComplete: function () {
             Swal.close();
-            
+
             var api = this.api();
             $(".filterhead", api.table().header()).each(function (i) {
                 if (i > 3 && i < 7) {
                     var column = api.column(i);
                     var select = $(
-                        '<select><option value="">الكل</option></select>'
-                    )
+                            '<select><option value="">الكل</option></select>'
+                        )
                         .appendTo($(this).empty())
                         .on("change", function () {
                             // FIXME: error dataTable undefined
@@ -261,9 +275,12 @@ jQuery(function () {
             });
         },
     });
-    
+
     paymentsReviewTbl.on('order.dt search.dt', function () {
-        paymentsReviewTbl.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+        paymentsReviewTbl.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function (cell, i) {
             cell.innerHTML = i + 1;
         });
     }).draw();
@@ -281,7 +298,8 @@ window.popup = function () {
 };
 
 window.showModal = function (callFrom = "edit", national_id, payment_id, name, amount) {
-
+    window.rotation = 0;
+    document.querySelector("#modalImage").style.transform = `rotate(${window.rotation}deg)`;
     if (callFrom == "reject") {
         $("#amountFormGroup").hide();
         $("#acceptBtnModal").hide();
@@ -395,6 +413,8 @@ window.okClicked = function (decision, national_id, payment_id, event) {
 
 };
 window.showPdf = function (url, type) {
+    window.rotation = 0;
+    document.querySelector("#modalImage").style.transform = `rotate(${window.rotation}deg)`;
     if (type == "pdf") {
         $("#modalImage").hide();
         $("#pdfIfreme").show();
@@ -407,3 +427,14 @@ window.showPdf = function (url, type) {
         $("#modalImage").attr("src", url);
     }
 };
+
+
+window.rotation = 0;
+
+window.rotateImg = function () {
+    window.rotation += 90;
+    if (rotation === 360) {
+        rotation = 0;
+    }
+    document.querySelector("#modalImage").style.transform = `rotate(${window.rotation}deg)`;
+}
