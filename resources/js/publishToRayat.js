@@ -57,7 +57,7 @@ jQuery(function () {
                                 break;
 
                             case 'privateState':
-                                return "حالة خاصة";
+                                return "ظروف خاصة";
                                 break;
 
                                 // case 'trainee':
@@ -525,14 +525,15 @@ jQuery(function () {
 
 window.publishToRayatStore = function (national_id, order_id, event) {
     let row = event.currentTarget.parentNode.parentNode;
-    let requested_hours = document.getElementById('requested_hours').value;
+    // console.log(row.children[11].children[0].value);
+    // let requested_hours = document.getElementById('requested_hours').value;
+    let requested_hours = row.children[11].children[0].value;
 
     let form = {
         national_id: national_id,
         requested_hours: requested_hours,
         order_id: order_id
     }
-
     axios.post(window.publishToRayat, form)
         .then((response) => {
             row.remove();

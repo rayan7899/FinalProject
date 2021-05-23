@@ -30,6 +30,11 @@ class OrderController extends Controller
          if ($semester == null) {
             return view('error')->with('error', 'حدث خطأ غير معروف');
          }
+
+         if ($user->student->credit_hours >= 12) {
+            return back()->with('error', 'الحد الاعلى للفصل الصيفي هو 12 ساعة');
+         }
+
          $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
          $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
             ->where("private_doc_verified", "!=", false)->count();
@@ -139,8 +144,7 @@ class OrderController extends Controller
             //    return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 12 و 21');
             // }
 
-
-            if ($total_hours > 12 && $semester->isSummer == true) {
+            if (($total_hours > 12 && $semester->isSummer == true) || ($user->student->credit_hours + $total_hours > 12 &&  $semester->isSummer == true)) {
                return back()->with('error', 'الحد الاعلى للفصل الصيفي هو 12 ساعة');
             }
 

@@ -78,10 +78,11 @@
                                                 </form>
                                             </div>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
+                                        </li>
                                     @endguest
-                                    <li class="nav-item">
-                                        <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
-                                    </li>
+                                   
                                 </ul>
                                 @auth
 
