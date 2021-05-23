@@ -12,7 +12,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <table class="table table-hover table-bordered bg-white">
+                    <table class="table table-hover table-bordered table-responsive bg-white ">
                         <thead>
                             <tr>
                                 <th class="text-center">رمز المقرر</th>
@@ -101,7 +101,7 @@
                     <!-- suggested courses -->
                     <div class="form-group">
                         <label>المقررات المقترحة</label>
-                        <table class="table table-hover table-bordered bg-white">
+                        <table class="table table-hover table-responsive table-bordered bg-white">
                             <thead>
                                 <tr>
                                     <th class="text-center">رمز المقرر</th>
