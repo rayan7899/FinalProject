@@ -20,6 +20,31 @@
                 {{ session()->get('success') ?? $success }}
             </div>
         @endif
+
+
+        <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 75%" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pdfName"></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <button onclick="window.rotateImg()" type="button" class="btn btn-primary">
+                            تدوير الصورة
+
+                            <i class="fa fa-rotate-right"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
+                        <div class="text-center" id="modalImageDev">
+                            <img id="modalImage" src="" alt="image" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-header">
                 أضافة رصيد
@@ -65,10 +90,12 @@
 
                     <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons" dir="ltr">
                         <label class="btn btn-outline-primary">
-                          <input type="radio" value="deduction" name="action" id="deduction" onclick="receiptToggle('hide')"> خصم من المحفظة
+                            <input type="radio" value="deduction" name="action" id="deduction"
+                                onclick="receiptToggle('hide')"> خصم من المحفظة
                         </label>
                         <label class="btn btn-outline-primary">
-                          <input required type="radio" value="charge" name="action" id="charge" checked onclick="receiptToggle('show')"> اضافة الى المحفضة
+                            <input required type="radio" value="charge" name="action" id="charge" checked
+                                onclick="receiptToggle('show')"> اضافة الى المحفضة
                         </label>
                     </div>
 
@@ -89,6 +116,34 @@
                         <button class="btn btn-primary w-25" type="submit">أرسال</button>
                     </div>
                 </form>
+            </div>
+        </div>
+        {{-- payments --}}
+        <div class="card mt-5"  id="paymentsReportCard" style="display: none">
+            <div class="card-header bg-white">
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="h5">
+                        الطلبات السابقة
+                    </div>
+                </div>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table nowrap display cell-border" id="paymentsReportTbl">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">رقم الطلب</th>
+                            <th class="text-center">المبلغ</th>
+                            <th class="text-center">حالة السداد</th>
+                            <th class="text-center">التاريخ</th>
+                            <th class="text-center">الملاحظات</th>
+                            <th class="text-center">ايصال السداد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
