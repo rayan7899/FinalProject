@@ -267,7 +267,7 @@
             <div class="card bg-dark text-white">
                 <img src="/images/background.jpg" style="height: 150px;" class="card-img" alt="...">
                 <div class="card-img-overlay">
-                    <p class="text-center  pt-4">
+                    <p class="text-center">
                         للتواصل:
                         Tvtc.brct.ctc@gmail.com
                         <br>
@@ -275,7 +275,10 @@
                         تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة
                         <br>
                         ©️ جميع الحقوق محفوظة -الكلية التقنية ببريدة 2021
+                        <br>
+                        نسخة تجريبية
                     </p>
+                    
                 </div>
             </div>
         </footer>
