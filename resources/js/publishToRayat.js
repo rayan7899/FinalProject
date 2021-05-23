@@ -28,6 +28,11 @@ jQuery(function () {
                     className: "text-center",
                 },
                 {
+                    data: "id",
+                    className: "text-center",
+
+                },
+                {
                     data: "student.program.name",
                     className: "text-center",
                 },
@@ -68,11 +73,7 @@ jQuery(function () {
                     className: "text-center",
 
                 },
-                {
-                    data: "id",
-                    className: "text-center",
-
-                },
+              
 
                 {
                     data: "requested_hours",
@@ -229,7 +230,7 @@ jQuery(function () {
                 Swal.close();
                 var api = this.api();
                 $(".filterhead", api.table().header()).each(function (i) {
-                    if (i > 3 && i < 7) {
+                    if (i > 5 && i < 9) {
                         var column = api.column(i);
                         var select = $(
                                 '<select><option value="">الكل</option></select>'

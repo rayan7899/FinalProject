@@ -22,7 +22,8 @@
             <table id="publishToRayatTbl" class="table nowrap display cell-border">
 
                 <thead>
-                    <tr>
+
+                    {{-- <tr>
                         <th colspan="9">
                         </th>
                         <th colspan="4">
@@ -34,19 +35,21 @@
                             </div>
                         </th>
 
-                    </tr>
+                    </tr> --}}
+
+
                     <tr>
                         <th class="text-center">#</th>
                         <th class="text-center">رقم الهوية</th>
                         <th class="text-center">الرقم التدريبي</th>
                         <th class="text-center">اسم المتدرب </th>
                         <th class="text-center">رقم الجوال</th>
+                        <th class="text-center">رقم الطلب</th>
                         <th class="text-center">البرنامج</th>
                         <th class="text-center">القسم</th>
                         <th class="text-center">التخصص</th>
                         <th class="text-center">الحالة</th>
                         <th class="text-center">المحفظة</th>
-                        <th class="text-center">رقم الطلب</th>
                         <th class="text-center"> عدد الساعات</th>
                         <th class="text-center">التسجيل في رايات</th>
                     </tr>
