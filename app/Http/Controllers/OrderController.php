@@ -27,8 +27,8 @@ class OrderController extends Controller
       try {
          $user = Auth::user();
          $semester = Semester::latest()->first();
-         if($semester == null){
-         return view('error')->with('error', 'حدث خطأ غير معروف');
+         if ($semester == null) {
+            return view('error')->with('error', 'حدث خطأ غير معروف');
          }
          $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
          $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
@@ -83,6 +83,15 @@ class OrderController extends Controller
 
    public function store(Request $request)
    {
+      $requestData = $this->validate($request, [
+         "courses"      => "required|array|min:1",
+         "courses.*"    => "required|numeric|distinct|exists:courses,id",
+         "traineeState"      => "required|string",
+         "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:4000",
+         "privateStateDoc"   => "required_if:traineeState,privateState",
+      ], [
+         'courses.required' => 'لم تقم باختيار المقررات',
+      ]);
       try {
          $user = Auth::user();
          $semester = Semester::latest()->first();
@@ -95,15 +104,7 @@ class OrderController extends Controller
             // return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
          }
 
-         $requestData = $this->validate($request, [
-            "courses"      => "required|array|min:1",
-            "courses.*"    => "required|numeric|distinct|exists:courses,id",
-            "traineeState"      => "required|string",
-            "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:4000",
-            "privateStateDoc"   => "required_if:traineeState,privateState",
-         ], [
-            'courses.required' => 'لم تقم باختيار المقررات',
-         ]);
+
 
 
          try {
