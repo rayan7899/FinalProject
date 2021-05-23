@@ -41,7 +41,7 @@ class CommunityController extends Controller
                 "url" => route("paymentsReviewForm")
             ],
             (object) [
-                "name" => " محفظة المتدرب (خصم/اضافة)",
+                "name" => "ادارة محفظة المتدرب",
                 "url" => route("chargeForm")
             ],
 
@@ -1093,7 +1093,7 @@ class CommunityController extends Controller
     public function getStudent($id)
     {
         try {
-            $user = User::with('student.courses')->whereHas('student', function ($result) use ($id) {
+            $user = User::with('student.payments')->whereHas('student', function ($result) use ($id) {
                 $result->where('national_id', $id)->orWhere('rayat_id', $id);
             })->first();
             if (!isset($user)) {

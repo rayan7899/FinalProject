@@ -132,7 +132,7 @@
                                                         المستخدمين</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('manageStudentsForm') }}">ادارة
-                                                        المستخدمين</a>
+                                                        المتدربين</a>
                                                     <a class="dropdown-item" href="{{ route('coursesIndex') }}">ادارة
                                                         المقررات</a>
                                                     <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع
@@ -145,8 +145,7 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('reportFilterdForm') }}">العمليات المالية حسب
                                                         التخصص</a>
-                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة
-                                                        متدرب</a>
+                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">ادارة محفظة المتدرب</a>
                                                     <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل
                                                         دراسي جديد</a>
                                                 </div>
