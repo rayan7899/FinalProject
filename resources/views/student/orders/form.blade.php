@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="modal fade" id="pick-courses" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="max-width: 75%" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header" dir="rtl">
                     <h5 class="modal-title">قم باختيار المواد المطلوبة</h5>
@@ -10,9 +10,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body table-responsive">
 
-                    <table class="table table-hover table-bordered table-responsive bg-white ">
+                    <table class="table table-hover table-bordered  bg-white ">
                         <thead>
                             <tr>
                                 <th class="text-center">رمز المقرر</th>
@@ -21,6 +21,7 @@
                                 <th class="text-center">الساعات</th>
                                 <th class="text-center">المبلغ</th>
                                 <th class="text-center @if ($user->student->level < 2) d-none @endif">
+                                    اضافة
                                 </th>
                             </tr>
                         </thead>
@@ -99,9 +100,9 @@
                         </div>
                     </div>
                     <!-- suggested courses -->
-                    <div class="form-group">
+                    <div class="form-group table-responsive">
                         <label>المقررات المقترحة</label>
-                        <table class="table table-hover table-responsive table-bordered bg-white">
+                        <table class="table table-hover table-bordered bg-white">
                             <thead>
                                 <tr>
                                     <th class="text-center">رمز المقرر</th>
