@@ -1099,7 +1099,7 @@ class CommunityController extends Controller
             if (!isset($user)) {
                 return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
             }
-            $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
+            $waitingTransCount = $user->student->payments()->where("accepted", null)->count();
             if ($waitingTransCount > 0) {
                 return response()->json(["message" => "يوجد طلب شحن قيد المراجعة لهذا المتدرب"], 422);
             }
@@ -1138,7 +1138,7 @@ class CommunityController extends Controller
             if (!isset($user)) {
                 return back()->with("error", "لا يوجد متدرب بهذا الرقم");
             }
-            $waitingTransCount = $user->student->payments()->where("transaction_id", "=", null)->count();
+            $waitingTransCount = $user->student->payments()->where("accepted", null)->count();
             if ($waitingTransCount > 0) {
                 return back()->with("error", "تعذر ارسال الطلب يوجد طلب شحن رصيد قيد المراجعة");
             }
