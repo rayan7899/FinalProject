@@ -95,12 +95,14 @@
                         <th scope="col">القسم</th>
                         <th scope="col">التخصص</th>
                         <th scope="col">الحالة</th>
+                        <th scope="col">تاريخ الطلب</th>
                         <th scope="col">ايصال السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
                         <th scope="col">الاجراء </th>
                         <th scope="col">الملاحظات </th>
                     </tr>
                     <tr>
+                        <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
@@ -120,6 +122,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>

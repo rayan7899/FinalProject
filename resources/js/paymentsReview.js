@@ -378,6 +378,12 @@ jQuery(function () {
 
             },
             {
+                data: function (data) {
+                    return data.created_at.split('T')[0];
+                },
+                className: "text-center",
+            },
+            {
                 data: "receipt_file_id",
                 className: "text-center",
                 render: function (data, type, row) {
