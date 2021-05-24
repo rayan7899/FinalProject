@@ -109,7 +109,7 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('deptCreateStudentForm') }}">اضافة متدرب</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route("rayatReportFormCommunity", ["type" => "community"]) }}">تقرير رايات</a>
+                                                        href="{{ route("rayatReportFormCommunity", ["type" => "departmentBoss"]) }}">تقرير رايات</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
