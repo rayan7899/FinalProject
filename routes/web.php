@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // TODO: disable this in release
     //Logs Viewer
-    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    // Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 });
 
 // خدمة المجتمع
@@ -146,7 +146,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::post('affairs/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStoreAffairs');
     // ExcelController
     Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
-    //Route::get('/excel/new/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
+    Route::get('/excel/new/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
     Route::post('/excel/new/import', [ExcelController::class, 'importNewUsers'])->name('importExcel');
     // Old users
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
@@ -232,9 +232,9 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     Route::post('/student/order/store', [OrderController::class, 'store'])->name('orderStore');
 
 
-    //UserControllaer New passwprd
-    Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
-    Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
+    // //UserControllaer New passwprd
+    // Route::get('/user/updatepassword', [UserController::class, 'UpdatePasswordForm'])->name('UpdatePasswordForm');
+    // Route::post('/user/updatepassword', [UserController::class, 'UpdatePassword'])->name('UpdatePassword');
 
     //refund
     Route::get('/student/refund_order', [RefundOrderController::class, 'form'])->name('refundOrderForm');

@@ -1,34 +1,35 @@
 <table>
     <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">المعرف</th>
-            <th scope="col">رقم الهوية</th>
-            <th scope="col">الاسم</th>
-            <th scope="col">رقم الجوال</th>
-            <th scope="col">البرنامج</th>
-            <th scope="col">القسم</th>
-            <th scope="col">التخصص</th>
-            <th scope="col">الحالة</th>
-            <th scope="col">المبلغ المدفوع</th>
-            <th scope="col">حالة التدقيق</th>
-            <th scope="col">ملاحظات المدقق</th>
+            <th style="text-align: center">#</th>
+            <th style="text-align: center">المعرف</th>
+            <th style="text-align: center">رقم الهوية</th>
+            <th style="text-align: center">الرقم التدريبي</th>
+            <th style="text-align: center">الاسم</th>
+            <th style="text-align: center">رقم الجوال</th>
+            <th style="text-align: center">البرنامج</th>
+            <th style="text-align: center">القسم</th>
+            <th style="text-align: center">التخصص</th>
+            <th style="text-align: center">الحالة</th>
+            <th style="text-align: center">الساعات المعتمدة</th>
+            <th style="text-align: center">رصيد المحفظة</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($users as $user)
             <tr>
-                <th class="text-center" scope="row">{{ $loop->index + 1 ?? '' }}</th>
-                <td>{{$user->id}}</td>
-                <td class="text-center">{{ $user->national_id ?? 'لا يوجد' }} </td>
-                <td>{{ $user->name ?? 'لا يوجد' }} </td>
-                <td class="text-center">{{ $user->phone ?? 'لا يوجد' }} </td>
-                <td class="text-center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
-                <td class="text-center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
-                <td class="text-center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                <td class="text-center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-                <td class="text-center">{{ $user->student->wallet ?? 'لا يوجد' }} </td>
-                <td>{{ $user->student->not }}</td>
+                <th style="text-align: center">{{ $loop->index + 1 ?? '' }}</th>
+                <td style="text-align: center">{{$user->id}}</td>
+                <td style="text-align: center">{{ $user->national_id ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ $user->student->rayat_id ?? 'لا يوجد' }} </td>
+                <td style="text-align: right">{{ $user->name ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ $user->phone ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ $user->student->program->name ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ $user->student->credit_hours ?? 'لا يوجد' }} </td>
+                <td style="text-align: center">{{ $user->student->wallet ?? 'لا يوجد' }} </td>
             </tr>
         @endforeach
     </tbody>

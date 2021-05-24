@@ -12,6 +12,8 @@ use App\Imports\UpdateStudentsWallet;
 use App\Imports\UpdateWalletImport;
 use App\Models\Department;
 use App\Models\Program;
+use App\Models\Semester;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -63,7 +65,15 @@ class ExcelController extends Controller
 
     public function exportNewUsers()
     {
-        return Excel::download(new UsersExport, 'users.xlsx');
+        try {
+            return Excel::download(new UsersExport, 'users.xlsx');
+            // return view('excel.exportAllStudent', [
+            //     'users' => User::whereHas("student")->get(),
+            // ]);
+        } catch (Exception $e) {
+           Log::error($e->getMessage().' '.$e);
+           return view('error')->with('error','حدث خطأ غير معروف');
+        }
     }
 
 

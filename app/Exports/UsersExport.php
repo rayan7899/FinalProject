@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Semester;
 use App\Models\User;
 use Illuminate\View\View as View;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -15,7 +16,7 @@ class UsersExport implements FromView, ShouldAutoSize
     public function view():View
     {
         return view('excel.exportAllStudent', [
-            'users' => User::all()
+            'users' => User::whereHas("student")->get(),
         ]);
     }
 }
