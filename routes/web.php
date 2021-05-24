@@ -146,8 +146,8 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::post('affairs/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStoreAffairs');
     // ExcelController
     Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
-    Route::get('/excel/new/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
     Route::post('/excel/new/import', [ExcelController::class, 'importNewUsers'])->name('importExcel');
+    Route::get('/excel/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
     // Old users
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
