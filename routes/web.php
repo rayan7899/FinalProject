@@ -55,14 +55,15 @@ Route::middleware('auth')->group(function () {
 
     // TODO: disable this in release
     //Logs Viewer
-    // Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 });
 
 // خدمة المجتمع
 Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community', [CommunityController::class, 'dashboard'])->name('communityDashboard');
     Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
-    Route::get('/api/community/student/payments/review', [CommunityController::class, 'paymentsReviewJson'])->name('paymentsReviewJson');
+    Route::get('/community/student/payments/report', [CommunityController::class, 'paymentsReport'])->name('paymentsReport');
+    Route::get('/api/community/student/payments/{type}', [CommunityController::class, 'paymentsReviewJson'])->name('paymentsReviewJson');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
@@ -86,12 +87,13 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/users/permissions/update/{user}', [CommunityController::class, 'editUserPermissionsUpdate'])->name('editUserPermissionsUpdate');
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
 
-    // Users manage create,edit,delete
+    // Students manage create,edit,delete
     Route::get('/community/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
     Route::get('/community/students/create', [CommunityController::class, 'createStudentForm'])->name('createStudentForm');
     Route::post('/community/students/store', [CommunityController::class, 'createStudentStore'])->name('createStudentStore');
     Route::get('/community/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
     Route::post('/community/students/update/{user}', [CommunityController::class, 'editStudentUpdate'])->name('editStudentUpdate');
+    Route::get('/community/students/reset-password/{user}', [CommunityController::class, 'resetStusentPassword'])->name('resetStusentPassword');
     Route::get('/api/community/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
     // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
 

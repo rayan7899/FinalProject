@@ -363,6 +363,7 @@ window.findStudent = async function () {
     }
 
     document.getElementById("editStudentForm").action = "/community/students/update/" + user.id;
+    document.getElementById("resetPasswordForm").action = "/community/students/reset-password/" + user.id;
     document.getElementById("national_id").value = user.national_id;
     document.getElementById("rayat_id").value = user.student.rayat_id;
     document.getElementById("name").value = user.name;
@@ -370,7 +371,7 @@ window.findStudent = async function () {
     document.getElementById("level").value = user.student.level;
 
 
-    $("#editStudentForm").show();
+    $("#studentSection").show();
     $("#searchSection").hide();
     level
     document.getElementById("program").value = user.student.program_id;

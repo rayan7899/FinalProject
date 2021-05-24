@@ -94,8 +94,11 @@ class OrderController extends Controller
          "traineeState"      => "required|string",
          "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:10000",
          "privateStateDoc"   => "required_if:traineeState,privateState",
+         "promise"           => "required_if:traineeState,privateState",
       ], [
          'courses.required' => 'لم تقم باختيار المقررات',
+         'promise.required_if' => 'التعهد مطلوب ',
+
       ]);
       try {
          $user = Auth::user();

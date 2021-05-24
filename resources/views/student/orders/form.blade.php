@@ -21,7 +21,7 @@
                                 <th class="text-center">الساعات</th>
                                 <th class="text-center">المبلغ</th>
                                 <th class="text-center @if ($user->student->level < 2) d-none @endif">
-                                    اضافة
+                                        اضافة
                                 </th>
                             </tr>
                         </thead>
@@ -111,7 +111,7 @@
                                     <th class="text-center">الساعات</th>
                                     <th class="text-center">المبلغ</th>
                                     <th class="text-center @if ($user->student->level < 2) d-none @endif">
-                                        اضافة/الغاء
+                                            اضافة/الغاء
                                     </th>
                                 </tr>
                             </thead>
@@ -172,18 +172,18 @@
                                 <div class="custom-control custom-radio custom-control-inline col-sm-3 m-0">
                                     <a id="info-popup" data-toggle="popover" onclick="popup()" title="حالات الضروف الخاصة"
                                         class="h5 text-right mx-2" data-content="
-                                                                                   <div class='text-right' dir='rtl' style='width: 30%;'>
-                                                                                   ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
-                                                                                   <br>
-                                                                                   ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
-                                                                                   <br>
-                                                                                   ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
-                                                                                   <br>
-                                                                                   ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
-                                                                                   <br>
-                                                                                   ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
-                                                                                   </div>
-                                                                                   ">( ! )</a>
+                                                                                                   <div class='text-right' dir='rtl' style='width: 30%;'>
+                                                                                                   ١- اذا كان المتدرب من ابناء شهداء الواجب (استشهاد والده) 
+                                                                                                   <br>
+                                                                                                   ٢- اذا كان المتدرب من الايتام المسجلين في دور الرعاية الاجتماعية
+                                                                                                   <br>
+                                                                                                   ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
+                                                                                                   <br>
+                                                                                                   ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
+                                                                                                   <br>
+                                                                                                   ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
+                                                                                                   </div>
+                                                                                                   ">( ! )</a>
                                     <input value="privateState" type="radio" onclick="window.calcCost()" id="privateState"
                                         name="traineeState" class="custom-control-input">
                                     <label class="custom-control-label" for="privateState">الظروف الخاصة</label>
@@ -255,10 +255,38 @@
 
 
                     <!-- requiered documents -->
-                    <div class="form-group" id="privateStateDocGroup" style="display: none;">
-                        <label for="privateStateDoc"> صور المستندات المطلوبة</label>
-                        <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="privateStateDoc" class="form-control"
-                            id="privateStateDoc" multiple disabled>
+                    <div id="privateStateDocGroup" style="display: none;">
+                        <div id="privateStatePromise" class="border rounded bg-light form-group">
+                            <label class="m-2 ">
+                                <input class="m-2" type="checkbox" name="promise">
+                                أتعهد بسداد كامل الرسوم المستحقة علي بعد قرار مجلس الكلية في حال عدم تطابق شروط الإعفاء
+                                وذلك
+                                دون ادنى مسؤولية على الكلية
+                                وفي حال عدم التزاميي بالسداد فإني أفوض الكلية باتخاذ كافة الإجراءات اللازمة تجاهي،
+                                وأتحمل
+                                مايترتب علي من التزامات. وهذا اقرار من بذلك
+                            </label>
+                            {{-- <div class="m-2">
+                                <p>
+                                    أتعهد بسداد كامل الرسوم المستحقة علي بعد قرار مجلس الكلية في حال عدم تطابق شروط الإعفاء
+                                    وذلك
+                                    دون ادنى مسؤولية على الكلية
+                                    وفي حال عدم التزاميي بالسداد فإني أفوض الكلية باتخاذ كافة الإجراءات اللازمة تجاهي،
+                                    وأتحمل
+                                    مايترتب علي من التزامات. وهذا اقرار من بذلك
+                                </p>
+                                <p>
+                                    وفي حال عدم التزاميي بالسداد فإني أفوض الكلية باتخاذ كافة الإجراءات اللازمة تجاهي،
+                                    وأتحمل
+                                    مايترتب علي من التزامات. وهذا اقرار من بذلك
+                                </p>
+                            </div> --}}
+                        </div>
+                        <div class="form-group">
+                            <label for="privateStateDoc"> صور المستندات المطلوبة</label>
+                            <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="privateStateDoc" class="form-control"
+                                id="privateStateDoc" multiple disabled>
+                        </div>
                     </div>
                     <!-- submet button -->
                     <div class="form-group my-3">

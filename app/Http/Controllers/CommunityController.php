@@ -41,6 +41,10 @@ class CommunityController extends Controller
                 "url" => route("paymentsReviewForm")
             ],
             (object) [
+                "name" => "تقرير طلبات الشحن",
+                "url" => route("paymentsReport")
+            ],
+            (object) [
                 "name" => "ادارة محفظة المتدرب",
                 "url" => route("chargeForm")
             ],
@@ -206,13 +210,25 @@ class CommunityController extends Controller
     }
 
 
+    public function resetStusentPassword(User $user)
+    {
+       try{
+        $user->password =  Hash::make("bct12345");
+        $user->save();
+        return back()->with('success','تم اعادة تعيين كلمة المرور بنجاح');
+       }catch(Exception $e){
+        Log::error($e->getMessage().' '.$e);
+        return back()->with('error','حدث خطأ غير معروف');
+       }
+    }
+
     public function editStudentUpdate(Request $request, User $user)
     {
         $requestData = $this->validate($request, [
-            'national_id' => 'required|digits:10|unique:users,national_id' . $user->id,
-            "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id' . $user->id,
+            'national_id' => 'required|digits:10|unique:users,national_id,' . $user->id,
+            "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id,' . $user->student->id,
             'name'     => 'required|string|min:3|max:100',
-            "phone"        => 'required|digits_between:9,14|unique:users,phone' . $user->id,
+            "phone"        => 'required|digits_between:9,14|unique:users,phone,' . $user->id,
             "major"         => "required|numeric|exists:majors,id",
             "level"         => "required|numeric|min:1|max:5",
         ]);
@@ -409,11 +425,20 @@ class CommunityController extends Controller
         return view('manager.community.paymentsReview');
     }
 
-    public function paymentsReviewJson()
+    public function paymentsReport()
+    {
+        return view('manager.community.paymentsReport');
+    }
+
+    public function paymentsReviewJson($type)
     {
         // $fetch_errors = [];
         try {
-            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major",])->where("accepted", null)->get();
+            $cond = "=";
+            if($type == 'report'){
+                $cond = "!=";
+            }
+            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major","transaction"])->where("accepted", $cond, null)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
@@ -423,8 +448,6 @@ class CommunityController extends Controller
 
     public function paymentsReviewUpdate(Request $request)
     {
-        $semester = Semester::latest()->first();
-
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
             "payment_id"         => "required|numeric|exists:payments,id",
@@ -434,6 +457,7 @@ class CommunityController extends Controller
         ]);
 
         try {
+            $semester = Semester::latest()->first();
             $decision = false;
             if ($reviewedPayment["decision"] == "accept") {
                 $decision = true;

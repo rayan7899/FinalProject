@@ -132,6 +132,8 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('publishToRayatFormCommunity', ['type' => 'community']) }}">الرفع
                                                         لرايات</a>
+                                                        <a class="dropdown-item"
+                                                        href="{{ route('publishToRayatFormCommunity', ['type' => 'community']) }}">تقرير طلبات الشحن</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
                                                     <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة

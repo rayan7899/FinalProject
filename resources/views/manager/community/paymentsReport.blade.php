@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="table-responsive p-2 bg-white rounded border">
-            <table class="table nowrap display cell-border" id="paymentsReviewTbl">
+            <table class="table nowrap display cell-border" id="paymentsReportTbl">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
@@ -98,6 +98,7 @@
                         <th scope="col">ايصال السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
                         <th scope="col">الاجراء </th>
+                        <th scope="col">الملاحظات </th>
                     </tr>
                     <tr>
                         <th class="filterhead" scope="col"></th>
@@ -111,12 +112,15 @@
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th>
+
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
@@ -136,7 +140,7 @@
         <script defer>
             var paymentVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
             var paymentWithNote = "{{ route('paymentsReviewUpdate') }}";
-            var paymentsReviewJson = "{{ route('paymentsReviewJson',['type' => 'review']) }}"
+            var paymentsReviewJson = "{{ route('paymentsReviewJson',['type' =>'report']) }}"
             window.addEventListener('DOMContentLoaded', (event) => {
                 Swal.fire({
                     html: "<h4>جاري جلب البيانات</h4>",

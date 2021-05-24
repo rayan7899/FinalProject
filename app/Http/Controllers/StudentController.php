@@ -117,7 +117,11 @@ class StudentController extends Controller
             // }
 
             DB::commit();
-            return redirect(route('orderForm'))->with('success', ' تم تحديث البيانات بنجاح');
+            if (count($user->student->orders) < 1) {
+                return redirect(route('orderForm'))->with('success', ' تم تحديث البيانات بنجاح');
+            }else{
+                return redirect(route('home'))->with('success', ' تم تحديث البيانات بنجاح');
+            }
         } catch (\Throwable $e) {
             DB::rollback();
             Log::error($e->getMessage() . ' ' . $e);

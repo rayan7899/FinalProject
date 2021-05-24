@@ -64,7 +64,8 @@ jQuery(function () {
                                 return "متدرب";
                                 break;
                         }
-                    }
+                    },                    
+                    className: "text-center",
 
                 },
                 {

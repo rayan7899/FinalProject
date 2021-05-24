@@ -17,30 +17,35 @@ jQuery(function () {
             targets: 0
         }],
         columns: [{
-                data: null
+                data: null,
+                className: "text-center",
             },
             {
-                data: "student.user.national_id"
+                data: "student.user.national_id",
+                className: "text-center",
             },
             {
                 data: "student.user.name",
             },
             {
-                data: "student.user.phone"
+                data: "student.user.phone",
+                className: "text-center",
             },
             {
-                data: "student.program.name"
+                data: "student.program.name",
+                className: "text-center",
             },
             {
-                data: "student.department.name"
+                data: "student.department.name",
+                className: "text-center",
             },
             {
-                data: "student.major.name"
+                data: "student.major.name",
+                className: "text-center",
             },
             {
-                data: "student.traineeState",
-                render: function (data) {
-                    switch (data) {
+                data: function (data) {
+                    switch (data.student.traineeState) {
                         case 'employee':
                             return "منسوب ";
                             break;
@@ -50,7 +55,7 @@ jQuery(function () {
                             break;
 
                         case 'privateState':
-                            return "حالة خاصة";
+                            return "ظروف خاصة";
                             break;
 
                             // case 'trainee':
@@ -58,7 +63,8 @@ jQuery(function () {
                             return "متدرب";
                             break;
                     }
-                }
+                },
+                className: "text-center",
 
             },
             {
@@ -80,7 +86,8 @@ jQuery(function () {
                 }
             },
             {
-                data: "amount"
+                data: "amount",
+                className: "text-center",
             },
 
 
@@ -278,6 +285,324 @@ jQuery(function () {
 
     paymentsReviewTbl.on('order.dt search.dt', function () {
         paymentsReviewTbl.column(0, {
+            search: 'applied',
+            order: 'applied'
+        }).nodes().each(function (cell, i) {
+            cell.innerHTML = i + 1;
+        });
+    }).draw();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let paymentsReportTbl = $('#paymentsReportTbl').DataTable({
+        ajax: window.paymentsReviewJson,
+        dataSrc: "data",
+        rowId: 'student.user.national_id',
+        columnDefs: [{
+                searchable: false,
+                orderable: false,
+                targets: 0
+            },
+            {
+                targets: 10,
+                createdCell: function (td, cellData, rowData, row, col) {
+                    if (cellData == 'مرفوض') {
+                        $(td).addClass('text-danger');
+                    } else {
+                        $(td).addClass('text-success');
+                    }
+                }
+            }
+        ],
+        columns: [{
+                data: null,
+                className: "text-center",
+            },
+            {
+                data: "student.user.national_id",
+                className: "text-center",
+            },
+            {
+                data: "student.user.name",
+            },
+            {
+                data: "student.user.phone",
+                className: "text-center",
+            },
+            {
+                data: "student.program.name",
+                className: "text-center",
+            },
+            {
+                data: "student.department.name",
+                className: "text-center",
+            },
+            {
+                data: "student.major.name",
+                className: "text-center",
+            },
+            {
+                data: function (data) {
+                    switch (data.student.traineeState) {
+                        case 'employee':
+                            return "منسوب ";
+                            break;
+
+                        case 'employeeSon':
+                            return "ابن منسوب";
+                            break;
+
+                        case 'privateState':
+                            return "ظروف خاصة";
+                            break;
+
+                            // case 'trainee':
+                        default:
+                            return "متدرب";
+                            break;
+                    }
+                },
+                className: "text-center",
+
+            },
+            {
+                data: "receipt_file_id",
+                className: "text-center",
+                render: function (data, type, row) {
+                    let ext = data.split('.')[1];
+                    if (ext == 'pdf' || ext == 'PDF') {
+                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
+                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','pdf')">
+                        <img style="width: 20px" src="/images/pdf.png" />
+                    </a>`;
+                    } else {
+                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
+                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','img')">
+                        <img style="width: 20px" src="/images/camera_img_icon.png" />
+                    </a>`;
+                    }
+                }
+            },
+            {
+                data: function (data) {
+                    if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
+                        if (data.amount != data.transaction.amount) {
+                            return `<del class="text-muted">${data.amount}</del>
+                            ${data.transaction.amount}`;
+                        } else {
+                            return data.amount;
+                        }
+                    } else {
+                        return data.amount;
+                    }
+                },
+                className: "text-center",
+            },
+
+
+            {
+                data: function (data) {
+                    if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
+                        return 'مقبول';
+                    } else {
+                        return 'مرفوض';
+                    }
+                },
+                className: 'text-center'
+
+            },
+            {
+                data: "note",
+            },
+
+
+        ],
+        order: [
+            [10, "asc"]
+        ],
+        language: {
+            emptyTable: "ليست هناك بيانات متاحة في الجدول",
+            loadingRecords: "جارٍ التحميل...",
+            processing: "جارٍ التحميل...",
+            lengthMenu: "أظهر _MENU_ مدخلات",
+            zeroRecords: "لم يعثر على أية سجلات",
+            info: "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+            infoEmpty: "يعرض 0 إلى 0 من أصل 0 سجل",
+            infoFiltered: "(منتقاة من مجموع _MAX_ مُدخل)",
+            search: "ابحث:",
+            paginate: {
+                first: "الأول",
+                previous: "السابق",
+                next: "التالي",
+                last: "الأخير",
+            },
+            aria: {
+                sortAscending: ": تفعيل لترتيب العمود تصاعدياً",
+                sortDescending: ": تفعيل لترتيب العمود تنازلياً",
+            },
+            select: {
+                rows: {
+                    _: "%d قيمة محددة",
+                    0: "",
+                    1: "1 قيمة محددة",
+                },
+                1: "%d سطر محدد",
+                _: "%d أسطر محددة",
+                cells: {
+                    1: "1 خلية محددة",
+                    _: "%d خلايا محددة",
+                },
+                columns: {
+                    1: "1 عمود محدد",
+                    _: "%d أعمدة محددة",
+                },
+            },
+            buttons: {
+                print: "طباعة",
+                copyKeys: "زر <i>ctrl</i> أو <i>⌘</i> + <i>C</i> من الجدول<br>ليتم نسخها إلى الحافظة<br><br>للإلغاء اضغط على الرسالة أو اضغط على زر الخروج.",
+                copySuccess: {
+                    _: "%d قيمة نسخت",
+                    1: "1 قيمة نسخت",
+                },
+                pageLength: {
+                    "-1": "اظهار الكل",
+                    _: "إظهار %d أسطر",
+                },
+                collection: "مجموعة",
+                copy: "نسخ",
+                copyTitle: "نسخ إلى الحافظة",
+                csv: "CSV",
+                excel: "Excel",
+                pdf: "PDF",
+                colvis: "إظهار الأعمدة",
+                colvisRestore: "إستعادة العرض",
+            },
+            autoFill: {
+                cancel: "إلغاء",
+                info: "مثال عن الملئ التلقائي",
+                fill: "املأ جميع الحقول بـ <i>%d&lt;\\/i&gt;</i>",
+                fillHorizontal: "تعبئة الحقول أفقيًا",
+                fillVertical: "تعبئة الحقول عموديا",
+            },
+            searchBuilder: {
+                add: "اضافة شرط",
+                clearAll: "ازالة الكل",
+                condition: "الشرط",
+                data: "المعلومة",
+                logicAnd: "و",
+                logicOr: "أو",
+                title: ["منشئ البحث"],
+                value: "القيمة",
+                conditions: {
+                    date: {
+                        after: "بعد",
+                        before: "قبل",
+                        between: "بين",
+                        empty: "فارغ",
+                        equals: "تساوي",
+                        not: "ليس",
+                        notBetween: "ليست بين",
+                        notEmpty: "ليست فارغة",
+                    },
+                    number: {
+                        between: "بين",
+                        empty: "فارغة",
+                        equals: "تساوي",
+                        gt: "أكبر من",
+                        gte: "أكبر وتساوي",
+                        lt: "أقل من",
+                        lte: "أقل وتساوي",
+                        not: "ليست",
+                        notBetween: "ليست بين",
+                        notEmpty: "ليست فارغة",
+                    },
+                    string: {
+                        contains: "يحتوي",
+                        empty: "فاغ",
+                        endsWith: "ينتهي ب",
+                        equals: "يساوي",
+                        not: "ليست",
+                        notEmpty: "ليست فارغة",
+                        startsWith: " تبدأ بـ ",
+                    },
+                },
+                button: {
+                    0: "فلاتر البحث",
+                    _: "فلاتر البحث (%d)",
+                },
+                deleteTitle: "حذف فلاتر",
+            },
+            searchPanes: {
+                clearMessage: "ازالة الكل",
+                collapse: {
+                    0: "بحث",
+                    _: "بحث (%d)",
+                },
+                count: "عدد",
+                countFiltered: "عدد المفلتر",
+                loadMessage: "جارِ التحميل ...",
+                title: "الفلاتر النشطة",
+            },
+            searchPlaceholder: "ابحث ...",
+        },
+        initComplete: function () {
+            Swal.close();
+
+            var api = this.api();
+            $(".filterhead", api.table().header()).each(function (i) {
+                if (i > 3 && i < 8 || i == 10) {
+                    var column = api.column(i);
+                    var select = $(
+                            '<select><option value="">الكل</option></select>'
+                        )
+                        .appendTo($(this).empty())
+                        .on("change", function () {
+                            // FIXME: error dataTable undefined
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(
+                                    val ? "^" + val + "$" : "",
+                                    true,
+                                    false
+                                )
+                                .draw();
+                        });
+
+                    column
+                        .data()
+                        .unique()
+                        .sort()
+                        .each(function (d, j) {
+                            select.append(
+                                '<option value="' +
+                                d +
+                                '">' +
+                                d +
+                                "</option>"
+                            );
+                        });
+                }
+            });
+        },
+    });
+
+    paymentsReportTbl.on('order.dt search.dt', function () {
+        paymentsReportTbl.column(0, {
             search: 'applied',
             order: 'applied'
         }).nodes().each(function (cell, i) {

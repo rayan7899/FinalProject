@@ -198,5 +198,9 @@ return [
         "rayat"                 => "رايات",
         "start_date"            => "تاريخ البداية",
         "end_date"              => "تاريخ النهاية",
+        "privatestate"           => "ظروف خاصة",
+        "promise"              => "التعهد",
+
+
     ],
 ];

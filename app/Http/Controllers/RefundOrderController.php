@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\RefundOrder;
 use App\Models\Semester;
 use Illuminate\Http\Request;
@@ -23,9 +24,9 @@ class RefundOrderController extends Controller
             return back()->with(['error' => 'لا يوجد ساعات معتمدة ولا رصيد لاسترداده']);
         }
         $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
-        $isHasActivePayment = $user->student->payments->where('accepted', null)->first() !== null;
+        // $isHasActivePayment = $user->student->payments->with('transaction')->where('accepted', null)->whereDoesntHave('transaction')->first();
+        $isHasActivePayment = Payment::where('accepted', null)->where("student_id",$user->student->id)->whereDoesntHave('transaction')->first() !== null;
         $isHasActiveOrder = $user->student->orders->where('transaction_id', null)->first() !== null;
-
         if ($isHasActiveRefund) {
             return back()->with(['error' => 'لا يمكن طلب استرداد مع وجود طلب استرداد اخر قيد المراجعة']);
         } else if ($isHasActivePayment) {
