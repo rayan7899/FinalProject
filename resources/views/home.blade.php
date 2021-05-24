@@ -381,7 +381,7 @@
                                 if ($payment->accepted == null) {
                                     $countWaitingPayment++;
                                 }
-                                $acceptedAmount = $user->student->transactions->where('payment_id', $payment->id)->first()->amount ?? null;
+                                $acceptedAmount = $user->student->transactions()->where('payment_id', $payment->id)->first()->amount ?? null;
                             @endphp
                             <tr class="text-center">
                                 <td>{{ $payment->id }}</td>
@@ -535,12 +535,12 @@
                             @endphp
                             <tr class="text-center">
                                 <td>{{ $refund->id ?? 'Error' }}</td>
-                                @if ($refund->accepted == null)
+                                @if ($refund->accepted === null)
                                     <td>قيد المراجعة</td>
                                 @else
                                     <td>{{ $refund->amount ?? 'Error' }}</td>
                                 @endif
-                                @if ($refund->accepted == null)
+                                @if ($refund->accepted === null)
                                     <td>قيد المراجعة</td>
                                 @elseif($refund->accepted)
                                     <td class="text-success">مقبول</td>
