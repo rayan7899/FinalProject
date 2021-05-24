@@ -667,11 +667,12 @@ class CommunityController extends Controller
                 }
                 // FIXME: rewrite me
                 if ($orders[$i]->student->wallet > 0 && $orders[$i]->student->traineeState != 'privateState') {
-
                     $canAddHours = floor($orders[$i]->student->wallet / ($orders[$i]->student->program->hourPrice * $discount));
-                } else {
-                    $canAddHours = 0;
+                } elseif($orders[$i]->student->traineeState != 'privateState') {
+                    unset($orders[$i]);
+                    continue;
                 }
+                
                 if ($orders[$i]->student->traineeState != 'privateState') {
                     if ($canAddHours < $orders[$i]->requested_hours) {
                         $orders[$i]->requested_hours = $canAddHours;
