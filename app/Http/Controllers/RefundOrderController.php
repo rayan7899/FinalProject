@@ -23,10 +23,9 @@ class RefundOrderController extends Controller
         if ($user->student->credit_hours <= 0 && $user->student->wallet <= 0) {
             return back()->with(['error' => 'لا يوجد ساعات معتمدة ولا رصيد لاسترداده']);
         }
-        $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
-        // $isHasActivePayment = $user->student->payments->with('transaction')->where('accepted', null)->whereDoesntHave('transaction')->first();
-        $isHasActivePayment = Payment::where('accepted', null)->where("student_id",$user->student->id)->whereDoesntHave('transaction')->first() !== null;
-        $isHasActiveOrder = $user->student->orders->where('transaction_id', null)->first() !== null;
+        $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
+        $isHasActivePayment = $user->student->payments()->where('accepted', null)->first() !== null;
+        $isHasActiveOrder = $user->student->orders()->where('transaction_id', null)->first() !== null;
         if ($isHasActiveRefund) {
             return back()->with(['error' => 'لا يمكن طلب استرداد مع وجود طلب استرداد اخر قيد المراجعة']);
         } else if ($isHasActivePayment) {
@@ -65,7 +64,7 @@ class RefundOrderController extends Controller
                 return back()->with(['error' => 'خطآ غير معروف']);
             }
 
-            $isHasActiveRefund = $user->student->refunds->where('accepted', null)->first() !== null;
+            $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
             if ($isHasActiveRefund) {
                 return redirect(route('home'))->with(['error' => 'خطآ غير معروف']);
             }
