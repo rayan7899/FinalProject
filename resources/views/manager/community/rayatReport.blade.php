@@ -70,8 +70,14 @@
         </div>
     </div>
     <script>
-        var rayatReportApi =
-            "{{ $type == 'community' ? route('rayatReportCommunityApi', ['type' => $type]) : route('rayatReportAffairsApi', ['type' => $type]) }}"
+        var rayatReportApi;
+        if("{{$type}}" == "departmentBoss"){
+            rayatReportApi = "{{ route('rayatReportCommunityApi', ['type' => $type]) }}";
+        }else{
+            rayatReportApi =
+                "{{ $type == 'community' ? route('rayatReportCommunityApi', ['type' => $type]) : route('rayatReportAffairsApi', ['type' => $type]) }}"
+        }
+
         window.addEventListener('DOMContentLoaded', (event) => {
             window.changeHoursInputs();
             Swal.fire({
