@@ -788,11 +788,20 @@ class CommunityController extends Controller
                     $cond = "=";
                 } else if ($type == "community") {
                     $cond = ">";
+                } else if($type == "departmentBoss"){
+                    $cond = ">=";
                 }
             }
-            $users = User::with(['student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond) {
+            $users = User::with(['student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond, $type) {
                 $result->where('level', $cond, '1')
                     ->where('credit_hours', '>', 0);
+                    
+                $user = Auth::user();
+                if($type == 'departmentBoss' && $user->manager->isDepartmentManager()){
+                    $result->whereHas('department', function ($res) use ($user){
+                        $res->whereIn('role_id', $user->manager->getPermissionRoleIds());
+                    });
+                }
             })->get();
 
             return response()->json(["data" => $users->toArray()], 200);

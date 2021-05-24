@@ -14,16 +14,25 @@ jQuery(function () {
 });
 
 window.findMajor = function (programs, program_id, department_id) {
-    for (var i = 0; i < programs.length; i++) {
-        for (var j = 0; j < programs[i].departments.length; j++) {
-            if (
-                programs[i].id == program_id &&
-                programs[i].departments[j].id == department_id
-            ) {
-                return programs[i].departments[j];
+    var majors;
+    Object.values(programs).forEach(program => {
+        Object.values(program.departments).forEach(department => {
+            if (program.id == program_id && department.id == department_id) {
+                majors = department.majors;
             }
-        }
-    }
+        });
+    });
+    return majors;
+    // for (var i = 0; i < programs.length; i++) {
+    //     for (var j = 0; j < programs[i].departments.length; j++) {
+    //         if (
+    //             programs[i].id == program_id &&
+    //             programs[i].departments[j].id == department_id
+    //         ) {
+    //             return programs[i].departments[j];
+    //         }
+    //     }
+    // }
 };
 
 window.findDepartment = function (programs, program_id) {
@@ -51,12 +60,13 @@ window.fillDepartments = function () {
     if (departments === undefined) {
         return;
     }
-    for (var i = 0; i < departments.length; i++) {
+    
+    Object.values(departments).forEach(department => {
         var option = document.createElement("option");
-        option.innerHTML = departments[i].name;
-        option.value = departments[i].id;
+        option.innerHTML = department.name;
+        option.value = department.id;
         dept.appendChild(option);
-    }
+    });
     fillMajors();
 };
 
@@ -66,13 +76,22 @@ window.fillMajors = function () {
     var mjr = document.getElementById("major");
     mjr.innerHTML = '<option value="0" disabled selected>أختر</option>';
     if (dept !== "0" && prog !== "0") {
-        var majors = findMajor(window.programs, prog, dept).majors;
-
-        for (var i = 0; i < majors.length; i++) {
-            var option = document.createElement("option");
-            option.innerHTML = majors[i].name;
-            option.value = majors[i].id;
-            mjr.appendChild(option);
+        var majors = findMajor(window.programs, prog, dept);
+        if (majors === undefined) {
+            return;
         }
+        // for (var i = 0; i < majors.length; i++) {
+        //     var option = document.createElement("option");
+        //     option.innerHTML = majors[i].name;
+        //     option.value = majors[i].id;
+        //     mjr.appendChild(option);
+        // }
+
+        Object.values(majors).forEach(major => {
+            var option = document.createElement("option");
+            option.innerHTML = major.name;
+            option.value = major.id;
+            mjr.appendChild(option);
+        });
     }
 };
