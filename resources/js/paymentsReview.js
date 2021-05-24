@@ -9,7 +9,10 @@ window.payment_id = 0;
 jQuery(function () {
     let paymentsReviewTbl = $('#paymentsReviewTbl').DataTable({
         ajax: window.paymentsReviewJson,
-        dataSrc: "data",
+        dataSrc: function (data) {
+            data = JSON.parse(data);
+            return json.data;
+        },
         rowId: 'student.user.national_id',
         columnDefs: [{
             searchable: false,

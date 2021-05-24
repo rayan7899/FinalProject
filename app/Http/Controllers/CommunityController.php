@@ -684,7 +684,7 @@ class CommunityController extends Controller
                 }
                 $orders[$i]->canAddHours = $canAddHours;
             }
-            return response(json_encode(["data" => $orders->toArray()]), 200);
+            return response()->json(["data" => $orders->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return view('manager.community.paymentsReview')->with('error', "تعذر جلب المتدربين");
