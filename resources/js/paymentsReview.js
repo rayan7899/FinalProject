@@ -316,7 +316,7 @@ jQuery(function () {
                 targets: 0
             },
             {
-                targets: 10,
+                targets: 11,
                 createdCell: function (td, cellData, rowData, row, col) {
                     if (cellData == 'مرفوض') {
                         $(td).addClass('text-danger');
@@ -436,7 +436,7 @@ jQuery(function () {
 
         ],
         order: [
-            [10, "asc"]
+            [11, "asc"]
         ],
         language: {
             emptyTable: "ليست هناك بيانات متاحة في الجدول",
@@ -568,7 +568,7 @@ jQuery(function () {
 
             var api = this.api();
             $(".filterhead", api.table().header()).each(function (i) {
-                if (i > 3 && i < 8 || i == 10) {
+                if (i > 3 && i < 8 || i == 11) {
                     var column = api.column(i);
                     var select = $(
                             '<select><option value="">الكل</option></select>'
