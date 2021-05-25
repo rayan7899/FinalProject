@@ -44,10 +44,10 @@ class CommunityController extends Controller
                 "name" => "تقرير طلبات الشحن",
                 "url" => route("paymentsReport")
             ],
-            (object) [
-                "name" => "ادارة محفظة المتدرب",
-                "url" => route("chargeForm")
-            ],
+            // (object) [
+            //     "name" => "ادارة محفظة المتدرب",
+            //     "url" => route("chargeForm")
+            // ],
 
             (object) [
                 "name" => "الرفع لرايات",
@@ -71,13 +71,17 @@ class CommunityController extends Controller
                 "url" => route("manageUsersForm")
             ],
             (object) [
-                "name" => "اضافة متدرب",
-                "url" => route("createStudentForm")
+                "name" => "ادارة المتدربين",
+                "url" => route("manageStudentsForm")
             ],
-            (object) [
-                "name" => "تعديل بيانات متدرب",
-                "url" => route("editStudentForm")
-            ],
+            // (object) [
+            //     "name" => "اضافة متدرب",
+            //     "url" => route("createStudentForm")
+            // ],
+            // (object) [
+            //     "name" => "تعديل بيانات متدرب",
+            //     "url" => route("editStudentForm")
+            // ],
 
             (object) [
                 "name" => "ادارة المقررات",

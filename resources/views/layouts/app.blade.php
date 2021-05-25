@@ -43,7 +43,7 @@
 
                             <div class="collapse navbar-collapse " id="navbarSupportedContent">
                                 <ul class="navbar-nav mr-auto">
-                                  
+
                                     <!-- Authentication Links -->
                                     @guest
                                         @if (Route::has('login'))
@@ -68,7 +68,7 @@
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                                                document.getElementById('logout-form').submit();">
+                                                                                                                                            document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -79,10 +79,11 @@
                                             </div>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
+                                            <a class="nav-link" target="_blank" href="{{ asset('help.pdf') }}">تعليمات
+                                                الاستخدام</a>
                                         </li>
                                     @endguest
-                                   
+
                                 </ul>
                                 @auth
 
@@ -104,12 +105,13 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('coursesPerLevel') }}">الجداول
                                                         المقترحة</a>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('deptCoursesIndex') }}">ادارة المقررات</a>
+                                                    <a class="dropdown-item" href="{{ route('deptCoursesIndex') }}">ادارة
+                                                        المقررات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('deptCreateStudentForm') }}">اضافة متدرب</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route("rayatReportFormCommunity", ["type" => "departmentBoss"]) }}">تقرير رايات</a>
+                                                        href="{{ route('rayatReportFormCommunity', ['type' => 'departmentBoss']) }}">تقرير
+                                                        رايات</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
@@ -127,15 +129,19 @@
                                             <li class="nav-item dropdown">
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item"
-                                                        href="{{ route('rayatReportFormCommunity', ['type' => 'community']) }}">تقرير
-                                                        رايات</a>
+                                                        href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
+
                                                     <a class="dropdown-item"
                                                         href="{{ route('publishToRayatFormCommunity', ['type' => 'community']) }}">الرفع
                                                         لرايات</a>
-                                                        <a class="dropdown-item"
-                                                        href="{{ route('publishToRayatFormCommunity', ['type' => 'community']) }}">تقرير طلبات الشحن</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('rayatReportFormCommunity', ['type' => 'community']) }}">تقرير
+                                                        رايات</a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('paymentsReviewForm') }}">تدقيق الايصالات</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('paymentsReport', ['type' => 'community']) }}">تقرير
+                                                        طلبات الشحن</a>
                                                     <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة
                                                         المستخدمين</a>
                                                     <a class="dropdown-item"
@@ -143,6 +149,11 @@
                                                         المتدربين</a>
                                                     <a class="dropdown-item" href="{{ route('coursesIndex') }}">ادارة
                                                         المقررات</a>
+                                                    <a class="dropdown-item" href="{{ route('refundOrdersForm') }}">طلبات
+                                                        الاسترداد</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('refundOrdersReport') }}">تقرير طلبات
+                                                        الاسترداد</a>
                                                     <a class="dropdown-item" href="{{ route('oldStudentsReport') }}">جميع
                                                         المتدربين المستمرين</a>
                                                     <a class="dropdown-item"
@@ -153,7 +164,7 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('reportFilterdForm') }}">العمليات المالية حسب
                                                         التخصص</a>
-                                                    <a class="dropdown-item" href="{{ route('chargeForm') }}">ادارة محفظة المتدرب</a>
+                                                    {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">ادارة محفظة المتدرب</a> --}}
                                                     <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل
                                                         دراسي جديد</a>
                                                 </div>
@@ -245,8 +256,8 @@
                                     @if (Auth::user()->hasRole('متدرب'))
                                         <ul class="navbar-nav">
                                             {{-- <li class="nav-item">
-                                                <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
-                                            </li> --}}
+                                            <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
+                                        </li> --}}
                                             <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
                                             </li>
@@ -285,7 +296,7 @@
                         <br>
                         نسخة تجريبية
                     </p>
-                    
+
                 </div>
             </div>
         </footer>

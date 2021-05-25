@@ -23,32 +23,31 @@
         <div class="card">
             <div class="card-header h5">{{ __('ادارة المتدربين') }}</div>
             <div class="card-body p-0 px-5">
-                <table class="table">
+                {{-- <table class="table">
                     <thead>
                         <tr>
-                        {{-- 
                             #####################################################
                             
                                     This page was created for future use
                             
                             #####################################################
-                            
-                            --}}
                         </tr>
                     </thead>
                     <tbody>
-                       
+
                     </tbody>
-                </table>
+                </table> --}}
                 <div class="p-2">
-                    <a class="btn btn-primary" href="{{ route('createStudentForm')}}">{{ __('اضافة متدرب') }}
-                       
-                    </a>
-                  
+                    <a href="{{ route('createStudentForm') }}" class="btn btn-outline-primary p-3 m-2"
+                        style="font-size: 16px; width: 220px;">اضافة متدرب</a>
+                    <a href="{{ route('editStudentForm') }}" class="btn btn-outline-primary p-3 m-2"
+                        style="font-size: 16px; width: 220px;">تعديل متدرب</a>
+                    <a href="{{ route('chargeForm') }}" class="btn btn-outline-primary p-3 m-2"
+                        style="font-size: 16px; width: 220px;">ادارة محفظة المتدرب</a>
                 </div>
 
             </div>
-           
+
         </div>
     </div>
 @stop
