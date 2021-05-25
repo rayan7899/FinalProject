@@ -13,6 +13,9 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 public/js/app.js
+public/js/app.js.LICENSE.txt
+public/js/app.js.map
+public/mix-manifest.json
 public/css/app.css
 public/css/app.css.map
 service-account-key.json
