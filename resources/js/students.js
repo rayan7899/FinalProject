@@ -388,3 +388,31 @@ window.popup = function () {
     });
     // $('[data-toggle="popover"]').popover();
 }
+
+
+window.getStudentReport = function () {
+
+    let id = document.getElementById("search").value;
+    Swal.fire({
+        html: "<h4>جاري تحديث البيانات</h4>",
+        timerProgressBar: true,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+    axios.get('/api/community/student/' + id)
+        .then((response) => {
+            document.getElementById("getReportForm").action = '/community/students/report/' + response.data.id;
+            document.getElementById("getReportForm").submit();
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+
+    Swal.close();
+}

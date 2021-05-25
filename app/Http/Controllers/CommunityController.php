@@ -141,6 +141,37 @@ class CommunityController extends Controller
         }
     }
 
+
+    public function getStudentForm()
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+             return view('manager.community.students.getStudentForm');
+            } else {
+                return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('error')->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+    public function studentReport(User $user)
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                if($user->student == null){
+                    return view('error')->with("error", "حدث خطأ غير معروف");
+                }
+              return view('manager.community.students.report')->with(compact('user'));
+            } else {
+                return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('error')->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+
     public function createStudentForm()
     {
         $programs = json_encode(Program::with("departments.majors.courses")->get());
