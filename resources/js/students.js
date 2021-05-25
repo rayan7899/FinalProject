@@ -400,7 +400,7 @@ window.getStudentReport = function () {
             Swal.showLoading();
         },
     });
-    axios.get('/api/community/student/' + id)
+    axios.get('/api/community/student-report/' + id)
         .then((response) => {
             document.getElementById("getReportForm").action = '/community/students/report/' + response.data.id;
             document.getElementById("getReportForm").submit();

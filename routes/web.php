@@ -90,6 +90,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     // Students manage create,edit,delete
     Route::get('/community/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
     Route::get('/community/students/get-student', [CommunityController::class, 'getStudentForm'])->name('getStudentForm');
+    Route::get('/api/community/student-report/{id}', [CommunityController::class, 'getStudentForReport'])->name('apiCommunityStudentData');
     Route::get('/community/students/report/{user}', [CommunityController::class, 'studentReport'])->name('studentReport');
     Route::get('/community/students/create', [CommunityController::class, 'createStudentForm'])->name('createStudentForm');
     Route::post('/community/students/store', [CommunityController::class, 'createStudentStore'])->name('createStudentStore');

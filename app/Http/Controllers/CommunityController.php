@@ -1182,6 +1182,23 @@ class CommunityController extends Controller
         }
     }
 
+    public function getStudentForReport($id)
+    {
+        try {
+            $user = User::with('student.payments.transaction')->whereHas('student', function ($result) use ($id) {
+                $result->where('national_id', $id)->orWhere('rayat_id', $id);
+            })->first();
+            if (!isset($user)) {
+                return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
+            }
+            return response()->json($user, 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            DB::rollBack();
+            return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
+        }
+    }
+
 
 
     public function chargeForm()
