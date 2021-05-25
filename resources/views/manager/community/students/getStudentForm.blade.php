@@ -22,7 +22,7 @@
         @endif
         <div class="card">
             <div class="card-header">
-                أضافة رصيد
+               جميع طلبات و بيانات المتدرب
             </div>
             <div class="card-body">
                 <div class="form-inline m-3">
