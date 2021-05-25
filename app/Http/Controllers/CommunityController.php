@@ -648,11 +648,13 @@ class CommunityController extends Controller
             $orders = Order::with(["student", "student.user", "student.program", "student.department", "student.major", "student.payments"])
                 ->where("transaction_id", null)
                 ->where("private_doc_verified", true)
-                ->whereDoesntHave("student.payments", function ($res) use ($cond) {
+                ->whereDoesntHave("student.payments", function ($res) {
                     $res->where("accepted", null);
-                })->whereHas("student", function ($res) use ($cond) {
-                    $res->where("level", $cond, 1)
-                        ->where("final_accepted", true);
+                })->whereHas("student", function ($res) use ($cond, $type) {
+                    $res->where("level", $cond, 1);
+                    if($type == "affairs"){
+                        $res->where("final_accepted", true);
+                    }
                 })->get();
             $countOfOrders =  count($orders);
             for ($i = 0; $i < $countOfOrders; $i++) {
