@@ -150,7 +150,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     // ExcelController
     Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
     Route::post('/excel/new/import', [ExcelController::class, 'importNewUsers'])->name('importExcel');
-    Route::get('/excel/export',[ExcelController::class,'exportNewUsers'])->name('ExportExcel');
+    Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
     // Old users
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
@@ -162,7 +162,6 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::get('/excel/rayat/update', [ExcelController::class, 'addRayatIdForm'])->name('addRayatIdForm');
     Route::post('/excel/rayat/update', [ExcelController::class, 'addRayatIdStore'])->name('addRayatIdStore');
 
-    // //Route::get('/excel/old/export',[ExcelController::class,'exportOldUsers'])->name('ExportExcel');
     Route::get('/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormAffairs');
     Route::get('api/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportAffairsApi');
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');

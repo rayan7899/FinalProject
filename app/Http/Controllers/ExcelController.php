@@ -63,10 +63,11 @@ class ExcelController extends Controller
 
     }
 
-    public function exportNewUsers()
+    public function exportMainStudentData()
     {
         try {
-            return Excel::download(new UsersExport, 'users.xlsx');
+            $filename='bct_main_data_backup_'.date('m-d-Y_h_i_a');
+            return Excel::download(new UsersExport, $filename.'.xlsx');
             // return view('excel.exportAllStudent', [
             //     'users' => User::whereHas("student")->get(),
             // ]);
@@ -90,10 +91,6 @@ class ExcelController extends Controller
         ]);
         Excel::import(new OldUsersImport, $request->file('excel_file'));
         return back();
-    }
-
-    public function exportOldUsers()
-    {
     }
 
     function updateStudentsWalletForm()
