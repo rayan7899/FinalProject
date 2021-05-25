@@ -1131,7 +1131,7 @@ class CommunityController extends Controller
     public function getStudent($id)
     {
         try {
-            $user = User::with('student.payments')->whereHas('student', function ($result) use ($id) {
+            $user = User::with('student.payments.transaction')->whereHas('student', function ($result) use ($id) {
                 $result->where('national_id', $id)->orWhere('rayat_id', $id);
             })->first();
             if (!isset($user)) {
