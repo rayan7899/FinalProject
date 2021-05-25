@@ -2,7 +2,7 @@
 window.user = null;
 function fillReportTable (user) {
     let national_id = user.national_id;
-    let paymentsReportTbl = $('#paymentsReportTbl').DataTable({
+    let singlePaymentsReportTbl = $('#singlePaymentsReportTbl').DataTable({
         // ajax: window.paymentsReviewJson,
         // dataSrc: "data",
         data:user.student.payments,
@@ -14,7 +14,6 @@ function fillReportTable (user) {
         columns: [{
                 data: null,
                 className:"text-center",
-                style:"max-width:10px;",
             },
             {
                 data: "id",
@@ -203,8 +202,8 @@ function fillReportTable (user) {
         },
     });
 
-    paymentsReportTbl.on('order.dt search.dt', function () {
-        paymentsReportTbl.column(0, {
+    singlePaymentsReportTbl.on('order.dt search.dt', function () {
+        singlePaymentsReportTbl.column(0, {
             search: 'applied',
             order: 'applied'
         }).nodes().each(function (cell, i) {

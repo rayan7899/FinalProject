@@ -128,7 +128,7 @@
                 </div>
             </div>
             <div class="card-body table-responsive">
-                <table class="table nowrap display cell-border" id="paymentsReportTbl">
+                <table class="table nowrap display cell-border" id="singlePaymentsReportTbl">
                     <thead>
                         <tr>
                             <th class="text-center">#</th>
