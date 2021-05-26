@@ -520,7 +520,29 @@ jQuery(function () {
 
 
 
-
+window.deleteOrder = function(order_id) {
+    axios.post('student/order/delete', {order_id: order_id})
+    .then((response) => {
+            console.log(response);
+            document.getElementById(order_id).remove();
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + response.data.message + "</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1000,
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+}
 
 
 window.publishToRayatStore = function (national_id, order_id, event) {

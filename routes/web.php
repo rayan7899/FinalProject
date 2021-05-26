@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // TODO: disable this in release
     //Logs Viewer
-    // Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 });
 
 // خدمة المجتمع
@@ -233,6 +233,7 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     // Student Courses Orders OrderController
     Route::get('/student/order/form', [OrderController::class, 'form'])->name('orderForm');
     Route::post('/student/order/store', [OrderController::class, 'store'])->name('orderStore');
+    Route::post('/student/order/delete', [OrderController::class, 'deleteOrder'])->name('deleteOrder');
 
 
     // //UserControllaer New passwprd

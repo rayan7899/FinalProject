@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Order;
 use App\Models\Semester;
 use Carbon\Carbon;
 use Exception;
@@ -238,6 +239,20 @@ class OrderController extends Controller
       } catch (Exception $e) {
          Log::error($e->getMessage() . ' ' . $e);
          return view('error')->with('error', 'حدث خطأ غير معروف');
+      }
+   }
+
+   public function deleteOrder(Request $request)
+   {
+      $requestData = $this->validate($request, [
+         "order_id"    => "required|numeric|distinct|exists:orders,id",
+      ]);
+      try {
+         Order::where('id', $requestData['order_id'])->delete();
+         return response()->json(["message" => "تم حذف الطلب بنجاح"], 200);
+      } catch (Exception $e) {
+         Log::error($e->getMessage() . ' ' . $e);
+         return response()->json(["message" => "حدث خطأ غير معروف تعذر حذف الطلب"], 422);
       }
    }
 }

@@ -467,7 +467,7 @@
                                     $hasEnoughMoney = false;
                                 }
                             @endphp
-                            <tr class="text-center">
+                            <tr class="text-center" id="{{$order->id}}">
                                 <td>{{ $order->id ?? 'Error' }}</td>
                                 <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                 <td>{{ $order->amount ?? 'Error' }}</td>
@@ -483,8 +483,11 @@
                                             <td style="min-width: 100px">
                                                 {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
+                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true" onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @else
                                             <td>معلق</td>
+                                            <td style="min-width: 100px">
+                                                {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-danger text-right">يرجى شحن المحفظة لا يوجد رصيد كافي
                                             </td>
                                         @endif
@@ -584,6 +587,7 @@
         </div>
 
         <script>
+            var deleteOrder = "{{ route('deleteOrder') }}";
             function tabClicked(id,event){
                 event.preventDefault();
                 let cards = document.getElementsByClassName('tables');
