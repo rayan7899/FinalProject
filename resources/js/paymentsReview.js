@@ -303,13 +303,33 @@ jQuery(function () {
 
 
 
-
+    // axios.get(window.paymentsReviewJson)
+    //     .then((response) => {
+    //         console.log(response);
+    //         Swal.fire({
+    //             position: "center",
+    //             html: "<h4>" + response.data.message + "</h4>",
+    //             icon: "success",
+    //             showConfirmButton: false,
+    //             timer: 1000,
+    //         });
+    //         $("#editModal").modal("hide");
+    //     })
+    //     .catch((error) => {
+    //         Swal.fire({
+    //             position: "center",
+    //             html: "<h4>" + error.response.data.message + "</h4>",
+    //             icon: "error",
+    //             showConfirmButton: true,
+    //         });
+    //     }
+    // );
 
 
     let paymentsReportTbl = $('#paymentsReportTbl').DataTable({
         ajax: window.paymentsReviewJson,
         dataSrc: "data",
-        rowId: 'student.user.national_id',
+        rowId: 'id',
         columnDefs: [{
                 searchable: false,
                 orderable: false,
@@ -431,6 +451,16 @@ jQuery(function () {
             },
             {
                 data: "note",
+            },
+            {
+                className: "text-center",
+                data: function (data, type, row) {
+                    if(data.accepted == 1){
+                        return `<a data-toggle="modal" data-target="#editModal" href="#" onclick="window.oldAmount.value = ${data.amount}; window.payment_id = ${data.id};"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
+                    }else{
+                        return '-';
+                    }
+                }
             },
 
 
@@ -618,7 +648,43 @@ jQuery(function () {
 
 });
 
-
+window.editAmount = function() {
+    var row = document.getElementById(window.payment_id);
+    if(window.newAmount.value == null || window.newAmount.value == ''){
+        Swal.fire({
+            position: "center",
+            html: "<h4>لا يمكن ترك حقل المبلغ الجديد فارغ</h4>",
+            icon: "error",
+            showConfirmButton: true,
+        });
+    }else{
+        let form = {
+            payment_id: window.payment_id,
+            amount: window.newAmount.value,
+        };
+        axios.post(window.editOldPayment, form)
+            .then((response) => {
+                Swal.fire({
+                    position: "center",
+                    html: "<h4>" + response.data.message + "</h4>",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1000,
+                });
+                row.children[10].innerHTML = window.newAmount.value;
+                $("#editModal").modal("hide");
+            })
+            .catch((error) => {
+                Swal.fire({
+                    position: "center",
+                    html: "<h4>" + error.response.data.message + "</h4>",
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+            }
+        );
+    }
+}
 
 
 

@@ -541,6 +541,46 @@ class CommunityController extends Controller
         }
     }
 
+    public function editOldPayment(Request $request){
+
+        $semester = Semester::latest()->first();
+        $reviewedPayment = $this->validate($request, [
+            "payment_id"         => "required|numeric|exists:payments,id",
+            "amount"             => "required|numeric",
+        ]);
+        if($reviewedPayment["amount"] < 0){
+            return response(json_encode(['message' => 'يجب ان يكون المبلغ المدخل اكبر من صفر']), 422);
+        }
+        try {
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])->first() ?? null;
+            if($reviewedPayment["amount"] == $payment->amount){
+                return response(json_encode(['message' => 'يجب ان يكون المبلغ المدخل غير مطابق للمبلغ السابق']), 422);
+            }
+
+            // return response(['message'=>$payment->transaction]);
+            DB::beginTransaction();
+                if($payment->amount > $reviewedPayment["amount"]){
+                    $diff = $payment->amount - $reviewedPayment["amount"];
+                    $payment->student->wallet -= $diff ;
+                }else{
+                    $diff = $reviewedPayment["amount"] - $payment->amount;
+                    $payment->student->wallet += $diff;
+                }
+                $payment->student->save();
+                $payment->update([
+                    "amount"    => $reviewedPayment["amount"],
+                    ]);
+                $payment->transaction()->update([
+                    "amount"    => $reviewedPayment["amount"],
+                ]);
+            DB::commit();
+            return response(json_encode(['message' => 'تم تعديل المبلغ بنجاح']), 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            DB::rollBack();
+            return response(json_encode(['message' => 'حدث خطأ غير معروف ' . $e->getCode()]), 422);
+        }
+    }
 
     public function paymentsReviewVerifiyDocs(Request $request)
     {

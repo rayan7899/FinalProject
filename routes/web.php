@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // TODO: disable this in release
     //Logs Viewer
-    // Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+    Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 });
 
 // خدمة المجتمع
@@ -66,6 +66,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/api/community/student/payments/{type}', [CommunityController::class, 'paymentsReviewJson'])->name('paymentsReviewJson');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
+    Route::post('/community/student/payments/edit', [CommunityController::class, 'editOldPayment'])->name('editOldPayment');
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
     Route::get('community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');
