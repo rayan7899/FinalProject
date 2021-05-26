@@ -44,6 +44,10 @@
                         style="font-size: 16px; width: 220px;">تعديل متدرب</a>
                     <a href="{{ route('chargeForm') }}" class="btn btn-outline-primary p-3 m-2"
                         style="font-size: 16px; width: 220px;">ادارة محفظة المتدرب</a>
+                        <a href="{{ route('getStudentForm') }}" class="btn btn-outline-primary p-3 m-2"
+                        style="font-size: 16px; width: 220px;">جميع طلبات و بيانات المتدرب</a>
+                        <a href="{{ route('exportMainStudentDataExcel') }}" class="btn btn-outline-primary p-3 m-2"
+                        style="font-size: 16px; width: 220px;">بيانات جميع المتدربين اكسل</a>
                 </div>
 
             </div>

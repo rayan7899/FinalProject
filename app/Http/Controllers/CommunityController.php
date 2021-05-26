@@ -141,6 +141,37 @@ class CommunityController extends Controller
         }
     }
 
+
+    public function getStudentForm()
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+             return view('manager.community.students.getStudentForm');
+            } else {
+                return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('error')->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+    public function studentReport(User $user)
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                if($user->student == null){
+                    return view('error')->with("error", "حدث خطأ غير معروف");
+                }
+              return view('manager.community.students.report')->with(compact('user'));
+            } else {
+                return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('error')->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+
     public function createStudentForm()
     {
         $programs = json_encode(Program::with("departments.majors.courses")->get());
@@ -1133,7 +1164,7 @@ class CommunityController extends Controller
     public function getStudent($id)
     {
         try {
-            $user = User::with('student.payments')->whereHas('student', function ($result) use ($id) {
+            $user = User::with('student.payments.transaction')->whereHas('student', function ($result) use ($id) {
                 $result->where('national_id', $id)->orWhere('rayat_id', $id);
             })->first();
             if (!isset($user)) {
@@ -1142,6 +1173,23 @@ class CommunityController extends Controller
             $waitingTransCount = $user->student->payments()->where("accepted", null)->count();
             if ($waitingTransCount > 0) {
                 return response()->json(["message" => "يوجد طلب شحن قيد المراجعة لهذا المتدرب"], 422);
+            }
+            return response()->json($user, 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            DB::rollBack();
+            return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
+        }
+    }
+
+    public function getStudentForReport($id)
+    {
+        try {
+            $user = User::with('student.payments.transaction')->whereHas('student', function ($result) use ($id) {
+                $result->where('national_id', $id)->orWhere('rayat_id', $id);
+            })->first();
+            if (!isset($user)) {
+                return response()->json(["message" => "لا يوجد متدرب بهذا الرقم"], 422);
             }
             return response()->json($user, 200);
         } catch (Exception $e) {

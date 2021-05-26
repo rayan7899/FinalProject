@@ -12,11 +12,8 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-public/js/app.js
-public/js/app.js.LICENSE.txt
-public/js/app.js.map
-public/mix-manifest.json
-public/css/app.css
-public/css/app.css.map
+/public/js
+/public/css
+/public/mix-manifest.json
 service-account-key.json
-database/seeders/UserSeeder.php
+/database/seeders/UserSeeder.php

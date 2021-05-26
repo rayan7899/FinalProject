@@ -20,9 +20,21 @@ function fillReportTable (user) {
                 className: "text-center",
             },
             {
-                data: "amount",
+                data: function (data) {
+                    if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
+                        if (data.amount != data.transaction.amount) {
+                            return `<del class="text-muted">${data.amount}</del>
+                            ${data.transaction.amount}`;
+                        } else {
+                            return data.amount;
+                        }
+                    } else {
+                        return data.amount;
+                    }
+                },
                 className: "text-center",
             },
+
             {
                 data: "accepted",
                 className: "text-center",
