@@ -542,7 +542,6 @@ class CommunityController extends Controller
     }
 
     public function editOldPayment(Request $request){
-
         $semester = Semester::latest()->first();
         $reviewedPayment = $this->validate($request, [
             "payment_id"         => "required|numeric|exists:payments,id",
@@ -562,16 +561,21 @@ class CommunityController extends Controller
                 if($payment->amount > $reviewedPayment["amount"]){
                     $diff = $payment->amount - $reviewedPayment["amount"];
                     $payment->student->wallet -= $diff ;
+                    $type = 'editPayment-deduction';
                 }else{
                     $diff = $reviewedPayment["amount"] - $payment->amount;
                     $payment->student->wallet += $diff;
+                    $type = 'editPayment-charge';
                 }
                 $payment->student->save();
                 $payment->update([
                     "amount"    => $reviewedPayment["amount"],
-                    ]);
-                $payment->transaction()->update([
-                    "amount"    => $reviewedPayment["amount"],
+                ]);
+                $payment->student->transactions()->create([
+                    "amount"        => $reviewedPayment["amount"],
+                    "type"          => $type,
+                    "manager_id"    => Auth::user()->manager->id,
+                    "semester_id"   => $semester->id,
                 ]);
             DB::commit();
             return response(json_encode(['message' => 'تم تعديل المبلغ بنجاح']), 200);
