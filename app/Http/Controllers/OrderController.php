@@ -36,8 +36,9 @@ class OrderController extends Controller
          }
 
          $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
-         $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
-            ->where("private_doc_verified", "!=", false)->count();
+         $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)->count();
+         // $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
+         //    ->where("private_doc_verified", "!=", false)->count();
          $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
          if ($user->student->level == 1 && $user->student->credit_hours != 0) {
             return redirect(route("home"))->with("error", "اضافة المقررات غير متاح للمتدربين في المستوى الاول");
