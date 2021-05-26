@@ -49,7 +49,7 @@ class PrivateStateController extends Controller
 
         foreach ($users as $user) {
             foreach ($user->student->orders as $order) {
-                if ($order->private_doc_verified == null) {
+                if ($order->private_doc_verified === null) {
                     $user->student->order = $order;
                     break;
                 }
