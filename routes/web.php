@@ -99,8 +99,9 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/students/reset-password/{user}', [CommunityController::class, 'resetStusentPassword'])->name('resetStusentPassword');
     Route::get('/api/community/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
     // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
-
-
+    
+    //export
+    Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
 
     //Manage Courses
     Route::get('/community/courses', [CommunityController::class, 'coursesIndex'])->name('coursesIndex');
@@ -150,7 +151,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     // ExcelController
     Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
     Route::post('/excel/new/import', [ExcelController::class, 'importNewUsers'])->name('importExcel');
-    Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
+    // Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
     // Old users
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
