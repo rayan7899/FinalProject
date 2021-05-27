@@ -43,17 +43,20 @@
                                 <input required type="number" class="form-control" id="amount" aria-describedby="amount">
                             </div>
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="noteShortcuts">اختصارات الملاحظات</label>
                                 <select onchange="fillNote()" class="form-control" id="noteShortcuts">
                                     <option value="0" selected disabled> اختر</option>
                                     <option value="wrong-receipt">الايصال غير معمتد</option>
                                     <option value="else">اخرى</option>
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <div class="form-group">
-                                <label for="" class="col-form-label">ملاحظات المدقق</label>
+                                <label for="note" class="col-form-label">ملاحظات المدقق</label>
+                                <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل.'">الايصال غير معمتد</span>
+                                <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'الايصال غير واضح.'">الايصال غير واضح</span>
+                                <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">تم استخدام الايصال مسبقًا</span>
                                 <textarea class="form-control" id="note"></textarea>
                             </div>
                         </form>
@@ -163,21 +166,21 @@
                 });
             });
 
-            function fillNote() {
-                let noteShortcuts = document.getElementById("noteShortcuts").value;
-                let note = "";
-                switch (noteShortcuts) {
-                    case 'wrong-receipt':
-                        note =
-                            "ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل."
-                        break;
-                    case 'else':
-                        note =
-                            ""
-                        break;
-                }
-                document.getElementById("note").value = note; 
-            }
+            // function fillNote() {
+            //     let noteShortcuts = document.getElementById("noteShortcuts").value;
+            //     let note = "";
+            //     switch (noteShortcuts) {
+            //         case 'wrong-receipt':
+            //             note =
+            //                 "ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل."
+            //             break;
+            //         case 'else':
+            //             note =
+            //                 ""
+            //             break;
+            //     }
+            //     document.getElementById("note").value = note; 
+            // }
 
         </script>
     </div>
