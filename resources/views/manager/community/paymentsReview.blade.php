@@ -44,6 +44,15 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="noteShortcuts">اختصارات الملاحضات</label>
+                                <select onchange="fillNote()" class="form-control" id="noteShortcuts">
+                                    <option value="" selected disabled> اختر</option>
+                                    <option value="wrong-receipt">الايصال غير معمتد</option>
+                                    <option value="else">اخرى</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="" class="col-form-label">ملاحظات المدقق</label>
                                 <textarea class="form-control" id="note"></textarea>
                             </div>
@@ -136,7 +145,7 @@
         <script defer>
             var paymentVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
             var paymentWithNote = "{{ route('paymentsReviewUpdate') }}";
-            var paymentsReviewJson = "{{ route('paymentsReviewJson',['type' => 'review']) }}"
+            var paymentsReviewJson = "{{ route('paymentsReviewJson', ['type' => 'review']) }}"
             window.addEventListener('DOMContentLoaded', (event) => {
                 Swal.fire({
                     html: "<h4>جاري جلب البيانات</h4>",
@@ -153,6 +162,22 @@
                     },
                 });
             });
+
+            function fillNote() {
+                let noteShortcuts = document.getElementById("noteShortcuts").value;
+                let note = "";
+                switch (noteShortcuts) {
+                    case 'wrong-receipt':
+                        note =
+                            "ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل."
+                        break;
+                    case 'else':
+                        note =
+                            ""
+                        break;
+                }
+                document.getElementById("note").value = note; 
+            }
 
         </script>
     </div>
