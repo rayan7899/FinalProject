@@ -666,6 +666,8 @@ window.showModal = function (callFrom = "edit", national_id, payment_id, name, a
     window.sname.value = name;
     window.note.value = "";
     window.payment_id = payment_id;
+    document.getElementById("noteShortcuts").value = "0" ;
+
     if (window.amount !== null) {
         window.amount.value = amount;
     }

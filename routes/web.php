@@ -92,6 +92,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/students/get-student', [CommunityController::class, 'getStudentForm'])->name('getStudentForm');
     Route::get('/api/community/student-report/{id}', [CommunityController::class, 'getStudentForReport'])->name('apiCommunityStudentData');
     Route::get('/community/students/report/{user}', [CommunityController::class, 'studentReport'])->name('studentReport');
+    Route::get('/community/students/show-order/{id}', [CommunityController::class, 'showOrder'])->name('showOrder');
     Route::get('/community/students/create', [CommunityController::class, 'createStudentForm'])->name('createStudentForm');
     Route::post('/community/students/store', [CommunityController::class, 'createStudentStore'])->name('createStudentStore');
     Route::get('/community/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
