@@ -46,7 +46,7 @@
                             <div class="form-group">
                                 <label for="noteShortcuts">اختصارات الملاحضات</label>
                                 <select onchange="fillNote()" class="form-control" id="noteShortcuts">
-                                    <option value="" selected disabled> اختر</option>
+                                    <option value="0" selected disabled> اختر</option>
                                     <option value="wrong-receipt">الايصال غير معمتد</option>
                                     <option value="else">اخرى</option>
                                 </select>
