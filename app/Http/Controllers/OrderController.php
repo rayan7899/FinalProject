@@ -36,10 +36,10 @@ class OrderController extends Controller
             return back()->with('error', 'الحد الاعلى للفصل الصيفي هو 12 ساعة');
          }
 
-         $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
+         $waitingPaymentssCount = $user->student->payments()->where("accepted", '=', null)->count();
 
          $waitingOrdersCount = $user->student->orders()
-            ->where("transaction_id", null)
+            ->where("transaction_id", '=', null)
             ->where("private_doc_verified", true)
             ->orWhere("private_doc_verified",'=', null)->count();
          $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
