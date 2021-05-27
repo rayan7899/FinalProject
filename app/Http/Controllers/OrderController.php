@@ -109,8 +109,10 @@ class OrderController extends Controller
          $user = Auth::user();
          $semester = Semester::latest()->first();
          $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
-         $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
-            ->where("private_doc_verified", "!=", false)->count();
+         $waitingOrdersCount = $user->student->orders()
+            ->where("transaction_id", null)
+            ->where("private_doc_verified", true)
+            ->orWhere("private_doc_verified",'=', null)->count();
 
          if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
             return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
