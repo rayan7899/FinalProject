@@ -114,10 +114,10 @@ class OrderController extends Controller
             ->where("private_doc_verified", true)
             ->orWhere("private_doc_verified",'=', null)->count();
 
-         if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
-            return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-            // return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-         }
+         // if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
+         //    return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+         //    // return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+         // }
 
          try {
             switch ($requestData["traineeState"]) {
