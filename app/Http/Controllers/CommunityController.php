@@ -172,6 +172,25 @@ class CommunityController extends Controller
         }
     }
 
+    public function showOrder($orderId)
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+              $order = Order::where("id",$orderId)->first();
+              if($order == null){
+                return back()->with("error", "لا يوجد طلب بهذا الرقم");
+              }
+              $user = $order->student->user;
+              return view('manager.community.students.showOrder')->with(compact('user','order'));
+            } else {
+                return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('error')->with("error", "حدث خطا غير معروف");
+        }
+    }
+
     public function createStudentForm()
     {
         $programs = json_encode(Program::with("departments.majors.courses")->get());

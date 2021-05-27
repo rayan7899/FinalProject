@@ -93,6 +93,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/students/get-student', [CommunityController::class, 'getStudentForm'])->name('getStudentForm');
     Route::get('/api/community/student-report/{id}', [CommunityController::class, 'getStudentForReport'])->name('apiCommunityStudentData');
     Route::get('/community/students/report/{user}', [CommunityController::class, 'studentReport'])->name('studentReport');
+    Route::get('/community/students/show-order/{id}', [CommunityController::class, 'showOrder'])->name('showOrder');
     Route::get('/community/students/create', [CommunityController::class, 'createStudentForm'])->name('createStudentForm');
     Route::post('/community/students/store', [CommunityController::class, 'createStudentStore'])->name('createStudentStore');
     Route::get('/community/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
@@ -100,8 +101,9 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/students/reset-password/{user}', [CommunityController::class, 'resetStusentPassword'])->name('resetStusentPassword');
     Route::get('/api/community/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
     // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
-
-
+    
+    //export
+    Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
 
     //Manage Courses
     Route::get('/community/courses', [CommunityController::class, 'coursesIndex'])->name('coursesIndex');
@@ -151,7 +153,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     // ExcelController
     Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
     Route::post('/excel/new/import', [ExcelController::class, 'importNewUsers'])->name('importExcel');
-    Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
+    // Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
     // Old users
     Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
     Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
