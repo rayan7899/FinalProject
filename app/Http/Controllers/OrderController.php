@@ -36,12 +36,12 @@ class OrderController extends Controller
             return back()->with('error', 'الحد الاعلى للفصل الصيفي هو 12 ساعة');
          }
 
-         $waitingPaymentssCount = $user->student->payments()->where("accepted", '=', null)->count();
+         $isHasActivePayment = $user->student->payments()->where("accepted", '=', null)->first() !== null;
 
-         $waitingOrdersCount = $user->student->orders()
+         $isHasActiveOrder = $user->student->orders()
             ->where("transaction_id", '=', null)
             ->where("private_doc_verified", true)
-            ->orWhere("private_doc_verified",'=', null)->count();
+            ->orWhere("private_doc_verified",'=', null)->first() !== null;
          $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
 
          if ($user->student->level == 1 && $user->student->credit_hours != 0) {
@@ -50,7 +50,7 @@ class OrderController extends Controller
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
          }
 
-         // if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
+         // if ($isHasActivePayment || $isHasActiveOrder) {
          //    return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
          //    //    return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
          // }
