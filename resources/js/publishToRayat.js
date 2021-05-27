@@ -523,7 +523,6 @@ jQuery(function () {
 window.deleteOrder = function(order_id) {
     axios.post('student/order/delete', {order_id: order_id})
     .then((response) => {
-            console.log(response);
             document.getElementById(order_id).remove();
             Swal.fire({
                 position: "center",
@@ -534,7 +533,6 @@ window.deleteOrder = function(order_id) {
             });
         })
         .catch((error) => {
-            console.log(error);
             Swal.fire({
                 position: "center",
                 html: "<h4>" + error.response.data.message + "</h4>",

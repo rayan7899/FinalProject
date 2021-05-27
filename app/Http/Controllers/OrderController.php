@@ -248,7 +248,12 @@ class OrderController extends Controller
          "order_id"    => "required|numeric|distinct|exists:orders,id",
       ]);
       try {
-         Order::where('id', $requestData['order_id'])->delete();
+         $order = Order::where('id', $requestData['order_id'])->first();
+         if($order->transaction_id != null || $order->transaction_id !== null){
+             return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
+           }else{
+             $order->delete();
+         }
          return response()->json(["message" => "تم حذف الطلب بنجاح"], 200);
       } catch (Exception $e) {
          Log::error($e->getMessage() . ' ' . $e);

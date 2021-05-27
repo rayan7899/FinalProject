@@ -621,6 +621,28 @@ jQuery(function () {
 
 
 
+window.deletePayment = function(payment_id) {
+    axios.post('student/payment/delete', {payment_id: payment_id})
+    .then((response) => {
+            document.getElementById(payment_id).remove();
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + response.data.message + "</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1000,
+            });
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+}
+
 
 window.popup = function () {
     $('[data-toggle="popover"]').popover({

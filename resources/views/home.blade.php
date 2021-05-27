@@ -370,6 +370,7 @@
                             <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
                             <th class="text-center">ايصال السداد</th>
+                            <th class="text-center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -383,7 +384,7 @@
                                 }
                                 $acceptedAmount = $user->student->transactions()->where('payment_id', $payment->id)->first()->amount ?? null;
                             @endphp
-                            <tr class="text-center">
+                            <tr class="text-center" id="{{ $payment->id }}">
                                 <td>{{ $payment->id }}</td>
                                 @if ($payment->transaction_id != null && $payment->amount != $acceptedAmount)
                                     <td><del class="text-muted">{{ $payment->amount }}</del>
@@ -423,6 +424,11 @@
                                         </a>
                                     @endif
                                 </td>
+                                @if ($payment->accepted === null)
+                                    <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true" onclick="deletePayment({{ $payment->id }})"></i></td>
+                                @else
+                                    <td></td>
+                                @endif
                             </tr>
                         @empty
 
@@ -456,6 +462,7 @@
                             <th class="text-center">حالة تسجيل الساعات في رايات</th>
                             <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
+                            <th class="text-center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -490,12 +497,15 @@
                                                 {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-danger text-right">يرجى شحن المحفظة لا يوجد رصيد كافي
                                             </td>
+
+                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true" onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @endif
                                     @else
                                         <td class="text-success">مقبول</td>
                                         <td style="min-width: 100px">
                                             {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                         <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
+                                        <td></td>
                                     @endif
                                 @endif
                             </tr>
@@ -588,6 +598,7 @@
 
         <script>
             var deleteOrder = "{{ route('deleteOrder') }}";
+            var deleteOrder = "{{ route('deletePayment') }}";
             function tabClicked(id,event){
                 event.preventDefault();
                 let cards = document.getElementsByClassName('tables');

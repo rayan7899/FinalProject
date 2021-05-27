@@ -224,6 +224,7 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     Route::get('/student/wallet/main', [PaymentController::class, 'main'])->name('walletMain');
     Route::get('/student/wallet/payment/from', [PaymentController::class, 'form'])->name('paymentForm');
     Route::post('/student/wallet/payment/store', [PaymentController::class, 'store'])->name('paymentStore');
+    Route::post('/student/payment/delete', [PaymentController::class, 'deletePayment'])->name('deletePayment');
 
     // Student wallet PaymentController (json)
     // Well be move from CommunityController
