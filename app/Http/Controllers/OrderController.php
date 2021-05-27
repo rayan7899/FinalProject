@@ -100,10 +100,12 @@ class OrderController extends Controller
          "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:10000",
          "privateStateDoc"   => "required_if:traineeState,privateState",
          "promise"           => "required_if:traineeState,privateState",
+         "paymentCost"       => "required_with:payment_receipt|numeric|min:0|max:50000"
       ], [
          'courses.required' => 'لم تقم باختيار المقررات',
          'promise.required_if' => 'التعهد مطلوب ',
-
+         'privateStateDoc.required_if' => 'يجب ارفاق المستندات المطلوبة',
+         'paymentCost.required_if' => 'لا يمكن ترك حقل المبلغ المسجل في الايصال فارغ',
       ]);
       try {
          $user = Auth::user();
@@ -204,7 +206,7 @@ class OrderController extends Controller
                   $doc_name =  $randomId . '.' . $requestData['payment_receipt']->getClientOriginalExtension();
                   $user->student->payments()->create(
                      [
-                        "amount"            => $cost,
+                        "amount"            => $requestData['paymentCost'],
                         "receipt_file_id"   => $doc_name,
                         "semester_id"        => $semester->id,
 

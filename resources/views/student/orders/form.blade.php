@@ -226,25 +226,38 @@
                             </div>
                         </div>
                         <!-- cost -->
-                        <div id="costFormGroup" class="form-group" style="display: none;">
-                            <label class=" align-self-center " for="cost">المبلغ المراد سداده</label>
-                            <div class=" input-group" dir="ltr">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">SR</span>
+                        <div id="costFormGroup" style="display: none;">
+
+                            <div class="form-group">
+                                <label class=" align-self-center " for="orderCost">المبلغ المراد سداده</label>
+                                <div class=" input-group" dir="ltr">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">SR</span>
+                                    </div>
+                                    <input dir="rtl" disabled type="text" class="form-control text-center" id="orderCost" name="orderCost">
                                 </div>
-                                <input dir="rtl" disabled type="text" class="form-control text-center" id="cost" name="cost"
-                                    value="">
                             </div>
-                            <!-- payment receipt image -->
-                            <div class="form-group" id="receipt">
-                                <label for="receiptImg"> صورة إيصال السداد</label>
-                                <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="payment_receipt" class="form-control"
-                                    id="receiptImg">
-                                <div class="alert alert-info p-1 my-1" role="alert">
-                                    <p class="p-0 m-0">
-                                        رقم حساب خدمة المجتمع والتدريب المستمر (مصرف الراجحي)
-                                        252608010092653
-                                    </p>
+                            <div class="form-group">
+                                <label class=" align-self-center " for="paymentCost">المبلغ المسجل في الايصال المرفق</label>
+                                <div class=" input-group" dir="ltr">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">SR</span>
+                                    </div>
+                                    <input dir="rtl" type="number" class="form-control" id="paymentCost" name="paymentCost">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <!-- payment receipt image -->
+                                <div class="form-group" id="receipt">
+                                    <label for="receiptImg"> صورة إيصال السداد</label>
+                                    <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="payment_receipt" class="form-control"
+                                        id="receiptImg">
+                                    <div class="alert alert-info p-1 my-1" role="alert">
+                                        <p class="p-0 m-0">
+                                            رقم حساب خدمة المجتمع والتدريب المستمر (مصرف الراجحي)
+                                            252608010092653
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
