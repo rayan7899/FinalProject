@@ -657,10 +657,14 @@ window.showModal = function (callFrom = "edit", national_id, payment_id, name, a
         $("#amountFormGroup").hide();
         $("#acceptBtnModal").hide();
         $("#rejectBtnModal").show();
+        $("#rejectMsgs").show();
+        $("#acceptMsgs").hide();
     } else {
         $("#amountFormGroup").show();
         $("#acceptBtnModal").show();
         $("#rejectBtnModal").hide();
+        $("#rejectMsgs").hide();
+        $("#acceptMsgs").show();
     }
     window.national_id.value = national_id;
     window.sname.value = name;

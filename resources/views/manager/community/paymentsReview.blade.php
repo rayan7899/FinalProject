@@ -54,9 +54,14 @@
 
                             <div class="form-group">
                                 <label for="note" class="col-form-label">ملاحظات المدقق</label>
-                                <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل.'">الايصال غير معمتد</span>
-                                <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'الايصال غير واضح.'">الايصال غير واضح</span>
-                                <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">تم استخدام الايصال مسبقًا</span>
+                                <div id="rejectMsgs">
+                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل.'">الايصال غير معمتد</span>
+                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'الايصال غير واضح.'">الايصال غير واضح</span>
+                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">الايصال مستخدم</span>
+                                </div>
+                                <div id="acceptMsgs">
+                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = `تم تعديل المبلغ الى ${window.amount.value} حسب الايصال`">تم تعديل المبلغ</span>
+                                </div>
                                 <textarea class="form-control" id="note"></textarea>
                             </div>
                         </form>
