@@ -730,10 +730,11 @@ class CommunityController extends Controller
                 }
                 
                 if ($orders[$i]->student->traineeState != 'privateState') {
-                    if ($canAddHours < $orders[$i]->requested_hours) {
-                        $orders[$i]->requested_hours = $canAddHours;
-                    } elseif ($canAddHours == 0) {
+                    if ($canAddHours == 0) {
                         unset($orders[$i]);
+                        continue;
+                    } elseif ($canAddHours < $orders[$i]->requested_hours) {
+                        $orders[$i]->requested_hours = $canAddHours;
                     }
                 } else {
                     $canAddHours = 'لا يوجد';
