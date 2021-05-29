@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
         ->name('GetStudentDocument');
     Route::get('api/documents/show/{national_id}/{filename}', [FileController::class, 'get_student_document_api'])
         ->name('GetStudentDocumentApi');
+    Route::get('api/documents/show/{national_id}', [FileController::class, 'get_all_documents_api'])->name('GetAllDocumentsApi');
 
     // TODO: disable this in release
     //Logs Viewer

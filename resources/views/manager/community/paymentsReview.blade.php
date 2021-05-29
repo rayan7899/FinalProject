@@ -60,7 +60,9 @@
                                     <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">الايصال مستخدم</span>
                                 </div>
                                 <div id="acceptMsgs">
-                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = `تم تعديل المبلغ الى ${window.amount.value} حسب الايصال`">تم تعديل المبلغ</span>
+                                    <span class="btn badge badge-pill badge-info"
+                                        onclick="window.note.value = `تم تعديل المبلغ الى ${window.amount.value} حسب الايصال`">تم
+                                        تعديل المبلغ</span>
                                 </div>
                                 <textarea class="form-control" id="note"></textarea>
                             </div>
@@ -78,7 +80,7 @@
         </div>
 
         <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-            <div class="modal-dialog" style="max-width: 75%" role="document">
+            <div class="modal-dialog modal-dialog-scrollable" style="max-width: 75%" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="pdfName"></h5>
@@ -95,7 +97,9 @@
                         <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
                         <div class="text-center" id="modalImageDev">
                             <img id="modalImage" src="" alt="image" class="img-fluid" />
+                            <h3 class="w-100 bg-secondary my-3 py-3">الايصالات السابقة</h3>
                         </div>
+                        <div class="text-center" id="oldReceipts"></div>
                     </div>
                 </div>
             </div>

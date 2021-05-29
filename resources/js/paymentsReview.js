@@ -785,8 +785,38 @@ window.showPdf = function (url, type) {
         $("#modalImage").attr("src", "");
         $("#modalImage").attr("src", url);
     }
+    showAllReceipts(url.split('/')[4]);
 };
 
+window.showAllReceipts = function (national_id) {
+    document.getElementById('oldReceipts').innerHTML = '';
+    axios.get(`/api/documents/show/${national_id}`)
+        .then((response) => {
+            if(response.data.length == 0){
+                $("#oldReceipts").prepend(`<p> لا يوجد ايصالات سابقة </p>`);
+            }else{
+                response.data.forEach(imgName=> {
+                    $("#oldReceipts").prepend(`<p><img src="/api/documents/show/${national_id}/${imgName}" alt="image" class="img-fluid"/></p>`);
+                });
+            }
+
+            // Swal.fire({
+            //     position: "center",
+            //     html: "<h4>" + response.data.message + "</h4>",
+            //     icon: "success",
+            //     showConfirmButton: false,
+            //     timer: 1000,
+            // });
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+}
 
 window.rotation = 0;
 
