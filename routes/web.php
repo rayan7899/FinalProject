@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StudentAffairsController;
 use App\Http\Controllers\DepartmentBossController;
 use App\Http\Controllers\FalteringStudentsController;
+use App\Http\Controllers\GeneralManagementController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StudentCoursesController;
@@ -57,6 +58,11 @@ Route::middleware('auth')->group(function () {
     // TODO: disable this in release
     //Logs Viewer
     Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+});
+
+//الإدارة العامة
+Route::middleware(['auth', 'role:الإدارة العامة'])->group(function () {
+    Route::get('/management', [GeneralManagementController::class, 'dashboard'])->name('managementDashboard');
 });
 
 // خدمة المجتمع

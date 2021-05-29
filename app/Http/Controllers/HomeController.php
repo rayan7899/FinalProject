@@ -37,6 +37,9 @@ class HomeController extends Controller
             if ($user->manager->hasRole("الإرشاد")) {
                 return redirect(route('privateDashboard'));
             }
+            if ($user->manager->hasRole("الإدارة العامة")) {
+                return redirect(route('managementDashboard'));
+            }
             if ($user->isDepartmentManager()) {
                 return redirect(route('deptBossDashboard'));
             }

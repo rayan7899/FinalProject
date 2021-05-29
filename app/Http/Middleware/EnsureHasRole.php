@@ -24,6 +24,8 @@ class EnsureHasRole
         switch ($role) {
             case "خدمة المجتمع":
             case "شؤون المتدربين":
+            case "الإدارة العامة":
+                break;
             case "الإرشاد":
                 if ($manager === null) {
                     return redirect(route('home'));

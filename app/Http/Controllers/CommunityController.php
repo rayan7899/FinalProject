@@ -30,6 +30,9 @@ class CommunityController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        if(Role::where("name", "=", "الإدارة العامة")->doesntExist()){
+            Role::create(['name' => 'الإدارة العامة']);
+        }
     }
 
     public function dashboard()
