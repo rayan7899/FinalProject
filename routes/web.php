@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StudentAffairsController;
 use App\Http\Controllers\DepartmentBossController;
 use App\Http\Controllers\FalteringStudentsController;
+use App\Http\Controllers\GeneralManagementController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StudentCoursesController;
@@ -52,10 +53,16 @@ Route::middleware('auth')->group(function () {
         ->name('GetStudentDocument');
     Route::get('api/documents/show/{national_id}/{filename}', [FileController::class, 'get_student_document_api'])
         ->name('GetStudentDocumentApi');
+    Route::get('api/documents/show/{national_id}', [FileController::class, 'get_all_documents_api'])->name('GetAllDocumentsApi');
 
     // TODO: disable this in release
     //Logs Viewer
     Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+});
+
+//الإدارة العامة
+Route::middleware(['auth', 'role:الإدارة العامة'])->group(function () {
+    Route::get('/management', [GeneralManagementController::class, 'dashboard'])->name('managementDashboard');
 });
 
 // خدمة المجتمع
@@ -226,6 +233,7 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     Route::get('/student/wallet/main', [PaymentController::class, 'main'])->name('walletMain');
     Route::get('/student/wallet/payment/from', [PaymentController::class, 'form'])->name('paymentForm');
     Route::post('/student/wallet/payment/store', [PaymentController::class, 'store'])->name('paymentStore');
+    Route::post('/student/payment/delete', [PaymentController::class, 'deletePayment'])->name('deletePayment');
 
     // Student wallet PaymentController (json)
     // Well be move from CommunityController
@@ -235,6 +243,7 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     // Student Courses Orders OrderController
     Route::get('/student/order/form', [OrderController::class, 'form'])->name('orderForm');
     Route::post('/student/order/store', [OrderController::class, 'store'])->name('orderStore');
+    Route::post('/student/order/delete', [OrderController::class, 'deleteOrder'])->name('deleteOrder');
 
 
     // //UserControllaer New passwprd

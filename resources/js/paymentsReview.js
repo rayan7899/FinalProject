@@ -687,6 +687,28 @@ window.editAmount = function() {
 }
 
 
+window.deletePayment = function(payment_id) {
+    axios.post('student/payment/delete', {payment_id: payment_id})
+    .then((response) => {
+            document.getElementById(payment_id).remove();
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + response.data.message + "</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1000,
+            });
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+}
+
 
 window.popup = function () {
     $('[data-toggle="popover"]').popover({
@@ -701,16 +723,20 @@ window.showModal = function (callFrom = "edit", national_id, payment_id, name, a
         $("#amountFormGroup").hide();
         $("#acceptBtnModal").hide();
         $("#rejectBtnModal").show();
+        $("#rejectMsgs").show();
+        $("#acceptMsgs").hide();
     } else {
         $("#amountFormGroup").show();
         $("#acceptBtnModal").show();
         $("#rejectBtnModal").hide();
+        $("#rejectMsgs").hide();
+        $("#acceptMsgs").show();
     }
     window.national_id.value = national_id;
     window.sname.value = name;
     window.note.value = "";
     window.payment_id = payment_id;
-    document.getElementById("noteShortcuts").value = "0" ;
+    // document.getElementById("noteShortcuts").value = "0" ;
 
     if (window.amount !== null) {
         window.amount.value = amount;
@@ -825,8 +851,38 @@ window.showPdf = function (url, type) {
         $("#modalImage").attr("src", "");
         $("#modalImage").attr("src", url);
     }
+    showAllReceipts(url.split('/')[4]);
 };
 
+window.showAllReceipts = function (national_id) {
+    document.getElementById('oldReceipts').innerHTML = '';
+    axios.get(`/api/documents/show/${national_id}`)
+        .then((response) => {
+            if(response.data.length == 0){
+                $("#oldReceipts").prepend(`<p> لا يوجد ايصالات سابقة </p>`);
+            }else{
+                response.data.forEach(imgName=> {
+                    $("#oldReceipts").prepend(`<p><img src="/api/documents/show/${national_id}/${imgName}" alt="image" class="img-fluid"/></p>`);
+                });
+            }
+
+            // Swal.fire({
+            //     position: "center",
+            //     html: "<h4>" + response.data.message + "</h4>",
+            //     icon: "success",
+            //     showConfirmButton: false,
+            //     timer: 1000,
+            // });
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+}
 
 window.rotation = 0;
 

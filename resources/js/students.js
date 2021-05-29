@@ -267,6 +267,8 @@ window.calcCost = function (firstLoad = false) {
             window.t_cost = window.t_cost * 0.25;
             $('#pledgeSection').show();
             $('#receiptImg').prop('disabled', false);
+            $('#paymentCost').prop('disabled', false);
+            $('#paymentCost').prop('required', true);
             $('#paymentGroup').show();
             $('#receipt').show();
             $('#privateStateDocGroup').hide();
@@ -278,6 +280,8 @@ window.calcCost = function (firstLoad = false) {
             window.t_cost = window.t_cost * 0.5;
             $('#pledgeSection').show();
             $('#receiptImg').prop('disabled', false);
+            $('#paymentCost').prop('disabled', false);
+            $('#paymentCost').prop('required', true);
             $('#paymentGroup').show();
             $('#receipt').show();
             $('#privateStateDocGroup').hide();
@@ -290,6 +294,7 @@ window.calcCost = function (firstLoad = false) {
             $('#paymentGroup').hide();
             $('#receipt').hide();
             $('#receiptImg').prop('disabled', true);
+            $('#paymentCost').prop('disabled', true);
             $('#privateStateDoc').prop('disabled', false);
             $('#privateStateDocGroup').show();
             break;
@@ -299,6 +304,8 @@ window.calcCost = function (firstLoad = false) {
             document.getElementById('totalHoursCost').value = window.t_cost;
             $('#pledgeSection').hide();
             $('#receiptImg').prop('disabled', false);
+            $('#paymentCost').prop('disabled', false);
+            $('#paymentCost').prop('required', true);
             $('#paymentGroup').show();
             $('#receipt').show();
             $('#privateStateDocGroup').hide();
@@ -312,13 +319,17 @@ window.calcCost = function (firstLoad = false) {
         document.getElementById("walletAfterCalc").value = walletAfterCalc;
         $('#costFormGroup').hide();
         $('#receiptImg').prop('disabled', true);
-        document.getElementById("cost").value = 0;;
+        $('#paymentCost').prop('disabled', true);
+        $('#paymentCost').prop('required', false);
+        document.getElementById("orderCost").value = 0;;
     } else {
         cost = Math.abs(walletAfterCalc);
         document.getElementById("walletAfterCalc").value = 0;
         $('#costFormGroup').show();
         $('#receiptImg').prop('disabled', false);
-        document.getElementById("cost").value = cost;
+        $('#paymentCost').prop('disabled', false);
+        $('#paymentCost').prop('required', true);
+        document.getElementById("orderCost").value = cost;
     }
 
 }

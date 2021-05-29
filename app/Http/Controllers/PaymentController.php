@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Semester;
 use Exception;
 use Illuminate\Http\Request;
@@ -74,5 +75,24 @@ class PaymentController extends Controller
             DB::rollBack();
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
         }
+    }
+
+    public function deletePayment(Request $request)
+    {
+       $requestData = $this->validate($request, [
+          "payment_id"    => "required|numeric|distinct|exists:payments,id",
+       ]);
+       try {
+          $payment = Payment::where('id', $requestData['payment_id'])->first();
+          if($payment->accepted == 1 || $payment->accepted == true){
+              return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
+            }else{
+              $payment->delete();
+          }
+          return response()->json(["message" => "تم حذف الطلب بنجاح"], 200);
+       } catch (Exception $e) {
+          Log::error($e->getMessage() . ' ' . $e);
+          return response()->json(["message" => "حدث خطأ غير معروف تعذر حذف الطلب"], 422);
+       }
     }
 }

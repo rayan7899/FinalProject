@@ -37,6 +37,9 @@ class HomeController extends Controller
             if ($user->manager->hasRole("الإرشاد")) {
                 return redirect(route('privateDashboard'));
             }
+            if ($user->manager->hasRole("الإدارة العامة")) {
+                return redirect(route('managementDashboard'));
+            }
             if ($user->isDepartmentManager()) {
                 return redirect(route('deptBossDashboard'));
             }
@@ -47,9 +50,9 @@ class HomeController extends Controller
             if (Hash::check("bct12345", $user->password)) {
                 return view('student.form')->with(compact('user'));
             }
-            if (count($user->student->orders) < 1) {
-                return redirect(route('orderForm'));
-            }
+            // if (count($user->student->orders) < 1) {
+            //     return redirect(route('orderForm'));
+            // }
             return view('home')->with(compact('user'));
         }
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Order;
 use App\Models\Semester;
 use Carbon\Carbon;
 use Exception;
@@ -35,12 +36,12 @@ class OrderController extends Controller
             return back()->with('error', 'الحد الاعلى للفصل الصيفي هو 12 ساعة');
          }
 
-         $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
+         $isHasActivePayment = $user->student->payments()->where("accepted", '=', null)->first() !== null;
 
-         $waitingOrdersCount = $user->student->orders()
-            ->where("transaction_id", null)
+         $isHasActiveOrder = $user->student->orders()
+            ->where("transaction_id", '=', null)
             ->where("private_doc_verified", true)
-            ->orWhere("private_doc_verified",'=', null)->count();
+            ->orWhere("private_doc_verified",'=', null)->first() !== null;
          $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
 
          if ($user->student->level == 1 && $user->student->credit_hours != 0) {
@@ -49,10 +50,10 @@ class OrderController extends Controller
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
          }
 
-         if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
-            return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-            //    return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-         }
+         // if ($isHasActivePayment || $isHasActiveOrder) {
+         //    return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+         //    //    return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+         // }
          $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
             ->get();
@@ -99,22 +100,26 @@ class OrderController extends Controller
          "payment_receipt"   => "mimes:pdf,png,jpg,jpeg|max:10000",
          "privateStateDoc"   => "required_if:traineeState,privateState",
          "promise"           => "required_if:traineeState,privateState",
+         "paymentCost"       => "required_with:payment_receipt|numeric|min:0|max:50000"
       ], [
          'courses.required' => 'لم تقم باختيار المقررات',
          'promise.required_if' => 'التعهد مطلوب ',
-
+         'privateStateDoc.required_if' => 'يجب ارفاق المستندات المطلوبة',
+         'paymentCost.required_if' => 'لا يمكن ترك حقل المبلغ المسجل في الايصال فارغ',
       ]);
       try {
          $user = Auth::user();
          $semester = Semester::latest()->first();
          $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
-         $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)
-            ->where("private_doc_verified", "!=", false)->count();
+         $waitingOrdersCount = $user->student->orders()
+            ->where("transaction_id", null)
+            ->where("private_doc_verified", true)
+            ->orWhere("private_doc_verified",'=', null)->count();
 
-         if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
-            return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-            // return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-         }
+         // if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
+         //    return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+         //    // return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+         // }
 
          try {
             switch ($requestData["traineeState"]) {
@@ -201,7 +206,7 @@ class OrderController extends Controller
                   $doc_name =  $randomId . '.' . $requestData['payment_receipt']->getClientOriginalExtension();
                   $user->student->payments()->create(
                      [
-                        "amount"            => $cost,
+                        "amount"            => $requestData['paymentCost'],
                         "receipt_file_id"   => $doc_name,
                         "semester_id"        => $semester->id,
 
@@ -238,6 +243,25 @@ class OrderController extends Controller
       } catch (Exception $e) {
          Log::error($e->getMessage() . ' ' . $e);
          return view('error')->with('error', 'حدث خطأ غير معروف');
+      }
+   }
+
+   public function deleteOrder(Request $request)
+   {
+      $requestData = $this->validate($request, [
+         "order_id"    => "required|numeric|distinct|exists:orders,id",
+      ]);
+      try {
+         $order = Order::where('id', $requestData['order_id'])->first();
+         if($order->transaction_id != null || $order->transaction_id !== null){
+             return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
+           }else{
+             $order->delete();
+         }
+         return response()->json(["message" => "تم حذف الطلب بنجاح"], 200);
+      } catch (Exception $e) {
+         Log::error($e->getMessage() . ' ' . $e);
+         return response()->json(["message" => "حدث خطأ غير معروف تعذر حذف الطلب"], 422);
       }
    }
 }
