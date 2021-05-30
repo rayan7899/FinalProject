@@ -219,10 +219,14 @@
 
         <ul class="nav nav-tabs border rounded bg-white p-0">
             <li class="nav-item">
-                <a onclick="tabClicked('transactions',event)" class="nav-link h5 {{ count($user->student->transactions) > 0 ? 'active' : '' }}" href="#">جميع العمليات المالية</a>
+                <a onclick="tabClicked('transactions',event)"
+                    class="nav-link h5 {{ count($user->student->transactions) > 0 ? 'active' : '' }}" href="#">جميع
+                    العمليات المالية</a>
             </li>
             <li class="nav-item">
-                <a onclick="tabClicked('payments',event)" class="nav-link h5 {{ count($user->student->transactions) == 0 ? 'active' : '' }}" href="#">المحفظة</a>
+                <a onclick="tabClicked('payments',event)"
+                    class="nav-link h5 {{ count($user->student->transactions) == 0 ? 'active' : '' }}"
+                    href="#">المحفظة</a>
             </li>
             <li class="nav-item">
                 <a onclick="tabClicked('orders',event)" class="nav-link h5" href="#">اضافة المقررات</a>
@@ -232,7 +236,8 @@
             </li>
         </ul>
         {{-- transactions --}}
-        <div id="transactions" style="display: {{ count($user->student->transactions) > 0 ? 'block' : 'none' }};" class="card tables">
+        <div id="transactions" style="display: {{ count($user->student->transactions) > 0 ? 'block' : 'none' }};"
+            class="card tables">
             {{-- <div class="card-header">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="h5">
@@ -274,7 +279,9 @@
                                 <td>{{ $transaction->id ?? 'Error' }}</td>
                                 @if ($transaction->type == 'deduction')
                                     @php
-                                        $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                        if (isset($transaction->order)) {
+                                            $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                        }
                                     @endphp
                                     <td class="text-danger"> خصم (اضافة مقررات)</td>
                                     <td>{{ $transaction->order->id ?? 'Error' }}</td>
@@ -289,7 +296,7 @@
                                     <td>{{ $transaction->refund->id ?? 'Error' }}</td>
                                 @elseif ($transaction->type == 'manager_recharge')
                                     <td class="text-success"> اضافة (من الادارة) </td>
-                                    <td>{{ $transaction->payment->id ?? 'لا يوجد'}}</td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
                                 @elseif ($transaction->type == 'manager_deduction')
                                     <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
@@ -348,7 +355,8 @@
         </div>
 
         {{-- payments --}}
-        <div id="payments" style="display: {{ count($user->student->transactions) == 0 ? 'block' : 'none' }};"  class="card tables">
+        <div id="payments" style="display: {{ count($user->student->transactions) == 0 ? 'block' : 'none' }};"
+            class="card tables">
             <div class="card-header bg-white">
                 <div class="d-flex flex-row justify-content-between">
                     <div class="h5">
@@ -379,10 +387,14 @@
                         @endphp
                         @forelse ($user->student->payments as $payment)
                             @php
-                                if ($payment->accepted == null) {
+                                if ($payment->accepted === null) {
                                     $countWaitingPayment++;
                                 }
-                                $acceptedAmount = $user->student->transactions()->where('payment_id', $payment->id)->first()->amount ?? null;
+                                $acceptedAmount =
+                                    $user->student
+                                        ->transactions()
+                                        ->where('payment_id', $payment->id)
+                                        ->first()->amount ?? null;
                             @endphp
                             <tr class="text-center" id="{{ $payment->id }}">
                                 <td>{{ $payment->id }}</td>
@@ -425,7 +437,8 @@
                                     @endif
                                 </td>
                                 @if ($payment->accepted === null)
-                                    <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true" onclick="deletePayment({{ $payment->id }})"></i></td>
+                                    <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true"
+                                            onclick="deletePayment({{ $payment->id }})"></i></td>
                                 @else
                                     <td></td>
                                 @endif
@@ -474,7 +487,7 @@
                                     $hasEnoughMoney = false;
                                 }
                             @endphp
-                            <tr class="text-center" id="{{$order->id}}">
+                            <tr class="text-center" id="{{ $order->id }}">
                                 <td>{{ $order->id ?? 'Error' }}</td>
                                 <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                 <td>{{ $order->amount ?? 'Error' }}</td>
@@ -490,7 +503,8 @@
                                             <td style="min-width: 100px">
                                                 {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
-                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true" onclick="deleteOrder({{ $order->id }})"></i></td>
+                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true"
+                                                    onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @else
                                             <td>معلق</td>
                                             <td style="min-width: 100px">
@@ -498,7 +512,8 @@
                                             <td class="text-danger text-right">يرجى شحن المحفظة لا يوجد رصيد كافي
                                             </td>
 
-                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true" onclick="deleteOrder({{ $order->id }})"></i></td>
+                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true"
+                                                    onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @endif
                                     @else
                                         <td class="text-success">مقبول</td>
@@ -599,18 +614,20 @@
         <script>
             var deleteOrder = "{{ route('deleteOrder') }}";
             var deleteOrder = "{{ route('deletePayment') }}";
-            function tabClicked(id,event){
+
+            function tabClicked(id, event) {
                 event.preventDefault();
                 let cards = document.getElementsByClassName('tables');
                 let navLinks = document.getElementsByClassName('nav-link');
-                for(let link of navLinks){
+                for (let link of navLinks) {
                     link.classList.remove('active');
-               }
-               for(let card of cards){
-                   card.style.display = 'none';
-               }
-               document.getElementById(id).style.display = 'block';
-               event.target.classList.add('active');
+                }
+                for (let card of cards) {
+                    card.style.display = 'none';
+                }
+                document.getElementById(id).style.display = 'block';
+                event.target.classList.add('active');
             }
+
         </script>
     @endsection

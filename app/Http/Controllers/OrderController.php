@@ -38,10 +38,10 @@ class OrderController extends Controller
 
          $isHasActivePayment = $user->student->payments()->where("accepted", '=', null)->first() !== null;
 
-         $isHasActiveOrder = $user->student->orders()
-            ->where("transaction_id", '=', null)
-            ->where("private_doc_verified", true)
-            ->orWhere("private_doc_verified",'=', null)->first() !== null;
+         // $isHasActiveOrder = $user->student->orders()
+         //    ->where("transaction_id", '=', null)
+         //    ->where("private_doc_verified", true)
+         //    ->orWhere("private_doc_verified",'=', null)->first() !== null;
          $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
 
          if ($user->student->level == 1 && $user->student->credit_hours != 0) {
@@ -54,6 +54,15 @@ class OrderController extends Controller
          //    return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
          //    //    return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
          // }
+
+
+      //   for($i = 0; $i < count($user->student->orders); $i++){
+      //      if($user->student->orders[$i]->transaction_id === null && $user->student->orders[$i]->private_doc_verified !== 0){
+      //       //   dump($user->student->orders[$i]);
+      //       return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+      //      }
+      //   }
+
          $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
             ->get();
