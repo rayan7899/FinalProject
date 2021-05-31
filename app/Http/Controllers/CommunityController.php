@@ -520,9 +520,11 @@ class CommunityController extends Controller
                 $decision = true;
             }
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
-            $payment = Payment::where("id", $reviewedPayment["payment_id"])->where("accepted", null)->first() ?? null;
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])->first() ?? null;
             if ($payment == null) {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+            } else if($payment->accepted !== null){
+                return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
             }
             DB::beginTransaction();
 
@@ -787,6 +789,8 @@ class CommunityController extends Controller
             $order = Order::where("id", $requestData['order_id'])->first();
             if ($order === null) {
                 return response(['message' => "خطأ في بيانات الطلب"], 422);
+            }else if($order->transaction_id !== null){
+                return response(['message' => "تم قبول هذا الطلب من قبل"], 422);
             }
 
             switch ($user->student->traineeState) {
@@ -1381,7 +1385,11 @@ class CommunityController extends Controller
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
-            // return response(['message'=>$refund->refund_to, 200]);
+            if ($refund === null) {
+                return response(['message' => "خطأ في بيانات الطلب"], 422);
+            }else if($refund->accepted !== null){
+                return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
+            }
 
             switch ($refund->reason) {
                 case 'drop-out':
