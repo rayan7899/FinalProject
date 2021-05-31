@@ -274,7 +274,9 @@
                                 <td>{{ $transaction->id ?? 'Error' }}</td>
                                 @if ($transaction->type == 'deduction')
                                     @php
-                                        $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                        if (isset($transaction->order)) {
+                                            $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                        }
                                     @endphp
                                     <td class="text-danger"> خصم (اضافة مقررات)</td>
                                     <td>{{ $transaction->order->id ?? 'Error' }}</td>
