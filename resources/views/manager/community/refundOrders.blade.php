@@ -164,7 +164,8 @@
                                     @default
                                         <td>لا يوجد</td>
                                 @endswitch
-                                <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }} - {{ date_diff(date_create(date('y-m-d')), $refund->created_at)->format('منذ %d ايام') ?? 'لا يوجد' }}</td>
+                                {{-- <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }} - {{ date_diff(date_create(date('y-m-d')), $refund->created_at)->format('منذ %d ايام') ?? 'لا يوجد' }}</td> --}}
+                                <td>{{ $refund->created_at->toDateString() ?? 'لا يوجد' }} - {{ $refund->created_at->diffForHumans() ?? 'لا يوجد' }}</td>
                                 <td>{{ $refund->student_note ?? 'لا يوجد' }}</td>
                                 <td class="text-center">
                                     <button class="btn btn-primary px-2 py-0" data-toggle="modal" data-target="#acceptModal" onclick="fillModal('{{ $refund->student->user->national_id ?? 0 }}','{{ $refund->id ?? 0 }}','{{ $refund->student->user->name ?? 0 }}','{{ $refund->amount ?? 0 }}','{{ $refund->reason ?? 0 }}')">قبول</button>

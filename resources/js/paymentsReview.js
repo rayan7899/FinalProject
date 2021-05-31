@@ -785,7 +785,7 @@ window.showPdf = function (url, type) {
         $("#modalImage").attr("src", "");
         $("#modalImage").attr("src", url);
     }
-    showAllReceipts(url.split('/')[4]);
+    document.getElementById('oldReceipts') !== null && showAllReceipts(url.split('/')[4]);
 };
 
 window.showAllReceipts = function (national_id) {
