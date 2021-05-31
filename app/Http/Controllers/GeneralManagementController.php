@@ -13,7 +13,7 @@ class GeneralManagementController extends Controller
 
     public function dashboard()
     {
-        $title = "خدمة المجتمع";
+        $title = "الإدارة العامة";
         $links = [
             (object) [
                 "name" => "تقرير طلبات الشحن",
