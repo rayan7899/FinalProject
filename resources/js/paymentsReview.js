@@ -424,9 +424,16 @@ jQuery(function () {
             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        if (data.amount != data.transaction.amount) {
-                            return `<del class="text-muted">${data.amount}</del>
-                            ${data.transaction.amount}`;
+                        var totalAmount = 0;
+                        data.transactions.forEach(transaction => {
+                            if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                                totalAmount += transaction.amount;
+                            }else{
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                        if (data.amount != totalAmount) {
+                            return `<del class="text-muted">${data.amount}</del> ${totalAmount}`;
                         } else {
                             return data.amount;
                         }
@@ -455,8 +462,16 @@ jQuery(function () {
             {
                 className: "text-center",
                 data: function (data, type, row) {
+                    var totalAmount = 0;
+                    data.transactions.forEach(transaction => {
+                        if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                            totalAmount += transaction.amount;
+                        }else{
+                            totalAmount -= transaction.amount;
+                        }
+                    });
                     if(data.accepted == 1){
-                        return `<a data-toggle="modal" data-target="#editModal" href="#" onclick="window.oldAmount.value = ${data.amount}; window.payment_id = ${data.id};"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
+                        return `<a data-toggle="modal" data-target="#editModal" href="#" onclick="window.oldAmount.value = ${totalAmount}; window.payment_id = ${data.id}; window.originalAmount = ${data.amount}"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
                     }else{
                         return '-';
                     }
@@ -661,6 +676,7 @@ window.editAmount = function() {
         let form = {
             payment_id: window.payment_id,
             amount: window.newAmount.value,
+            note: window.note.value,
         };
         axios.post(window.editOldPayment, form)
             .then((response) => {
@@ -671,8 +687,9 @@ window.editAmount = function() {
                     showConfirmButton: false,
                     timer: 1000,
                 });
-                row.children[10].innerHTML = window.newAmount.value;
+                row.children[10].innerHTML = `<del class="text-muted">${window.originalAmount}</del> ${window.newAmount.value}`;
                 $("#editModal").modal("hide");
+                window.newAmount.value = '';
             })
             .catch((error) => {
                 Swal.fire({

@@ -18,7 +18,7 @@
         @endif
         <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div dir="rtl" class="modal-header">
                         <h5 class="modal-title" id="editModalLabel">تعديل</h5>
@@ -36,6 +36,10 @@
                             <div id="amountFormGroup" class="form-group col-md-6" style="display:block">
                                 <label for="newAmount">المبلغ الجديد</label>
                                 <input required type="number" class="form-control" id="newAmount" aria-describedby="newAmount">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="note" class="col-form-label">ملاحظات المدقق</label>
+                                <textarea class="form-control" id="note" name="note"></textarea>
                             </div>
                         </form>
                     </div>
@@ -68,6 +72,7 @@
                         <div class="text-center" id="modalImageDev">
                             <img id="modalImage" src="" alt="image" class="img-fluid" />
                         </div>
+                        <div class="text-center" id="oldReceipts"></div>
                     </div>
                 </div>
             </div>

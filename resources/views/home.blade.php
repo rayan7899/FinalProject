@@ -300,6 +300,12 @@
                                 @elseif ($transaction->type == 'manager_deduction')
                                     <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
+                                @elseif ($transaction->type == 'editPayment-deduction')
+                                    <td class="text-danger"> خصم (من الادارة) </td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
+                                @elseif ($transaction->type == 'editPayment-charge')
+                                    <td class="text-success"> اضافة (من الادارة) </td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
                                 @else
                                     <td>لا يوجد</td>
                                     <td>{{ $transaction->refund_order_id ?? 'Error' }}</td>
@@ -390,11 +396,14 @@
                                 if ($payment->accepted === null) {
                                     $countWaitingPayment++;
                                 }
-                                $acceptedAmount =
-                                    $user->student
-                                        ->transactions()
-                                        ->where('payment_id', $payment->id)
-                                        ->first()->amount ?? null;
+                                $acceptedAmount = 0;
+                                foreach ($payment->transactions as  $transaction) {
+                                    if($transaction->type == 'editPayment-charge' || $transaction->type == 'recharge' || $transaction->type == 'manager_recharge'){
+                                        $acceptedAmount += $transaction->amount;
+                                    }else{
+                                        $acceptedAmount -= $transaction->amount;
+                                    }
+                                }    
                             @endphp
                             <tr class="text-center" id="{{ $payment->id }}">
                                 <td>{{ $payment->id }}</td>
