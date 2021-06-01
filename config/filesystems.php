@@ -62,7 +62,7 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
         
-        'google' => [
+        'GoogleDrive' => [
             'driver' => 'google',
             'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
             'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),

@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('backup:clean')->daily()->at('04:42')
+        $schedule->command('backup:clean')->daily()->at('06:10')
         ->then(function () {
             Artisan::call('backup:run');
         });
