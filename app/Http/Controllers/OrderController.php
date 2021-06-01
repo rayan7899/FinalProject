@@ -56,12 +56,11 @@ class OrderController extends Controller
          // }
 
 
-      //   for($i = 0; $i < count($user->student->orders); $i++){
-      //      if($user->student->orders[$i]->transaction_id === null && $user->student->orders[$i]->private_doc_verified !== 0){
-      //       //   dump($user->student->orders[$i]);
-      //       return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-      //      }
-      //   }
+         for($i = 0; $i < count($user->student->orders); $i++){
+            if($user->student->orders[$i]->transaction_id === null && $user->student->orders[$i]->private_doc_verified !== 0){
+               return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+            }
+         }
 
          $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
