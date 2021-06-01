@@ -36,6 +36,8 @@ class PaymentController extends Controller
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
         } elseif ($isHasActiveRefund) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
+        } elseif($waitingOrdersCount == 0){
+            return redirect(route("home"))->with("error", "لا يمكن شحن المحفظة في الوقت الحالي");
         }
         return view("student.wallet.payment");
     }
