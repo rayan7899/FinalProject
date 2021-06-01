@@ -8,7 +8,7 @@ return [
          * The name of this application. You can use this name to monitor
          * the backups.
          */
-        'name' => 'bct_website' , //env('APP_NAME', 'laravel-backup'),
+        'name' => '', //env('APP_NAME', 'laravel-backup'),
 
         'source' => [
 
@@ -116,7 +116,7 @@ return [
              * The disk names on which the backups will be stored.
              */
             'disks' => [
-                'backups',
+                'google'
             ],
         ],
 
@@ -154,8 +154,8 @@ return [
             \Spatie\Backup\Notifications\Notifications\BackupHasFailedNotification::class => ['mail'],
             \Spatie\Backup\Notifications\Notifications\UnhealthyBackupWasFoundNotification::class => ['mail'],
             \Spatie\Backup\Notifications\Notifications\CleanupHasFailedNotification::class => ['mail'],
-            \Spatie\Backup\Notifications\Notifications\BackupWasSuccessfulNotification::class => ['mail'],
-            \Spatie\Backup\Notifications\Notifications\HealthyBackupWasFoundNotification::class => ['mail'],
+            \Spatie\Backup\Notifications\Notifications\BackupWasSuccessfulNotification::class => [],
+            \Spatie\Backup\Notifications\Notifications\HealthyBackupWasFoundNotification::class => [],
             \Spatie\Backup\Notifications\Notifications\CleanupWasSuccessfulNotification::class => ['mail'],
         ],
 
@@ -166,7 +166,10 @@ return [
         'notifiable' => \Spatie\Backup\Notifications\Notifiable::class,
 
         'mail' => [
-            'to' => 'your@example.com',
+            'to' => [
+                'tvtc.bct@gmail.com',
+                'abdullah.clg@hotmail.com'
+            ],
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
@@ -174,27 +177,27 @@ return [
             ],
         ],
 
-        'slack' => [
-            'webhook_url' => '',
+        // 'slack' => [
+        //     'webhook_url' => '',
 
-            /*
-             * If this is set to null the default channel of the webhook will be used.
-             */
-            'channel' => null,
+        //     /*
+        //      * If this is set to null the default channel of the webhook will be used.
+        //      */
+        //     'channel' => null,
 
-            'username' => null,
+        //     'username' => null,
 
-            'icon' => null,
+        //     'icon' => null,
 
-        ],
+        // ],
 
-        'discord' => [
-            'webhook_url' => '',
+        // 'discord' => [
+        //     'webhook_url' => '',
 
-            'username' => null,
+        //     'username' => null,
 
-            'avatar_url' => null,
-        ],
+        //     'avatar_url' => null,
+        // ],
     ],
 
     /*
@@ -204,11 +207,11 @@ return [
      */
     'monitor_backups' => [
         [
-            'name' => env('APP_NAME', 'laravel-backup'),
-            'disks' => ['local'],
+            'name' => '',
+            'disks' => ['google'],
             'health_checks' => [
                 \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumAgeInDays::class => 1,
-                \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes::class => 5000,
+                \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes::class => 10000,
             ],
         ],
 
