@@ -90,6 +90,7 @@ class PaymentController extends Controller
               return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
             }else{
               $payment->delete();
+              Storage::disk('studentDocuments')->delete('/'.$payment->student->user->national_id.'/receipts/'.$payment->receipt_file_id);
           }
           return response()->json(["message" => "تم حذف الطلب بنجاح"], 200);
        } catch (Exception $e) {
