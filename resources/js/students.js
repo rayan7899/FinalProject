@@ -427,3 +427,10 @@ window.getStudentReport = function () {
 
     Swal.close();
 }
+
+
+
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    $("[data-toggle=popover]").popover();
+});
