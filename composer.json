@@ -18,7 +18,9 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
         "maatwebsite/excel": "^3.1",
-        "rap2hpoutre/laravel-log-viewer": "^1.7"
+        "nao-pon/flysystem-google-drive": "~1.1",
+        "rap2hpoutre/laravel-log-viewer": "^1.7",
+        "spatie/laravel-backup": "^7.5"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
