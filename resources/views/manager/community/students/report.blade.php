@@ -72,207 +72,201 @@
             </div>
             <div class="row">
 
-                {{-- Name --}}
                 <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white h5"
-                            value="{{ $user->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">الاسم</label></span>
-                        </div>
-                    </div>
-                </div>
 
-
-                {{-- program --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->program->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">البرنامج</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- national_id --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->national_id ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- department --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->department->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">القسم</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- rayat id --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->rayat_id ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">الرقم التدريبي</label></span>
-                        </div>
-                    </div>
-                </div>
-                {{-- major --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->major->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">التخصص</label></span>
-                        </div>
-                    </div>
-                </div>
-                {{-- phone --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->phone ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- level --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $stringLevel ?? 'Error' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">المستوى</label></span>
-                        </div>
-                    </div>
-                </div>
-
-
-                {{-- email --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->email ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">البريد الالكتروني</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- <div class="col-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->wallet ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">رصيد المحفظة</label></span>
-                        </div>
-                    </div>
-                </div> --}}
-
-
-
-                @php
-                    $total_hours = 0;
-                    foreach ($user->student->orders as $order) {
-                        if ($order->transaction_id !== null && $order->private_doc_verified == true) {
-                            $total_hours += $order->requested_hours;
-                        }
-                    }
-                @endphp
-
-
-
-                {{-- credit_hours --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->credit_hours ?? 0 }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;">
-                                <span class=" d-inline text-center m-0 p-0 w-100">
-                                    <a role="button" class="mx-1" data-toggle="popover" title="الساعات المتاحة"
-                                        data-content="عدد الساعات المتاحة للإضافة عبر موقع رايات">
-                                        <i class="fa fa-info-circle d-inline"></i>
-                                    </a> الساعات المتاحة
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- trainee state --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ __($user->student->traineeState) ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">الحالة</label></span>
-                        </div>
-                    </div>
-                </div>
-                {{-- rayat hours --}}
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white" value="0">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;">
-                                <a role="button" class="mx-1" data-toggle="popover" title="الساعات المعتمدة"
-                                    data-content="عدد الساعات التي تم اضافتها من قبل المتدرب في رايات"> 
-                                    <i class="fa fa-info-circle d-inline"></i>
-                                </a> 
-                               الساعات المعتمدة
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-
-                {{-- accepted state --}}
-                @if ($user->student->level == 1)
-                    @php
-                        $acceptMessage = 'مقبول مبدئي'; // default message
-                        if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
-                            if ($user->student->credit_hours == 0) {
-                                $acceptMessage = 'مقبول نهائي - بانتظار إتاحة الساعات في رايات';
-                            } else {
-                                $acceptMessage = 'مقبول نهائي - تم إتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات';
-                            }
-                        }
-                    @endphp
-                    <div class="col-12">
+                    {{-- Name --}}
+                    <div class="row p-0 m-0">
                         <div dir="ltr" class="input-group mb-1">
-                            <input readonly type="text" class="form-control text-right bg-white"
-                                value="{{ $acceptMessage ?? 'Error' }}">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $user->name ?? 'لا يوجد' }}">
                             <div class="input-group-append">
                                 <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+                                        class="text-center m-0 p-0 w-100">الاسم</label></span>
                             </div>
                         </div>
                     </div>
-                @endif
+
+                    {{-- national_id --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->national_id ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- rayat id --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->student->rayat_id ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">الرقم التدريبي</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- phone --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->phone ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- email --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->email ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">البريد الالكتروني</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {{-- trainee state --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ __($user->student->traineeState) ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">الحالة</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-md-6">
+                    {{-- program --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->student->program->name ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">البرنامج</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- department --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->student->department->name ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">القسم</label></span>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- major --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->student->major->name ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">التخصص</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- level --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $stringLevel ?? 'Error' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">المستوى</label></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @php
+                        $total_hours = 0;
+                        foreach ($user->student->orders as $order) {
+                            if ($order->transaction_id !== null && $order->private_doc_verified == true) {
+                                $total_hours += $order->requested_hours;
+                            }
+                        }
+                    @endphp
+
+                    {{-- credit_hours --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $user->student->credit_hours ?? 0 }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;">
+                                    <span class=" d-inline text-center m-0 p-0 w-100">
+                                        <a role="button" class="mx-1" data-toggle="popover" title="الساعات المتاحة"
+                                            data-content="عدد الساعات المتاحة للإضافة عبر موقع رايات">
+                                            <i class="fa fa-info-circle d-inline"></i>
+                                        </a> الساعات المتاحة
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- rayat hours --}}
+                    <div class="row p-0 m-0">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white" value="0">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;">
+                                    <a role="button" class="mx-1" data-toggle="popover" title="الساعات المعتمدة"
+                                        data-content="عدد الساعات التي تم اضافتها من قبل المتدرب في رايات">
+                                        <i class="fa fa-info-circle d-inline"></i>
+                                    </a>
+                                    الساعات المعتمدة
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {{-- accepted state --}}
+                    @if ($user->student->level == 1)
+                        @php
+                            $acceptMessage = 'مقبول مبدئي'; // default message
+                            if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
+                                if ($user->student->credit_hours == 0) {
+                                    $acceptMessage = 'مقبول نهائي - بانتظار إتاحة الساعات في رايات';
+                                } else {
+                                    $acceptMessage = 'مقبول نهائي - تم إتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات';
+                                }
+                            }
+                        @endphp
+                        <div class="col-12">
+                            <div dir="ltr" class="input-group mb-1">
+                                <input readonly type="text" class="form-control text-right bg-white"
+                                    value="{{ $acceptMessage ?? 'Error' }}">
+                                <div class="input-group-append">
+                                    <span class="input-group-text text-center" style="width: 120px;"><label
+                                            class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+
+                </div>
             </div>
         </div>
 
@@ -337,7 +331,7 @@
                                     <td>{{ $transaction->refund->id ?? 'Error' }}</td>
                                 @elseif ($transaction->type == 'manager_recharge')
                                     <td class="text-success"> اضافة (من الادارة) </td>
-                                    <td>{{ $transaction->payment->id ?? 'لا يوجد'}}</td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
                                 @elseif ($transaction->type == 'manager_deduction')
                                     <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
@@ -396,7 +390,7 @@
         </div>
 
         {{-- payments --}}
-        <div id="payments" style="display: none;"  class="card tables">
+        <div id="payments" style="display: none;" class="card tables">
             <div class="card-body table-responsive p-0">
                 <table class="table text-nowrap table-striped table-hover table-bordered m-0 p-0">
                     <thead>
@@ -418,7 +412,11 @@
                                 if ($payment->accepted == null) {
                                     $countWaitingPayment++;
                                 }
-                                $acceptedAmount = $user->student->transactions()->where('payment_id', $payment->id)->first()->amount ?? null;
+                                $acceptedAmount =
+                                    $user->student
+                                        ->transactions()
+                                        ->where('payment_id', $payment->id)
+                                        ->first()->amount ?? null;
                             @endphp
                             <tr class="text-center">
                                 <td>{{ $payment->id }}</td>
@@ -613,18 +611,19 @@
         </div>
 
         <script>
-            function tabClicked(id,event){
+            function tabClicked(id, event) {
                 event.preventDefault();
                 let cards = document.getElementsByClassName('tables');
                 let navLinks = document.getElementsByClassName('nav-link');
-                for(let link of navLinks){
+                for (let link of navLinks) {
                     link.classList.remove('active');
-               }
-               for(let card of cards){
-                   card.style.display = 'none';
-               }
-               document.getElementById(id).style.display = 'block';
-               event.target.classList.add('active');
+                }
+                for (let card of cards) {
+                    card.style.display = 'none';
+                }
+                document.getElementById(id).style.display = 'block';
+                event.target.classList.add('active');
             }
+
         </script>
     @endsection
