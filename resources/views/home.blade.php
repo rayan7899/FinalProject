@@ -12,7 +12,7 @@
             </div>
         @endif
         <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-            <div class="modal-dialog" style="max-width: 75%" role="document">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="pdfName"></h5>
@@ -30,6 +30,13 @@
             </div>
         </div>
         <x-student-info :user="$user"/>
+
+        <div class="alert alert-warning border">
+            <b>تنبية</b>
+            هذا الموقع مسؤول عن العمليات المالية فقط ويجب عليك التوجه الى موقع
+            <a href="https://www.tvtc.gov.sa/rayat.html">رايات</a>
+            لتسجيل الجدول بعد دفع الرسوم وإتاحة الساعات للتسجيل.
+        </div>
 
         <ul class="nav nav-tabs border rounded bg-white p-0">
             <li class="nav-item">
@@ -284,9 +291,9 @@
                     <thead>
                         <tr>
                             <th class="text-center">رقم الطلب</th>
-                            <th class="text-center">عدد الساعات</th>
                             <th class="text-center">المبلغ</th>
-                            <th class="text-center">حالة تسجيل الساعات في رايات</th>
+                            <th class="text-center">إتاحة الساعات في رايات</th>
+                            <th class="text-center">الساعات المطلوبة</th>
                             <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
                             <th class="text-center"></th>
@@ -303,10 +310,10 @@
                             @endphp
                             <tr class="text-center" id="{{ $order->id }}">
                                 <td>{{ $order->id ?? 'Error' }}</td>
-                                <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                 <td>{{ $order->amount ?? 'Error' }}</td>
                                 @if ($order->private_doc_verified === false || $order->private_doc_verified === '0' || $order->private_doc_verified === 0)
                                     <td class="text-danger">مرفوض</td>
+                                    <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                     <td style="min-width: 100px">{{ $order->created_at->toDateString() ?? 'Error' }}
                                     </td>
                                     <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
@@ -314,6 +321,7 @@
                                     @if ($order->transaction_id == null)
                                         @if ($hasEnoughMoney == true || $user->student->traineeState == 'privateState')
                                             <td>قيد المراجعة</td>
+                                            <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                             <td style="min-width: 100px">
                                                 {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
@@ -321,6 +329,7 @@
                                                     onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @else
                                             <td>معلق</td>
+                                            <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                             <td style="min-width: 100px">
                                                 {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-danger text-right">يرجى شحن المحفظة لا يوجد رصيد كافي
@@ -330,7 +339,8 @@
                                                     onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @endif
                                     @else
-                                        <td class="text-success">مقبول</td>
+                                        <td class="text-success">متاح</td>
+                                        <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                         <td style="min-width: 100px">
                                             {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                         <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
