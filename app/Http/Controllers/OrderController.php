@@ -265,6 +265,9 @@ class OrderController extends Controller
              return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
            }else{
              $order->delete();
+             if($order->private_doc_file_id != null){
+               Storage::disk('studentDocuments')->deleteDirectory('/'.$order->student->user->national_id.'/privateStateDocs/'.$order->private_doc_file_id);
+             }
          }
          return response()->json(["message" => "تم حذف الطلب بنجاح"], 200);
       } catch (Exception $e) {
