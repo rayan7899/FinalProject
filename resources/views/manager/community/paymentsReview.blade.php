@@ -92,9 +92,13 @@
 
                             <i class="fa fa-rotate-right"></i>
                         </button>
+                        <button onclick="printImg()" type="button" class="btn btn-primary mx-2">
+                            <i class="fa fa-print"></i>
+                        </button>
                     </div>
                     <div class="modal-body">
-                        <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
+                        <iframe id="pdfIfreme" src="#" width="100%" height="600px"></iframe>
+                        <iframe style="display: none; position: fixed;" id="imgIframe"  width="100%" height="100%"></iframe>
                         <div class="text-center" id="modalImageDev">
                             <img id="modalImage" src="" alt="image" class="img-fluid" />
                             <h3 class="w-100 bg-secondary my-3 py-3">الايصالات السابقة</h3>
