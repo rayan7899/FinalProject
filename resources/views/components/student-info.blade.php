@@ -27,55 +27,133 @@
     <div class="card my-4">
         <div class="card-header">
             <h5 class="card-title">
-                البيانات الشخصية
+                بيانات المتدرب
             </h5>
         </div>
         <div class="row">
 
-            {{-- right side --}}
             <div class="col-md-6">
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white h5"
-                        value="{{ $user->name ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">الاسم</label></span>
+
+                {{-- Name --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white h5"
+                            value="{{ $user->name ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">الاسم</label></span>
+                        </div>
                     </div>
                 </div>
 
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->national_id ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
+                {{-- national_id --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $user->national_id ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
+                        </div>
                     </div>
                 </div>
 
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->student->rayat_id ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">الرقم التدريبي</label></span>
+                {{-- rayat id --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $user->student->rayat_id ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">الرقم التدريبي</label></span>
+                        </div>
                     </div>
                 </div>
 
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->phone ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
+                {{-- phone --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $user->phone ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
+                        </div>
                     </div>
                 </div>
 
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->email ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">البريد الالكتروني</label></span>
+                {{-- email --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $user->email ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">البريد الالكتروني</label></span>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{-- trainee state --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ __($user->student->traineeState) ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">الحالة</label></span>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-md-6">
+                {{-- program --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $user->student->program->name ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">البرنامج</label></span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- department --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $user->student->department->name ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">القسم</label></span>
+                        </div>
+                    </div>
+                </div>
+                {{-- major --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $user->student->major->name ?? 'لا يوجد' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">التخصص</label></span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- level --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white"
+                            value="{{ $stringLevel ?? 'Error' }}">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;"><label
+                                    class="text-center m-0 p-0 w-100">المستوى</label></span>
+                        </div>
                     </div>
                 </div>
 
@@ -88,128 +166,67 @@
                     }
                 @endphp
 
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $total_hours ?? 0 }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">الساعات الكلية</label></span>
-                    </div>
-                </div>
-            </div>
-
-
-
-            {{-- left side --}}
-            <div class="col-md-6">
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->student->program->name ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">البرنامج</label></span>
-                    </div>
-                </div>
-
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->student->department->name ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">القسم</label></span>
-                    </div>
-                </div>
-
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->student->major->name ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">التخصص</label></span>
-                    </div>
-                </div>
-
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $stringLevel ?? 'Error' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">المستوى</label></span>
-                    </div>
-                </div>
-
-                @php
-                    switch ($user->student->traineeState) {
-                        case 'employee':
-                            $traineeStateString = "منسوب ";
-                            break;
-
-                        case 'employeeSon':
-                            $traineeStateString = "ابن منسوب";
-                            break;
-
-                        case 'privateState':
-                            $traineeStateString = "ظروف خاصة";
-                            break;
-
-                        default:
-                            $traineeStateString = "متدرب";
-                            break;
-                    }
-                @endphp
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $traineeStateString ?? 'Error' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">الحالة</label></span>
-                    </div>
-                </div>
-
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->student->credit_hours ?? 0 }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">الساعات المعتمدة</label></span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- <div class="col-6">
-                <div dir="ltr" class="input-group mb-1">
-                    <input readonly type="text" class="form-control text-right bg-white"
-                        value="{{ $user->student->wallet ?? 'لا يوجد' }}">
-                    <div class="input-group-append">
-                        <span class="input-group-text text-center" style="width: 120px;"><label
-                                class="text-center m-0 p-0 w-100">رصيد المحفظة</label></span>
-                    </div>
-                </div>
-            </div> --}}
-
-            {{-- accepted state --}}
-            @if ($user->student->level == 1)
-                @php
-                    $acceptMessage = 'مقبول مبدئي'; // default message
-                    if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
-                        if ($user->student->credit_hours == 0) {
-                            $acceptMessage = 'مقبول نهائي - بانتظار اتاحة الساعات في رايات';
-                        } else {
-                            $acceptMessage = 'مقبول نهائي - تم اتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات';
-                        }
-                    }
-                @endphp
-                <div class="col-12">
+                {{-- credit_hours --}}
+                <div class="row p-0 m-0">
                     <div dir="ltr" class="input-group mb-1">
                         <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $acceptMessage ?? 'Error' }}">
+                            value="{{ $user->student->credit_hours ?? 0 }}">
                         <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+                            <span class="input-group-text text-center" style="width: 120px;">
+                                <span class=" d-inline text-center m-0 p-0 w-100">
+                                    <a role="button" class="mx-1" data-toggle="popover" title="الساعات المتاحة"
+                                        data-content="عدد الساعات المتاحة للإضافة عبر موقع رايات">
+                                        <i class="fa fa-info-circle d-inline"></i>
+                                    </a> الساعات المتاحة
+                                </span>
+                            </span>
                         </div>
                     </div>
                 </div>
-            @endif
+
+                {{-- rayat hours --}}
+                <div class="row p-0 m-0">
+                    <div dir="ltr" class="input-group mb-1">
+                        <input readonly type="text" class="form-control text-right bg-white" value="0">
+                        <div class="input-group-append">
+                            <span class="input-group-text text-center" style="width: 120px;">
+                                <a role="button" class="mx-1" data-toggle="popover" title="الساعات المعتمدة"
+                                    data-content="عدد الساعات التي تم اضافتها من قبل المتدرب في رايات">
+                                    <i class="fa fa-info-circle d-inline"></i>
+                                </a>
+                                الساعات المعتمدة
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+                {{-- accepted state --}}
+                @if ($user->student->level == 1)
+                    @php
+                        $acceptMessage = 'مقبول مبدئي'; // default message
+                        if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
+                            if ($user->student->credit_hours == 0) {
+                                $acceptMessage = 'مقبول نهائي - بانتظار إتاحة الساعات في رايات';
+                            } else {
+                                $acceptMessage = 'مقبول نهائي - تم إتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات';
+                            }
+                        }
+                    @endphp
+                    <div class="col-12">
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                value="{{ $acceptMessage ?? 'Error' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                        class="text-center m-0 p-0 w-100">حالة القبول</label></span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+
+            </div>
         </div>
     </div>
 </div>
