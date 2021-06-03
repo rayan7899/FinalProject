@@ -86,6 +86,10 @@ class PaymentController extends Controller
        ]);
        try {
           $payment = Payment::where('id', $requestData['payment_id'])->first();
+          $user = Auth::user();
+          if($user->id !== $payment->student->user->id && !$user->hasRole('خدمة المجتمع')){
+             return response()->json(["message" => "ليس لديك صلاحيات لتنفيذ هذا الامر"], 422);
+          }
           if($payment->accepted == 1 || $payment->accepted == true){
               return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
             }else{
