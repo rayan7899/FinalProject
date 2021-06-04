@@ -1080,9 +1080,10 @@ class CommunityController extends Controller
             // })->sum('discount');
 
             $baccSumDiscount = $baccSumHours * 550 - $baccSumDeductions;
-            
+        
             $baccCommunityAmount = $baccSumDeductions * 0.15;
-            $baccUnitAmount = $baccSumDeductions * 0.85;
+            $baccGeneralManageAmount = $baccSumDeductions * 0.05;
+            $baccUnitAmount = $baccSumDeductions * 0.80;
 
 
             $baccSum = $baccSumWallets + $baccSumDeductions;
@@ -1106,8 +1107,8 @@ class CommunityController extends Controller
             $diplomSumDiscount = $diplomSumHours * 400 - $diplomSumDeductions;
             
             $diplomCommunityAmount = $diplomSumDeductions * 0.15;
-            $diplomUnitAmount = $diplomSumDeductions * 0.85;
-
+            $diplomGeneralManageAmount = $diplomSumDeductions * 0.05;
+            $diplomUnitAmount = $diplomSumDeductions * 0.80;
             $diplomSum = $diplomSumWallets + $diplomSumDeductions;
 
             return view("manager.community.reports.all")->with(compact(
@@ -1119,6 +1120,7 @@ class CommunityController extends Controller
                     'baccSumDiscount',
                     'baccCommunityAmount',
                     'baccUnitAmount',
+                    'baccGeneralManageAmount',
                     'baccSum',
 
                     'diplomCount',
@@ -1127,6 +1129,7 @@ class CommunityController extends Controller
                     'diplomSumDeductions',
                     'diplomSumDiscount',
                     'diplomCommunityAmount',
+                    'diplomGeneralManageAmount',
                     'diplomUnitAmount',
                     'diplomSum',
 

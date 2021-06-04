@@ -119,11 +119,27 @@
                             <div class="input-group-append">
                                 <span class="input-group-text text-center" style="width: 180px;">
                                     <label class="text-center m-0 p-0 w-100">
-                                    <a role="button" class="mx-1" data-toggle="popover" title="مخصص خدمة المجتمع"
-                                        data-content="١٥٪ من مجموع تكلفة الساعات">
-                                        <i class="fa fa-info-circle d-inline"></i>
-                                    </a>
-                                    مخصص خدمة المجتمع
+                                        <a role="button" class="mx-1" data-toggle="popover" title="مخصص المركز الرئيسي"
+                                            data-content="١٥٪ من مجموع تكلفة الساعات">
+                                            <i class="fa fa-info-circle d-inline"></i>
+                                        </a>
+                                        مخصص المركز الرئيسي
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $baccGeneralManageAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                        <a role="button" class="mx-1" data-toggle="popover" title="مخصص الادارة العامة"
+                                            data-content="٥٪ من مجموع تكلفة الساعات">
+                                            <i class="fa fa-info-circle d-inline"></i>
+                                        </a>
+                                        مخصص الادارة العامة
                                     </label>
                                 </span>
                             </div>
@@ -136,14 +152,13 @@
                                 <span class="input-group-text text-center" style="width: 180px;">
                                     <label class="text-center m-0 p-0 w-100">
                                     <a role="button" class="mx-1" data-toggle="popover" title="مخصص الوحدة المنفذة"
-                                        data-content="٨٥٪ من مجموع تكلفة الساعات">
+                                        data-content="٨٠٪ من مجموع تكلفة الساعات">
                                         <i class="fa fa-info-circle d-inline"></i>
                                     </a> مخصص الوحدة المنفذة
                                     </label>
                                 </span>
                             </div>
                         </div>
-
                         {{-- <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
                                 value="{{$baccSumWallets ?? 'لا يوجد' }}">
@@ -213,11 +228,27 @@
                             <div class="input-group-append">
                                 <span class="input-group-text text-center" style="width: 180px;">
                                     <label class="text-center m-0 p-0 w-100">
-                                        <a role="button" class="mx-1" data-toggle="popover" title="مخصص خدمة المجتمع"
+                                        <a role="button" class="mx-1" data-toggle="popover" title="مخصص المركز الرئيسي"
                                             data-content="١٥٪ من مجموع تكلفة الساعات">
                                             <i class="fa fa-info-circle d-inline"></i>
                                         </a>
-                                        مخصص خدمة المجتمع
+                                        مخصص المركز الرئيسي
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $diplomGeneralManageAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                        <a role="button" class="mx-1" data-toggle="popover" title="مخصص الادارة العامة"
+                                            data-content="٥٪ من مجموع تكلفة الساعات">
+                                            <i class="fa fa-info-circle d-inline"></i>
+                                        </a>
+                                        مخصص الادارة العامة
                                     </label>
                                 </span>
                             </div>
@@ -230,7 +261,7 @@
                                 <span class="input-group-text text-center" style="width: 180px;">
                                     <label class="text-center m-0 p-0 w-100">
                                     <a role="button" class="mx-1" data-toggle="popover" title="مخصص الوحدة المنفذة"
-                                        data-content="٨٥٪ من مجموع تكلفة الساعات">
+                                        data-content="٨٠٪ من مجموع تكلفة الساعات">
                                         <i class="fa fa-info-circle d-inline"></i>
                                     </a> مخصص الوحدة المنفذة
                                     </label>
