@@ -1206,7 +1206,9 @@ class CommunityController extends Controller
 
             $sumDiscount = $sumHours * $programObj->hourPrice - $sumDeductions;
             $communityAmount = $sumDeductions * 0.15;
-            $unitAmount = $sumDeductions * 0.85;
+            $unitAmount = $sumDeductions * 0.80;
+            $generalManageAmount = $sumDeductions * 0.05;
+
 
             return view("manager.community.reports.filtered")->with(compact(
                 [
@@ -1216,6 +1218,7 @@ class CommunityController extends Controller
                     'sumDiscount',
                     'communityAmount',
                     'unitAmount',
+                    'generalManageAmount',
 
                     'programObj',
                     'department',
