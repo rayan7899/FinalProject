@@ -76,21 +76,22 @@
                     <div class="card-header h5">{{ $programObj->name ?? 'Error' }} - {{ $department->name ?? 'Error' }} -
                         {{ $major->name ?? 'Error' }} </div>
                     <div class="card-body">
+                        
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{ $count ?? 'لا يوجد' }}">
+                                value="{{ $sumHours ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">عدد المتدربين</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">عدد الساعات الكلي</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{ $sumWallets ?? 'لا يوجد' }}">
+                                value="{{ $count ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">مجموع الارصدة</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">عدد المتدربين</label></span>
                             </div>
                         </div>
 
@@ -98,19 +99,52 @@
                             <input readonly type="text" class="form-control text-right bg-white h5"
                                 value="{{ $sumDeductions ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">مجموع مبالغ الساعات</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">مجموع تكلفة الساعات</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{ $sum ?? 'لا يوجد' }}">
+                                value="{{ $sumDiscount ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">المجموع</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">مجموع التخفيض</label></span>
                             </div>
                         </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $communityAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                        <a role="button" class="mx-1" data-toggle="popover" title="مخصص خدمة المجتمع"
+                                            data-content="١٥٪ من مجموع تكلفة الساعات">
+                                            <i class="fa fa-info-circle d-inline"></i>
+                                        </a>
+                                        مخصص خدمة المجتمع
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $unitAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                    <a role="button" class="mx-1" data-toggle="popover" title="مخصص الوحدة المنفذة"
+                                        data-content="٨٥٪ من مجموع تكلفة الساعات">
+                                        <i class="fa fa-info-circle d-inline"></i>
+                                    </a> مخصص الوحدة المنفذة
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>

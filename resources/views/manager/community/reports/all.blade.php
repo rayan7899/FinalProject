@@ -21,8 +21,7 @@
                 {{ session()->get('success') ?? $success }}
             </div>
         @endif
-{{--        
-            <form method="POST" action="{{ route('reportFilterd') }}" class="border rounded p-4 mb-4 bg-white">
+        {{-- <form method="POST" action="{{ route('reportFilterd') }}" class="border rounded p-4 mb-4 bg-white">
                 @csrf
 
                 <div class="form-row mb-3">
@@ -72,46 +71,97 @@
                 </div>
               
             </form> --}}
-            <div class="row">
+        <div class="row">
             <div class="col">
                 <div class="card">
                     <div class="card-header h5">{{ __('بكالوريوس') }}</div>
                     <div class="card-body">
+
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{$baccCount ?? 'لا يوجد' }}">
+                                value="{{ $baccSumHours ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">عدد الساعات الكلي</label></span>
+                            </div>
+                        </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $baccCount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;"><label
                                         class="text-center m-0 p-0 w-100">عدد المتدربين</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{$baccSumWallets ?? 'لا يوجد' }}">
+                                value="{{ $baccSumDeductions ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">مجموع الارصدة</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">مجموع تكلفة الساعات</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{$baccSumDeductions ?? 'لا يوجد' }}">
+                                value="{{ $baccSumDiscount ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">مجموع مبالغ الساعات</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">مجموع التخفيض</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $baccCommunityAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                    <a role="button" class="mx-1" data-toggle="popover" title="مخصص خدمة المجتمع"
+                                        data-content="١٥٪ من مجموع تكلفة الساعات">
+                                        <i class="fa fa-info-circle d-inline"></i>
+                                    </a>
+                                    مخصص خدمة المجتمع
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $baccUnitAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                    <a role="button" class="mx-1" data-toggle="popover" title="مخصص الوحدة المنفذة"
+                                        data-content="٨٥٪ من مجموع تكلفة الساعات">
+                                        <i class="fa fa-info-circle d-inline"></i>
+                                    </a> مخصص الوحدة المنفذة
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{$baccSumWallets ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">مجموع الارصدة</label></span>
+                            </div>
+                        </div> --}}
+
+
+                        {{-- <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
                                 value="{{$baccSum ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                <span class="input-group-text text-center" style="width: 180px;"><label
                                         class="text-center m-0 p-0 w-100">المجموع</label></span>
                             </div>
-                        </div>
+                        </div> --}}
 
                     </div>
                 </div>
@@ -120,41 +170,91 @@
                 <div class="card">
                     <div class="card-header h5">{{ __('دبلوم') }}</div>
                     <div class="card-body">
+
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{$diplomCount ?? 'لا يوجد' }}">
+                                value="{{ $diplomSumHours ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">عدد الساعات الكلي</label></span>
+                            </div>
+                        </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $diplomCount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;"><label
                                         class="text-center m-0 p-0 w-100">عدد المتدربين</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{$diplomSumWallets ?? 'لا يوجد' }}">
+                                value="{{ $diplomSumDeductions ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">مجموع الارصدة</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">مجموع تكلفة الساعات</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
-                                value="{{$diplomSumDeductions ?? 'لا يوجد' }}">
+                                value="{{ $diplomSumDiscount ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">مجموع مبالغ الساعات</label></span>
+                                <span class="input-group-text text-center" style="width: 180px;"><label
+                                        class="text-center m-0 p-0 w-100">مجموع التخفيض</label></span>
                             </div>
                         </div>
 
                         <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $diplomCommunityAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                        <a role="button" class="mx-1" data-toggle="popover" title="مخصص خدمة المجتمع"
+                                            data-content="١٥٪ من مجموع تكلفة الساعات">
+                                            <i class="fa fa-info-circle d-inline"></i>
+                                        </a>
+                                        مخصص خدمة المجتمع
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div dir="ltr" class="input-group mb-1">
+                            <input readonly type="text" class="form-control text-right bg-white h5"
+                                value="{{ $diplomUnitAmount ?? 'لا يوجد' }}">
+                            <div class="input-group-append">
+                                <span class="input-group-text text-center" style="width: 180px;">
+                                    <label class="text-center m-0 p-0 w-100">
+                                    <a role="button" class="mx-1" data-toggle="popover" title="مخصص الوحدة المنفذة"
+                                        data-content="٨٥٪ من مجموع تكلفة الساعات">
+                                        <i class="fa fa-info-circle d-inline"></i>
+                                    </a> مخصص الوحدة المنفذة
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- <div dir="ltr" class="input-group mb-1">
+                                <input readonly type="text" class="form-control text-right bg-white h5"
+                                    value="{{$diplomSumWallets ?? 'لا يوجد' }}">
+                                <div class="input-group-append">
+                                    <span class="input-group-text text-center" style="width: 180px;"><label
+                                            class="text-center m-0 p-0 w-100">مجموع الارصدة</label></span>
+                                </div>
+                            </div> --}}
+
+                        {{-- <div dir="ltr" class="input-group mb-1">
                             <input readonly type="text" class="form-control text-right bg-white h5"
                                 value="{{$diplomSum ?? 'لا يوجد' }}">
                             <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
+                                <span class="input-group-text text-center" style="width: 180px;"><label
                                         class="text-center m-0 p-0 w-100">المجموع</label></span>
                             </div>
-                        </div>
+                        </div> --}}
 
                     </div>
                 </div>

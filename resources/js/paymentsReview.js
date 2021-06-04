@@ -789,11 +789,13 @@ window.showPdf = function (url, type) {
     document.querySelector("#modalImage").style.transform = `rotate(${window.rotation}deg)`;
     if (type == "pdf") {
         $("#modalImage").hide();
+        $("#modalImage").removeAttr("src");
         $("#pdfIfreme").show();
         $("#pdfIfreme").attr("src", "");
         $("#pdfIfreme").attr("src", url);
     } else {
         $("#pdfIfreme").hide();
+        $("#pdfIfreme").attr("src", "");
         $("#modalImage").show();
         $("#modalImage").attr("src", "");
         $("#modalImage").attr("src", url);
@@ -805,10 +807,10 @@ window.showAllReceipts = function (national_id) {
     document.getElementById('oldReceipts').innerHTML = '';
     axios.get(`/api/documents/show/${national_id}`)
         .then((response) => {
-            if(response.data.length == 0){
+            if (response.data.length == 0) {
                 $("#oldReceipts").prepend(`<p> لا يوجد ايصالات سابقة </p>`);
-            }else{
-                response.data.forEach(imgName=> {
+            } else {
+                response.data.forEach(imgName => {
                     $("#oldReceipts").prepend(`<p><img src="/api/documents/show/${national_id}/${imgName}" alt="image" class="img-fluid"/></p>`);
                 });
             }
@@ -839,4 +841,21 @@ window.rotateImg = function () {
         rotation = 0;
     }
     document.querySelector("#modalImage").style.transform = `rotate(${window.rotation}deg)`;
+}
+
+window.printImg = function () {
+
+    if (document.getElementById("modalImage").hasAttribute('src')) {
+        let imgSrc = document.getElementById("modalImage").src;
+        $("#imgIframe").show();
+        $("#imgIframe").attr('src', imgSrc);
+        $('#imgIframe').on('load', function () {
+            $("#imgIframe").contents().find("img").attr("style", "max-width:100%;max-height:100%");
+            document.getElementById("imgIframe").contentWindow.print()
+            $("#imgIframe").hide();
+        });
+
+    } else {
+        document.getElementById("pdfIfreme").contentWindow.print();
+    }
 }
