@@ -184,7 +184,7 @@
                         {{-- المحفظة --}}
                     </div>
 
-                    <a href="{{ route('paymentForm') }}" class="btn btn-primary rounded">
+                    <a href="{{ route('paymentForm') }}" class="btn @if (!$semester->can_request_hours) btn-primary @else btn-secondary @endif rounded">
                         شحن المحفظة
                     </a>
                 </div>
@@ -279,11 +279,9 @@
                 <div class="d-flex flex-row justify-content-between">
                     {{-- <p class="h5">طلبات اضافة المقررات</p> --}}
                     <p></p>
-                    {{-- @if ($user->student->level > 1) --}}
-                    <a href="{{ route('orderForm') }}" class="btn btn-primary rounded">
+                    <a href="{{ route('orderForm') }}" class="btn @if ($semester->can_request_hours) btn-primary @else btn-secondary @endif rounded">
                         اضافة مقررات
                     </a>
-                    {{-- @endif --}}
                 </div>
             </div>
             <div class="card-body table-responsive p-0">

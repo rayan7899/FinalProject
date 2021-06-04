@@ -74,8 +74,6 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/api/community/student/payments/{type}', [CommunityController::class, 'paymentsReviewJson'])->name('paymentsReviewJson');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
-    Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
-    Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
     Route::get('community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');
     Route::get('api/community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatJson'])->name('getStudentForRayatCommunityApi');
     Route::post('community/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStoreCommunity');
@@ -139,6 +137,12 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     //backup
     Route::get('/community/backup/download',[FileController::class, 'downloadBackup'])->name('downloadBackup');
 
+    //manage semesters
+    Route::get('/community/semester', [CommunityController::class, 'semesterDashboard'])->name('communitySemesterDashboard');
+    Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
+    Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
+    Route::post('/community/toggle-allow-add-hours', [CommunityController::class, 'toggleAllowAddHours'])->name('toggleAllowAddHours');
+
 });
 
 
@@ -182,44 +186,44 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
 });
 
 // روأسا الأقسام
-// Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
-//departmentBoss
-Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
-Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
-Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
+Route::middleware(['auth'])->group(function () {
+    //departmentBoss
+    Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
+    Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
+    Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
 
-Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
-Route::get('/api/student/{id}', [StudentController::class, 'getStudent'])->name('apiGetStudent');
-Route::get('/api/major/{majorId}/courses', [CourseController::class, 'getCoursesByMajorId']);
-Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCoursesToStudent'])->name('addCoursesToStudent');
-Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
-// FIXME: use path-parameter instead of header key-value pairs (for consistency)
-Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');
-
-
-//Manage Courses
-Route::get('/department-boss/courses', [DepartmentBossController::class, 'coursesIndex'])->name('deptCoursesIndex');
-Route::get('/department-boss/courses/create', [DepartmentBossController::class, 'createCourseForm'])->name('deptCreateCourseForm');
-Route::post('/department-boss/courses/store', [DepartmentBossController::class, 'createCourse'])->name('deptCreateCourse');
-Route::get('/department-boss/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
-Route::post('/department-boss/courses/update', [DepartmentBossController::class, 'editCourse'])->name('deptEditCourse');
-Route::get('/department-boss/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
-
-// Users manage create,edit,delete
-Route::get('/department-boss/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
-Route::get('/department-boss/students/create', [DepartmentBossController::class, 'createStudentForm'])->name('deptCreateStudentForm');
-Route::post('/department-boss/students/store', [DepartmentBossController::class, 'createStudentStore'])->name('deptCreateStudentStore');
-// Route::get('/department-boss/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
-// Route::post('/department-boss/students/update/{user}', [CommunityController::class, 'editStudentUpdate'])->name('editStudentUpdate');
-// Route::get('/api/department-boss/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
-// Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+    Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
+    Route::get('/api/student/{id}', [StudentController::class, 'getStudent'])->name('apiGetStudent');
+    Route::get('/api/major/{majorId}/courses', [CourseController::class, 'getCoursesByMajorId']);
+    Route::post('/api/student/add-courses', [StudentCoursesController::class, 'addCoursesToStudent'])->name('addCoursesToStudent');
+    Route::get('/api/program/{id}/majors/', [MajorController::class, 'getmajorsByProgramId']);
+    // FIXME: use path-parameter instead of header key-value pairs (for consistency)
+    Route::post('/api/student/delete-courses', [StudentCoursesController::class, 'deleteCourseFromStudent'])->name('apiDeleteCourseFromStudent');
 
 
-/// rayat
-Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
-Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
+    //Manage Courses
+    Route::get('/department-boss/courses', [DepartmentBossController::class, 'coursesIndex'])->name('deptCoursesIndex');
+    Route::get('/department-boss/courses/create', [DepartmentBossController::class, 'createCourseForm'])->name('deptCreateCourseForm');
+    Route::post('/department-boss/courses/store', [DepartmentBossController::class, 'createCourse'])->name('deptCreateCourse');
+    Route::get('/department-boss/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
+    Route::post('/department-boss/courses/update', [DepartmentBossController::class, 'editCourse'])->name('deptEditCourse');
+    Route::get('/department-boss/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
 
-// });
+    // Users manage create,edit,delete
+    Route::get('/department-boss/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
+    Route::get('/department-boss/students/create', [DepartmentBossController::class, 'createStudentForm'])->name('deptCreateStudentForm');
+    Route::post('/department-boss/students/store', [DepartmentBossController::class, 'createStudentStore'])->name('deptCreateStudentStore');
+    // Route::get('/department-boss/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
+    // Route::post('/department-boss/students/update/{user}', [CommunityController::class, 'editStudentUpdate'])->name('editStudentUpdate');
+    // Route::get('/api/department-boss/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
+    // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
+
+
+    /// rayat
+    Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
+    Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
+
+});
 
 // المتدربين
 // Route::middleware(['auth', 'role:متدرب', 'agreement'])->group(function () {

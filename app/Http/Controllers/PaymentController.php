@@ -29,14 +29,21 @@ class PaymentController extends Controller
     public function form()
     {
         $user = Auth::user();
+        $semester = Semester::latest()->first();
         $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
-        $waitingOrdersCount = $user->student->orders()->where("transaction_id", null)->count();
+        $isHasActiveOrder = $user->student->orders()
+                                            ->where('transaction_id', null)
+                                            ->where(function($res){
+                                                $res->where('private_doc_verified', 1)
+                                                    ->orWhere('private_doc_verified', null);
+                                            })
+                                            ->first() !== null;
         $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
         if ($waitingPaymentssCount > 0) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
         } elseif ($isHasActiveRefund) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
-        } elseif($waitingOrdersCount == 0){
+        } elseif($semester->can_request_hours && !$isHasActiveOrder){
             return redirect(route("home"))->with("error", "لا يمكن شحن المحفظة في الوقت الحالي, لدفع الرسوم استخدم ايقونة اضافة المقررات");
         }
         return view("student.wallet.payment");

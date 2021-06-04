@@ -88,8 +88,8 @@ class CommunityController extends Controller
                 "url" => route("coursesIndex")
             ],
             (object) [
-                "name" => "فصل دراسي جديد",
-                "url" => route("newSemester")
+                "name" => "ادارة الفصل الدراسي",
+                "url" => route("communitySemesterDashboard")
             ],
             (object) [
                 "name" => "جميع العمليات المالية",
@@ -616,6 +616,17 @@ class CommunityController extends Controller
         }
     }
 
+    public function semesterDashBoard()
+    {
+        try {
+            $semester = Semester::latest()->first();
+            return view("manager.community.semesters.manage")->with(compact('semester'));
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', 'حدث خطأ غير معروف');
+        }
+    }
+
 
     public function newSemesterForm()
     {
@@ -671,6 +682,25 @@ class CommunityController extends Controller
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
             return back()->with('error', 'حدث خطأ غير معروف');
+        }
+    }
+
+    public function toggleAllowAddHours(Request $request)
+    {
+        try {
+            $semester = Semester::latest()->first();
+            if($semester->can_request_hours){
+                $semester->can_request_hours = false;
+                $msg = ' ايقاف اضافة المقررات';
+            }else{
+                $semester->can_request_hours = true;
+                $msg = ' اتاحة اضافة المقررات';
+            }
+            $semester->save();
+            return back()->with(["success" => "تم".$msg]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with(['error' => "تعذر".$msg]);
         }
     }
 
