@@ -705,25 +705,38 @@ window.editAmount = function() {
 
 
 window.deletePayment = function(payment_id) {
-    axios.post('student/payment/delete', {payment_id: payment_id})
-    .then((response) => {
-            document.getElementById(payment_id).remove();
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + response.data.message + "</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1000,
-            });
-        })
-        .catch((error) => {
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + error.response.data.message + "</h4>",
-                icon: "error",
-                showConfirmButton: true,
-            });
-        });
+    Swal.fire({
+        title: ' هل انت متأكد ؟',
+        text: "سيم حذف المقر ، لا يمكن التراجع عن هذا الاجراء",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'نعم',
+        cancelButtonText: 'الغاء',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.post('/student/payment/delete', {payment_id: payment_id})
+            .then((response) => {
+                    document.getElementById(payment_id).remove();
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + response.data.message + "</h4>",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1000,
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + error.response.data.message + "</h4>",
+                        icon: "error",
+                        showConfirmButton: true,
+                    });
+                });
+        }
+    });
 }
 
 
@@ -859,11 +872,13 @@ window.showPdf = function (url, type) {
     document.querySelector("#modalImage").style.transform = `rotate(${window.rotation}deg)`;
     if (type == "pdf") {
         $("#modalImage").hide();
+        $("#modalImage").removeAttr("src");
         $("#pdfIfreme").show();
         $("#pdfIfreme").attr("src", "");
         $("#pdfIfreme").attr("src", url);
     } else {
         $("#pdfIfreme").hide();
+        $("#pdfIfreme").attr("src", "");
         $("#modalImage").show();
         $("#modalImage").attr("src", "");
         $("#modalImage").attr("src", url);
@@ -875,10 +890,10 @@ window.showAllReceipts = function (national_id) {
     document.getElementById('oldReceipts').innerHTML = '';
     axios.get(`/api/documents/show/${national_id}`)
         .then((response) => {
-            if(response.data.length == 0){
+            if (response.data.length == 0) {
                 $("#oldReceipts").prepend(`<p> لا يوجد ايصالات سابقة </p>`);
-            }else{
-                response.data.forEach(imgName=> {
+            } else {
+                response.data.forEach(imgName => {
                     $("#oldReceipts").prepend(`<p><img src="/api/documents/show/${national_id}/${imgName}" alt="image" class="img-fluid"/></p>`);
                 });
             }
@@ -909,4 +924,21 @@ window.rotateImg = function () {
         rotation = 0;
     }
     document.querySelector("#modalImage").style.transform = `rotate(${window.rotation}deg)`;
+}
+
+window.printImg = function () {
+
+    if (document.getElementById("modalImage").hasAttribute('src')) {
+        let imgSrc = document.getElementById("modalImage").src;
+        $("#imgIframe").show();
+        $("#imgIframe").attr('src', imgSrc);
+        $('#imgIframe').on('load', function () {
+            $("#imgIframe").contents().find("img").attr("style", "max-width:100%;max-height:100%");
+            document.getElementById("imgIframe").contentWindow.print()
+            $("#imgIframe").hide();
+        });
+
+    } else {
+        document.getElementById("pdfIfreme").contentWindow.print();
+    }
 }

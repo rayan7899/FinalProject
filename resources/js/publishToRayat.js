@@ -521,25 +521,38 @@ jQuery(function () {
 
 
 window.deleteOrder = function(order_id) {
-    axios.post('student/order/delete', {order_id: order_id})
-    .then((response) => {
-            document.getElementById(order_id).remove();
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + response.data.message + "</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1000,
-            });
-        })
-        .catch((error) => {
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + error.response.data.message + "</h4>",
-                icon: "error",
-                showConfirmButton: true,
-            });
-        });
+    Swal.fire({
+        title: ' هل انت متأكد ؟',
+        text: "سيم حذف المقر ، لا يمكن التراجع عن هذا الاجراء",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'نعم',
+        cancelButtonText: 'الغاء',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.post('/student/order/delete', {order_id: order_id})
+            .then((response) => {
+                    document.getElementById(order_id).remove();
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + response.data.message + "</h4>",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1000,
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + error.response.data.message + "</h4>",
+                        icon: "error",
+                        showConfirmButton: true,
+                    });
+                });
+        }
+    });
 }
 
 

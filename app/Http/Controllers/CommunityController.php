@@ -30,9 +30,6 @@ class CommunityController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        if(Role::where("name", "=", "الإدارة العامة")->doesntExist()){
-            Role::create(['name' => 'الإدارة العامة']);
-        }
     }
 
     public function dashboard()
@@ -91,8 +88,8 @@ class CommunityController extends Controller
                 "url" => route("coursesIndex")
             ],
             (object) [
-                "name" => "فصل دراسي جديد",
-                "url" => route("newSemester")
+                "name" => "ادارة الفصل الدراسي",
+                "url" => route("communitySemesterDashboard")
             ],
             (object) [
                 "name" => "جميع العمليات المالية",
@@ -149,7 +146,7 @@ class CommunityController extends Controller
     {
         try {
             if (Auth::user()->hasRole("خدمة المجتمع")) {
-             return view('manager.community.students.getStudentForm');
+                return view('manager.community.students.getStudentForm');
             } else {
                 return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
@@ -162,10 +159,10 @@ class CommunityController extends Controller
     {
         try {
             if (Auth::user()->hasRole("خدمة المجتمع")) {
-                if($user->student == null){
+                if ($user->student == null) {
                     return view('error')->with("error", "حدث خطأ غير معروف");
                 }
-              return view('manager.community.students.report')->with(compact('user'));
+                return view('manager.community.students.report')->with(compact('user'));
             } else {
                 return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
@@ -179,12 +176,12 @@ class CommunityController extends Controller
     {
         try {
             if (Auth::user()->hasRole("خدمة المجتمع")) {
-              $order = Order::where("id",$orderId)->first();
-              if($order == null){
-                return back()->with("error", "لا يوجد طلب بهذا الرقم");
-              }
-              $user = $order->student->user;
-              return view('manager.community.students.showOrder')->with(compact('user','order'));
+                $order = Order::where("id", $orderId)->first();
+                if ($order == null) {
+                    return back()->with("error", "لا يوجد طلب بهذا الرقم");
+                }
+                $user = $order->student->user;
+                return view('manager.community.students.showOrder')->with(compact('user', 'order'));
             } else {
                 return view('error')->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
             }
@@ -269,14 +266,14 @@ class CommunityController extends Controller
 
     public function resetStusentPassword(User $user)
     {
-       try{
-        $user->password =  Hash::make("bct12345");
-        $user->save();
-        return back()->with('success','تم اعادة تعيين كلمة المرور بنجاح');
-       }catch(Exception $e){
-        Log::error($e->getMessage().' '.$e);
-        return back()->with('error','حدث خطأ غير معروف');
-       }
+        try {
+            $user->password =  Hash::make("bct12345");
+            $user->save();
+            return back()->with('success', 'تم اعادة تعيين كلمة المرور بنجاح');
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', 'حدث خطأ غير معروف');
+        }
     }
 
     public function editStudentUpdate(Request $request, User $user)
@@ -492,7 +489,7 @@ class CommunityController extends Controller
         // $fetch_errors = [];
         try {
             $cond = "=";
-            if($type == 'report'){
+            if ($type == 'report') {
                 $cond = "!=";
             }
             $payments = Payment::with(["student.user", "student.program", "student.department", "student.major","transactions"])->where("accepted", $cond, null)->get();
@@ -523,7 +520,7 @@ class CommunityController extends Controller
             $payment = Payment::where("id", $reviewedPayment["payment_id"])->first() ?? null;
             if ($payment == null) {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-            } else if($payment->accepted !== null){
+            } else if ($payment->accepted !== null) {
                 return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
             }
             DB::beginTransaction();
@@ -676,6 +673,17 @@ class CommunityController extends Controller
         }
     }
 
+    public function semesterDashBoard()
+    {
+        try {
+            $semester = Semester::latest()->first();
+            return view("manager.community.semesters.manage")->with(compact('semester'));
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', 'حدث خطأ غير معروف');
+        }
+    }
+
 
     public function newSemesterForm()
     {
@@ -734,6 +742,25 @@ class CommunityController extends Controller
         }
     }
 
+    public function toggleAllowAddHours(Request $request)
+    {
+        try {
+            $semester = Semester::latest()->first();
+            if($semester->can_request_hours){
+                $semester->can_request_hours = false;
+                $msg = ' ايقاف اضافة المقررات';
+            }else{
+                $semester->can_request_hours = true;
+                $msg = ' اتاحة اضافة المقررات';
+            }
+            $semester->save();
+            return back()->with(["success" => "تم".$msg]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with(['error' => "تعذر".$msg]);
+        }
+    }
+
 
     public function publishToRayatForm($type)
     {
@@ -764,7 +791,7 @@ class CommunityController extends Controller
                     $res->where("accepted", null);
                 })->whereHas("student", function ($res) use ($cond, $type) {
                     $res->where("level", $cond, 1);
-                    if($type == "affairs"){
+                    if ($type == "affairs") {
                         $res->where("final_accepted", true);
                     }
                 })->get();
@@ -786,11 +813,11 @@ class CommunityController extends Controller
                 // FIXME: rewrite me
                 if ($orders[$i]->student->wallet > 0 && $orders[$i]->student->traineeState != 'privateState') {
                     $canAddHours = floor($orders[$i]->student->wallet / ($orders[$i]->student->program->hourPrice * $discount));
-                } elseif($orders[$i]->student->traineeState != 'privateState') {
+                } elseif ($orders[$i]->student->traineeState != 'privateState') {
                     unset($orders[$i]);
                     continue;
                 }
-                
+
                 if ($orders[$i]->student->traineeState != 'privateState') {
                     if ($canAddHours == 0) {
                         unset($orders[$i]);
@@ -846,7 +873,7 @@ class CommunityController extends Controller
             $order = Order::where("id", $requestData['order_id'])->first();
             if ($order === null) {
                 return response(['message' => "خطأ في بيانات الطلب"], 422);
-            }else if($order->transaction_id !== null){
+            } else if ($order->transaction_id !== null) {
                 return response(['message' => "تم قبول هذا الطلب من قبل"], 422);
             }
 
@@ -934,17 +961,17 @@ class CommunityController extends Controller
                     $cond = "=";
                 } else if ($type == "community") {
                     $cond = ">";
-                } else if($type == "departmentBoss"){
+                } else if ($type == "departmentBoss") {
                     $cond = ">=";
                 }
             }
             $users = User::with(['student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond, $type) {
                 $result->where('level', $cond, '1')
                     ->where('credit_hours', '>', 0);
-                    
+
                 $user = Auth::user();
-                if($type == 'departmentBoss' && $user->manager->isDepartmentManager()){
-                    $result->whereHas('department', function ($res) use ($user){
+                if ($type == 'departmentBoss' && $user->manager->isDepartmentManager()) {
+                    $result->whereHas('department', function ($res) use ($user) {
                         $res->whereIn('role_id', $user->manager->getPermissionRoleIds());
                     });
                 }
@@ -1116,58 +1143,90 @@ class CommunityController extends Controller
     public function reportAllForm()
     {
 
-
         try {
             $programs = [];
             if (Auth::user()->hasRole('خدمة المجتمع')) {
                 $programs = json_encode(Program::with("departments.majors.courses")->get());
+            } else {
+                return back()->with("error", " لا تملك الصلاحيات لدخول لهذه الصفحة ");
             }
 
-            $baccCount = User::with("student")->whereHas("student", function ($res) {
-                $res->where("program_id", 1);
-            })->get()->count();
+            $baccCount = Student::where('program_id', 1)->where('credit_hours', '>', 0)->count();
 
-            $baccSumWallets = User::with("student")->whereHas("student", function ($res) {
-                $res->where("program_id", 1);
-            })->get()->sum("student.wallet");
+            $baccSumWallets = Student::where('program_id', 1)->sum('wallet');
+
+            $baccSumHours = Student::where('program_id', 1)->sum('credit_hours');
 
 
             $baccSumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) {
                 $res->where("program_id", 1);
-            })->where("type", "deduction")->get()->sum("amount");
+            })->where("type", "deduction")->sum("amount");
+
+            // $baccSumDiscount = Order::with('student')->whereHas('student', function ($res) {
+            //     $res->where('program_id', 1);
+            // })->sum('discount');
+
+            $baccSumDiscount = $baccSumHours * 550 - $baccSumDeductions;
+        
+            $baccCommunityAmount = $baccSumDeductions * 0.15;
+            $baccGeneralManageAmount = $baccSumDeductions * 0.05;
+            $baccUnitAmount = $baccSumDeductions * 0.80;
 
 
-            $diplomCount = User::with("student")->whereHas("student", function ($res) {
-                $res->where("program_id", 2);
-            })->get()->count();
+            $baccSum = $baccSumWallets + $baccSumDeductions;
 
-            $diplomSumWallets = User::with("student")->whereHas("student", function ($res) {
-                $res->where("program_id", 2);
-            })->get()->sum("student.wallet");
+            // ###################################### Deplom #######################################
 
+            $diplomCount = Student::where('program_id', 2)->where('credit_hours', '>', 0)->count();
+
+            $diplomSumWallets = Student::where('program_id', 2)->sum('wallet');
+
+            $diplomSumHours = Student::where('program_id', 2)->sum('credit_hours');
 
             $diplomSumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) {
                 $res->where("program_id", 2);
-            })->where("type", "deduction")->get()->sum("amount");
+            })->where("type", "deduction")->sum("amount");
 
-            $baccSum = $baccSumWallets + $baccSumDeductions;
+            // $diplomSumDiscount = Order::with('student')->whereHas('student', function ($res) {
+            //     $res->where('program_id', 2);
+            // })->sum('discount');
+
+            $diplomSumDiscount = $diplomSumHours * 400 - $diplomSumDeductions;
+            
+            $diplomCommunityAmount = $diplomSumDeductions * 0.15;
+            $diplomGeneralManageAmount = $diplomSumDeductions * 0.05;
+            $diplomUnitAmount = $diplomSumDeductions * 0.80;
             $diplomSum = $diplomSumWallets + $diplomSumDeductions;
+
             return view("manager.community.reports.all")->with(compact(
                 [
                     'baccCount',
                     'baccSumWallets',
+                    'baccSumHours',
                     'baccSumDeductions',
+                    'baccSumDiscount',
+                    'baccCommunityAmount',
+                    'baccUnitAmount',
+                    'baccGeneralManageAmount',
+                    'baccSum',
+
                     'diplomCount',
                     'diplomSumWallets',
+                    'diplomSumHours',
                     'diplomSumDeductions',
-                    'baccSum',
+                    'diplomSumDiscount',
+                    'diplomCommunityAmount',
+                    'diplomGeneralManageAmount',
+                    'diplomUnitAmount',
                     'diplomSum',
+
                     'programs'
                 ]
             ));
         } catch (Exception $e) {
+            dd($e);
             Log::error($e->getMessage() . ' ' . $e);
-            return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
+            return back()->with("error", "حدث خطأ غير معروف ");
         }
     }
 
@@ -1203,38 +1262,57 @@ class CommunityController extends Controller
 
             if (Auth::user()->hasRole('خدمة المجتمع')) {
                 $programs = json_encode(Program::with("departments.majors.courses")->get());
+            } else {
+                return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
             }
 
-            $count = User::with("student")->whereHas("student", function ($res) use ($requestData) {
-                $res->where("program_id",  $requestData['prog_id'])
+
+
+            $count = Student::where("program_id",  $requestData['prog_id'])
+                ->where('credit_hours', '>', 0)
+                ->where("department_id", $requestData['dept_id'])
+                ->where("major_id", $requestData['major_id'])
+                ->count();
+
+            $sumHours = Student::where("program_id",  $requestData['prog_id'])
+                ->where("department_id", $requestData['dept_id'])
+                ->where("major_id", $requestData['major_id'])
+                ->sum('credit_hours');
+
+            $sumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) use ($requestData) {
+                $res->where("program_id", $requestData['prog_id'])
                     ->where("department_id", $requestData['dept_id'])
                     ->where("major_id", $requestData['major_id']);
-            })->get()->count();
+            })->where("type", "deduction")->sum("amount");
 
-            $sumWallets = User::with("student")->whereHas("student", function ($res) use ($requestData) {
-                $res->where("program_id",  $requestData['prog_id'])
-                    ->where("department_id", $requestData['dept_id'])
-                    ->where("major_id", $requestData['major_id']);
-            })->get()->sum("student.wallet");
+            // $sumDiscount = Order::with('student')->whereHas('student', function ($res) use ($requestData) {
+            //     $res->where("program_id", $requestData['prog_id'])
+            //         ->where("department_id", $requestData['dept_id'])
+            //         ->where("major_id", $requestData['major_id']);
+            // })->sum('discount');
+
+            $sumDiscount = $sumHours * $programObj->hourPrice - $sumDeductions;
+            $communityAmount = $sumDeductions * 0.15;
+            $unitAmount = $sumDeductions * 0.80;
+            $generalManageAmount = $sumDeductions * 0.05;
 
 
-            $sumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res)  use ($requestData) {
-                $res->where("program_id",  $requestData['prog_id'])
-                    ->where("department_id", $requestData['dept_id'])
-                    ->where("major_id", $requestData['major_id']);
-            })->where("type", "deduction")->get()->sum("amount");
-
-            $sum = $sumWallets + $sumDeductions;
             return view("manager.community.reports.filtered")->with(compact(
                 [
                     'count',
-                    'sumWallets',
+                    'sumHours',
                     'sumDeductions',
-                    'sum',
-                    'programs',
+                    'sumDiscount',
+                    'communityAmount',
+                    'unitAmount',
+                    'generalManageAmount',
+
                     'programObj',
                     'department',
-                    'major'
+                    'major',
+
+                    'programs',
+
                 ]
             ));
         } catch (Exception $e) {
@@ -1444,7 +1522,7 @@ class CommunityController extends Controller
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
             if ($refund === null) {
                 return response(['message' => "خطأ في بيانات الطلب"], 422);
-            }else if($refund->accepted !== null){
+            } else if ($refund->accepted !== null) {
                 return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
             }
 

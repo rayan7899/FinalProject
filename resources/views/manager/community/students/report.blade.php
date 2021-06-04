@@ -1,27 +1,5 @@
 @extends('layouts.app')
 @section('content')
-    @php
-    $stringLevel = '';
-    switch ($user->student->level) {
-        case 1:
-            $stringLevel = 'الاول';
-            break;
-        case 2:
-            $stringLevel = 'الثاني';
-            break;
-        case 3:
-            $stringLevel = 'الثالث';
-            break;
-        case 4:
-            $stringLevel = 'الرابع';
-            break;
-        case 5:
-            $stringLevel = 'الخامس';
-            break;
-        default:
-            $stringLevel = 'Error';
-    }
-    @endphp
     <div class="container">
         @if (session()->has('error') || isset($error))
             <div class="alert alert-danger">
@@ -41,11 +19,19 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
+                        <button onclick="window.rotateImg()" type="button" class="btn btn-primary">
+                            تدوير الصورة
+                            <i class="fa fa-rotate-right"></i>
+                        </button>
+                        <button onclick="printImg()" type="button" class="btn btn-primary mx-2">
+                            <i class="fa fa-print"></i>
+                        </button>
                     </div>
                     <div class="modal-body">
-                        <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
+                        <iframe id="pdfIfreme" src="#" width="100%" height="600px"></iframe>
+                        <iframe style="display: none; position: fixed;" id="imgIframe"  width="100%" height="100%"></iframe>
                         <div class="text-center">
-                            <img id="modalImage" src="" alt="image" class="img-fluid" />
+                            <img id="modalImage" src="#" alt="image" class="img-fluid" />
                         </div>
                     </div>
                 </div>
@@ -64,171 +50,7 @@
                 </div>
             </div>
         </div>
-        <div class="card my-4">
-            <div class="card-header">
-                <h5 class="card-title">
-                    بيانات المتدرب
-                </h5>
-            </div>
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white h5"
-                            value="{{ $user->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">الاسم</label></span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->program->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">البرنامج</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->national_id ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">رقم الهوية</label></span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->department->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">القسم</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->phone ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">رقم الجوال</label></span>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->major->name ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">التخصص</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->email ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">البريد الالكتروني</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- <div class="col-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->wallet ?? 'لا يوجد' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">رصيد المحفظة</label></span>
-                        </div>
-                    </div>
-                </div> --}}
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $stringLevel ?? 'Error' }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">المستوى</label></span>
-                        </div>
-                    </div>
-                </div>
-
-                @php
-                    $total_hours = 0;
-                    foreach ($user->student->orders as $order) {
-                        if ($order->transaction_id !== null && $order->private_doc_verified == true) {
-                            $total_hours += $order->requested_hours;
-                        }
-                    }
-                @endphp
-
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $total_hours ?? 0 }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">الساعات الكلية</label></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->credit_hours ?? 0 }}">
-                        <div class="input-group-append">
-                            <span class="input-group-text text-center" style="width: 120px;"><label
-                                    class="text-center m-0 p-0 w-100">الساعات المعتمدة</label></span>
-                        </div>
-                    </div>
-                </div>
-                {{-- accepted state --}}
-                @if ($user->student->level == 1)
-                    @php
-                        $acceptMessage = 'مقبول مبدئي'; // default message
-                        if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
-                            if ($user->student->credit_hours == 0) {
-                                $acceptMessage = 'مقبول نهائي - بانتظار اتاحة الساعات في رايات';
-                            } else {
-                                $acceptMessage = 'مقبول نهائي - تم اتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات';
-                            }
-                        }
-                    @endphp
-                    <div class="col-12">
-                        <div dir="ltr" class="input-group mb-1">
-                            <input readonly type="text" class="form-control text-right bg-white"
-                                value="{{ $acceptMessage ?? 'Error' }}">
-                            <div class="input-group-append">
-                                <span class="input-group-text text-center" style="width: 120px;"><label
-                                        class="text-center m-0 p-0 w-100">حالة القبول</label></span>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        </div>
+        <x-student-info :user="$user"/>
 
         <ul class="nav nav-tabs border rounded bg-white p-0">
             <li class="nav-item">
@@ -291,7 +113,7 @@
                                     <td>{{ $transaction->refund->id ?? 'Error' }}</td>
                                 @elseif ($transaction->type == 'manager_recharge')
                                     <td class="text-success"> اضافة (من الادارة) </td>
-                                    <td>{{ $transaction->payment->id ?? 'لا يوجد'}}</td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
                                 @elseif ($transaction->type == 'manager_deduction')
                                     <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
@@ -350,7 +172,7 @@
         </div>
 
         {{-- payments --}}
-        <div id="payments" style="display: none;"  class="card tables">
+        <div id="payments" style="display: none;" class="card tables">
             <div class="card-body table-responsive p-0">
                 <table class="table text-nowrap table-striped table-hover table-bordered m-0 p-0">
                     <thead>
@@ -361,6 +183,7 @@
                             <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
                             <th class="text-center">ايصال السداد</th>
+                            <th class="text-center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -372,9 +195,13 @@
                                 if ($payment->accepted == null) {
                                     $countWaitingPayment++;
                                 }
-                                $acceptedAmount = $user->student->transactions()->where('payment_id', $payment->id)->first()->amount ?? null;
+                                $acceptedAmount =
+                                    $user->student
+                                        ->transactions()
+                                        ->where('payment_id', $payment->id)
+                                        ->first()->amount ?? null;
                             @endphp
-                            <tr class="text-center">
+                            <tr class="text-center" id="{{ $payment->id }}">
                                 <td>{{ $payment->id }}</td>
                                 @if ($payment->transaction_id != null && $payment->amount != $acceptedAmount)
                                     <td><del class="text-muted">{{ $payment->amount }}</del>
@@ -414,6 +241,12 @@
                                         </a>
                                     @endif
                                 </td>
+                                @if ($payment->accepted === null)
+                                    <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true"
+                                            onclick="deletePayment({{ $payment->id }})"></i></td>
+                                @else
+                                    <td></td>
+                                @endif
                             </tr>
                         @empty
 
@@ -431,11 +264,12 @@
                     <thead>
                         <tr>
                             <th class="text-center">رقم الطلب</th>
-                            <th class="text-center">عدد الساعات</th>
                             <th class="text-center">المبلغ</th>
-                            <th class="text-center">حالة تسجيل الساعات في رايات</th>
+                            <th class="text-center">إتاحة الساعات في رايات</th>
+                            <th class="text-center">الساعات المطلوبة</th>
                             <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
+                            <th class="text-center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -447,12 +281,12 @@
                                     $hasEnoughMoney = false;
                                 }
                             @endphp
-                            <tr class="text-center">
+                            <tr class="text-center" id="{{ $order->id }}">
                                 <td>{{ $order->id ?? 'Error' }}</td>
-                                <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                 <td>{{ $order->amount ?? 'Error' }}</td>
                                 @if ($order->private_doc_verified === false || $order->private_doc_verified === '0' || $order->private_doc_verified === 0)
                                     <td class="text-danger">مرفوض</td>
+                                    <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                     <td style="min-width: 100px">{{ $order->created_at->toDateString() ?? 'Error' }}
                                     </td>
                                     <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
@@ -460,19 +294,30 @@
                                     @if ($order->transaction_id == null)
                                         @if ($hasEnoughMoney == true || $user->student->traineeState == 'privateState')
                                             <td>قيد المراجعة</td>
+                                            <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                             <td style="min-width: 100px">
                                                 {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
+                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true"
+                                                    onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @else
                                             <td>معلق</td>
+                                            <td>{{ $order->requested_hours ?? 'Error' }}</td>
+                                            <td style="min-width: 100px">
+                                                {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                             <td class="text-danger text-right">يرجى شحن المحفظة لا يوجد رصيد كافي
                                             </td>
+
+                                            <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true"
+                                                    onclick="deleteOrder({{ $order->id }})"></i></td>
                                         @endif
                                     @else
-                                        <td class="text-success">مقبول</td>
+                                        <td class="text-success">متاح</td>
+                                        <td>{{ $order->requested_hours ?? 'Error' }}</td>
                                         <td style="min-width: 100px">
                                             {{ $order->created_at->toDateString() ?? 'Error' }}</td>
                                         <td class="text-right">{{ $order->note ?? 'لا يوجد' }}</td>
+                                        <td></td>
                                     @endif
                                 @endif
                             </tr>
@@ -555,18 +400,19 @@
         </div>
 
         <script>
-            function tabClicked(id,event){
+            function tabClicked(id, event) {
                 event.preventDefault();
                 let cards = document.getElementsByClassName('tables');
                 let navLinks = document.getElementsByClassName('nav-link');
-                for(let link of navLinks){
+                for (let link of navLinks) {
                     link.classList.remove('active');
-               }
-               for(let card of cards){
-                   card.style.display = 'none';
-               }
-               document.getElementById(id).style.display = 'block';
-               event.target.classList.add('active');
+                }
+                for (let card of cards) {
+                    card.style.display = 'none';
+                }
+                document.getElementById(id).style.display = 'block';
+                event.target.classList.add('active');
             }
+
         </script>
     @endsection

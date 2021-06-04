@@ -287,7 +287,7 @@
                 <div class="card-img-overlay">
                     <p class="text-center">
                         للتواصل:
-                        Tvtc.brct.ctc@gmail.com
+                       tvtc.brct.ctc@gmail.com
                         <br>
                         <br>
                         تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة

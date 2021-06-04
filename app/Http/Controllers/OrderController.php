@@ -30,6 +30,8 @@ class OrderController extends Controller
          $semester = Semester::latest()->first();
          if ($semester == null) {
             return view('error')->with('error', 'حدث خطأ غير معروف');
+         }elseif(!$semester->can_request_hours){
+            return back()->with('error', 'اضافة المقررات غير متاح في الوقت الحالي');
          }
 
          if ($user->student->credit_hours >= 12) {
@@ -56,12 +58,11 @@ class OrderController extends Controller
          // }
 
 
-      //   for($i = 0; $i < count($user->student->orders); $i++){
-      //      if($user->student->orders[$i]->transaction_id === null && $user->student->orders[$i]->private_doc_verified !== 0){
-      //       //   dump($user->student->orders[$i]);
-      //       return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
-      //      }
-      //   }
+         for($i = 0; $i < count($user->student->orders); $i++){
+            if($user->student->orders[$i]->transaction_id === null && $user->student->orders[$i]->private_doc_verified !== 0){
+               return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
+            }
+         }
 
          $courses = Course::where('suggested_level', $user->student->level)
             ->where('major_id', $user->student->major_id)
@@ -262,10 +263,17 @@ class OrderController extends Controller
       ]);
       try {
          $order = Order::where('id', $requestData['order_id'])->first();
+         $user = Auth::user();
+         if($user->id !== $order->student->user->id && !$user->hasRole('خدمة المجتمع')){
+            return response()->json(["message" => "ليس لديك صلاحيات لتنفيذ هذا الامر"], 422);
+         }
          if($order->transaction_id != null || $order->transaction_id !== null){
              return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
            }else{
              $order->delete();
+             if($order->private_doc_file_id != null){
+               Storage::disk('studentDocuments')->deleteDirectory('/'.$order->student->user->national_id.'/privateStateDocs/'.$order->private_doc_file_id);
+             }
          }
          return response()->json(["message" => "تم حذف الطلب بنجاح"], 200);
       } catch (Exception $e) {
