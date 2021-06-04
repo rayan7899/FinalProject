@@ -183,6 +183,7 @@
                             <th class="text-center">التاريخ</th>
                             <th class="text-center">الملاحظات</th>
                             <th class="text-center">ايصال السداد</th>
+                            <th class="text-center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -200,7 +201,7 @@
                                         ->where('payment_id', $payment->id)
                                         ->first()->amount ?? null;
                             @endphp
-                            <tr class="text-center">
+                            <tr class="text-center" id="{{ $payment->id }}">
                                 <td>{{ $payment->id }}</td>
                                 @if ($payment->transaction_id != null && $payment->amount != $acceptedAmount)
                                     <td><del class="text-muted">{{ $payment->amount }}</del>
@@ -240,6 +241,12 @@
                                         </a>
                                     @endif
                                 </td>
+                                @if ($payment->accepted === null)
+                                    <td><i class="fa btn fa-trash fa-lg text-danger p-0" aria-hidden="true"
+                                            onclick="deletePayment({{ $payment->id }})"></i></td>
+                                @else
+                                    <td></td>
+                                @endif
                             </tr>
                         @empty
 

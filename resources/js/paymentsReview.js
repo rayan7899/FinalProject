@@ -621,28 +621,39 @@ jQuery(function () {
 
 
 
-window.deletePayment = function (payment_id) {
-    axios.post('student/payment/delete', {
-            payment_id: payment_id
-        })
-        .then((response) => {
-            document.getElementById(payment_id).remove();
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + response.data.message + "</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1000,
-            });
-        })
-        .catch((error) => {
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + error.response.data.message + "</h4>",
-                icon: "error",
-                showConfirmButton: true,
-            });
-        });
+window.deletePayment = function(payment_id) {
+    Swal.fire({
+        title: ' هل انت متأكد ؟',
+        text: "سيم حذف المقر ، لا يمكن التراجع عن هذا الاجراء",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'نعم',
+        cancelButtonText: 'الغاء',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.post('/student/payment/delete', {payment_id: payment_id})
+            .then((response) => {
+                    document.getElementById(payment_id).remove();
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + response.data.message + "</h4>",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1000,
+                    });
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + error.response.data.message + "</h4>",
+                        icon: "error",
+                        showConfirmButton: true,
+                    });
+                });
+        }
+    });
 }
 
 

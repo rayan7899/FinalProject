@@ -261,6 +261,10 @@ class OrderController extends Controller
       ]);
       try {
          $order = Order::where('id', $requestData['order_id'])->first();
+         $user = Auth::user();
+         if($user->id !== $order->student->user->id && !$user->hasRole('خدمة المجتمع')){
+            return response()->json(["message" => "ليس لديك صلاحيات لتنفيذ هذا الامر"], 422);
+         }
          if($order->transaction_id != null || $order->transaction_id !== null){
              return response()->json(["message" => "لا يمكن حذف طلب تم تدقيقه"], 422);
            }else{
