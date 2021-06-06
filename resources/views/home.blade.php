@@ -122,10 +122,10 @@
                                     <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
                                 @elseif ($transaction->type == 'editPayment-deduction')
-                                    <td class="text-danger"> خصم (من الادارة) </td>
+                                    <td class="text-danger"> خصم (اعادة تدقيق ايصال) </td>
                                     <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
                                 @elseif ($transaction->type == 'editPayment-charge')
-                                    <td class="text-success"> اضافة (من الادارة) </td>
+                                    <td class="text-success"> اضافة (اعادة تدقيق ايصال) </td>
                                     <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
                                 @else
                                     <td>لا يوجد</td>
