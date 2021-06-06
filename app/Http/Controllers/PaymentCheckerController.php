@@ -44,7 +44,8 @@ class PaymentCheckerController extends Controller
             if ($type == 'report') {
                 $cond = "!=";
             }
-            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transaction"])->where("accepted", "!=", null)->where("checker_decision", null)->get();
+            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transactions"])
+            ->where("accepted", "!=", null)->where("checker_decision", null)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);

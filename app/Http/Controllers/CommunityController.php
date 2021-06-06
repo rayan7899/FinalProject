@@ -481,6 +481,12 @@ class CommunityController extends Controller
         }
     }
 
+    /*
+
+###################################### Payments Review ######################################
+
+*/
+
     public function paymentsReviewForm()
     {
         return view('manager.community.paymentsReview');
@@ -499,7 +505,7 @@ class CommunityController extends Controller
             if ($type == 'report') {
                 $cond = "!=";
             }
-            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major","transactions"])->where("accepted", $cond, null)->get();
+            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transactions"])->where("accepted", $cond, null)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
@@ -570,55 +576,71 @@ class CommunityController extends Controller
         }
     }
 
-    public function editOldPayment(Request $request){
+    public function editOldPayment(Request $request)
+    {
         $semester = Semester::latest()->first();
         $reviewedPayment = $this->validate($request, [
             "payment_id"         => "required|numeric|exists:payments,id",
             "amount"             => "required|numeric",
-            "note"               => "string|nullable"
+            "note"               => "string|nullable",
+            "isRecheck"          => "boolean|nullable"
+
         ]);
-        if(Auth::user()->id != 1){
+        if (Auth::user()->id < 2) {
             return response(json_encode(['message' => "ليس لديك صلاحيات لتنفيذ هذا الامر"]), 422);
-        }elseif($reviewedPayment["amount"] < 0){
+        } elseif ($reviewedPayment["amount"] < 0) {
             return response(json_encode(['message' => 'يجب ان يكون المبلغ المدخل اكبر من صفر']), 422);
         }
         try {
             $payment = Payment::where("id", $reviewedPayment["payment_id"])->first() ?? null;
             $acceptedAmount = 0;
             foreach ($payment->transactions as  $transaction) {
-                if($transaction->type == 'editPayment-charge' || $transaction->type == 'recharge' || $transaction->type == 'manager_recharge'){
+                if ($transaction->type == 'editPayment-charge' || $transaction->type == 'recharge' || $transaction->type == 'manager_recharge') {
                     $acceptedAmount += $transaction->amount;
-                }else{
+                } else {
                     $acceptedAmount -= $transaction->amount;
                 }
             }
-             
-            if($reviewedPayment["amount"] == $acceptedAmount){
+
+            if ($reviewedPayment["amount"] == $acceptedAmount) {
                 return response(json_encode(['message' => 'يجب ان يكون المبلغ المدخل غير مطابق للمبلغ السابق']), 422);
             }
 
             DB::beginTransaction();
-                if($acceptedAmount > $reviewedPayment["amount"]){
-                    $diff = $acceptedAmount - $reviewedPayment["amount"];
-                    $payment->student->wallet -= $diff ;
-                    $type = 'editPayment-deduction';
-                }else{
-                    $diff = $reviewedPayment["amount"] - $acceptedAmount;
-                    $payment->student->wallet += $diff;
-                    $type = 'editPayment-charge';
-                }
-                $payment->student->save();
-                $transaction = $payment->student->transactions()->create([
-                    "payment_id"    => $payment->id,
-                    "amount"        => $diff,
-                    "type"          => $type,
-                    "manager_id"    => Auth::user()->manager->id,
-                    "semester_id"   => $semester->id,
-                    "note"          => $reviewedPayment["note"] ?? null,
-                ]);
+            if ($acceptedAmount > $reviewedPayment["amount"]) {
+                $diff = $acceptedAmount - $reviewedPayment["amount"];
+                $payment->student->wallet -= $diff;
+                $type = 'editPayment-deduction';
+            } else {
+                $diff = $reviewedPayment["amount"] - $acceptedAmount;
+                $payment->student->wallet += $diff;
+                $type = 'editPayment-charge';
+            }
+            $payment->student->save();
+            $transaction = $payment->student->transactions()->create([
+                "payment_id"    => $payment->id,
+                "amount"        => $diff,
+                "type"          => $type,
+                "manager_id"    => Auth::user()->manager->id,
+                "semester_id"   => $semester->id,
+                "note"          => $reviewedPayment["note"] ?? null,
+            ]);
+            if (isset($reviewedPayment['isRecheck'])) {
                 $payment->update([
                     "transaction_id"    => $transaction->id,
+                    "checker_decision"  =>  false,
+                    "note"          => $reviewedPayment["note"] ?? null,
+                    "manager_id"        => Auth::user()->manager->id
                 ]);
+            } else {
+                $payment->update([
+                    "transaction_id"    => $transaction->id,
+                    "note"          => $reviewedPayment["note"] ?? null,
+                    "manager_id"        => Auth::user()->manager->id,
+
+                ]);
+            }
+
             DB::commit();
             return response(json_encode(['message' => 'تم تعديل المبلغ بنجاح']), 200);
         } catch (Exception $e) {
@@ -649,11 +671,11 @@ class CommunityController extends Controller
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
             $payment = Payment::where("id", $reviewedPayment["payment_id"])
                 ->where("student_id", $user->student->id)->first() ?? null;
-                if ($payment == null) {
-                    return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-                } else if ($payment->accepted !== null) {
-                    return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
-                }
+            if ($payment == null) {
+                return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+            } else if ($payment->accepted !== null) {
+                return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
+            }
 
             if ($decision == true) {
                 $transaction = $user->student->transactions()->create([
@@ -687,26 +709,19 @@ class CommunityController extends Controller
         }
     }
 
-    public function semesterDashBoard()
-    {
-        try {
-            $semester = Semester::latest()->first();
-            return view("manager.community.semesters.manage")->with(compact('semester'));
-        } catch (Exception $e) {
-            Log::error($e->getMessage() . ' ' . $e);
-            return back()->with('error', 'حدث خطأ غير معروف');
-        }
-    }
 
+    /*
 
+###################################### Payments Recheck ######################################
 
+*/
 
     public function paymentsRecheckForm()
     {
         return view('manager.community.paymentsRecheck');
     }
 
-    
+
 
     public function paymentsRecheckReport()
     {
@@ -722,8 +737,8 @@ class CommunityController extends Controller
             if ($type == 'report') {
                 $cond = "!=";
             }
-            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transaction"])
-                        ->where("accepted", '!=', null)->where("checker_decision",false)->get();
+            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transactions"])
+                ->where("accepted", '!=', null)->where("checker_decision", false)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
@@ -731,64 +746,27 @@ class CommunityController extends Controller
         }
     }
 
-
-
-
-
-    public function paymentsRecheckUpdate(Request $request)
+    public function paymentsRecheckReject(Request $request)
     {
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
             "payment_id"         => "required|numeric|exists:payments,id",
-            "amount"             => "required|numeric",
-            "decision"           => "required|in:accept,reject",
-            "note"               => "string|nullable"
-        ]);
 
+        ]);
         try {
-            $semester = Semester::latest()->first();
-            $decision = false;
-            if ($reviewedPayment["decision"] == "accept") {
-                $decision = true;
-            }
+            DB::beginTransaction();
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
             $payment = Payment::where("id", $reviewedPayment["payment_id"])
                 ->where("student_id", $user->student->id)->first() ?? null;
             if ($payment == null) {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-            } else if ($payment->accepted !== null) {
+            } else if ($payment->checker_decision == true) {
                 return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
             }
-            DB::beginTransaction();
-
-            if ($decision == true) {
-                $transaction = $user->student->transactions()->create([
-                    "payment_id"    => $payment->id,
-                    "amount"        => $reviewedPayment["amount"],
-                    "note"          => $reviewedPayment["note"],
-                    "type"          => "recharge",
-                    "manager_id"    => Auth::user()->manager->id,
-                    "semester_id"   => $semester->id,
-
-                ]);
-                $payment->update([
-                    "transaction_id" => $transaction->id,
-                    "note"          => $reviewedPayment["note"],
-                    "accepted"       => true,
-
-                ]);
-
-                $user->student->wallet += $reviewedPayment["amount"];
-                $user->student->save();
-            } else {
-                $payment->update([
-                    "note"          => $reviewedPayment["note"],
-                    "accepted"       => false,
-
-                ]);
-            }
-
-
+            $payment->update([
+                "checker_decision"   => true, // community user reject = payment-checker user accept
+                "manager_id"         => Auth::user()->manager->id
+            ]);
             DB::commit();
             return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
         } catch (Exception $e) {
@@ -798,71 +776,23 @@ class CommunityController extends Controller
         }
     }
 
-    public function paymentsRecheckVerifiyDocs(Request $request)
-    {
-        $semester = Semester::latest()->first();
-        $reviewedPayment = $this->validate($request, [
-            "national_id"        => "required|numeric",
-            "payment_id"         => "required|numeric|exists:payments,id",
-            "decision"           => "required|in:accept,reject",
-
-        ]);
-
-        try {
-            $decision = false;
-            if ($reviewedPayment["decision"] == "accept") {
-                $decision = true;
-            }
-
-            DB::beginTransaction();
-
-            $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
-            $payment = Payment::where("id", $reviewedPayment["payment_id"])
-                ->where("student_id", $user->student->id)->first() ?? null;
-                if ($payment == null) {
-                    return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-                } else if ($payment->accepted !== null) {
-                    return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
-                }
-
-            if ($decision == true) {
-                $transaction = $user->student->transactions()->create([
-                    "payment_id"    => $payment->id,
-                    "amount"    => $payment->amount,
-                    "type"    => "recharge",
-                    "manager_id"    => Auth::user()->manager->id,
-                    "semester_id"        => $semester->id,
-
-                ]);
-                $payment->update([
-                    "transaction_id" => $transaction->id,
-                    "accepted"       => $decision,
-
-                ]);
-                $user->student->wallet += $payment->amount;
-                $user->student->save();
-            } else {
-                $payment->update([
-                    "accepted"       => false,
-
-                ]);
-            }
-
-            DB::commit();
-            return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
-        } catch (Exception $e) {
-            Log::error($e->getMessage() . ' ' . $e);
-            DB::rollBack();
-            return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
-        }
-    }
-    
     public function newSemesterForm()
     {
         return view("manager.community.newSemester");
     }
 
 
+
+    public function semesterDashBoard()
+    {
+        try {
+            $semester = Semester::latest()->first();
+            return view("manager.community.semesters.manage")->with(compact('semester'));
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', 'حدث خطأ غير معروف');
+        }
+    }
 
     public function newSemester(Request $request)
     {
@@ -918,18 +848,18 @@ class CommunityController extends Controller
     {
         try {
             $semester = Semester::latest()->first();
-            if($semester->can_request_hours){
+            if ($semester->can_request_hours) {
                 $semester->can_request_hours = false;
                 $msg = ' ايقاف اضافة المقررات';
-            }else{
+            } else {
                 $semester->can_request_hours = true;
                 $msg = ' اتاحة اضافة المقررات';
             }
             $semester->save();
-            return back()->with(["success" => "تم".$msg]);
+            return back()->with(["success" => "تم" . $msg]);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
-            return back()->with(['error' => "تعذر".$msg]);
+            return back()->with(['error' => "تعذر" . $msg]);
         }
     }
 

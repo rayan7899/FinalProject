@@ -688,6 +688,8 @@ window.editAmount = function() {
                     timer: 1000,
                 });
                 row.children[10].innerHTML = `<del class="text-muted">${window.originalAmount}</del> ${window.newAmount.value}`;
+                row.children[12].innerHTML = window.note.value;
+
                 $("#editModal").modal("hide");
                 window.newAmount.value = '';
             })

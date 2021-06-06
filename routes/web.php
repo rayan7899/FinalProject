@@ -97,8 +97,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
      Route::get('/community/student/payments/recheck', [CommunityController::class, 'paymentsRecheckForm'])->name('paymentsRecheckForm');
      Route::get('/community/student/payments/recheck/report', [CommunityController::class, 'paymentsRecheckReport'])->name('paymentsReport');
      Route::get('/api/community/student/payments/recheck/{type}', [CommunityController::class, 'paymentsRecheckJson'])->name('paymentsRecheckJson');
-     Route::post('/community/student/payments/recheck/verified-update', [CommunityController::class, 'paymentsRecheckUpdate'])->name('paymentsRecheckUpdate');
-     Route::post('/community/student/payments/recheck/verified-docs', [CommunityController::class, 'paymentsRecheckVerifiyDocs'])->name('paymentsRecheckVerifiyDocs');
+     Route::post('/community/student/payments/recheck/verified-docs', [CommunityController::class, 'paymentsRecheckReject'])->name('paymentsRecheckReject');
 
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');

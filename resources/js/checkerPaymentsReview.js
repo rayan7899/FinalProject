@@ -88,9 +88,17 @@ jQuery(function () {
             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        if (data.amount != data.transaction.amount) {
-                            return `<del class="text-muted">${data.amount}</del>
-                            ${data.transaction.amount}`;
+                        var totalAmount = 0;
+                        data.transactions.forEach(transaction => {
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
+                                totalAmount += transaction.amount;
+                            } else {
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                        window.totalAmount = totalAmount;
+                        if (data.amount != totalAmount) {
+                            return `<del class="text-muted">${data.amount}</del> ${totalAmount}`;
                         } else {
                             return data.amount;
                         }
@@ -101,20 +109,35 @@ jQuery(function () {
                 className: "text-center",
             },
             {
-                data: "transaction.note",
+                data: function (data) {
+                    return data.transactions[data.transactions.length - 1].note;
+                },
+                className: "text-center",
             },
             {
                 data: "student.level",
                 className: "text-center",
                 render: function (data, type, row) {
+                    if (row.accepted == 1 || row.accepted == '1' || row.accepted == true) {
+                        var totalAmount = 0;
+                        row.transactions.forEach(transaction => {
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
+                                totalAmount += transaction.amount;
+                            } else {
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                    } else {
+                        totalAmount = row.amount;
+                    }
                     return `<button 
                 class="btn btn-primary px-2 py-0"
-                onclick="window.checkerShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.transaction.amount}', event)">
+                onclick="window.checkerShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${totalAmount}', event)">
                 قبول</button>
                 
                 <button data-toggle="modal" data-target="#editModal"
                 class="btn btn-danger px-2 py-0"
-                onclick="window.checkerShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.transaction.amount}', event)">
+                onclick="window.checkerShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${totalAmount}', event)">
                 رفض</button>
                 `;
                 }

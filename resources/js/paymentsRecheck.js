@@ -10,12 +10,16 @@ jQuery(function () {
     let paymentsRecheckTbl = $('#paymentsRecheckTbl').DataTable({
         ajax: window.paymentsRecheckJson,
         dataSrc: "data",
-        rowId: 'student.user.national_id',
+        rowId: 'id',
         columnDefs: [{
             searchable: false,
             orderable: false,
             targets: 0
         }],
+        createdRow: function (row, data, dataIndex) {
+            row.dataset.origAmount = data.amount;
+        //    data.dataset.origAmount
+        },
         columns: [{
                 data: null,
                 className: "text-center",
@@ -88,9 +92,16 @@ jQuery(function () {
             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        if (data.amount != data.transaction.amount) {
-                            return `<del class="text-muted">${data.amount}</del>
-                            ${data.transaction.amount}`;
+                        var totalAmount = 0;
+                        data.transactions.forEach(transaction => {
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
+                                totalAmount += transaction.amount;
+                            } else {
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                        if (data.amount != totalAmount) {
+                            return `<del class="text-muted">${data.amount}</del> ${totalAmount}`;
                         } else {
                             return data.amount;
                         }
@@ -101,20 +112,35 @@ jQuery(function () {
                 className: "text-center",
             },
             {
+                data: "note",
+            },
+            {
                 data: "checker_note",
             },
             {
                 data: "student.level",
                 className: "text-center",
                 render: function (data, type, row) {
+                    if (row.accepted == 1 || row.accepted == '1' || row.accepted == true) {
+                        var totalAmount = 0;
+                        row.transactions.forEach(transaction => {
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
+                                totalAmount += transaction.amount;
+                            } else {
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                    } else {
+                        totalAmount = row.amount;
+                    }
                     return `<button data-toggle="modal" data-target="#editModal"
                 class="btn btn-primary px-2 py-0"
-                onclick="window.recheckShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.transaction.note}','${row.transaction.amount}', event)">
+                onclick="window.recheckShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}', event)">
                 تعديل</button>
                 
                 <button 
                 class="btn btn-danger px-2 py-0"
-                onclick="window.recheckShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.transaction.note}','${row.transaction.amount}', event)">
+                onclick="window.recheckShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}', event)">
                 رفض</button>
                 `;
                 }
@@ -310,7 +336,7 @@ jQuery(function () {
 
 
 
-window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, name,note, amount, event) {
+window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, name, note, amount, event) {
     window.rotation = 0;
     // console.log(event.target.parentNode.parentNode);
     // return;
@@ -327,13 +353,13 @@ window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, 
             cancelButtonText: 'الغاء',
         }).then((result) => {
             if (result.isConfirmed) {
-                checkerOkClicked('accept', national_id, payment_id, event)
+                recheckRejectClicked(national_id, payment_id, event)
             }
         })
     } else {
         $("#amountFormGroup").show();
         $("#acceptBtnModal").show();
-        $("#rejectBtnModal").hide();
+        // $("#rejectBtnModal").hide();
         $("#rejectMsgs").hide();
         $("#acceptMsgs").show();
     }
@@ -347,61 +373,7 @@ window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, 
     }
 };
 
-window.sendDecisionWithNote = function (decision) {
-    let national_id = window.national_id.value;
-    let amount = window.amount.value;
-    let payment_id = window.payment_id;
-    let note = window.note.value;
-
-    if (amount == "" || amount <= 0) {
-        amount = 0;
-    }
-    let form = {
-        national_id: national_id,
-        amount: amount,
-        decision: decision,
-        payment_id: payment_id,
-        note: note,
-    };
-
-    Swal.fire({
-        html: "<h4>جاري تحديث البيانات</h4>",
-        timerProgressBar: true,
-        didOpen: () => {
-            Swal.showLoading();
-        },
-    });
-
-
-    axios.post(window.paymentRecheckWithNote, form)
-        .then((response) => {
-            if (document.getElementById(national_id) !== null) {
-                document.getElementById(national_id).remove();
-            }
-
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + response.data.message + "</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1000,
-            });
-            $("#editModal").modal("hide");
-        })
-        .catch((error) => {
-            Swal.fire({
-                position: "center",
-                html: "<h4>" + error.response.data.message + "</h4>",
-                icon: "error",
-                showConfirmButton: true,
-            });
-        });
-
-    Swal.close();
-
-};
-
-window.recheckRejectClicked = function (decision, national_id, payment_id, event) {
+window.recheckRejectClicked = function (national_id, payment_id, event) {
     let row = event.target.parentNode.parentNode;
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
@@ -414,10 +386,9 @@ window.recheckRejectClicked = function (decision, national_id, payment_id, event
     var form = {
         national_id: national_id,
         payment_id: payment_id,
-        decision: decision
     };
 
-    axios.post(window.paymentRecheckVerified, form)
+    axios.post(window.paymentsRecheckReject, form)
         .then((response) => {
             row.remove();
             Swal.fire({
@@ -441,3 +412,43 @@ window.recheckRejectClicked = function (decision, national_id, payment_id, event
     Swal.close();
 
 };
+
+window.recheckEditAmount = function () {
+    var row = document.getElementById(window.payment_id);
+    if (window.newAmount.value == null || window.newAmount.value == '') {
+        Swal.fire({
+            position: "center",
+            html: "<h4>لا يمكن ترك حقل المبلغ الجديد فارغ</h4>",
+            icon: "error",
+            showConfirmButton: true,
+        });
+    } else {
+        let form = {
+            payment_id: window.payment_id,
+            amount: window.newAmount.value,
+            note: window.note.value,
+            isRecheck:true
+        };
+        axios.post(window.editOldPayment, form)
+            .then((response) => {
+                Swal.fire({
+                    position: "center",
+                    html: "<h4>" + response.data.message + "</h4>",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1000,
+                });
+                row.remove();
+                $("#editModal").modal("hide");
+                window.newAmount.value = '';
+            })
+            .catch((error) => {
+                Swal.fire({
+                    position: "center",
+                    html: "<h4>" + error.response.data.message + "</h4>",
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+            });
+    }
+}
