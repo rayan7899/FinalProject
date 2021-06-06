@@ -264,6 +264,22 @@
                                         </ul>
                                     @endif
 
+                                    @if (Auth::user()->hasRole('مدقق ايصالات'))
+                                    <ul class="navbar-nav">
+                                        <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                            مدقق ايصالات</li>
+                                        <li class="nav-item dropdown">
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="nav-link" href="{{ route('paymentCheckerDashboard') }}">تدقيق الايصالات</a>
+                                            </div>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                        </li>
+                                    </ul>
+                                @endif
+
                                 @endauth
                             </div>
                             <a class="navbar-brand py-0 pl-3" href="{{ route('home') }}">

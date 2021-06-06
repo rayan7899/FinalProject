@@ -18,6 +18,7 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StudentCoursesController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentCheckerController;
 use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\RefundOrderController;
 use App\Http\Controllers\TransactionController;
@@ -64,16 +65,41 @@ Route::middleware('auth')->group(function () {
 //الإدارة العامة
 Route::middleware(['auth', 'role:الإدارة العامة'])->group(function () {
     Route::get('/management', [GeneralManagementController::class, 'dashboard'])->name('managementDashboard');
+    Route::get('/general/student/payments/review', [GeneralManagementController::class, 'paymentsReviewForm'])->name('generalPaymentsReviewForm');
+    Route::post('/general/student/payments/verified-docs', [GeneralManagementController::class, 'paymentsReviewVerifiyDocs'])->name('generalPaymentsReviewVerifiyDocs');
+    Route::get('/api/general/student/payments/{type}', [GeneralManagementController::class, 'paymentsReviewJson'])->name('generalPaymentsReviewJson');
+    Route::post('/general/student/payments/verified-update', [GeneralManagementController::class, 'paymentsReviewUpdate'])->name('generalPaymentsReviewUpdate');
+    Route::get('/general/student/payments/report', [CommunityCGeneralManagementControllerontroller::class, 'paymentsReport'])->name('generalPaymentsReport');
+
+});
+
+Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
+    Route::get('/payments-checker', [PaymentCheckerController::class, 'dashboard'])->name('paymentCheckerDashboard');
+    Route::get('/payments-checker/student/payments/review', [PaymentCheckerController::class, 'checkerPaymentsReviewForm'])->name('checkerPaymentsReviewForm');
+    Route::post('/payments-checker/student/payments/verified-docs', [PaymentCheckerController::class, 'checkerPaymentsReviewVerifiyDocs'])->name('checkerPaymentsReviewVerifiyDocs');
+    Route::get('/api/payments-checker/student/payments/{type}', [PaymentCheckerController::class, 'checkerPaymentsReviewJson'])->name('checkerPaymentsReviewJson');
+    Route::post('/payments-checker/student/payments/verified-update', [PaymentCheckerController::class, 'checkerPaymentsReviewUpdate'])->name('checkerPaymentsReviewUpdate');
+    Route::get('/payments-checker/student/payments/report', [PaymentCheckerController::class, 'checkerPaymentsReport'])->name('checkerPaymentsReport');
+
 });
 
 // خدمة المجتمع
 Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community', [CommunityController::class, 'dashboard'])->name('communityDashboard');
+    // check payments
     Route::get('/community/student/payments/review', [CommunityController::class, 'paymentsReviewForm'])->name('paymentsReviewForm');
     Route::get('/community/student/payments/report', [CommunityController::class, 'paymentsReport'])->name('paymentsReport');
     Route::get('/api/community/student/payments/{type}', [CommunityController::class, 'paymentsReviewJson'])->name('paymentsReviewJson');
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
+
+     // recheck payments
+     Route::get('/community/student/payments/recheck', [CommunityController::class, 'paymentsRecheckForm'])->name('paymentsRecheckForm');
+     Route::get('/community/student/payments/recheck/report', [CommunityController::class, 'paymentsRecheckReport'])->name('paymentsReport');
+     Route::get('/api/community/student/payments/recheck/{type}', [CommunityController::class, 'paymentsRecheckJson'])->name('paymentsRecheckJson');
+     Route::post('/community/student/payments/recheck/verified-update', [CommunityController::class, 'paymentsRecheckUpdate'])->name('paymentsRecheckUpdate');
+     Route::post('/community/student/payments/recheck/verified-docs', [CommunityController::class, 'paymentsRecheckVerifiyDocs'])->name('paymentsRecheckVerifiyDocs');
+
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
     Route::get('community/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatForm'])->name('publishToRayatFormCommunity');

@@ -13,12 +13,14 @@ class AddTrnsacionsRelations extends Migration
      */
     public function up()
     {
-         Schema::table('transactions', function (Blueprint $table) {
-         $table->foreign('payment_id')->references('id')->on('payments');
-         $table->foreign('order_id')->references('id')->on('orders');
-         $table->foreign('refund_order_id')->references('id')->on('refund_orders');
-         }
-         );
+        Schema::table(
+            'transactions',
+            function (Blueprint $table) {
+                $table->foreign('payment_id')->references('id')->on('payments');
+                $table->foreign('order_id')->references('id')->on('orders');
+                $table->foreign('refund_order_id')->references('id')->on('refund_orders');
+            }
+        );
     }
 
     /**

@@ -523,7 +523,7 @@ jQuery(function () {
 window.deleteOrder = function(order_id) {
     Swal.fire({
         title: ' هل انت متأكد ؟',
-        text: "سيم حذف المقر ، لا يمكن التراجع عن هذا الاجراء",
+        text: " لا يمكن التراجع عن هذا الاجراء",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',

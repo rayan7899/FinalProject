@@ -29,6 +29,7 @@ class OrderController extends Controller
          $user = Auth::user();
          $semester = Semester::latest()->first();
          if ($semester == null) {
+            Log::info("there is no semester! ");
             return view('error')->with('error', 'حدث خطأ غير معروف');
          }
 

@@ -624,7 +624,7 @@ jQuery(function () {
 window.deletePayment = function(payment_id) {
     Swal.fire({
         title: ' هل انت متأكد ؟',
-        text: "سيم حذف المقر ، لا يمكن التراجع عن هذا الاجراء",
+        text: " لا يمكن التراجع عن هذا الاجراء",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
