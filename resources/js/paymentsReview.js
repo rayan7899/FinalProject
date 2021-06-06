@@ -303,13 +303,33 @@ jQuery(function () {
 
 
 
-
+    // axios.get(window.paymentsReviewJson)
+    //     .then((response) => {
+    //         console.log(response);
+    //         Swal.fire({
+    //             position: "center",
+    //             html: "<h4>" + response.data.message + "</h4>",
+    //             icon: "success",
+    //             showConfirmButton: false,
+    //             timer: 1000,
+    //         });
+    //         $("#editModal").modal("hide");
+    //     })
+    //     .catch((error) => {
+    //         Swal.fire({
+    //             position: "center",
+    //             html: "<h4>" + error.response.data.message + "</h4>",
+    //             icon: "error",
+    //             showConfirmButton: true,
+    //         });
+    //     }
+    // );
 
 
     let paymentsReportTbl = $('#paymentsReportTbl').DataTable({
         ajax: window.paymentsReviewJson,
         dataSrc: "data",
-        rowId: 'student.user.national_id',
+        rowId: 'id',
         columnDefs: [{
                 searchable: false,
                 orderable: false,
@@ -404,9 +424,16 @@ jQuery(function () {
             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        if (data.amount != data.transaction.amount) {
-                            return `<del class="text-muted">${data.amount}</del>
-                            ${data.transaction.amount}`;
+                        var totalAmount = 0;
+                        data.transactions.forEach(transaction => {
+                            if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                                totalAmount += transaction.amount;
+                            }else{
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                        if (data.amount != totalAmount) {
+                            return `<del class="text-muted">${data.amount}</del> ${totalAmount}`;
                         } else {
                             return data.amount;
                         }
@@ -431,6 +458,24 @@ jQuery(function () {
             },
             {
                 data: "note",
+            },
+            {
+                className: "text-center",
+                data: function (data, type, row) {
+                    var totalAmount = 0;
+                    data.transactions.forEach(transaction => {
+                        if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                            totalAmount += transaction.amount;
+                        }else{
+                            totalAmount -= transaction.amount;
+                        }
+                    });
+                    if(data.accepted == 1){
+                        return `<a data-toggle="modal" data-target="#editModal" href="#" onclick="window.oldAmount.value = ${totalAmount}; window.payment_id = ${data.id}; window.originalAmount = ${data.amount}"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
+                    }else{
+                        return '-';
+                    }
+                }
             },
 
 
@@ -618,7 +663,45 @@ jQuery(function () {
 
 });
 
-
+window.editAmount = function() {
+    var row = document.getElementById(window.payment_id);
+    if(window.newAmount.value == null || window.newAmount.value == ''){
+        Swal.fire({
+            position: "center",
+            html: "<h4>لا يمكن ترك حقل المبلغ الجديد فارغ</h4>",
+            icon: "error",
+            showConfirmButton: true,
+        });
+    }else{
+        let form = {
+            payment_id: window.payment_id,
+            amount: window.newAmount.value,
+            note: window.note.value,
+        };
+        axios.post(window.editOldPayment, form)
+            .then((response) => {
+                Swal.fire({
+                    position: "center",
+                    html: "<h4>" + response.data.message + "</h4>",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1000,
+                });
+                row.children[10].innerHTML = `<del class="text-muted">${window.originalAmount}</del> ${window.newAmount.value}`;
+                $("#editModal").modal("hide");
+                window.newAmount.value = '';
+            })
+            .catch((error) => {
+                Swal.fire({
+                    position: "center",
+                    html: "<h4>" + error.response.data.message + "</h4>",
+                    icon: "error",
+                    showConfirmButton: true,
+                });
+            }
+        );
+    }
+}
 
 
 window.deletePayment = function(payment_id) {

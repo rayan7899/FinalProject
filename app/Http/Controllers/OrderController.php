@@ -31,6 +31,8 @@ class OrderController extends Controller
          if ($semester == null) {
             Log::info("there is no semester! ");
             return view('error')->with('error', 'حدث خطأ غير معروف');
+         }elseif(!$semester->can_request_hours){
+            return redirect(route("home"))->with('error', 'اضافة المقررات غير متاح في الوقت الحالي');
          }
 
          if ($user->student->credit_hours >= 12) {

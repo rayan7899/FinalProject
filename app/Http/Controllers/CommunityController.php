@@ -95,8 +95,8 @@ class CommunityController extends Controller
                 "url" => route("coursesIndex")
             ],
             (object) [
-                "name" => "فصل دراسي جديد",
-                "url" => route("newSemester")
+                "name" => "ادارة الفصل الدراسي",
+                "url" => route("communitySemesterDashboard")
             ],
             (object) [
                 "name" => "جميع العمليات المالية",
@@ -499,7 +499,7 @@ class CommunityController extends Controller
             if ($type == 'report') {
                 $cond = "!=";
             }
-            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transaction"])->where("accepted", $cond, null)->get();
+            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major","transactions"])->where("accepted", $cond, null)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
@@ -570,6 +570,63 @@ class CommunityController extends Controller
         }
     }
 
+    public function editOldPayment(Request $request){
+        $semester = Semester::latest()->first();
+        $reviewedPayment = $this->validate($request, [
+            "payment_id"         => "required|numeric|exists:payments,id",
+            "amount"             => "required|numeric",
+            "note"               => "string|nullable"
+        ]);
+        if(Auth::user()->id != 1){
+            return response(json_encode(['message' => "ليس لديك صلاحيات لتنفيذ هذا الامر"]), 422);
+        }elseif($reviewedPayment["amount"] < 0){
+            return response(json_encode(['message' => 'يجب ان يكون المبلغ المدخل اكبر من صفر']), 422);
+        }
+        try {
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])->first() ?? null;
+            $acceptedAmount = 0;
+            foreach ($payment->transactions as  $transaction) {
+                if($transaction->type == 'editPayment-charge' || $transaction->type == 'recharge' || $transaction->type == 'manager_recharge'){
+                    $acceptedAmount += $transaction->amount;
+                }else{
+                    $acceptedAmount -= $transaction->amount;
+                }
+            }
+             
+            if($reviewedPayment["amount"] == $acceptedAmount){
+                return response(json_encode(['message' => 'يجب ان يكون المبلغ المدخل غير مطابق للمبلغ السابق']), 422);
+            }
+
+            DB::beginTransaction();
+                if($acceptedAmount > $reviewedPayment["amount"]){
+                    $diff = $acceptedAmount - $reviewedPayment["amount"];
+                    $payment->student->wallet -= $diff ;
+                    $type = 'editPayment-deduction';
+                }else{
+                    $diff = $reviewedPayment["amount"] - $acceptedAmount;
+                    $payment->student->wallet += $diff;
+                    $type = 'editPayment-charge';
+                }
+                $payment->student->save();
+                $transaction = $payment->student->transactions()->create([
+                    "payment_id"    => $payment->id,
+                    "amount"        => $diff,
+                    "type"          => $type,
+                    "manager_id"    => Auth::user()->manager->id,
+                    "semester_id"   => $semester->id,
+                    "note"          => $reviewedPayment["note"] ?? null,
+                ]);
+                $payment->update([
+                    "transaction_id"    => $transaction->id,
+                ]);
+            DB::commit();
+            return response(json_encode(['message' => 'تم تعديل المبلغ بنجاح']), 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            DB::rollBack();
+            return response(json_encode(['message' => 'حدث خطأ غير معروف ' . $e->getCode()]), 422);
+        }
+    }
 
     public function paymentsReviewVerifiyDocs(Request $request)
     {
@@ -627,6 +684,17 @@ class CommunityController extends Controller
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
+        }
+    }
+
+    public function semesterDashBoard()
+    {
+        try {
+            $semester = Semester::latest()->first();
+            return view("manager.community.semesters.manage")->with(compact('semester'));
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', 'حدث خطأ غير معروف');
         }
     }
 
@@ -843,6 +911,25 @@ class CommunityController extends Controller
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
             return back()->with('error', 'حدث خطأ غير معروف');
+        }
+    }
+
+    public function toggleAllowAddHours(Request $request)
+    {
+        try {
+            $semester = Semester::latest()->first();
+            if($semester->can_request_hours){
+                $semester->can_request_hours = false;
+                $msg = ' ايقاف اضافة المقررات';
+            }else{
+                $semester->can_request_hours = true;
+                $msg = ' اتاحة اضافة المقررات';
+            }
+            $semester->save();
+            return back()->with(["success" => "تم".$msg]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with(['error' => "تعذر".$msg]);
         }
     }
 

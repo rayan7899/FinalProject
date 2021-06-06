@@ -11,9 +11,9 @@ class Payment extends Model
     
     protected $guarded = [];
 
-    public function transaction()
+    public function transactions()
     {
-        return $this->hasOne(Transaction::class);
+        return $this->hasMany(Transaction::class);
     }
 
     public function student()

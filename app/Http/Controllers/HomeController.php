@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -56,7 +57,9 @@ class HomeController extends Controller
             // if (count($user->student->orders) < 1) {
             //     return redirect(route('orderForm'));
             // }
-            return view('home')->with(compact('user'));
+
+            $semester = Semester::latest()->first();
+            return view('home')->with(compact('user', 'semester'));
         }
     }
 }

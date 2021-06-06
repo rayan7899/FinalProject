@@ -12,7 +12,7 @@ class Transaction extends Model
     protected $guarded = [];
     public function payment()
     {
-        return $this->hasOne(Payment::class);
+        return $this->belongsTo(Payment::class);
     }
 
     public function order()

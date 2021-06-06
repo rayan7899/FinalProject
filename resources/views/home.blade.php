@@ -121,6 +121,12 @@
                                 @elseif ($transaction->type == 'manager_deduction')
                                     <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
+                                @elseif ($transaction->type == 'editPayment-deduction')
+                                    <td class="text-danger"> خصم (اعادة تدقيق ايصال) </td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
+                                @elseif ($transaction->type == 'editPayment-charge')
+                                    <td class="text-success"> اضافة (اعادة تدقيق ايصال) </td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
                                 @else
                                     <td>لا يوجد</td>
                                     <td>{{ $transaction->refund_order_id ?? 'Error' }}</td>
@@ -184,7 +190,7 @@
                         {{-- المحفظة --}}
                     </div>
 
-                    <a href="{{ route('paymentForm') }}" class="btn btn-primary rounded">
+                    <a href="{{ route('paymentForm') }}" class="btn @if (!$semester->can_request_hours) btn-primary @else btn-secondary @endif rounded">
                         شحن المحفظة
                     </a>
                 </div>
@@ -211,11 +217,14 @@
                                 if ($payment->accepted === null) {
                                     $countWaitingPayment++;
                                 }
-                                $acceptedAmount =
-                                    $user->student
-                                        ->transactions()
-                                        ->where('payment_id', $payment->id)
-                                        ->first()->amount ?? null;
+                                $acceptedAmount = 0;
+                                foreach ($payment->transactions as  $transaction) {
+                                    if($transaction->type == 'editPayment-charge' || $transaction->type == 'recharge' || $transaction->type == 'manager_recharge'){
+                                        $acceptedAmount += $transaction->amount;
+                                    }else{
+                                        $acceptedAmount -= $transaction->amount;
+                                    }
+                                }    
                             @endphp
                             <tr class="text-center" id="{{ $payment->id }}">
                                 <td>{{ $payment->id }}</td>
@@ -279,11 +288,9 @@
                 <div class="d-flex flex-row justify-content-between">
                     {{-- <p class="h5">طلبات اضافة المقررات</p> --}}
                     <p></p>
-                    {{-- @if ($user->student->level > 1) --}}
-                    <a href="{{ route('orderForm') }}" class="btn btn-primary rounded">
+                    <a href="{{ route('orderForm') }}" class="btn @if ($semester->can_request_hours) btn-primary @else btn-secondary @endif rounded">
                         اضافة مقررات
                     </a>
-                    {{-- @endif --}}
                 </div>
             </div>
             <div class="card-body table-responsive p-0">
