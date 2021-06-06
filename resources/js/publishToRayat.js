@@ -288,13 +288,14 @@ jQuery(function () {
         let rayatReportTbl = $('#rayatReportTbl').DataTable({
             ajax: window.rayatReportApi,
             dataSrc: "data",
-            rowId: 'id',
+            rowId: 'student.id',
             columnDefs: [{
                 searchable: false,
                 orderable: false,
                 targets: 0
             }],
-            columns: [{
+            columns: [
+                {
                     data: null
                 },
                 {
@@ -330,8 +331,11 @@ jQuery(function () {
                     }
 
                 },
-
-
+                {
+                    render: function(data, type, row) {
+                        return `<a href="#" onclick="showOrders(${row.student.id})"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
+                    },
+                },
             ],
             order: [
                 [0, "asc"]
@@ -517,7 +521,49 @@ jQuery(function () {
 
 
 
-
+window.showOrders = function (student_id) {
+    axios.get(`/api/community/student/orders/${student_id}`)
+        .then((response) => {
+            console.log(response);
+            var tblOrders = document.getElementById('tblOrders');
+            tblOrders.innerHTML = '';
+            response.data.forEach(order => {
+                var row = tblOrders.insertRow(0);
+                var orderId = row.insertCell(0);
+                var requestedHours = row.insertCell(1);
+                // var acceptedHours = row.insertCell(2);
+                var editIcon = row.insertCell(2);
+                orderId.innerHTML = order.id;
+                requestedHours.innerHTML = order.requested_hours;
+                // switch ((order.amount/order.student)*100) {
+                //     case value:
+                        
+                //         break;
+                
+                //     default:
+                //         break;
+                // }
+                // acceptedHours.innerHTML = order.discount == 0 ? 0 : (order.discount/order.amount)*100;
+                editIcon.innerHTML = `<a href="#"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
+            });
+            $('#editModal').modal();
+            // Swal.fire({
+            //     position: "center",
+            //     html: "<h4>" + response.data.message + "</h4>",
+            //     icon: "success",
+            //     showConfirmButton: false,
+            //     timer: 1000,
+            // });
+        })
+        .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+}
 
 
 window.deleteOrder = function(order_id) {

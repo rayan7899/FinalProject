@@ -984,6 +984,17 @@ class CommunityController extends Controller
         }
     }
 
+    public function getStudentOrders($student_id)
+    {
+        try {
+            $orders = Student::find($student_id)->orders()->with('transaction', 'student.program')->get();
+            return response()->json($orders, 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return response()->json(["message" => $e], 422);        
+        }
+    }
+
 
 
 

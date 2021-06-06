@@ -130,6 +130,9 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/reports/filterd', [CommunityController::class, 'reportFilterdForm'])->name('reportFilterdForm');
     Route::post('/community/reports/filterd', [CommunityController::class, 'reportFilterd'])->name('reportFilterd');
 
+    //orders
+    Route::get('/api/community/student/orders/{student_id}', [CommunityController::class, 'getStudentOrders'])->name('getStudentOrders');
+
     //refunds
     Route::get('/community/refund-orders', [CommunityController::class, 'refundOrdersForm'])->name('refundOrdersForm');
     Route::get('/community/report/refund-orders', [CommunityController::class, 'refundOrdersReport'])->name('refundOrdersReport');

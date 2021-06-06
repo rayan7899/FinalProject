@@ -298,34 +298,6 @@ jQuery(function () {
 
 
 
-
-
-
-
-
-    // axios.get(window.paymentsReviewJson)
-    //     .then((response) => {
-    //         console.log(response);
-    //         Swal.fire({
-    //             position: "center",
-    //             html: "<h4>" + response.data.message + "</h4>",
-    //             icon: "success",
-    //             showConfirmButton: false,
-    //             timer: 1000,
-    //         });
-    //         $("#editModal").modal("hide");
-    //     })
-    //     .catch((error) => {
-    //         Swal.fire({
-    //             position: "center",
-    //             html: "<h4>" + error.response.data.message + "</h4>",
-    //             icon: "error",
-    //             showConfirmButton: true,
-    //         });
-    //     }
-    // );
-
-
     let paymentsReportTbl = $('#paymentsReportTbl').DataTable({
         ajax: window.paymentsReviewJson,
         dataSrc: "data",

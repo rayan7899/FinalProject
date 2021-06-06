@@ -15,6 +15,43 @@
                 @endif
             </div>
         @endif
+
+        <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div dir="rtl" class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">تعديل</h5>
+                        <button style="margin:0px; padding: 0px;" type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div dir="rtl" class="modal-body">
+                        <table class="table hover">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>الساعات المطلوبة</th>
+                                    {{-- <th>الساعات المقبولة</th> --}}
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblOrders">
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
+                        
+                        {{-- <button id="rejectBtnModal" onclick="window.editAmount()"
+                            class="btn btn-primary btn-md" style="display:block">تم</button> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="table-responsive p-2 bg-white rounded border">
             <table id="rayatReportTbl" class="table nowrap display cell-border">
                 <thead>
@@ -33,8 +70,10 @@
                         <th class="text-center">التخصص</th>
                         <th class="text-center">عدد الساعات</th>
                         <th class="text-center">حالة التسجيل</th>
+                        <th class="text-center"></th>
                     </tr>
                     <tr>
+                        <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
