@@ -70,9 +70,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button id="acceptBtnModal" onclick="window.checkerSendDecisionWithNote('accept')"
+                        <button id="acceptBtnModal" onclick="window.sendDecisionWithNote('accept')"
                             class="btn btn-primary btn-md" style="display:block">قبول</button>
-                        <button id="rejectBtnModal" onclick="window.checkerSendDecisionWithNote('reject')"
+                        <button id="rejectBtnModal" onclick="window.sendDecisionWithNote('reject')"
                             class="btn btn-danger btn-md" style="display:block">رفض</button>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
             </div>
         </div>
         <div class="table-responsive p-2 bg-white rounded border">
-            <table class="table nowrap display cell-border" id="checkerPaymentsReviewTbl">
+            <table class="table nowrap display cell-border" id="generalPaymentsReviewTbl">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
@@ -146,9 +146,9 @@
             </table>
         </div>
         <script defer>
-            var checkerPaymentVerified = "{{ route('checkerPaymentsReviewVerifiyDocs') }}";
-            var checkerPaymentWithNote = "{{ route('checkerPaymentsReviewUpdate') }}";
-            var checkerPaymentsReviewJson = "{{ route('checkerPaymentsReviewJson', ['type' => 'review']) }}"
+            var generalPaymentVerified = "{{ route('generalPaymentsReviewVerifiyDocs') }}";
+            var generalPaymentWithNote = "{{ route('generalPaymentsReviewUpdate') }}";
+            var generalPaymentsReviewJson = "{{ route('generalPaymentsReviewJson', ['type' => 'review']) }}"
             window.addEventListener('DOMContentLoaded', (event) => {
                 Swal.fire({
                     html: "<h4>جاري جلب البيانات</h4>",

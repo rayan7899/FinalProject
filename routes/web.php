@@ -65,11 +65,11 @@ Route::middleware('auth')->group(function () {
 //الإدارة العامة
 Route::middleware(['auth', 'role:الإدارة العامة'])->group(function () {
     Route::get('/management', [GeneralManagementController::class, 'dashboard'])->name('managementDashboard');
-    Route::get('/general/student/payments/review', [GeneralManagementController::class, 'paymentsReviewForm'])->name('generalPaymentsReviewForm');
-    Route::post('/general/student/payments/verified-docs', [GeneralManagementController::class, 'paymentsReviewVerifiyDocs'])->name('generalPaymentsReviewVerifiyDocs');
-    Route::get('/api/general/student/payments/{type}', [GeneralManagementController::class, 'paymentsReviewJson'])->name('generalPaymentsReviewJson');
-    Route::post('/general/student/payments/verified-update', [GeneralManagementController::class, 'paymentsReviewUpdate'])->name('generalPaymentsReviewUpdate');
-    Route::get('/general/student/payments/report', [CommunityCGeneralManagementControllerontroller::class, 'paymentsReport'])->name('generalPaymentsReport');
+    Route::get('/general/student/payments/review', [GeneralManagementController::class, 'generalPaymentsReviewForm'])->name('generalPaymentsReviewForm');
+    Route::post('/general/student/payments/verified-docs', [GeneralManagementController::class, 'generalPaymentsReviewVerifiyDocs'])->name('generalPaymentsReviewVerifiyDocs');
+    Route::get('/api/general/student/payments/{type}', [GeneralManagementController::class, 'generalPaymentsReviewJson'])->name('generalPaymentsReviewJson');
+    Route::post('/general/student/payments/verified-update', [GeneralManagementController::class, 'generalPaymentsReviewUpdate'])->name('generalPaymentsReviewUpdate');
+    Route::get('/general/student/payments/report', [GeneralManagementController::class, 'generalPaymentsReport'])->name('generalPaymentsReport');
 
 });
 

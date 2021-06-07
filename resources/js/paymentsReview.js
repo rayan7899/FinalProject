@@ -336,7 +336,7 @@ jQuery(function () {
                 targets: 0
             },
             {
-                targets: 11,
+                targets: 7,
                 createdCell: function (td, cellData, rowData, row, col) {
                     if (cellData == 'مرفوض') {
                         $(td).addClass('text-danger');
@@ -357,22 +357,22 @@ jQuery(function () {
             {
                 data: "student.user.name",
             },
-            {
-                data: "student.user.phone",
-                className: "text-center",
-            },
-            {
-                data: "student.program.name",
-                className: "text-center",
-            },
-            {
-                data: "student.department.name",
-                className: "text-center",
-            },
-            {
-                data: "student.major.name",
-                className: "text-center",
-            },
+            // {
+            //     data: "student.user.phone",
+            //     className: "text-center",
+            // },
+            // {
+            //     data: "student.program.name",
+            //     className: "text-center",
+            // },
+            // {
+            //     data: "student.department.name",
+            //     className: "text-center",
+            // },
+            // {
+            //     data: "student.major.name",
+            //     className: "text-center",
+            // },
             {
                 data: function (data) {
                     switch (data.student.traineeState) {
@@ -481,7 +481,7 @@ jQuery(function () {
 
         ],
         order: [
-            [11, "asc"]
+            [7, "asc"]
         ],
         language: {
             emptyTable: "ليست هناك بيانات متاحة في الجدول",
@@ -613,7 +613,7 @@ jQuery(function () {
 
             var api = this.api();
             $(".filterhead", api.table().header()).each(function (i) {
-                if (i > 3 && i < 8 || i == 11) {
+                if (i == 3 || i == 7) {
                     var column = api.column(i);
                     var select = $(
                             '<select><option value="">الكل</option></select>'
@@ -687,8 +687,8 @@ window.editAmount = function() {
                     showConfirmButton: false,
                     timer: 1000,
                 });
-                row.children[10].innerHTML = `<del class="text-muted">${window.originalAmount}</del> ${window.newAmount.value}`;
-                row.children[12].innerHTML = window.note.value;
+                row.children[6].innerHTML = `<del class="text-muted">${window.originalAmount}</del> ${window.newAmount.value}`;
+                row.children[8].innerHTML = window.note.value;
 
                 $("#editModal").modal("hide");
                 window.newAmount.value = '';

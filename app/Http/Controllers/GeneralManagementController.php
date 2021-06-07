@@ -7,6 +7,7 @@ use App\Models\Semester;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -22,25 +23,25 @@ class GeneralManagementController extends Controller
         $title = "الإدارة العامة";
         $links = [
             (object) [
-                "name" => "تقرير طلبات الشحن",
-                "url" => route("paymentsReport")
+                "name" => "تدقيق الايصالات",
+                "url" => route("generalPaymentsReviewForm")
             ],
         ];
         return view("manager.community.dashboard")->with(compact("links", "title"));
     }
 
 
-    public function paymentsReviewForm()
+    public function generalPaymentsReviewForm()
     {
-        return view('manager.community.paymentsReview');
+        return view('manager.generalManagement.generalPaymentsReview');
     }
 
-    public function paymentsReport()
+    public function generalPaymentsReport()
     {
         return view('manager.community.paymentsReport');
     }
 
-    public function paymentsReviewJson($type)
+    public function generalPaymentsReviewJson($type)
     {
         // $fetch_errors = [];
         try {
@@ -48,15 +49,16 @@ class GeneralManagementController extends Controller
             if ($type == 'report') {
                 $cond = "!=";
             }
-            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transaction"])->where("accepted", $cond, null)->get();
+            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transactions"])
+            ->where("accepted", true)->where("checker_decision", true)->where("management_decision", null)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
-            return view('manager.community.paymentsReview')->with('error', "تعذر جلب المتدربين");
+            return response()->json(["error" => 'تعذر جلب البيانات خطأ غير معروف'], 200);
         }
     }
 
-    public function paymentsReviewUpdate(Request $request)
+    public function generalPaymentsReviewUpdate(Request $request)
     {
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
@@ -67,61 +69,33 @@ class GeneralManagementController extends Controller
         ]);
 
         try {
-            $semester = Semester::latest()->first();
             $decision = false;
             if ($reviewedPayment["decision"] == "accept") {
                 $decision = true;
             }
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
-            $payment = Payment::where("id", $reviewedPayment["payment_id"])->first() ?? null;
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])
+                ->where("student_id", $user->student->id)->first() ?? null;
             if ($payment == null) {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-            } else if ($payment->accepted !== null) {
+            } else if ($payment->management_decision !== null) {
                 return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
             }
-            DB::beginTransaction();
-
-            if ($decision == true) {
-                $transaction = $user->student->transactions()->create([
-                    "payment_id"    => $payment->id,
-                    "amount"        => $reviewedPayment["amount"],
-                    "note"          => $reviewedPayment["note"],
-                    "type"          => "recharge",
-                    "manager_id"    => Auth::user()->manager->id,
-                    "semester_id"   => $semester->id,
-
-                ]);
-                $payment->update([
-                    "transaction_id" => $transaction->id,
-                    "note"          => $reviewedPayment["note"],
-                    "accepted"       => true,
-
-                ]);
-
-                $user->student->wallet += $reviewedPayment["amount"];
-                $user->student->save();
-            } else {
-                $payment->update([
-                    "note"          => $reviewedPayment["note"],
-                    "accepted"       => false,
-
-                ]);
-            }
-
-
-            DB::commit();
-            return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
+            $payment->update([
+                "management_decision"       => $decision,
+                "management_note"          => $reviewedPayment["note"],
+                "manager_id"            => Auth::user()->manager->id,
+            ]);
+            return response(json_encode(['message' => 'تمت معالجة الطلب بنجاح']), 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
-            DB::rollBack();
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }
 
 
-    public function paymentsReviewVerifiyDocs(Request $request)
+    public function generalPaymentsReviewVerifiyDocs(Request $request)
     {
-        $semester = Semester::latest()->first();
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
             "payment_id"         => "required|numeric|exists:payments,id",
@@ -130,44 +104,30 @@ class GeneralManagementController extends Controller
         ]);
 
         try {
+
             $decision = false;
             if ($reviewedPayment["decision"] == "accept") {
                 $decision = true;
             }
 
-            DB::beginTransaction();
 
             $user = User::with('student')->where('national_id', $reviewedPayment['national_id'])->first();
-            $payment = Payment::where("id", $reviewedPayment["payment_id"])->first();
+            $payment = Payment::where("id", $reviewedPayment["payment_id"])
+                ->where("student_id", $user->student->id)->first() ?? null;
+                if ($payment == null) {
+                    return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+                } else if ($payment->management_decision !== null) {
+                    return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
+                }
 
-            if ($decision == true) {
-                $transaction = $user->student->transactions()->create([
-                    "payment_id"    => $payment->id,
-                    "amount"    => $payment->amount,
-                    "type"    => "recharge",
-                    "manager_id"    => Auth::user()->manager->id,
-                    "semester_id"        => $semester->id,
+            $payment->update([
+                "management_decision"       => $decision,
+                "manager_id"             => Auth::user()->manager->id
+            ]);
 
-                ]);
-                $payment->update([
-                    "transaction_id" => $transaction->id,
-                    "accepted"       => $decision,
-
-                ]);
-                $user->student->wallet += $payment->amount;
-                $user->student->save();
-            } else {
-                $payment->update([
-                    "accepted"       => false,
-
-                ]);
-            }
-
-            DB::commit();
-            return response(json_encode(['message' => 'تم ارسال الطلب بنجاح']), 200);
+            return response(json_encode(['message' => 'تمت معالجة الطلب بنجاح']), 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
-            DB::rollBack();
             return response(json_encode(['message' => 'حدث خطأ غير معروف' . $e->getCode()]), 422);
         }
     }

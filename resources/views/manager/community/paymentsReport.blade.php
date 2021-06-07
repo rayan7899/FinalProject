@@ -88,10 +88,10 @@
                         <th scope="col">#</th>
                         <th scope="col">رقم الهوية</th>
                         <th scope="col">الاسم</th>
-                        <th scope="col">رقم الجوال</th>
-                        <th scope="col">البرنامج</th>
+                        {{-- <th scope="col">رقم الجوال</th> --}}
+                        {{-- <th scope="col">البرنامج</th>
                         <th scope="col">القسم</th>
-                        <th scope="col">التخصص</th>
+                        <th scope="col">التخصص</th> --}}
                         <th scope="col">الحالة</th>
                         <th scope="col">تاريخ الطلب</th>
                         <th scope="col">ايصال السداد</th>
@@ -104,10 +104,10 @@
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
+                        {{-- <th class="filterhead" scope="col"></th> --}}
+                        {{-- <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
-                        <th class="filterhead" scope="col"></th>
-                        <th class="filterhead" scope="col"></th>
-                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th> --}}
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
@@ -120,25 +120,6 @@
                 </thead>
                 <tbody>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-
-                    </tr>
-                </tfoot>
             </table>
         </div>
         <script defer>

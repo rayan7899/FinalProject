@@ -68,7 +68,7 @@
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                                                            document.getElementById('logout-form').submit();">
+                                                                                                                                                document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -166,7 +166,7 @@
                                                         التخصص</a>
                                                     {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">ادارة محفظة المتدرب</a> --}}
                                                     <a class="dropdown-item" href="{{ route('newSemesterForm') }}">فصل
-                                                        دراسي جديد</a>
+                                                        تدريبي جديد</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
@@ -265,20 +265,40 @@
                                     @endif
 
                                     @if (Auth::user()->hasRole('مدقق ايصالات'))
-                                    <ul class="navbar-nav">
-                                        <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                            مدقق ايصالات</li>
-                                        <li class="nav-item dropdown">
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="nav-link" href="{{ route('paymentCheckerDashboard') }}">تدقيق الايصالات</a>
-                                            </div>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                        </li>
-                                    </ul>
-                                @endif
+                                        <ul class="navbar-nav">
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                                مدقق ايصالات</li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="nav-link"
+                                                        href="{{ route('paymentCheckerDashboard') }}">تدقيق الايصالات</a>
+                                                </div>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                            </li>
+                                        </ul>
+                                    @endif
+
+                                    @if (Auth::user()->hasRole('الإدارة العامة'))
+                                        <ul class="navbar-nav">
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                                الإدارة العامة</li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="nav-link"
+                                                        href="{{ route('managementDashboard') }}">الرئيسية</a>
+                                                        <a class="nav-link"
+                                                        href="{{ route('generalPaymentsReviewForm') }}">تدقيق الايصالات</a>
+                                                </div>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
+                                            </li>
+                                        </ul>
+                                    @endif
 
                                 @endauth
                             </div>
@@ -303,7 +323,7 @@
                 <div class="card-img-overlay">
                     <p class="text-center">
                         للتواصل:
-                       tvtc.brct.ctc@gmail.com
+                        tvtc.brct.ctc@gmail.com
                         <br>
                         <br>
                         تصميم وتطوير مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة

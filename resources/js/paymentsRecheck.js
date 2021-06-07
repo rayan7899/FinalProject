@@ -2,6 +2,7 @@ window.national_id = document.getElementById("national_id");
 window.sname = document.getElementById("sname");
 window.amount = document.getElementById("amount");
 window.note = document.getElementById("note");
+window.isManagment = false;
 window.payment_id = 0;
 
 
@@ -18,7 +19,7 @@ jQuery(function () {
         }],
         createdRow: function (row, data, dataIndex) {
             row.dataset.origAmount = data.amount;
-        //    data.dataset.origAmount
+            //    data.dataset.origAmount
         },
         columns: [{
                 data: null,
@@ -115,7 +116,14 @@ jQuery(function () {
                 data: "note",
             },
             {
-                data: "checker_note",
+                data: function (data) {
+                    if (data.checker_decision == 1 || data.checker_decision == '1' || data.checker_decision == true) {
+                        if (data.management_decision == 0 || data.management_decision == '0' || data.management_decision == false) {
+                            return data.management_note;
+                        }
+                    }
+                    return data.checker_note;
+                },
             },
             {
                 data: "student.level",
@@ -133,14 +141,20 @@ jQuery(function () {
                     } else {
                         totalAmount = row.amount;
                     }
+                    var isManagment = false;
+                    if (row.checker_decision == 1 || row.checker_decision == '1' || row.checker_decision == true) {
+                        if (row.management_decision == 0 || row.management_decision == '0' || row.management_decision == false) {
+                            isManagment = true;
+                        }
+                    }
                     return `<button data-toggle="modal" data-target="#editModal"
                 class="btn btn-primary px-2 py-0"
-                onclick="window.recheckShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}', event)">
+                onclick="window.recheckShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}',${isManagment}, event)">
                 تعديل</button>
                 
                 <button 
                 class="btn btn-danger px-2 py-0"
-                onclick="window.recheckShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}', event)">
+                onclick="window.recheckShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}',${isManagment}, event)">
                 رفض</button>
                 `;
                 }
@@ -336,7 +350,7 @@ jQuery(function () {
 
 
 
-window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, name, note, amount, event) {
+window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, name, note, amount, isManagment, event) {
     window.rotation = 0;
     // console.log(event.target.parentNode.parentNode);
     // return;
@@ -365,7 +379,12 @@ window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, 
     }
     window.national_id.value = national_id;
     window.sname.value = name;
-    window.note.value = note;
+    window.isManagment = isManagment;
+    if (note == null || note == 'null') {
+        window.note.value = '';
+    } else {
+        window.note.value = note;
+    }
     window.payment_id = payment_id;
 
     if (window.amount !== null) {
@@ -427,7 +446,8 @@ window.recheckEditAmount = function () {
             payment_id: window.payment_id,
             amount: window.newAmount.value,
             note: window.note.value,
-            isRecheck:true
+            isRecheck: true,
+            isManagment: window.isManagment
         };
         axios.post(window.editOldPayment, form)
             .then((response) => {

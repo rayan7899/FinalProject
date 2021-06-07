@@ -29,7 +29,7 @@
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h5>بداية فصل دراسي جديد</h5>
+                    <h5>بداية فصل تدريبي جديد</h5>
                 </div>
                 {{-- <div class="card-body">
                 <p>

@@ -7,8 +7,8 @@ window.payment_id = 0;
 
 
 jQuery(function () {
-    let checkerPaymentsReviewTbl = $('#checkerPaymentsReviewTbl').DataTable({
-        ajax: window.checkerPaymentsReviewJson,
+    let generalPaymentsReviewTbl = $('#generalPaymentsReviewTbl').DataTable({
+        ajax: window.generalPaymentsReviewJson,
         dataSrc: "data",
         rowId: 'student.user.national_id',
         columnDefs: [{
@@ -132,12 +132,12 @@ jQuery(function () {
                     }
                     return `<button 
                 class="btn btn-primary px-2 py-0"
-                onclick="window.checkerShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${totalAmount}', event)">
+                onclick="window.generalShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${totalAmount}', event)">
                 قبول</button>
                 
                 <button data-toggle="modal" data-target="#editModal"
                 class="btn btn-danger px-2 py-0"
-                onclick="window.checkerShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${totalAmount}', event)">
+                onclick="window.generalShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${totalAmount}', event)">
                 رفض</button>
                 `;
                 }
@@ -318,8 +318,8 @@ jQuery(function () {
         },
     });
 
-    checkerPaymentsReviewTbl.on('order.dt search.dt', function () {
-        checkerPaymentsReviewTbl.column(0, {
+    generalPaymentsReviewTbl.on('order.dt search.dt', function () {
+        generalPaymentsReviewTbl.column(0, {
             search: 'applied',
             order: 'applied'
         }).nodes().each(function (cell, i) {
@@ -333,7 +333,7 @@ jQuery(function () {
 
 
 
-window.checkerShowModal = function (callFrom = "edit", national_id, payment_id, name, amount, event) {
+window.generalShowModal = function (callFrom = "edit", national_id, payment_id, name, amount, event) {
     window.rotation = 0;
     // console.log(event.target.parentNode.parentNode);
     // return;
@@ -356,7 +356,7 @@ window.checkerShowModal = function (callFrom = "edit", national_id, payment_id, 
             cancelButtonText: 'الغاء',
         }).then((result) => {
             if (result.isConfirmed) {
-                checkerOkClicked('accept', national_id, payment_id, event)
+                generalOkClicked('accept', national_id, payment_id, event)
             }
         })
     }
@@ -370,7 +370,7 @@ window.checkerShowModal = function (callFrom = "edit", national_id, payment_id, 
     }
 };
 
-window.checkerSendDecisionWithNote = function (decision) {
+window.sendDecisionWithNote = function (decision) {
     let national_id = window.national_id.value;
     let amount = window.amount.value;
     let payment_id = window.payment_id;
@@ -396,7 +396,7 @@ window.checkerSendDecisionWithNote = function (decision) {
     });
 
 
-    axios.post(window.checkerPaymentWithNote, form)
+    axios.post(window.generalPaymentWithNote, form)
         .then((response) => {
             if (document.getElementById(national_id) !== null) {
                 document.getElementById(national_id).remove();
@@ -424,7 +424,7 @@ window.checkerSendDecisionWithNote = function (decision) {
 
 };
 
-window.checkerOkClicked = function (decision, national_id, payment_id, event) {
+window.generalOkClicked = function (decision, national_id, payment_id, event) {
     let row = event.target.parentNode.parentNode;
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
@@ -440,7 +440,7 @@ window.checkerOkClicked = function (decision, national_id, payment_id, event) {
         decision: decision
     };
 
-    axios.post(window.checkerPaymentVerified, form)
+    axios.post(window.generalPaymentVerified, form)
         .then((response) => {
             row.remove();
             Swal.fire({

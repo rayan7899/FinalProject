@@ -16,8 +16,8 @@ class PaymentsAddDecisionNoteColumns extends Migration
         Schema::table('payments', function (Blueprint $table) {
             $table->boolean('checker_decision')->nullable();
             $table->text('checker_note')->nullable();
-            $table->boolean('managment_decision')->nullable();
-            $table->text('managment_note')->nullable();
+            $table->boolean('management_decision')->nullable();
+            $table->text('management_note')->nullable();
             $table->unsignedBigInteger("manager_id")->nullable();
             $table->foreign('manager_id')->references('id')->on('managers');
         });

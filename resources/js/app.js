@@ -13,6 +13,8 @@ require("./wallet");
 require("./refundOrders");
 require("./studentsReport");
 require("./checkerPaymentsReview");
+require("./generalPaymentsReview");
+
 
 
 
