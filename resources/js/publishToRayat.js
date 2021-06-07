@@ -333,7 +333,7 @@ jQuery(function () {
                 },
                 {
                     render: function(data, type, row) {
-                        return `<a href="#" onclick="showOrders(${row.student.id})"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
+                        return `<p onclick="showOrders(${row.student.id})"><i class="fa btn fa-lg fa-edit text-primary"></i></p>`;
                     },
                 },
             ],
@@ -522,8 +522,21 @@ jQuery(function () {
 
 
 window.showOrders = function (student_id) {
+    Swal.fire({
+        html: "<h4>جاري جلب البيانات</h4>",
+        timerProgressBar: true,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
     axios.get(`/api/community/student/orders/${student_id}`)
         .then((response) => {
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 100,
+            });
             console.log(response);
             var tblOrders = document.getElementById('tblOrders');
             tblOrders.innerHTML = '';
@@ -531,31 +544,42 @@ window.showOrders = function (student_id) {
                 var row = tblOrders.insertRow(0);
                 var orderId = row.insertCell(0);
                 var requestedHours = row.insertCell(1);
-                // var acceptedHours = row.insertCell(2);
-                var editIcon = row.insertCell(2);
+                var cost = row.insertCell(2);
+                var editIcon = row.insertCell(3);
                 orderId.innerHTML = order.id;
+                cost.innerHTML = order.amount;
                 requestedHours.innerHTML = order.requested_hours;
-                // switch ((order.amount/order.student)*100) {
-                //     case value:
-                        
-                //         break;
-                
-                //     default:
-                //         break;
-                // }
-                // acceptedHours.innerHTML = order.discount == 0 ? 0 : (order.discount/order.amount)*100;
-                editIcon.innerHTML = `<a href="#"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
+                editIcon.innerHTML = `<p data-target="#editModal" data-toggle="modal" onclick="window.order_id=${order.id};window.oldHours.value=${order.requested_hours};window.newHours.value='';window.note.value='';"><i class="fa btn fa-lg fa-edit text-primary"></i></p>`;
             });
-            $('#editModal').modal();
-            // Swal.fire({
-            //     position: "center",
-            //     html: "<h4>" + response.data.message + "</h4>",
-            //     icon: "success",
-            //     showConfirmButton: false,
-            //     timer: 1000,
-            // });
+            $('#ordersModal').modal();
         })
         .catch((error) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + error.response.data.message + "</h4>",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        });
+}
+
+window.editHours = function(){
+    axios.post('/api/community/order/edit', { 
+        order_id: window.order_id,
+        newHours: window.newHours.value,
+        note: window.note.value
+    })
+        .then((response) => {
+            Swal.fire({
+                position: "center",
+                html: "<h4>" + response.data.message + "</h4>",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 1000,
+            });
+        })
+        .catch((error) => {
+            console.log(error);
             Swal.fire({
                 position: "center",
                 html: "<h4>" + error.response.data.message + "</h4>",

@@ -987,11 +987,58 @@ class CommunityController extends Controller
     public function getStudentOrders($student_id)
     {
         try {
-            $orders = Student::find($student_id)->orders()->with('transaction', 'student.program')->get();
+            $orders = Student::find($student_id)->orders;
             return response()->json($orders, 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return response()->json(["message" => $e], 422);        
+        }
+    }
+
+    public function editOrder(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "order_id"    => "required|numeric|distinct|exists:orders,id",
+            "newHours"    => "required|numeric",
+            "note"        => "string|nullable",
+        ]);
+        try {
+            $semester = Semester::latest()->first();
+            $order = Order::find($requestData['order_id']);
+            if($order->requested_hours == 0){
+                return response(json_encode(['message' => 'لا يمكن التعديل على طلب مرفوض']), 422);
+            }
+
+            if($order->amount/$order->requested_hours == 0) { //private state
+            }elseif(in_array($order->amount/$order->requested_hours, [550, 400])){ //defualt state
+            }elseif(in_array($order->amount/$order->requested_hours, [275, 200])){ //employee's son state
+            }elseif(in_array($order->amount/$order->requested_hours, [137.5, 100])){ //employee state
+            }else{
+                return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+            }
+            if($requestData['newHours'] > $order->requested_hours){
+                $type = 'editOrder-deduction';
+            }else{
+                $type = 'editOrder-charge';
+            }
+            DB::beginTransaction();
+                $transaction = $order->student->transactions()->create([
+                    "order_id"      => $order->id,
+                    "type"          => $type,
+                    "manager_id"    => Auth::user()->manager->id,
+                    "semester_id"   => $semester->id,
+                    "note"          => $requestData["note"] ?? null,
+                ]);
+                $order->update([
+                    "requested_hours"   => $requestData['newHours'],
+                    "transaction_id"    => $transaction->id,
+                ]);
+            DB::commit();
+            return response()->json(["message" => 'تم التعديل بنجاح'], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            DB::rollBack();
+            return response()->json(["message" => $e], 422);
         }
     }
 

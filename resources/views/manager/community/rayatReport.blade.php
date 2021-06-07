@@ -16,24 +16,24 @@
             </div>
         @endif
 
-        <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+        <div dir="ltr" class="modal fade" id="ordersModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog modal-md" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div dir="rtl" class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">تعديل</h5>
+                        <h5 class="modal-title" id="editModalLabel">جميع الطلبات لهذا الفصل</h5>
                         <button style="margin:0px; padding: 0px;" type="button" class="close" data-dismiss="modal"
                             aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div dir="rtl" class="modal-body">
-                        <table class="table hover">
+                    <div dir="rtl" class="modal-body p-0 m-0 table-responsive">
+                        <table class="table table-sm table-hover text-center">
                             <thead>
                                 <tr>
                                     <th>رقم الطلب</th>
-                                    <th>الساعات المطلوبة</th>
-                                    {{-- <th>الساعات المقبولة</th> --}}
+                                    <th>عدد الساعات</th>
+                                    <th>المبلغ</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -47,6 +47,43 @@
                         
                         {{-- <button id="rejectBtnModal" onclick="window.editAmount()"
                             class="btn btn-primary btn-md" style="display:block">تم</button> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div dir="rtl" class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">تعديل</h5>
+                        <button style="margin:0px; padding: 0px;" type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div dir="rtl" class="modal-body">
+                        <div class="row">
+                            <div id="hoursFormGroup" class="form-group col-md-6" style="display:block">
+                                <label for="oldHours">عدد الساعات السابق</label>
+                                <input disabled type="number" class="form-control" id="oldHours" aria-describedby="oldHours">
+                            </div>
+                            <div id="hoursFormGroup" class="form-group col-md-6" style="display:block">
+                                <label for="newHours">عدد الساعات الجديد</label>
+                                <input required type="number" class="form-control" id="newHours" aria-describedby="newHours">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="note" class="col-form-label">ملاحظات المدقق</label>
+                                <textarea class="form-control" id="note" name="note"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
+                        
+                        <button id="rejectBtnModal" onclick="window.editHours()"
+                            class="btn btn-primary btn-md" style="display:block">تم</button>
                     </div>
                 </div>
             </div>
