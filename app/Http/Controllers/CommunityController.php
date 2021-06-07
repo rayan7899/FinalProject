@@ -47,10 +47,10 @@ class CommunityController extends Controller
                 "name" => "تدقيق الايصالات",
                 "url" => route("paymentsReviewForm")
             ],
-            (object) [
-                "name" => "اعادة تدقيق الايصالات",
-                "url" => route("paymentsRecheckForm")
-            ],
+            // (object) [
+            //     "name" => "اعادة تدقيق الايصالات",
+            //     "url" => route("paymentsRecheckForm")
+            // ],
             (object) [
                 "name" => "تقرير طلبات الشحن",
                 "url" => route("paymentsReport")
