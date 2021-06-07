@@ -540,16 +540,18 @@ window.showOrders = function (student_id) {
             var tblOrders = document.getElementById('tblOrders');
             tblOrders.innerHTML = '';
             response.data.forEach(order => {
-                var row = tblOrders.insertRow(0);
-                row.id = order.id;
-                var orderId = row.insertCell(0);
-                var requestedHours = row.insertCell(1);
-                var cost = row.insertCell(2);
-                var editIcon = row.insertCell(3);
-                orderId.innerHTML = order.id;
-                cost.innerHTML = order.amount;
-                requestedHours.innerHTML = order.requested_hours;
-                editIcon.innerHTML = `<p data-target="#editModal" data-toggle="modal" onclick="window.order_id=${order.id};window.oldHours.value=${order.requested_hours};window.newHours.value='';window.note.value='';"><i class="fa btn fa-lg fa-edit text-primary"></i></p>`;
+                if(order.requested_hours > 0){
+                    var row = tblOrders.insertRow(0);
+                    row.id = order.id;
+                    var orderId = row.insertCell(0);
+                    var requestedHours = row.insertCell(1);
+                    var cost = row.insertCell(2);
+                    var editIcon = row.insertCell(3);
+                    orderId.innerHTML = order.id;
+                    cost.innerHTML = order.amount;
+                    requestedHours.innerHTML = order.requested_hours;
+                    editIcon.innerHTML = `<p data-target="#editModal" data-toggle="modal" onclick="window.order_id=${order.id};window.oldHours.value=${order.requested_hours};window.newHours.value='';window.note.value='';"><i class="fa btn fa-lg fa-edit text-primary"></i></p>`;
+                }
             });
             $('#ordersModal').modal();
         })
