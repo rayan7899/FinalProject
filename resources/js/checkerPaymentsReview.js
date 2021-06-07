@@ -110,7 +110,11 @@ jQuery(function () {
             },
             {
                 data: function (data) {
-                    return data.transactions[data.transactions.length - 1].note;
+                    if(data.transactions.length > 0){
+                        return data.transactions[data.transactions.length - 1].note;
+                    }else{
+                        return '';
+                    }
                 },
                 className: "text-center",
             },
