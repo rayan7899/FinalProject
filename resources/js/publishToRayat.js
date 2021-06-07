@@ -537,11 +537,11 @@ window.showOrders = function (student_id) {
                 showConfirmButton: false,
                 timer: 100,
             });
-            console.log(response);
             var tblOrders = document.getElementById('tblOrders');
             tblOrders.innerHTML = '';
             response.data.forEach(order => {
                 var row = tblOrders.insertRow(0);
+                row.id = order.id;
                 var orderId = row.insertCell(0);
                 var requestedHours = row.insertCell(1);
                 var cost = row.insertCell(2);
@@ -570,6 +570,7 @@ window.editHours = function(){
         note: window.note.value
     })
         .then((response) => {
+            document.getElementById(window.order_id).children[1].innerHTML = window.newHours.value;
             Swal.fire({
                 position: "center",
                 html: "<h4>" + response.data.message + "</h4>",
@@ -577,6 +578,7 @@ window.editHours = function(){
                 showConfirmButton: false,
                 timer: 1000,
             });
+            $('#editModal').modal('hide');
         })
         .catch((error) => {
             console.log(error);

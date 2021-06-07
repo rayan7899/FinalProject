@@ -1125,38 +1125,61 @@ class CommunityController extends Controller
             "order_id"    => "required|numeric|distinct|exists:orders,id",
             "newHours"    => "required|numeric",
             "note"        => "string|nullable",
+        ],
+        [
+            "newHours.required" => "حقل عدد الساعات مطلوب"
         ]);
         try {
             $semester = Semester::latest()->first();
             $order = Order::find($requestData['order_id']);
-            if($order->requested_hours == 0){
+            if($order->requested_hours == $requestData['newHours']){
+                return response(json_encode(['message' => 'يجب ان يكون عدد الساعات المدخل غير مطابق لعدد الساعات الحالي']), 422);
+            }elseif($requestData['newHours'] < 0){
+                return response(json_encode(['message' => 'لا يمكن ادخال قيمة اصغر من صفر']), 422);
+            }elseif ($order->requested_hours == 0) {
                 return response(json_encode(['message' => 'لا يمكن التعديل على طلب مرفوض']), 422);
             }
 
-            if($order->amount/$order->requested_hours == 0) { //private state
-            }elseif(in_array($order->amount/$order->requested_hours, [550, 400])){ //defualt state
-            }elseif(in_array($order->amount/$order->requested_hours, [275, 200])){ //employee's son state
-            }elseif(in_array($order->amount/$order->requested_hours, [137.5, 100])){ //employee state
-            }else{
+            if ($order->amount / $order->requested_hours == 0) { //private state
+                $hourCost = 0;
+            } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+                $hourCost = $order->student->program->hourPrice;
+            } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+                $hourCost = $order->student->program->hourPrice * 0.5;
+            } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+                $hourCost = $order->student->program->hourPrice * 0.25;
+            } else {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
             }
-            if($requestData['newHours'] > $order->requested_hours){
-                $type = 'editOrder-deduction';
-            }else{
-                $type = 'editOrder-charge';
-            }
             DB::beginTransaction();
-                $transaction = $order->student->transactions()->create([
-                    "order_id"      => $order->id,
-                    "type"          => $type,
-                    "manager_id"    => Auth::user()->manager->id,
-                    "semester_id"   => $semester->id,
-                    "note"          => $requestData["note"] ?? null,
-                ]);
-                $order->update([
-                    "requested_hours"   => $requestData['newHours'],
-                    "transaction_id"    => $transaction->id,
-                ]);
+            if ($requestData['newHours'] > $order->requested_hours) {
+                //increase hours
+                $diffCost = ($requestData['newHours'] - $order->requested_hours) * $hourCost;
+                $type = 'editOrder-deduction';
+                $order->student->wallet -= $diffCost;
+            } else {
+                // decrease hours
+                $diffCost = ($order->requested_hours - $requestData['newHours']) * $hourCost;
+                $type = 'editOrder-charge';
+                $order->student->wallet += $diffCost;
+            }
+            $order->student->credit_hours = $requestData['newHours'];
+            $order->student->save();
+            $transaction = $order->student->transactions()->create([
+                "order_id"      => $order->id,
+                "amount"        => $diffCost,
+                "type"          => $type,
+                "manager_id"    => Auth::user()->manager->id,
+                "semester_id"   => $semester->id,
+                "note"          => $requestData["note"] ?? null,
+            ]);
+            $order->update([
+                "amount"            => $requestData['newHours'] * $hourCost,
+                "requested_hours"   => $requestData['newHours'],
+                "discount"          => $requestData['newHours'] * $order->student->program->hourPrice - $requestData['newHours'] * $hourCost,
+                "transaction_id"    => $transaction->id,
+                "note"              => "تم تغيير عدد الساعات من " . $order->requested_hours . " إلى " . $requestData['newHours'],
+            ]);
             DB::commit();
             return response()->json(["message" => 'تم التعديل بنجاح'], 200);
         } catch (Exception $e) {

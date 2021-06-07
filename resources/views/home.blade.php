@@ -127,9 +127,15 @@
                                 @elseif ($transaction->type == 'editPayment-charge')
                                     <td class="text-success"> اضافة (اعادة تدقيق ايصال) </td>
                                     <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
+                                @elseif ($transaction->type == 'editOrder-charge')
+                                    <td class="text-success"> اضافة (تعديل ساعات) </td>
+                                    <td>{{ $transaction->order->id ?? 'لا يوجد' }}</td>
+                                @elseif ($transaction->type == 'editOrder-deduction')
+                                    <td class="text-danger"> خصم (تعديل ساعات) </td>
+                                    <td>{{ $transaction->order->id ?? 'لا يوجد' }}</td>
                                 @else
                                     <td>لا يوجد</td>
-                                    <td>{{ $transaction->refund_order_id ?? 'Error' }}</td>
+                                    <td>Error</td>
                                 @endif
                                 <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
                                 <td style="min-width: 100px">{{ $transaction->created_at->toDateString() ?? 'Error' }}
