@@ -531,12 +531,7 @@ window.showOrders = function (student_id) {
     });
     axios.get(`/api/community/student/orders/${student_id}`)
         .then((response) => {
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 100,
-            });
+            Swal.close();
             var tblOrders = document.getElementById('tblOrders');
             tblOrders.innerHTML = '';
             response.data.forEach(order => {
