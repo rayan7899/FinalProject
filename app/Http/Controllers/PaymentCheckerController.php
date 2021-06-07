@@ -11,37 +11,32 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class GeneralManagementController extends Controller
+class PaymentCheckerController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function dashboard()
     {
-        $title = "الإدارة العامة";
+        $title = "مدقق ايصالات";
         $links = [
             (object) [
                 "name" => "تدقيق الايصالات",
-                "url" => route("generalPaymentsReviewForm")
+                "url" => route("checkerPaymentsReviewForm")
             ],
         ];
-        return view("manager.community.dashboard")->with(compact("links", "title"));
+        return view("manager.paymentChecker.dashboard")->with(compact("links", "title"));
     }
 
 
-    public function generalPaymentsReviewForm()
+    public function checkerPaymentsReviewForm()
     {
-        return view('manager.generalManagement.generalPaymentsReview');
+        return view('manager.paymentChecker.checkerPaymentsReview');
     }
 
-    public function generalPaymentsReport()
+    public function checkerPaymentsReport()
     {
         return view('manager.community.paymentsReport');
     }
 
-    public function generalPaymentsReviewJson($type)
+    public function checkerPaymentsReviewJson($type)
     {
         // $fetch_errors = [];
         try {
@@ -50,15 +45,15 @@ class GeneralManagementController extends Controller
                 $cond = "!=";
             }
             $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transactions"])
-            ->where("accepted", true)->where("checker_decision", true)->where("management_decision", null)->get();
+            ->where("accepted", "!=", null)->where("checker_decision", null)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
-            return response()->json(["error" => 'تعذر جلب البيانات خطأ غير معروف'], 200);
+            return view('manager.community.paymentsReview')->with('error', "تعذر جلب المتدربين");
         }
     }
 
-    public function generalPaymentsReviewUpdate(Request $request)
+    public function checkerPaymentsReviewUpdate(Request $request)
     {
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
@@ -78,12 +73,12 @@ class GeneralManagementController extends Controller
                 ->where("student_id", $user->student->id)->first() ?? null;
             if ($payment == null) {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-            } else if ($payment->management_decision !== null) {
+            } else if ($payment->checker_decision !== null) {
                 return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
             }
             $payment->update([
-                "management_decision"       => $decision,
-                "management_note"          => $reviewedPayment["note"],
+                "checker_decision"       => $decision,
+                "checker_note"          => $reviewedPayment["note"],
                 "manager_id"            => Auth::user()->manager->id,
             ]);
             return response(json_encode(['message' => 'تمت معالجة الطلب بنجاح']), 200);
@@ -94,7 +89,7 @@ class GeneralManagementController extends Controller
     }
 
 
-    public function generalPaymentsReviewVerifiyDocs(Request $request)
+    public function checkerPaymentsReviewVerifiyDocs(Request $request)
     {
         $reviewedPayment = $this->validate($request, [
             "national_id"        => "required|numeric",
@@ -116,12 +111,12 @@ class GeneralManagementController extends Controller
                 ->where("student_id", $user->student->id)->first() ?? null;
                 if ($payment == null) {
                     return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-                } else if ($payment->management_decision !== null) {
+                } else if ($payment->checker_decision !== null) {
                     return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
                 }
 
             $payment->update([
-                "management_decision"       => $decision,
+                "checker_decision"       => $decision,
                 "manager_id"             => Auth::user()->manager->id
             ]);
 

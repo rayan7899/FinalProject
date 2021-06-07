@@ -1,5 +1,6 @@
 require("./bootstrap");
 require("./paymentsReview");
+require("./paymentsRecheck");
 require("./studentFinalAccepted");
 require("./students");
 require("./excelForm");
@@ -11,6 +12,10 @@ require("./manageCourses");
 require("./wallet");
 require("./refundOrders");
 require("./studentsReport");
+require("./checkerPaymentsReview");
+require("./generalPaymentsReview");
+
+
 
 
 

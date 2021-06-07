@@ -16,68 +16,57 @@
                 @endif
             </div>
         @endif
+      
+
+
         <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog " role="document">
-                <div class="modal-content">
-                    <div dir="rtl" class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">تعديل</h5>
-                        <button style="margin:0px; padding: 0px;" type="button" class="close" data-dismiss="modal"
-                            aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div dir="rtl" class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="national_id">رقم الهوية</label>
-                                <input type="text" class="form-control" id="national_id" aria-describedby="national_id"
-                                    disabled="true">
-                            </div>
-                            <div class="form-group">
-                                <label for="name">الاسم</label>
-                                <input type="text" class="form-control" id="sname" aria-describedby="name" disabled="true">
-                            </div>
-                            <div id="amountFormGroup" class="form-group" style="display:block">
-                                <label for="amount">المبلغ المدفوع</label>
-                                <input required type="number" class="form-control" id="amount" aria-describedby="amount">
-                            </div>
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div dir="rtl" class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">تعديل</h5>
+                    <button style="margin:0px; padding: 0px;" type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div dir="rtl" class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="national_id">رقم الهوية</label>
+                            <input type="text" class="form-control" id="national_id" aria-describedby="national_id"
+                                disabled="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="name">الاسم</label>
+                            <input type="text" class="form-control" id="sname" aria-describedby="name" disabled="true">
+                        </div>
+                        <div class="row">
 
-                            {{-- <div class="form-group">
-                                <label for="noteShortcuts">اختصارات الملاحظات</label>
-                                <select onchange="fillNote()" class="form-control" id="noteShortcuts">
-                                    <option value="0" selected disabled> اختر</option>
-                                    <option value="wrong-receipt">الايصال غير معمتد</option>
-                                    <option value="else">اخرى</option>
-                                </select>
-                            </div> --}}
-
-                            <div class="form-group">
-                                <label for="note" class="col-form-label">ملاحظات المدقق</label>
-                                <div id="rejectMsgs">
-                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل.'">الايصال غير معمتد</span>
-                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'الايصال غير واضح.'">الايصال غير واضح</span>
-                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">الايصال مستخدم</span>
-                                </div>
-                                <div id="acceptMsgs">
-                                    <span class="btn badge badge-pill badge-info"
-                                        onclick="window.note.value = `تم تعديل المبلغ الى ${window.amount.value} حسب الايصال`">تم
-                                        تعديل المبلغ</span>
-                                </div>
-                                <textarea class="form-control" id="note"></textarea>
+                            <div id="amountFormGroup" class="form-group col-md-6" style="display:block">
+                                <label for="amount">المبلغ السابق</label>
+                                <input disabled type="number" class="form-control" id="amount" aria-describedby="amount">
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button id="acceptBtnModal" onclick="window.sendStudentUpdate('accept')"
-                            class="btn btn-primary btn-md" style="display:block">قبول</button>
-                        <button id="rejectBtnModal" onclick="window.sendStudentUpdate('reject')"
-                            class="btn btn-danger btn-md" style="display:block">رفض</button>
-                    </div>
+                            <div id="amountFormGroup" class="form-group col-md-6" style="display:block">
+                                <label for="newAmount">المبلغ الجديد</label>
+                                <input required type="number" class="form-control" id="newAmount" aria-describedby="newAmount">
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="note" class="col-form-label">ملاحظات المدقق</label>
+                            <textarea class="form-control" id="note" name="note"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
+                    
+                    <button id="rejectBtnModal" onclick="window.recheckEditAmount()"
+                        class="btn btn-primary btn-md">تم</button>
                 </div>
             </div>
         </div>
+    </div>
 
         <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable" style="max-width: 75%" role="document">
@@ -109,27 +98,32 @@
             </div>
         </div>
         <div class="table-responsive p-2 bg-white rounded border">
-            <table class="table nowrap display cell-border" id="paymentsReviewTbl">
+            <table class="table nowrap display cell-border" id="paymentsRecheckTbl">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">رقم الهوية</th>
                         <th scope="col">الاسم</th>
-                        <th scope="col">رقم الجوال</th>
+                        {{-- <th scope="col">رقم الجوال</th>
                         <th scope="col">البرنامج</th>
                         <th scope="col">القسم</th>
-                        <th scope="col">التخصص</th>
+                        <th scope="col">التخصص</th> --}}
                         <th scope="col">الحالة</th>
                         <th scope="col">ايصال السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
+                        <th scope="col">الملاحظات </th>
+                        <th scope="col">ملاحظات المدقق </th>
+
                         <th scope="col">الاجراء </th>
                     </tr>
                     <tr>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
+                        {{-- <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th> --}}
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
@@ -141,27 +135,12 @@
                 <tbody>
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-
-                    </tr>
-                </tfoot>
             </table>
         </div>
         <script defer>
-            var paymentVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
-            var paymentWithNote = "{{ route('paymentsReviewUpdate') }}";
-            var paymentsReviewJson = "{{ route('paymentsReviewJson', ['type' => 'review']) }}"
+            var paymentsRecheckReject = "{{ route('paymentsRecheckReject') }}";
+            var paymentsRecheckJson = "{{ route('paymentsRecheckJson', ['type' => 'review']) }}"
+            var editOldPayment = "{{ route('editOldPayment') }}"
             window.addEventListener('DOMContentLoaded', (event) => {
                 Swal.fire({
                     html: "<h4>جاري جلب البيانات</h4>",

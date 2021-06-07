@@ -70,9 +70,9 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button id="acceptBtnModal" onclick="window.sendStudentUpdate('accept')"
+                        <button id="acceptBtnModal" onclick="window.checkerSendDecisionWithNote('accept')"
                             class="btn btn-primary btn-md" style="display:block">قبول</button>
-                        <button id="rejectBtnModal" onclick="window.sendStudentUpdate('reject')"
+                        <button id="rejectBtnModal" onclick="window.checkerSendDecisionWithNote('reject')"
                             class="btn btn-danger btn-md" style="display:block">رفض</button>
                     </div>
                 </div>
@@ -109,28 +109,30 @@
             </div>
         </div>
         <div class="table-responsive p-2 bg-white rounded border">
-            <table class="table nowrap display cell-border" id="paymentsReviewTbl">
+            <table class="table nowrap display cell-border" id="checkerPaymentsReviewTbl">
                 <thead class="text-center">
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">رقم الهوية</th>
                         <th scope="col">الاسم</th>
-                        <th scope="col">رقم الجوال</th>
+                        {{-- <th scope="col">رقم الجوال</th>
                         <th scope="col">البرنامج</th>
                         <th scope="col">القسم</th>
-                        <th scope="col">التخصص</th>
+                        <th scope="col">التخصص</th> --}}
                         <th scope="col">الحالة</th>
                         <th scope="col">ايصال السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
+                        <th scope="col">الملاحظات </th>
                         <th scope="col">الاجراء </th>
                     </tr>
                     <tr>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
+                        {{-- <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
-                        <th class="filterhead" scope="col"></th>
+                        <th class="filterhead" scope="col"></th> --}}
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
@@ -141,27 +143,12 @@
                 <tbody>
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-
-                    </tr>
-                </tfoot>
             </table>
         </div>
         <script defer>
-            var paymentVerified = "{{ route('paymentsReviewVerifiyDocs') }}";
-            var paymentWithNote = "{{ route('paymentsReviewUpdate') }}";
-            var paymentsReviewJson = "{{ route('paymentsReviewJson', ['type' => 'review']) }}"
+            var checkerPaymentVerified = "{{ route('checkerPaymentsReviewVerifiyDocs') }}";
+            var checkerPaymentWithNote = "{{ route('checkerPaymentsReviewUpdate') }}";
+            var checkerPaymentsReviewJson = "{{ route('checkerPaymentsReviewJson', ['type' => 'review']) }}"
             window.addEventListener('DOMContentLoaded', (event) => {
                 Swal.fire({
                     html: "<h4>جاري جلب البيانات</h4>",
