@@ -1157,13 +1157,14 @@ class CommunityController extends Controller
                 $diffCost = ($requestData['newHours'] - $order->requested_hours) * $hourCost;
                 $type = 'editOrder-deduction';
                 $order->student->wallet -= $diffCost;
+                $order->student->credit_hours += $requestData['newHours'] - $order->requested_hours;
             } else {
                 // decrease hours
                 $diffCost = ($order->requested_hours - $requestData['newHours']) * $hourCost;
                 $type = 'editOrder-charge';
                 $order->student->wallet += $diffCost;
+                $order->student->credit_hours -= $order->requested_hours - $requestData['newHours'];
             }
-            $order->student->credit_hours = $requestData['newHours'];
             $order->student->save();
             $transaction = $order->student->transactions()->create([
                 "order_id"      => $order->id,
@@ -1181,7 +1182,7 @@ class CommunityController extends Controller
                 "note"              => "تم تغيير عدد الساعات من " . $order->requested_hours . " إلى " . $requestData['newHours'],
             ]);
             DB::commit();
-            return response()->json(["message" => 'تم التعديل بنجاح'], 200);
+            return response()->json(["message" => 'تم التعديل بنجاح', 'newCost' => $requestData['newHours'] * $hourCost], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();

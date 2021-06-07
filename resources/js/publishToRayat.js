@@ -571,6 +571,7 @@ window.editHours = function(){
     })
         .then((response) => {
             document.getElementById(window.order_id).children[1].innerHTML = window.newHours.value;
+            document.getElementById(window.order_id).children[2].innerHTML = response.data.newCost;
             Swal.fire({
                 position: "center",
                 html: "<h4>" + response.data.message + "</h4>",
