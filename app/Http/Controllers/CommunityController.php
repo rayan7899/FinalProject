@@ -47,10 +47,10 @@ class CommunityController extends Controller
                 "name" => "تدقيق الايصالات",
                 "url" => route("paymentsReviewForm")
             ],
-            // (object) [
-            //     "name" => "اعادة تدقيق الايصالات",
-            //     "url" => route("paymentsRecheckForm")
-            // ],
+            (object) [
+                "name" => "اعادة تدقيق الايصالات",
+                "url" => route("paymentsRecheckForm")
+            ],
             (object) [
                 "name" => "تقرير طلبات الشحن",
                 "url" => route("paymentsReport")
@@ -721,7 +721,7 @@ class CommunityController extends Controller
 
 
         ]);
-        if (Auth::user()->id < 2) {
+        if (Auth::user()->id > 2) {
             return response(json_encode(['message' => "ليس لديك صلاحيات لتنفيذ هذا الامر"]), 422);
         } elseif ($reviewedPayment["amount"] < 0) {
             return response(json_encode(['message' => 'يجب ان يكون المبلغ المدخل اكبر من صفر']), 422);
