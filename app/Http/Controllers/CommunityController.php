@@ -1171,6 +1171,13 @@ class CommunityController extends Controller
             } else {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
             }
+
+            if($order->student->traineeState != 'privateState'){
+                if($requestData['newHours'] * $hourCost > $order->student->wallet){
+                    return response(['message' => "لا يوجد رصيد كافي لدى المتدرب لإضافة الساعات"], 422);
+                }
+            }
+
             DB::beginTransaction();
             if ($requestData['newHours'] > $order->requested_hours) {
                 //increase hours
