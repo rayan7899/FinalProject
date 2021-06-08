@@ -52,14 +52,7 @@ class StudentAffairsController extends Controller
                 "name" => "اضافة اكسل مستجدين",
                 "url" => route("AddExcelForm")
             ],
-            (object) [
-                "name" => "اضافة اكسل مستمرين",
-                "url" => route("OldForm")
-            ],
-            (object) [
-                "name" => "اضافة الفائض/العجز للمستمرين",
-                "url" => route("UpdateStudentsWalletForm")
-            ],
+
             (object) [
                 "name" => "اضافة الرقم التدريبي للمستجدين",
                 "url" => route("addRayatIdForm")
