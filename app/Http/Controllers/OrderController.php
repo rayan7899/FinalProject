@@ -35,7 +35,7 @@ class OrderController extends Controller
             return redirect(route("home"))->with('error', 'اضافة المقررات غير متاح في الوقت الحالي');
          }
 
-         if ($user->student->credit_hours >= 12) {
+         if ($user->student->available_hours >= 12) {
             return back()->with('error', 'الحد الاعلى للفصل الصيفي هو 12 ساعة');
          }
 
@@ -47,7 +47,7 @@ class OrderController extends Controller
          //    ->orWhere("private_doc_verified",'=', null)->first() !== null;
          $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
 
-         if ($user->student->level == 1 && $user->student->credit_hours != 0) {
+         if ($user->student->level == 1 && $user->student->available_hours != 0) {
             return redirect(route("home"))->with("error", "اضافة المقررات غير متاح للمتدربين في المستوى الاول");
          } elseif ($isHasActiveRefund) {
             return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب استرداد تحت المراجعة");
@@ -70,7 +70,7 @@ class OrderController extends Controller
             ->get();
          $major_courses = null;
 
-         if ($user->student->studentState == true && $user->student->credit_hours == 0) {
+         if ($user->student->studentState == true && $user->student->available_hours == 0) {
             $courses_id = array_map(
                function ($c) {
                   return $c['id'];
@@ -147,7 +147,7 @@ class OrderController extends Controller
             }
             $total_hours = array_sum(array_map(
                function ($c) {
-                  return $c['credit_hours'];
+                  return $c['available_hours'];
                },
                Course::whereIn('id', $requestData['courses'])->get()->toArray()
             ));
@@ -164,7 +164,7 @@ class OrderController extends Controller
             //    return back()->with('error', 'يجب أن يكون مجموع ساعات الجدول بين 12 و 21');
             // }
 
-            if (($total_hours > 12 && $semester->isSummer == true) || ($user->student->credit_hours + $total_hours > 12 &&  $semester->isSummer == true)) {
+            if (($total_hours > 12 && $semester->isSummer == true) || ($user->student->available_hours + $total_hours > 12 &&  $semester->isSummer == true)) {
                return back()->with('error', 'الحد الاعلى للفصل الصيفي هو 12 ساعة');
             }
 

@@ -83,7 +83,7 @@ class UsersExport implements FromView, ShouldAutoSize
 //             $user->student->department->name,
 //             $user->student->major->name,
 //             $user->student->traineeState,
-//             $user->student->credit_hours,
+//             $user->student->available_hours,
 //             $user->student->wallet,
 //         ] ;
  

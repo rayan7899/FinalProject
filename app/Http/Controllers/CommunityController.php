@@ -119,6 +119,18 @@ class CommunityController extends Controller
                 "url" => route("refundOrdersReport")
             ],
             // (object) [
+            //     "name" => "اضافة اكسل مستمرين",
+            //     "url" => route("OldForm")
+            // ],
+            // (object) [
+            //     "name" => "اضافة الفائض/العجز للمستمرين",
+            //     "url" => route("UpdateStudentsWalletForm")
+            // ],
+            (object) [
+                "name" => "تحديث الساعات المعتمدة",
+                "url" => route("UpdateCreditHoursForm")
+            ],
+            // (object) [
             //     "name" => "المتدربين المدققة ايصالاتهم",
             //     "url" => route("CheckedStudents")
             // ],
@@ -846,7 +858,7 @@ class CommunityController extends Controller
 
             DB::table('students')
                 ->update([
-                    'credit_hours' => 0,
+                    'available_hours' => 0,
                 ]);
             if (isset($requestData['isSummerSemester']) &&  $requestData['isSummerSemester'] == false) {
                 DB::table('students')
@@ -1060,7 +1072,7 @@ class CommunityController extends Controller
             ]);
 
             $user->student->wallet -= $amount;
-            $user->student->credit_hours += $requestData['requested_hours'];
+            $user->student->available_hours += $requestData['requested_hours'];
             $user->student->save();
             DB::commit();
             return response(['message' => 'تم قبول الطلب بنجاح'], 200);
@@ -1091,7 +1103,7 @@ class CommunityController extends Controller
             }
             $users = User::with(['student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond, $type) {
                 $result->where('level', $cond, '1')
-                    ->where('credit_hours', '>', 0);
+                    ->where('available_hours', '>', 0);
 
                 $user = Auth::user();
                 if ($type == 'departmentBoss' && $user->manager->isDepartmentManager()) {
@@ -1705,7 +1717,7 @@ class CommunityController extends Controller
                 }
 
                 if (in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
-                    $refund->student->credit_hours = 0;
+                    $refund->student->available_hours = 0;
                 }
 
                 $refund->student->save();
