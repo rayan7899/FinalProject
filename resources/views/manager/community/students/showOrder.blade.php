@@ -163,7 +163,7 @@
                 <div class="col-md-6">
                     <div dir="ltr" class="input-group mb-1">
                         <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->credit_hours ?? 0 }}">
+                            value="{{ $user->student->available_hours ?? 0 }}">
                         <div class="input-group-append">
                             <span class="input-group-text text-center" style="width: 120px;"><label
                                     class="text-center m-0 p-0 w-100">الساعات المعتمدة</label></span>
@@ -175,7 +175,7 @@
                     @php
                         $acceptMessage = 'مقبول مبدئي'; // default message
                         if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
-                            if ($user->student->credit_hours == 0) {
+                            if ($user->student->available_hours == 0) {
                                 $acceptMessage = 'مقبول نهائي - بانتظار اتاحة الساعات في رايات';
                             } else {
                                 $acceptMessage = 'مقبول نهائي - تم اتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات';

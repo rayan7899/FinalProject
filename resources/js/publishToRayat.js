@@ -319,11 +319,11 @@ jQuery(function () {
                     data: "student.major.name"
                 },
                 {
-                    data: "student.credit_hours",
+                    data: "student.available_hours",
                     className: "text-center",
                 },
                 {
-                    data: "student.credit_hours",
+                    data: "student.available_hours",
                     className: "text-center",
                     render: function (student, type, row) {
                         return `<p class="text-success">مسجل في رايات</p>`

@@ -43,7 +43,7 @@
                             <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                             <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                            <td>{{ $user->student->credit_hours ?? 'لا يوجد' }} </td>
+                            <td>{{ $user->student->available_hours ?? 'لا يوجد' }} </td>
                         </tr>
                     @empty
                         لايوجد
