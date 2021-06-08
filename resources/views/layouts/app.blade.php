@@ -21,7 +21,7 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" style="display: flex; flex-direction: column; min-height: 100vh">
         <div class="position-absolute w-100 h-100 p-0 m-0" id="loadingSpin"
             style="background-color: #0002;z-index: 10; display: none;">
             <div class="spinner-border text-success position-absolute h3"
@@ -311,12 +311,50 @@
             </div>
         </div>
 
-        <main class="py-4 my-4 p-2" style="text-align: right !important; min-height: 550px;" dir="rtl">
+        <main class="py-4 my-4 p-2" style="text-align: right !important; flex-grow: 1" dir="rtl">
             @yield('content')
         </main>
+        
+        <footer class="card bg-light" dir="rtl">
+            <div class="card-body container">
+                <div class="row text-right justify-content-center ">
 
+                    <div class="col-md-3 align-self-center">
+                        <img width="200px" class="mb-5" src="{{ asset('images/tvtclogo2.png') }}" alt="شعار الكلية">
+                    </div>
 
-        <footer class="justify-content-end" dir="rtl">
+                    <div class="col-xs-4 m-0 pl-3">
+                        <h4>التواصل</h4>
+                        <hr>
+                        <ul class="list-unstyled pr-0">
+                            <li>
+                                <a class="btn text-black-50" href="mailto: tvtc.brct.ctc@gmail.com">
+                                    <i class="fa fa-envelope-o text-black-50 pl-2" aria-hidden="true"></i> tvtc.brct.ctc@gmail.com 
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-xs-4">
+                        <h4>المطورين</h4>
+                        <hr>
+                        <ul class="list-unstyled text-black-50 pr-3">
+                            <li>م. عبدالله النغيمشي</li>
+                            <li>م. مهند الرسيني</li>
+                            <li>م. ريان العرفج</li>
+                            <li class="mt-2">اشراف م. باسم الحسيني</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-footer text-secondary text-center">
+                <p class="m-0"><span class="text-black-50">© جميع الحقوق محفوظة</span> - مركز خدمة المجتمع والتدريب المستمر بالكلية التقنية ببريدة 2021 <span class="text-black-50 pr-3">نسخة تجريبية</span></p>
+            </div>
+        </footer>
+
+        {{-- <footer class="page-footer" dir="rtl">
+                <i class="fa fa-envelope" aria-hidden="true"></i><a href="mailto: rayan7899@hotmail.com">اتصل بنا</a>
 
             <div class="card bg-dark text-white">
                 <img src="/images/background.jpg" style="height: 150px;" class="card-img" alt="...">
@@ -332,10 +370,9 @@
                         <br>
                         نسخة تجريبية
                     </p>
-
                 </div>
             </div>
-        </footer>
+        </footer> --}}
     </div>
 </body>
 
