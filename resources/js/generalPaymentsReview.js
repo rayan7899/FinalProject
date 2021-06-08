@@ -67,24 +67,7 @@ jQuery(function () {
                 className: "text-center",
 
             },
-            {
-                data: "receipt_file_id",
-                className: "text-center",
-                render: function (data, type, row) {
-                    let ext = data.split('.')[1];
-                    if (ext == 'pdf' || ext == 'PDF') {
-                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
-                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','pdf')">
-                        <img style="width: 20px" src="/images/pdf.png" />
-                    </a>`;
-                    } else {
-                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
-                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','img')">
-                        <img style="width: 20px" src="/images/camera_img_icon.png" />
-                    </a>`;
-                    }
-                }
-            },
+            
             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
@@ -113,6 +96,24 @@ jQuery(function () {
                     return data.transactions[data.transactions.length - 1].note;
                 },
                 className: "text-center",
+            },
+            {
+                data: "receipt_file_id",
+                className: "text-center",
+                render: function (data, type, row) {
+                    let ext = data.split('.')[1];
+                    if (ext == 'pdf' || ext == 'PDF') {
+                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
+                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','pdf')">
+                        <img style="width: 20px" src="/images/pdf.png" />
+                    </a>`;
+                    } else {
+                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
+                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','img')">
+                        <img style="width: 20px" src="/images/camera_img_icon.png" />
+                    </a>`;
+                    }
+                }
             },
             {
                 data: "student.level",
@@ -375,6 +376,15 @@ window.sendDecisionWithNote = function (decision) {
     let amount = window.amount.value;
     let payment_id = window.payment_id;
     let note = window.note.value;
+    if(note == null || note == ''){
+        Swal.fire({
+            position: "center",
+            html: "<h4>الملاحظات حقل مطلوب</h4>",
+            icon: "error",
+            showConfirmButton: true,
+        });
+        return;
+    }
 
     if (amount == "" || amount <= 0) {
         amount = 0;

@@ -12,6 +12,11 @@ class Manager extends Model
 {
     use HasFactory;
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
     public function permissions()
     {
         return $this->hasMany(Permission::class);

@@ -68,7 +68,7 @@
                                             <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
                                                 <a class="dropdown-item text-right" href="{{ route('logout') }}"
                                                     onclick="event.preventDefault();
-                                                                                                                                                document.getElementById('logout-form').submit();">
+                                                                                                                                                    document.getElementById('logout-form').submit();">
                                                     {{ __('Logout') }}
                                                 </a>
 
@@ -272,7 +272,10 @@
                                             <li class="nav-item dropdown">
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="nav-link"
-                                                        href="{{ route('paymentCheckerDashboard') }}">تدقيق الايصالات</a>
+                                                        href="{{ route('paymentCheckerDashboard') }}">الرئيسية</a>
+                                                    <a class="nav-link"
+                                                        href="{{ route('checkerPaymentsReviewForm') }}">تدقيق
+                                                        الايصالات</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
@@ -290,8 +293,9 @@
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="nav-link"
                                                         href="{{ route('managementDashboard') }}">الرئيسية</a>
-                                                        <a class="nav-link"
-                                                        href="{{ route('generalPaymentsReviewForm') }}">تدقيق الايصالات</a>
+                                                    <a class="nav-link"
+                                                        href="{{ route('generalPaymentsReviewForm') }}">تدقيق
+                                                        الايصالات</a>
                                                 </div>
                                             </li>
                                             <li class="nav-item">
