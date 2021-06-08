@@ -55,6 +55,10 @@ class CommunityController extends Controller
                 "name" => "تقرير طلبات الشحن",
                 "url" => route("paymentsReport")
             ],
+            (object) [
+                "name" => "الايصالات المدققة نهائيا",
+                "url" => route("finalReviewReprot")
+            ],
             // (object) [
             //     "name" => "ادارة محفظة المتدرب",
             //     "url" => route("chargeForm")
@@ -514,6 +518,27 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return view('manager.community.paymentsReview')->with('error', "تعذر جلب المتدربين");
+        }
+    }
+
+    public function finalReviewReprot()
+    {
+        return view('manager.community.reports.finalReport');
+    }
+
+    public function finalReviewReprotJson(Request $request)
+    {
+        try {
+            $semester = Semester::latest()->first();
+            $payments = Payment::with(["student.user", "transactions"])
+                            ->where('checker_decision', 1)
+                            ->where('management_decision', 1)
+                            ->where('semester_id', $semester->id)
+                            ->get();
+            return response()->json(["data" => $payments->toArray()], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return view('manager.community.reports.finalReport')->with('error', "تعذر جلب المتدربين");
         }
     }
 
@@ -1181,7 +1206,7 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             DB::rollBack();
-            return response()->json(["message" => $e], 422);
+            return response()->json(["message" => 'خطأ غير معروف'], 422);
         }
     }
 
