@@ -54,11 +54,11 @@
 
                             <div class="form-group">
                                 <label for="note" class="col-form-label">ملاحظات المدقق</label>
-                                <div id="rejectMsgs">
+                                {{-- <div id="rejectMsgs">
                                     <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل.'">الايصال غير معمتد</span>
                                     <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'الايصال غير واضح.'">الايصال غير واضح</span>
                                     <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">الايصال مستخدم</span>
-                                </div>
+                                </div> --}}
                                 <div id="acceptMsgs">
                                     <span class="btn badge badge-pill badge-info"
                                         onclick="window.note.value = `تم تعديل المبلغ الى ${window.amount.value} حسب الايصال`">تم
@@ -120,9 +120,9 @@
                         <th scope="col">القسم</th>
                         <th scope="col">التخصص</th> --}}
                         <th scope="col">الحالة</th>
-                        <th scope="col">ايصال السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
                         <th scope="col">الملاحظات </th>
+                        <th scope="col">ايصال السداد</th>
                         <th scope="col">الاجراء </th>
                     </tr>
                     <tr>

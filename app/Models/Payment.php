@@ -25,4 +25,8 @@ class Payment extends Model
     {
         return $this->belongsTo(Semester::class);
     }
+    public function manager()
+    {
+        return $this->belongsTo(Manager::class);
+    }
 }

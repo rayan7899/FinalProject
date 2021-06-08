@@ -2,7 +2,7 @@ window.national_id = document.getElementById("national_id");
 window.sname = document.getElementById("sname");
 window.amount = document.getElementById("amount");
 window.note = document.getElementById("note");
-window.isManagment = false;
+// window.isManagment = false;
 window.payment_id = 0;
 
 
@@ -72,24 +72,7 @@ jQuery(function () {
                 className: "text-center",
 
             },
-            {
-                data: "receipt_file_id",
-                className: "text-center",
-                render: function (data, type, row) {
-                    let ext = data.split('.')[1];
-                    if (ext == 'pdf' || ext == 'PDF') {
-                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
-                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','pdf')">
-                        <img style="width: 20px" src="/images/pdf.png" />
-                    </a>`;
-                    } else {
-                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
-                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','img')">
-                        <img style="width: 20px" src="/images/camera_img_icon.png" />
-                    </a>`;
-                    }
-                }
-            },
+           
             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
@@ -112,8 +95,20 @@ jQuery(function () {
                 },
                 className: "text-center",
             },
+            
             {
                 data: "note",
+            },
+            {
+                data: function (data) {
+                    if(data.checker_decision == 0 || data.checker_decision == '0' || data.checker_decision == false){
+                        return `مدقق الايصالات | ${data.manager.user.name}`
+                    }else if(data.management_decision == 0 || data.management_decision == '0' || data.management_decision == false){
+                        return `الادارة العامة | ${data.manager.user.name}`
+                    }else{
+                        return 'خطأ غير معروف'
+                    }
+                },
             },
             {
                 data: function (data) {
@@ -124,6 +119,24 @@ jQuery(function () {
                     }
                     return data.checker_note;
                 },
+            },
+            {
+                data: "receipt_file_id",
+                className: "text-center",
+                render: function (data, type, row) {
+                    let ext = data.split('.')[1];
+                    if (ext == 'pdf' || ext == 'PDF') {
+                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
+                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','pdf')">
+                        <img style="width: 20px" src="/images/pdf.png" />
+                    </a>`;
+                    } else {
+                        return `<a data-toggle="modal" data-target="#pdfModal" href="#"
+                        onclick="showPdf('/api/documents/show/${row.student.user.national_id}/${data}','img')">
+                        <img style="width: 20px" src="/images/camera_img_icon.png" />
+                    </a>`;
+                    }
+                }
             },
             {
                 data: "student.level",
@@ -141,20 +154,20 @@ jQuery(function () {
                     } else {
                         totalAmount = row.amount;
                     }
-                    var isManagment = false;
-                    if (row.checker_decision == 1 || row.checker_decision == '1' || row.checker_decision == true) {
-                        if (row.management_decision == 0 || row.management_decision == '0' || row.management_decision == false) {
-                            isManagment = true;
-                        }
-                    }
+                    // var isManagment = false;
+                    // if (row.checker_decision == 1 || row.checker_decision == '1' || row.checker_decision == true) {
+                    //     if (row.management_decision == 0 || row.management_decision == '0' || row.management_decision == false) {
+                    //         isManagment = true;
+                    //     }
+                    // }
                     return `<button data-toggle="modal" data-target="#editModal"
                 class="btn btn-primary px-2 py-0"
-                onclick="window.recheckShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}',${isManagment}, event)">
+                onclick="window.recheckShowModal('accept','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}', event)">
                 تعديل</button>
                 
                 <button 
                 class="btn btn-danger px-2 py-0"
-                onclick="window.recheckShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}',${isManagment}, event)">
+                onclick="window.recheckShowModal('reject','${row.student.user.national_id}','${row.id}','${row.student.user.name}','${row.note}','${totalAmount}', event)">
                 رفض</button>
                 `;
                 }
@@ -350,7 +363,7 @@ jQuery(function () {
 
 
 
-window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, name, note, amount, isManagment, event) {
+window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, name, note, amount, event) {
     window.rotation = 0;
     // console.log(event.target.parentNode.parentNode);
     // return;
@@ -358,7 +371,7 @@ window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, 
     if (callFrom == "reject") {
         Swal.fire({
             title: ' هل انت متأكد ؟',
-            text: " لا يمكن التراجع عن هذا الاجراء",
+            text: " .سيتم ارسال الطلب الى مدقق الايصالات لمراجعته مرة اخرى",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -379,7 +392,7 @@ window.recheckShowModal = function (callFrom = "edit", national_id, payment_id, 
     }
     window.national_id.value = national_id;
     window.sname.value = name;
-    window.isManagment = isManagment;
+    // window.isManagment = isManagment;
     if (note == null || note == 'null') {
         window.note.value = '';
     } else {
@@ -447,7 +460,7 @@ window.recheckEditAmount = function () {
             amount: window.newAmount.value,
             note: window.note.value,
             isRecheck: true,
-            isManagment: window.isManagment
+            // isManagment: window.isManagment
         };
         axios.post(window.editOldPayment, form)
             .then((response) => {
