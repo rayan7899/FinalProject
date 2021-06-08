@@ -17,7 +17,7 @@ class Transaction extends Model
 
     public function order()
     {
-        return $this->hasOne(Order::class);
+        return $this->belongsTo(Order::class);
     }
 
     public function refund()

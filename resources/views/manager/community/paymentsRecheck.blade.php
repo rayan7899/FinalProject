@@ -53,7 +53,7 @@
                             </div>
                         </div>
                         <div class="form-group col-12">
-                            <label for="note" class="col-form-label">ملاحظات المدقق</label>
+                            <label for="note" class="col-form-label">الملاحظات</label>
                             <textarea class="form-control" id="note" name="note"></textarea>
                         </div>
                     </form>
@@ -109,11 +109,11 @@
                         <th scope="col">القسم</th>
                         <th scope="col">التخصص</th> --}}
                         <th scope="col">الحالة</th>
-                        <th scope="col">ايصال السداد</th>
                         <th scope="col">المبلغ المدفوع</th>
                         <th scope="col">الملاحظات </th>
+                        <th scope="col">مرفوض من قبل </th>
                         <th scope="col">ملاحظات المدقق </th>
-
+                        <th scope="col">ايصال السداد</th>
                         <th scope="col">الاجراء </th>
                     </tr>
                     <tr>
@@ -124,6 +124,7 @@
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th> --}}
+                        <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>
                         <th class="filterhead" scope="col"></th>

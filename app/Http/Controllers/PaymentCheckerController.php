@@ -60,7 +60,7 @@ class PaymentCheckerController extends Controller
             "payment_id"         => "required|numeric|exists:payments,id",
             "amount"             => "required|numeric",
             "decision"           => "required|in:accept,reject",
-            "note"               => "string|nullable"
+            "note"               => "required|string"
         ]);
 
         try {

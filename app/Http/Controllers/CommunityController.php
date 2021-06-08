@@ -678,7 +678,7 @@ class CommunityController extends Controller
             if ($type == 'report') {
                 $cond = "!=";
             }
-            $payments = Payment::with(["student.user", "student.program", "student.department", "student.major", "transactions"])
+            $payments = Payment::with(["student.user", "manager.user", "student.program", "student.department", "student.major", "transactions"])
                 ->where("accepted", '!=', null)->where("checker_decision", false)->orWhere("management_decision", false)->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
@@ -701,11 +701,12 @@ class CommunityController extends Controller
                 ->where("student_id", $user->student->id)->first() ?? null;
             if ($payment == null) {
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
-            } else if ($payment->checker_decision == true) {
+            } else if ($payment->checker_decision === null) {
                 return response(['message' => "تمت معالجة هذا الطلب من قبل"], 422);
             }
             $payment->update([
-                "checker_decision"   => true, // community user reject = payment-checker user accept
+                "checker_decision"  =>  null,
+                "management_decision" =>  null,
                 "manager_id"         => Auth::user()->manager->id
             ]);
             DB::commit();
@@ -729,7 +730,7 @@ class CommunityController extends Controller
             "amount"             => "required|numeric",
             "note"               => "string|nullable",
             "isRecheck"          => "boolean|nullable",
-            "isManagment"        => "boolean|nullable"
+            // "isManagment"        => "boolean|nullable"
 
 
         ]);
@@ -772,23 +773,14 @@ class CommunityController extends Controller
                 "semester_id"   => $semester->id,
                 "note"          => $reviewedPayment["note"] ?? null,
             ]);
-            if (isset($reviewedPayment['isRecheck']) && isset($reviewedPayment['isManagment'])) {
-                if ($reviewedPayment['isManagment'] == true) {
-                    $payment->update([
-                        "transaction_id"    => $transaction->id,
-                        "checker_decision"  =>  true,
-                        "management_decision" =>  true,
-                        "note"              => $reviewedPayment["note"] ?? null,
-                        "manager_id"        => Auth::user()->manager->id
-                    ]);
-                } else {
-                    $payment->update([
-                        "transaction_id"    => $transaction->id,
-                        "checker_decision"  =>  true,
-                        "note"              => $reviewedPayment["note"] ?? null,
-                        "manager_id"        => Auth::user()->manager->id
-                    ]);
-                }
+            if (isset($reviewedPayment['isRecheck'])) {
+                $payment->update([
+                    "transaction_id"    => $transaction->id,
+                    "checker_decision"  =>  null,
+                    "management_decision" =>  null,
+                    "note"              => $reviewedPayment["note"] ?? null,
+                    "manager_id"        => Auth::user()->manager->id
+                ]);
             } else {
                 $payment->update([
                     "transaction_id"    => $transaction->id,
@@ -1117,6 +1109,91 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return view('manager.community.rayatReport');
+        }
+    }
+
+    public function getStudentOrders($student_id)
+    {
+        try {
+            $orders = Student::find($student_id)->orders;
+            return response()->json($orders, 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return response()->json(["message" => $e], 422);
+        }
+    }
+
+    public function editOrder(Request $request)
+    {
+        $requestData = $this->validate(
+            $request,
+            [
+                "order_id"    => "required|numeric|distinct|exists:orders,id",
+                "newHours"    => "required|numeric",
+                "note"        => "string|nullable",
+            ],
+            [
+                "newHours.required" => "حقل عدد الساعات مطلوب"
+            ]
+        );
+        try {
+            $semester = Semester::latest()->first();
+            $order = Order::find($requestData['order_id']);
+            if ($order->requested_hours == $requestData['newHours']) {
+                return response(json_encode(['message' => 'يجب ان يكون عدد الساعات المدخل غير مطابق لعدد الساعات الحالي']), 422);
+            } elseif ($requestData['newHours'] < 0) {
+                return response(json_encode(['message' => 'لا يمكن ادخال قيمة اصغر من صفر']), 422);
+            } elseif ($order->requested_hours == 0) {
+                return response(json_encode(['message' => 'لا يمكن التعديل على طلب مرفوض']), 422);
+            }
+
+            if ($order->amount / $order->requested_hours == 0) { //private state
+                $hourCost = 0;
+            } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+                $hourCost = $order->student->program->hourPrice;
+            } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+                $hourCost = $order->student->program->hourPrice * 0.5;
+            } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+                $hourCost = $order->student->program->hourPrice * 0.25;
+            } else {
+                return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+            }
+            DB::beginTransaction();
+            if ($requestData['newHours'] > $order->requested_hours) {
+                //increase hours
+                $diffCost = ($requestData['newHours'] - $order->requested_hours) * $hourCost;
+                $type = 'editOrder-deduction';
+                $order->student->wallet -= $diffCost;
+                $order->student->credit_hours += $requestData['newHours'] - $order->requested_hours;
+            } else {
+                // decrease hours
+                $diffCost = ($order->requested_hours - $requestData['newHours']) * $hourCost;
+                $type = 'editOrder-charge';
+                $order->student->wallet += $diffCost;
+                $order->student->credit_hours -= $order->requested_hours - $requestData['newHours'];
+            }
+            $order->student->save();
+            $transaction = $order->student->transactions()->create([
+                "order_id"      => $order->id,
+                "amount"        => $diffCost,
+                "type"          => $type,
+                "manager_id"    => Auth::user()->manager->id,
+                "semester_id"   => $semester->id,
+                "note"          => $requestData["note"] ?? null,
+            ]);
+            $order->update([
+                "amount"            => $requestData['newHours'] * $hourCost,
+                "requested_hours"   => $requestData['newHours'],
+                "discount"          => $requestData['newHours'] * $order->student->program->hourPrice - $requestData['newHours'] * $hourCost,
+                "transaction_id"    => $transaction->id,
+                "note"              => "تم تغيير عدد الساعات من " . $order->requested_hours . " إلى " . $requestData['newHours'],
+            ]);
+            DB::commit();
+            return response()->json(["message" => 'تم التعديل بنجاح', 'newCost' => $requestData['newHours'] * $hourCost], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            DB::rollBack();
+            return response()->json(["message" => $e], 422);
         }
     }
 
