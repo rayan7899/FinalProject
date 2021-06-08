@@ -171,6 +171,16 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
     Route::post('/community/toggle-allow-add-hours', [CommunityController::class, 'toggleAllowAddHours'])->name('toggleAllowAddHours');
 
+    // Old users
+    // Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
+    // Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
+    //Update Students wallet
+    // Route::get('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletForm'])->name('UpdateStudentsWalletForm');
+    // Route::post('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletStore'])->name('UpdateStudentsWalletStore');
+    //Update Cedit hours
+    Route::get('/excel/hours/update', [ExcelController::class, 'updateCreditHoursForm'])->name('UpdateCreditHoursForm');
+    Route::post('/excel/hours/update', [ExcelController::class, 'updateCreditHoursStore'])->name('UpdateCreditHoursStore');
+
 });
 
 
@@ -194,20 +204,14 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     Route::get('api/affairs/publish-to-rayat/{type}', [CommunityController::class, 'publishToRayatJson'])->name('getStudentForRayatAffairsApi');
     Route::post('affairs/publish-to-rayat', [CommunityController::class, 'publishToRayat'])->name('publishToRayatStoreAffairs');
     // ExcelController
+    // Add new students
     Route::get('/excel/new/add', [ExcelController::class, 'importNewForm'])->name('AddExcelForm');
     Route::post('/excel/new/import', [ExcelController::class, 'importNewUsers'])->name('importExcel');
     // Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
-    // Old users
-    Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');
-    Route::post('/excel/old/import', [ExcelController::class, 'importOldUsers'])->name('OldImport');
-    //Update Students wallet
-    Route::get('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletForm'])->name('UpdateStudentsWalletForm');
-    Route::post('/excel/wallet/update', [ExcelController::class, 'updateStudentsWalletStore'])->name('UpdateStudentsWalletStore');
-
     //Add rayat_id to new students
     Route::get('/excel/rayat/update', [ExcelController::class, 'addRayatIdForm'])->name('addRayatIdForm');
     Route::post('/excel/rayat/update', [ExcelController::class, 'addRayatIdStore'])->name('addRayatIdStore');
-
+//FIXME: rewrite me
     Route::get('/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormAffairs');
     Route::get('api/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportAffairsApi');
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
