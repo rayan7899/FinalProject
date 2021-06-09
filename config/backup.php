@@ -117,7 +117,6 @@ return [
              */
             'disks' => [
                 'GoogleDrive',
-                'backups'
             ],
         ],
 
