@@ -21,6 +21,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentCheckerController;
 use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\RefundOrderController;
+use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\TransactionController;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -81,6 +82,12 @@ Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
     Route::post('/payments-checker/student/payments/verified-update', [PaymentCheckerController::class, 'checkerPaymentsReviewUpdate'])->name('checkerPaymentsReviewUpdate');
     Route::get('/payments-checker/student/payments/report', [PaymentCheckerController::class, 'checkerPaymentsReport'])->name('checkerPaymentsReport');
 
+});
+
+
+// المدربين
+Route::middleware(['auth', 'role:مدرب'])->group(function () {
+    Route::get('/trainer', [TrainerController::class, 'dashboard'])->name('trainerDashboard');
 });
 
 // خدمة المجتمع
