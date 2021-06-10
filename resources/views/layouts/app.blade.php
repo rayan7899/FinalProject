@@ -205,11 +205,11 @@
                                                     <a class="dropdown-item" href="{{ route('AddExcelForm') }}">اضافة
                                                         اكسل
                                                         مستجدين</a>
-                                                    <a class="dropdown-item" href="{{ route('OldForm') }}">
+                                                    {{-- <a class="dropdown-item" href="{{ route('OldForm') }}">
                                                         اضافة اكسل مستمرين </a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('UpdateStudentsWalletForm') }}">
-                                                        اضافة الفائض / العجز للمستمرين </a>
+                                                        اضافة الفائض / العجز للمستمرين </a> --}}
                                                     {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a> --}}
                                                     <a class="dropdown-item" href="{{ route('addRayatIdForm') }}">اضافة
                                                         الرقم التدريبي للمستجدين</a>
