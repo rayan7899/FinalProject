@@ -851,6 +851,8 @@ class CommunityController extends Controller
             DB::table('students')
                 ->update([
                     'available_hours' => 0,
+                    'credit_hours' => 0,
+
                 ]);
             if (isset($requestData['isSummerSemester']) &&  $requestData['isSummerSemester'] == false) {
                 DB::table('students')
@@ -1093,9 +1095,10 @@ class CommunityController extends Controller
                     $cond = ">=";
                 }
             }
-            $users = User::with(['student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond, $type) {
+            $users = User::with(['student.user','student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond, $type) {
                 $result->where('level', $cond, '1')
-                    ->where('available_hours', '>', 0);
+                    ->where('credit_hours', '>', 0)
+                    ->orWhere('available_hours', '>', 0);
 
                 $user = Auth::user();
                 if ($type == 'departmentBoss' && $user->manager->isDepartmentManager()) {
@@ -1164,13 +1167,13 @@ class CommunityController extends Controller
                 $diffCost = ($requestData['newHours'] - $order->requested_hours) * $hourCost;
                 $type = 'editOrder-deduction';
                 $order->student->wallet -= $diffCost;
-                $order->student->credit_hours += $requestData['newHours'] - $order->requested_hours;
+                $order->student->available_hours += $requestData['newHours'] - $order->requested_hours;
             } else {
                 // decrease hours
                 $diffCost = ($order->requested_hours - $requestData['newHours']) * $hourCost;
                 $type = 'editOrder-charge';
                 $order->student->wallet += $diffCost;
-                $order->student->credit_hours -= $order->requested_hours - $requestData['newHours'];
+                $order->student->available_hours -= $order->requested_hours - $requestData['newHours'];
             }
             $order->student->save();
             $transaction = $order->student->transactions()->create([
@@ -1215,7 +1218,7 @@ class CommunityController extends Controller
                     $cond = ">";
                 }
             }
-            $users = User::with(['student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond) {
+            $users = User::with(['student.user','student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond) {
                 $result->where('level', $cond, '1');
             })->get();
             return response()->json(["data" => $users->toArray()], 200);
@@ -1369,10 +1372,9 @@ class CommunityController extends Controller
             $baccSumWallets = Student::where('program_id', 1)->sum('wallet');
 
             $baccSumHours = Student::where('program_id', 1)->sum('credit_hours');
-
-
+            
             $baccSumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) {
-                $res->where("program_id", 1);
+                $res->where("program_id", 1)->where('credit_hours', '>', 0);
             })->where("type", "deduction")->sum("amount");
 
             // $baccSumDiscount = Order::with('student')->whereHas('student', function ($res) {
@@ -1397,7 +1399,7 @@ class CommunityController extends Controller
             $diplomSumHours = Student::where('program_id', 2)->sum('credit_hours');
 
             $diplomSumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) {
-                $res->where("program_id", 2);
+                $res->where("program_id", 2)->where('credit_hours', '>', 0);
             })->where("type", "deduction")->sum("amount");
 
             // $diplomSumDiscount = Order::with('student')->whereHas('student', function ($res) {
@@ -1495,7 +1497,8 @@ class CommunityController extends Controller
             $sumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) use ($requestData) {
                 $res->where("program_id", $requestData['prog_id'])
                     ->where("department_id", $requestData['dept_id'])
-                    ->where("major_id", $requestData['major_id']);
+                    ->where("major_id", $requestData['major_id'])
+                    ->where('credit_hours', '>', 0);
             })->where("type", "deduction")->sum("amount");
 
             // $sumDiscount = Order::with('student')->whereHas('student', function ($res) use ($requestData) {
@@ -1539,7 +1542,7 @@ class CommunityController extends Controller
     public function getStudent($id)
     {
         try {
-            $user = User::with('student.payments.transaction')->whereHas('student', function ($result) use ($id) {
+            $user = User::with('student.payments.transactions')->whereHas('student', function ($result) use ($id) {
                 $result->where('national_id', $id)->orWhere('rayat_id', $id);
             })->first();
             if (!isset($user)) {
@@ -1560,7 +1563,7 @@ class CommunityController extends Controller
     public function getStudentForReport($id)
     {
         try {
-            $user = User::with('student.payments.transaction')->whereHas('student', function ($result) use ($id) {
+            $user = User::with('student.payments.transactions')->whereHas('student', function ($result) use ($id) {
                 $result->where('national_id', $id)->orWhere('rayat_id', $id);
             })->first();
             if (!isset($user)) {

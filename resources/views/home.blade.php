@@ -29,7 +29,7 @@
                 </div>
             </div>
         </div>
-        <x-student-info :user="$user"/>
+        <x-student-info :user="$user" />
 
         <div class="alert alert-warning border">
             <b>تنبية</b>
@@ -85,7 +85,7 @@
                             <th class="text-center" scope="col">رقم الطلب (شحن / اضافة مقررات)</th>
                             <th class="text-center" scope="col">المبلغ</th>
                             <th class="text-center" scope="col">التاريخ</th>
-                            <th class="text-center" scope="col">الملاحظات</th>
+                            {{-- <th class="text-center" scope="col">الملاحظات</th> --}}
                             <th class="text-center" scope="col">ايصال السداد</th>
                         </tr>
 
@@ -99,11 +99,18 @@
                             <tr class="text-center">
                                 <td>{{ $transaction->id ?? 'Error' }}</td>
                                 @if ($transaction->type == 'deduction')
-                                    @php
+                                    {{-- @php
                                         if (isset($transaction->order)) {
-                                            $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                            $hoursNote = 'مقابل اضافة ساعات';
+                                        
+                                            // if(count($transaction->order->transactions) == 1){
+                                            //     $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                            // }else {
+                                            //     $lastTrans = $transaction->order->transactions()->latest()->first();
+                                            //     $hoursNote = 'تم تغيير المبلغ بالعملية رقم ' . $lastTrans->id;
+                                            // }
                                         }
-                                    @endphp
+                                    @endphp --}}
                                     <td class="text-danger"> خصم (اضافة مقررات)</td>
                                     <td>{{ $transaction->order->id ?? 'Error' }}</td>
                                 @elseif ($transaction->type == 'recharge')
@@ -141,7 +148,7 @@
                                 <td style="min-width: 100px">{{ $transaction->created_at->toDateString() ?? 'Error' }}
                                 </td>
 
-                                <td class="text-right">
+                                {{-- <td class="text-right">
                                     @if ($transaction->type == 'deduction')
                                         {{ $hoursNote ?? '' }}
                                         <br>
@@ -149,7 +156,7 @@
                                     @else
                                         {{ $transaction->note ?? 'لا يوجد' }}
                                     @endif
-                                </td>
+                                </td> --}}
                                 @if (in_array($transaction->type, ['recharge', 'manager_recharge']))
                                     @if ($transaction->payment != null)
                                         <td>
@@ -196,7 +203,8 @@
                         {{-- المحفظة --}}
                     </div>
 
-                    <a href="{{ route('paymentForm') }}" class="btn @if (!$semester->can_request_hours) btn-primary @else btn-secondary @endif rounded">
+                    <a href="{{ route('paymentForm') }}" class="btn @if (!$semester->can_request_hours) btn-primary @else btn-secondary @endif
+                        rounded">
                         شحن المحفظة
                     </a>
                 </div>
@@ -224,13 +232,13 @@
                                     $countWaitingPayment++;
                                 }
                                 $acceptedAmount = 0;
-                                foreach ($payment->transactions as  $transaction) {
-                                    if($transaction->type == 'editPayment-charge' || $transaction->type == 'recharge' || $transaction->type == 'manager_recharge'){
+                                foreach ($payment->transactions as $transaction) {
+                                    if ($transaction->type == 'editPayment-charge' || $transaction->type == 'recharge' || $transaction->type == 'manager_recharge') {
                                         $acceptedAmount += $transaction->amount;
-                                    }else{
+                                    } else {
                                         $acceptedAmount -= $transaction->amount;
                                     }
-                                }    
+                                }
                             @endphp
                             <tr class="text-center" id="{{ $payment->id }}">
                                 <td>{{ $payment->id }}</td>
@@ -294,7 +302,8 @@
                 <div class="d-flex flex-row justify-content-between">
                     {{-- <p class="h5">طلبات اضافة المقررات</p> --}}
                     <p></p>
-                    <a href="{{ route('orderForm') }}" class="btn @if ($semester->can_request_hours) btn-primary @else btn-secondary @endif rounded">
+                    <a href="{{ route('orderForm') }}" class="btn @if ($semester->can_request_hours) btn-primary @else btn-secondary @endif
+                        rounded">
                         اضافة مقررات
                     </a>
                 </div>

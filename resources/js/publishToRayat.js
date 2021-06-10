@@ -64,7 +64,7 @@ jQuery(function () {
                                 return "متدرب";
                                 break;
                         }
-                    },                    
+                    },
                     className: "text-center",
 
                 },
@@ -73,7 +73,7 @@ jQuery(function () {
                     className: "text-center",
 
                 },
-              
+
 
                 {
                     data: "requested_hours",
@@ -278,6 +278,13 @@ jQuery(function () {
         }).draw();
     }
 
+    $('#publishToRayatTbl tbody').on('dblclick', 'tr', function () {
+        var row = publishToRayatTbl.row(this).data();
+        
+            if (this.querySelector('a') == null && this.querySelector('button') == null) {
+                window.open(`/community/students/report/${row.student.user.id}`, '_self');
+            }
+    });
 
 
 
@@ -294,12 +301,11 @@ jQuery(function () {
                 orderable: false,
                 targets: 0
             }],
-            columns: [
-                {
+            columns: [{
                     data: null
                 },
                 {
-                    data: "national_id"
+                    data: "national_id",
                 },
                 {
                     data: "student.rayat_id"
@@ -324,6 +330,10 @@ jQuery(function () {
                     className: "text-center",
                 },
                 {
+                    data: "student.credit_hours",
+                    className: "text-center",
+                },
+                {
                     data: "student.available_hours",
                     className: "text-center",
                     render: function (student, type, row) {
@@ -332,7 +342,7 @@ jQuery(function () {
 
                 },
                 {
-                    render: function(data, type, row) {
+                    render: function (data, type, row) {
                         return `<p onclick="showOrders(${row.student.id})"><i class="fa btn fa-lg fa-edit text-primary"></i></p>`;
                     },
                 },
@@ -507,6 +517,7 @@ jQuery(function () {
                 });
             },
         });
+
         rayatReportTbl.on('order.dt search.dt', function () {
             rayatReportTbl.column(0, {
                 search: 'applied',
@@ -515,6 +526,13 @@ jQuery(function () {
                 cell.innerHTML = i + 1;
             });
         }).draw();
+
+        $('#rayatReportTbl tbody').on('dblclick', 'tr', function () {
+            var row = rayatReportTbl.row(this).data();
+            if (this.querySelector('a') == null && this.querySelector('button') == null) {
+                window.open(`/community/students/report/${row.student.user.id}`, '_self');
+            }
+        });
     }
 });
 
@@ -535,7 +553,7 @@ window.showOrders = function (student_id) {
             var tblOrders = document.getElementById('tblOrders');
             tblOrders.innerHTML = '';
             response.data.forEach(order => {
-                if(order.requested_hours > 0){
+                if (order.requested_hours > 0) {
                     var row = tblOrders.insertRow(0);
                     row.id = order.id;
                     var orderId = row.insertCell(0);
@@ -560,12 +578,12 @@ window.showOrders = function (student_id) {
         });
 }
 
-window.editHours = function(){
-    axios.post('/api/community/order/edit', { 
-        order_id: window.order_id,
-        newHours: window.newHours.value,
-        note: window.note.value
-    })
+window.editHours = function () {
+    axios.post('/api/community/order/edit', {
+            order_id: window.order_id,
+            newHours: window.newHours.value,
+            note: window.note.value
+        })
         .then((response) => {
             document.getElementById(window.order_id).children[1].innerHTML = window.newHours.value;
             document.getElementById(window.order_id).children[2].innerHTML = response.data.newCost;
@@ -590,7 +608,7 @@ window.editHours = function(){
 }
 
 
-window.deleteOrder = function(order_id) {
+window.deleteOrder = function (order_id) {
     Swal.fire({
         title: ' هل انت متأكد ؟',
         text: " لا يمكن التراجع عن هذا الاجراء",
@@ -602,8 +620,10 @@ window.deleteOrder = function(order_id) {
         cancelButtonText: 'الغاء',
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.post('/student/order/delete', {order_id: order_id})
-            .then((response) => {
+            axios.post('/student/order/delete', {
+                    order_id: order_id
+                })
+                .then((response) => {
                     document.getElementById(order_id).remove();
                     Swal.fire({
                         position: "center",

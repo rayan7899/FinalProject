@@ -14,7 +14,7 @@ class StudentsAddAvailableHoursColumn extends Migration
     public function up()
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->integer('available_hours')->nullable()->default(0);
+            $table->integer('credit_hours')->nullable()->default(0);
         });
     }
 

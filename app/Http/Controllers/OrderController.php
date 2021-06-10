@@ -147,7 +147,7 @@ class OrderController extends Controller
             }
             $total_hours = array_sum(array_map(
                function ($c) {
-                  return $c['available_hours'];
+                  return $c['credit_hours'];
                },
                Course::whereIn('id', $requestData['courses'])->get()->toArray()
             ));

@@ -105,11 +105,13 @@
                         <th class="text-center">البرنامج</th>
                         <th class="text-center">القسم</th>
                         <th class="text-center">التخصص</th>
-                        <th class="text-center">عدد الساعات</th>
+                        <th class="text-center"> الساعات المتاحة</th>
+                        <th class="text-center"> الساعات المعتمدة</th>
                         <th class="text-center">حالة التسجيل</th>
                         <th class="text-center"></th>
                     </tr>
                     <tr>
+                        <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>

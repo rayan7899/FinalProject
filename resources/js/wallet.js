@@ -19,12 +19,19 @@ function fillReportTable (user) {
                 data: "id",
                 className: "text-center",
             },
-            {
+             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        if (data.amount != data.transaction.amount) {
-                            return `<del class="text-muted">${data.amount}</del>
-                            ${data.transaction.amount}`;
+                        var totalAmount = 0;
+                        data.transactions.forEach(transaction => {
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
+                                totalAmount += transaction.amount;
+                            } else {
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                        if (data.amount != totalAmount) {
+                            return `<del class="text-muted">${data.amount}</del> ${totalAmount}`;
                         } else {
                             return data.amount;
                         }
@@ -222,6 +229,15 @@ function fillReportTable (user) {
             cell.innerHTML = i + 1;
         });
     }).draw();
+
+
+    $('#singlePaymentsReportTbl tbody').on('dblclick', 'tr', function () {
+        var row = singlePaymentsReportTbl.row(this).data();
+        
+            if (this.querySelector('a') == null && this.querySelector('button') == null) {
+                window.open(`/community/students/report/${row.student.user.id}`, '_self');
+            }
+    });
 
 }
 

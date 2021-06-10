@@ -144,3 +144,106 @@ static  = [
 ٣- اذا كان المتدرب من المسجلين نطاما في احدى الجمعيات الخيرية الرسمية
 ٤- اذا كان المتدرب من ابناء السجناء المسجلين بلجنة تراحم وحالته تتطلب المساعدة
 ٥- اذا كان المتدرب من ذوي الاعاقة بموجب تقرير رسمي من الجهات ذات العلاقة (وزارة العمل والتنمية الاجتماعية)
+
+
+
+
+Route::get('/test/0001', function () {
+    $users = User::whereHas('student')->get();
+    foreach ($users as $user) {
+        $order = $user->student->orders()
+            ->where("transaction_id", '!=', null)
+            ->where("requested_hours", '>', 0)->latest()->first();
+        if ($order == null) {
+            $hourCost = $user->student->program->hourPrice;
+        }elseif ($order->amount / $order->requested_hours == 0) { //private state
+            $hourCost = 0;
+        } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+            $hourCost = $order->student->program->hourPrice;
+        } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+            $hourCost = $order->student->program->hourPrice * 0.5;
+        } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+            $hourCost = $order->student->program->hourPrice * 0.25;
+        }
+        $sumHours = $user->student->orders()
+            ->where("transaction_id", '!=', null)
+            ->sum("requested_hours");
+        $amount = $sumHours * $hourCost;
+        $hoursDeduction = $user->student->transactions()
+            ->where("type", 'deduction')
+            ->orWhere("type", 'editOrder-deduction')->sum("amount");
+
+        if ($amount != $hoursDeduction) {
+            dump($user->name,$user->national_id,'قيمة الساعات المضافة '.$amount,' القيمة المخصومه من الرصيد '.$hoursDeduction);
+        }
+    }
+});
+
+
+
+    public function run()
+    {
+        $semester = Semester::latest()->first();
+        $users = User::whereHas("student")->get();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('orders')->truncate();
+        DB::table('refund_orders')->truncate();
+        DB::table('payments')->truncate();
+        DB::table('transactions')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;'); 
+        foreach ($users as $user) {
+            $user->student->wallet = 0;
+            $user->student->credit_hours = 0;
+            $hours = 6;
+            $amount = $hours * $user->student->program->hourPrice;
+            $newOrder = $user->student->orders()->create([
+                "amount"                => $amount,
+                "discount"              => 0,
+                "requested_hours"       => $hours,
+                "private_doc_verified"  => true,
+                "semester_id"           => $semester->id,
+            ]);
+
+            $transaction = $user->student->transactions()->create([
+                "order_id"    => $newOrder->id,
+                "amount"        => $amount,
+                "type"          => "deduction",
+                "manager_id"       => 2,
+                "semester_id"   => $semester->id,
+
+            ]);
+            $user->student->available_hours = $hours;
+            $user->student->save();
+            $newOrder->transaction_id = $transaction->id;
+            $newOrder->save();
+            dump($user->national_id . " success");
+        }
+        $user = User::whereHas("student")->first();
+            $hours = 6;
+            $amount = $hours * $user->student->program->hourPrice;
+            $newOrder = $user->student->orders()->create([
+                "amount"                => $amount,
+                "discount"              => 0,
+                "requested_hours"       => $hours,
+                "private_doc_verified"  => true,
+                "semester_id"           => $semester->id,
+            ]);
+
+            $transaction = $user->student->transactions()->create([
+                "order_id"    => $newOrder->id,
+                "amount"        => $amount,
+                "type"          => "deduction",
+                "manager_id"       => 2,
+                "semester_id"   => $semester->id,
+
+            ]);
+            $user->student->available_hours += $hours;
+            $user->student->save();
+            $newOrder->transaction_id = $transaction->id;
+            $newOrder->save();
+            dump($user->national_id . " success");
+    }
+
+
+
+

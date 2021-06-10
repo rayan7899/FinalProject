@@ -22,6 +22,8 @@ use App\Http\Controllers\PaymentCheckerController;
 use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\RefundOrderController;
 use App\Http\Controllers\TransactionController;
+use App\Models\Order;
+use App\Models\Semester;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
@@ -70,7 +72,6 @@ Route::middleware(['auth', 'role:الإدارة العامة'])->group(function 
     Route::get('/api/general/student/payments/{type}', [GeneralManagementController::class, 'generalPaymentsReviewJson'])->name('generalPaymentsReviewJson');
     Route::post('/general/student/payments/verified-update', [GeneralManagementController::class, 'generalPaymentsReviewUpdate'])->name('generalPaymentsReviewUpdate');
     Route::get('/general/student/payments/report', [GeneralManagementController::class, 'generalPaymentsReport'])->name('generalPaymentsReport');
-
 });
 
 Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
@@ -80,7 +81,6 @@ Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
     Route::get('/api/payments-checker/student/payments/{type}', [PaymentCheckerController::class, 'checkerPaymentsReviewJson'])->name('checkerPaymentsReviewJson');
     Route::post('/payments-checker/student/payments/verified-update', [PaymentCheckerController::class, 'checkerPaymentsReviewUpdate'])->name('checkerPaymentsReviewUpdate');
     Route::get('/payments-checker/student/payments/report', [PaymentCheckerController::class, 'checkerPaymentsReport'])->name('checkerPaymentsReport');
-
 });
 
 // خدمة المجتمع
@@ -93,11 +93,11 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/community/student/payments/verified-update', [CommunityController::class, 'paymentsReviewUpdate'])->name('paymentsReviewUpdate');
     Route::post('/community/student/payments/verified-docs', [CommunityController::class, 'paymentsReviewVerifiyDocs'])->name('paymentsReviewVerifiyDocs');
 
-     // recheck payments
-     Route::get('/community/student/payments/recheck', [CommunityController::class, 'paymentsRecheckForm'])->name('paymentsRecheckForm');
-     Route::get('/community/student/payments/recheck/report', [CommunityController::class, 'paymentsRecheckReport'])->name('paymentsReport');
-     Route::get('/api/community/student/payments/recheck/{type}', [CommunityController::class, 'paymentsRecheckJson'])->name('paymentsRecheckJson');
-     Route::post('/community/student/payments/recheck/verified-docs', [CommunityController::class, 'paymentsRecheckReject'])->name('paymentsRecheckReject');
+    // recheck payments
+    Route::get('/community/student/payments/recheck', [CommunityController::class, 'paymentsRecheckForm'])->name('paymentsRecheckForm');
+    Route::get('/community/student/payments/recheck/report', [CommunityController::class, 'paymentsRecheckReport'])->name('paymentsReport');
+    Route::get('/api/community/student/payments/recheck/{type}', [CommunityController::class, 'paymentsRecheckJson'])->name('paymentsRecheckJson');
+    Route::post('/community/student/payments/recheck/verified-docs', [CommunityController::class, 'paymentsRecheckReject'])->name('paymentsRecheckReject');
 
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
@@ -134,9 +134,9 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/students/reset-password/{user}', [CommunityController::class, 'resetStusentPassword'])->name('resetStusentPassword');
     Route::get('/api/community/student-info/{id}', [CommunityController::class, 'getStudentById'])->name('GetStudentById');
     // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
-    
+
     //export
-    Route::get('/excel/export/main-data',[ExcelController::class,'exportMainStudentData'])->name('exportMainStudentDataExcel');
+    Route::get('/excel/export/main-data', [ExcelController::class, 'exportMainStudentData'])->name('exportMainStudentDataExcel');
 
     //Manage Courses
     Route::get('/community/courses', [CommunityController::class, 'coursesIndex'])->name('coursesIndex');
@@ -167,7 +167,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/api/community/refund-orders', [CommunityController::class, 'refundOrdersUpdate'])->name('apiRefundOrdersUpdate');
 
     //backup
-    Route::get('/community/backup/download',[FileController::class, 'downloadBackup'])->name('downloadBackup');
+    Route::get('/community/backup/download', [FileController::class, 'downloadBackup'])->name('downloadBackup');
 
     //manage semesters
     Route::get('/community/semester', [CommunityController::class, 'semesterDashboard'])->name('communitySemesterDashboard');
@@ -184,7 +184,6 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     //Update Cedit hours
     Route::get('/excel/hours/update', [ExcelController::class, 'updateCreditHoursForm'])->name('UpdateCreditHoursForm');
     Route::post('/excel/hours/update', [ExcelController::class, 'updateCreditHoursStore'])->name('UpdateCreditHoursStore');
-
 });
 
 
@@ -215,7 +214,7 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
     //Add rayat_id to new students
     Route::get('/excel/rayat/update', [ExcelController::class, 'addRayatIdForm'])->name('addRayatIdForm');
     Route::post('/excel/rayat/update', [ExcelController::class, 'addRayatIdStore'])->name('addRayatIdStore');
-//FIXME: rewrite me
+    //FIXME: rewrite me
     Route::get('/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormAffairs');
     Route::get('api/affairs/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportAffairsApi');
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
@@ -258,7 +257,6 @@ Route::middleware(['auth'])->group(function () {
     /// rayat
     Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
     Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
-
 });
 
 // المتدربين

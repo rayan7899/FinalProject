@@ -126,7 +126,7 @@ class StudentAffairsController extends Controller
     public function finalAcceptedJson()
     {
         try {
-            $users = User::with(['student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
+            $users = User::with(['student.user','student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
                 $result->where('level', 1)
                     ->where('data_updated', true)
                     ->whereHas('orders', function ($res) {
@@ -210,7 +210,7 @@ class StudentAffairsController extends Controller
     public function finalAcceptedReportJson()
     {
         try {
-            $users = User::with(['student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
+            $users = User::with(['student.user','student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
                 $result->where('final_accepted', true)
                     ->where('student_docs_verified', true)
                     ->where("level", 1);
