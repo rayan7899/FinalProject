@@ -1188,7 +1188,7 @@ class CommunityController extends Controller
             }
 
             if($order->student->traineeState != 'privateState'){
-                if($requestData['newHours'] * $hourCost > $order->student->wallet){
+                if(($requestData['newHours'] -  $order->requested_hours) * $hourCost > $order->student->wallet){
                     return response(['message' => "لا يوجد رصيد كافي لدى المتدرب لإضافة الساعات"], 422);
                 }
             }
@@ -1829,7 +1829,7 @@ class CommunityController extends Controller
                 }
 
                 if (in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
-                    $refund->student->available_hours = 0;
+                    $refund->student->credit_hours = 0;
                 }
 
                 $refund->student->save();

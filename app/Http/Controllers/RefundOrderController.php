@@ -19,8 +19,9 @@ class RefundOrderController extends Controller
 
     public function form()
     {
+        return back()->with(['error' => 'سيكون طلب الاسترداد متاح عندما يتم اعتماد الساعات']);
         $user = Auth::user();
-        if ($user->student->available_hours <= 0 && $user->student->wallet <= 0) {
+        if ($user->student->credit_hours <= 0 && $user->student->wallet <= 0) {
             return back()->with(['error' => 'لا يوجد ساعات معتمدة ولا رصيد لاسترداده']);
         }
         $isHasActiveRefund = $user->student->refunds()->where('accepted', null)->first() !== null;
@@ -83,7 +84,7 @@ class RefundOrderController extends Controller
                     $discount = 1; // = %0 discount
             }
 
-            $creditHoursCost = $user->student->available_hours * $user->student->program->hourPrice * $discount;
+            $creditHoursCost = $user->student->credit_hours * $user->student->program->hourPrice * $discount;
 
             $amount = 0;
             if (in_array($requestData['reason'], ['drop-out', 'not-opened-class', 'exception'])) {
