@@ -597,7 +597,7 @@ window.editHours = function () {
             $('#editModal').modal('hide');
         })
         .catch((error) => {
-            console.log(error);
+            
             Swal.fire({
                 position: "center",
                 html: "<h4>" + error.response.data.message + "</h4>",
@@ -648,7 +648,7 @@ window.deleteOrder = function (order_id) {
 
 window.publishToRayatStore = function (national_id, order_id, event) {
     let row = event.currentTarget.parentNode.parentNode;
-    // console.log(row.children[11].children[0].value);
+    // 
     // let requested_hours = document.getElementById('requested_hours').value;
     let requested_hours = row.children[11].children[0].value;
 
@@ -669,7 +669,7 @@ window.publishToRayatStore = function (national_id, order_id, event) {
             });
         })
         .catch((error) => {
-            console.log(error);
+            
             Swal.fire({
                 position: "center",
                 html: "<h4>" + error.response.data.message + "</h4>",

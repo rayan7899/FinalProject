@@ -543,10 +543,10 @@ class CommunityController extends Controller
         try {
             $semester = Semester::latest()->first();
             $payments = Payment::with(["student.user", "transactions"])
-                            ->where('checker_decision', 1)
-                            ->where('management_decision', 1)
-                            ->where('semester_id', $semester->id)
-                            ->get();
+                ->where('checker_decision', 1)
+                ->where('management_decision', 1)
+                ->where('semester_id', $semester->id)
+                ->get();
             return response()->json(["data" => $payments->toArray()], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
@@ -1120,7 +1120,7 @@ class CommunityController extends Controller
                     $cond = ">=";
                 }
             }
-            $users = User::with(['student.user','student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond, $type) {
+            $users = User::with(['student.user', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond, $type) {
                 $result->where('level', $cond, '1')
                     ->where('credit_hours', '>', 0)
                     ->orWhere('available_hours', '>', 0);
@@ -1143,7 +1143,9 @@ class CommunityController extends Controller
     public function getStudentOrders($student_id)
     {
         try {
-            $orders = Student::find($student_id)->orders;
+            $orders = Student::find($student_id)->orders()
+                ->where("transaction_id", "!=", null)
+                ->where("requested_hours", ">", 0)->get();
             return response()->json($orders, 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
@@ -1187,8 +1189,8 @@ class CommunityController extends Controller
                 return response(json_encode(['message' => 'خطأ غير معروف']), 422);
             }
 
-            if($order->student->traineeState != 'privateState'){
-                if(($requestData['newHours'] -  $order->requested_hours) * $hourCost > $order->student->wallet){
+            if ($order->student->traineeState != 'privateState') {
+                if (($requestData['newHours'] -  $order->requested_hours) * $hourCost > $order->student->wallet) {
                     return response(['message' => "لا يوجد رصيد كافي لدى المتدرب لإضافة الساعات"], 422);
                 }
             }
@@ -1250,7 +1252,7 @@ class CommunityController extends Controller
                     $cond = ">";
                 }
             }
-            $users = User::with(['student.user','student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond) {
+            $users = User::with(['student.user', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) use ($cond) {
                 $result->where('level', $cond, '1');
             })->get();
             return response()->json(["data" => $users->toArray()], 200);
@@ -1404,7 +1406,7 @@ class CommunityController extends Controller
             $baccSumWallets = Student::where('program_id', 1)->sum('wallet');
 
             $baccSumHours = Student::where('program_id', 1)->sum('credit_hours');
-            
+
             $baccSumDeductions = Transaction::with("order.student")->whereHas("order.student", function ($res) {
                 $res->where("program_id", 1)->where('credit_hours', '>', 0);
             })->where("type", "deduction")->sum("amount");
