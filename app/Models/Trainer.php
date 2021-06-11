@@ -28,4 +28,9 @@ class Trainer extends Model
     {
         return $this->belongsTo(Major::class);
     }
+
+    public function coursesOrders()
+    {
+        return $this->hasMany(TrainerCoursesOrders::class);
+    }
 }
