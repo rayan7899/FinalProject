@@ -83,12 +83,29 @@
                             @enderror
                         </div>
 
-                        <!-- phone number -->
+                        {{--  phone number --}}
                         <div class="form-group">
                             <label for="phone">رقم الجوال</label>
                             <input required type="phone" class="form-control @error('phone') is-invalid @enderror"
                                 id="phone" name="phone" value="{{ old('phone') ?? '' }}">
                             @error('phone')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        {{-- Trainee State --}}
+                        <div class="form-group">
+                            <label for="traineeState">{{ __('الحالة') }}</label>
+                            <select id="traineeState" class="form-control" name="traineeState" class="ml-0 d-inline mx-3">
+                                <option value="0" disabled selected>أختر</option>
+                                <option value="trainee">{{__('trainee')}} </option>
+                                <option value="employee"> {{__('employee')}}</option>
+                                <option value="employeeSon">{{__('employeeSon')}}</option>
+                                <option value="privateState"> {{__('privateState')}}</option>
+                            </select>
+                            @error('traineeState')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
