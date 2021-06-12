@@ -5,7 +5,6 @@ use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\StudentController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
@@ -14,18 +13,14 @@ use App\Http\Controllers\DepartmentBossController;
 use App\Http\Controllers\FalteringStudentsController;
 use App\Http\Controllers\GeneralManagementController;
 use App\Http\Controllers\MajorController;
-use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\StudentCoursesController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentCheckerController;
 use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\RefundOrderController;
-use App\Http\Controllers\TransactionController;
-use App\Models\Order;
-use App\Models\Semester;
 use App\Models\User;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
