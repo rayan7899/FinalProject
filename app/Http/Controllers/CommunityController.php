@@ -310,12 +310,59 @@ class CommunityController extends Controller
             "rayat_id"    => 'required|digits_between:9,10|unique:students,rayat_id,' . $user->student->id,
             'name'     => 'required|string|min:3|max:100',
             "phone"        => 'required|digits_between:9,14|unique:users,phone,' . $user->id,
+            "traineeState"      => "required|string",
             "major"         => "required|numeric|exists:majors,id",
             "level"         => "required|numeric|min:1|max:5",
         ]);
-
         try {
             if (Auth::user()->hasRole("خدمة المجتمع")) {
+                if ($user->student->traineeState != $requestData['traineeState']) {
+                    $semester = Semester::latest()->first();
+                    $orders = $user->student->orders()
+                        ->where("transaction_id", "!=", null)
+                        ->where("requested_hours", ">", 0)
+                        ->where("semester_id", $semester->id)->get();
+                    $hourCost = $user->student->getHourCost($requestData['traineeState']);
+                    if ($hourCost === false) {
+                        return back()->with('error', $requestData['traineeState'] . ' خطأ في ايجاد حالة المتدرب');
+                    }
+                    foreach ($orders as $order) {
+                        $oldCost = $order->amount;
+                        $newCost = $order->requested_hours * $hourCost;
+                        if ($oldCost == $newCost) {
+                            continue;
+                        }
+                        DB::beginTransaction();
+                        if ($newCost > $oldCost) {
+                            // deduction
+                            $diffCost = $newCost - $oldCost;
+                            $type = 'editOrder-deduction';
+                            $order->student->wallet -= $diffCost;
+                        } else {
+                            //restore
+                            $diffCost =  $oldCost - $newCost;
+                            $type = 'editOrder-charge';
+                            $order->student->wallet += $diffCost;
+                        }
+                        $transaction = $order->student->transactions()->create([
+                            "order_id"      => $order->id,
+                            "amount"        => $diffCost,
+                            "type"          => $type,
+                            "manager_id"    => Auth::user()->manager->id,
+                            "semester_id"   => $semester->id,
+                            "note"          => " تعديل الحالة الى ". __($requestData['traineeState']),
+                        ]);
+                        $order->update([
+                            "amount"            => $newCost,
+                            "discount"          => $order->requested_hours * $order->student->program->hourPrice - $order->requested_hours * $hourCost,
+                            "transaction_id"    => $transaction->id,
+                            "note"              => "تم تعديل المبلغ من " . $oldCost . " إلى " . $newCost . " حسب الحالة (" . __($requestData['traineeState']) . ")",
+                        ]);
+                        $order->student->traineeState = $requestData['traineeState'];
+                        $order->student->save();
+                        DB::commit();
+                    }
+                }
 
                 $major = Major::find($requestData['major']) ?? null;
                 $prog_id = $major->department->program->id;
