@@ -379,6 +379,7 @@ window.findStudent = async function () {
     document.getElementById("rayat_id").value = user.student.rayat_id;
     document.getElementById("name").value = user.name;
     document.getElementById("phone").value = user.phone;
+    document.getElementById("traineeState").value = user.student.traineeState;
     document.getElementById("level").value = user.student.level;
 
 
