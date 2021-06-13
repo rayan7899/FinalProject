@@ -233,9 +233,13 @@
                                     <td>قيد المراجعة</td>
                                 @else
                                     @if ($payment->accepted == true || $payment->accepted == 1)
-                                        <td class="text-success">مقبول</td>
+                                        @if ($payment->checker_decision == 1 && $payment->management_decision == 1)
+                                            <td class="text-success">مقبول نهائي</td>
+                                        @else
+                                            <td class="text-success">مقبول مبدئي</td>
+                                        @endif
                                     @else
-                                        <td class="text-danger">مرفوض</td>
+                                    <td class="text-danger">مرفوض</td>
                                     @endif
                                 @endif
                                 <td style="min-width: 100px">{{ $payment->created_at->toDateString() ?? 'Error' }}</td>

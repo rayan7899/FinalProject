@@ -422,8 +422,11 @@ jQuery(function () {
 
             {
                 data: function (data) {
-                    if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        return 'مقبول';
+                    if ((data.accepted == 1 || data.accepted == true) && (data.management_decision == 1 || data.management_decision == true)) {
+                        return 'مقبول نهائي';
+
+                    } else if (data.accepted == 1 || data.accepted == true) {
+                        return 'مقبول مبدئي';
                     } else {
                         return 'مرفوض';
                     }
@@ -638,10 +641,10 @@ jQuery(function () {
 
     $('#paymentsReportTbl tbody').on('click', 'td', function () {
         var row = paymentsReportTbl.row(this).data();
-        
-            if (this.querySelector('a') == null && this.querySelector('button') == null) {
-                window.open(`/community/students/report/${row.student.user.id}`, '_self');
-            }
+
+        if (this.querySelector('a') == null && this.querySelector('button') == null) {
+            window.open(`/community/students/report/${row.student.user.id}`, '_self');
+        }
     });
 
 
@@ -653,13 +656,11 @@ jQuery(function () {
         dataSrc: "data",
         rowId: 'id',
         columnDefs: [{
-                searchable: false,
-                orderable: false,
-                targets: 0
-            },
-        ],
-        columns: [
-            {
+            searchable: false,
+            orderable: false,
+            targets: 0
+        }, ],
+        columns: [{
                 data: null,
                 className: "text-center",
             },
@@ -723,9 +724,9 @@ jQuery(function () {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
                         var totalAmount = 0;
                         data.transactions.forEach(transaction => {
-                            if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
                                 totalAmount += transaction.amount;
-                            }else{
+                            } else {
                                 totalAmount -= transaction.amount;
                             }
                         });
