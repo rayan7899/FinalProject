@@ -316,23 +316,25 @@ class CommunityController extends Controller
         ]);
         try {
             if (Auth::user()->hasRole("خدمة المجتمع")) {
-                if ($user->student->traineeState != $requestData['traineeState']) {
-                    $semester = Semester::latest()->first();
-                    $orders = $user->student->orders()
-                        ->where("transaction_id", "!=", null)
-                        ->where("requested_hours", ">", 0)
-                        ->where("semester_id", $semester->id)->get();
-                    $hourCost = $user->student->getHourCost($requestData['traineeState']);
-                    if ($hourCost === false) {
-                        return back()->with('error', $requestData['traineeState'] . ' خطأ في ايجاد حالة المتدرب');
+                $semester = Semester::latest()->first();
+                $orders = $user->student->orders()
+                    ->where("requested_hours", ">", 0)
+                    ->where("semester_id", $semester->id)->get();
+                $hourCost = $user->student->getHourCost($requestData['traineeState']);
+                if ($hourCost === false) {
+                    return back()->with('error', $requestData['traineeState'] . ' خطأ في ايجاد حالة المتدرب');
+                }
+                foreach ($orders as $order) {
+                    $oldCost = $order->amount;
+                    $newCost = $order->requested_hours * $hourCost;
+                    if ($oldCost == $newCost) {
+                        continue;
                     }
-                    foreach ($orders as $order) {
-                        $oldCost = $order->amount;
-                        $newCost = $order->requested_hours * $hourCost;
-                        if ($oldCost == $newCost) {
-                            continue;
-                        }
-                        DB::beginTransaction();
+                    DB::beginTransaction();
+
+                    $transaction = null;
+                    if ($order->transaction_id !== null) {
+
                         if ($newCost > $oldCost) {
                             // deduction
                             $diffCost = $newCost - $oldCost;
@@ -344,24 +346,28 @@ class CommunityController extends Controller
                             $type = 'editOrder-charge';
                             $order->student->wallet += $diffCost;
                         }
+
                         $transaction = $order->student->transactions()->create([
                             "order_id"      => $order->id,
                             "amount"        => $diffCost,
                             "type"          => $type,
                             "manager_id"    => Auth::user()->manager->id,
                             "semester_id"   => $semester->id,
-                            "note"          => " تعديل الحالة الى ". __($requestData['traineeState']),
+                            "note"          => " تعديل الحالة الى " . __($requestData['traineeState']),
                         ]);
-                        $order->update([
-                            "amount"            => $newCost,
-                            "discount"          => $order->requested_hours * $order->student->program->hourPrice - $order->requested_hours * $hourCost,
-                            "transaction_id"    => $transaction->id,
-                            "note"              => "تم تعديل المبلغ من " . $oldCost . " إلى " . $newCost . " حسب الحالة (" . __($requestData['traineeState']) . ")",
-                        ]);
-                        $order->student->traineeState = $requestData['traineeState'];
-                        $order->student->save();
-                        DB::commit();
                     }
+
+                    $order->update([
+                        "amount"                => $newCost,
+                        "discount"              => $order->requested_hours * $order->student->program->hourPrice - $order->requested_hours * $hourCost,
+                        "transaction_id"        => $transaction->id ?? null,
+                        "private_doc_verified"  => true,
+                        "note"                  => "تم تعديل المبلغ من " . $oldCost . " إلى " . $newCost . " حسب الحالة (" . __($requestData['traineeState']) . ")",
+                    ]);
+
+                    $order->student->traineeState = $requestData['traineeState'];
+                    $order->student->save();
+                    DB::commit();
                 }
 
                 $major = Major::find($requestData['major']) ?? null;
