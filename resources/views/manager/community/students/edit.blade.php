@@ -94,7 +94,7 @@
                                 </span>
                             @enderror
                         </div>
-
+                       
                         {{-- Trainee State --}}
                         <div class="form-group">
                             <label for="traineeState">{{ __('الحالة') }}</label>
@@ -105,6 +105,12 @@
                                 <option value="employeeSon">{{__('employeeSon')}}</option>
                                 <option value="privateState"> {{__('privateState')}}</option>
                             </select>
+                            <small class="alert-warning p-1 my-1 d-block">
+                               
+                                    <b>تنبية</b>
+                                     عند تغيير حالة المتدرب الى (ظروف خاصة) ستكون جميع الطلبات للفصل الحالي المرفوعة الى رايات والتي قيد المراجعة مقبولة من الارشاد تلقائياً
+                              
+                            </small>
                             @error('traineeState')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
