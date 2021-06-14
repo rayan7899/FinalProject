@@ -266,6 +266,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
     Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
 
+
+    /// review trainers orders 
+    Route::get('/department-boss/trainers-info', [DepartmentBossController::class, 'trainersInfoView'])->name('trainersInfoView');
+    Route::get('/api/department-boss/get-courses/{trainer}', [DepartmentBossController::class, 'getCoursesByTrainer'])->name('getCoursesByTrainer');
+    Route::post('/api/department-boss/accept', [DepartmentBossController::class, 'acceptTrainerCourseOrder'])->name('acceptTrainerCourseOrder');
+
 });
 
 // المتدربين
