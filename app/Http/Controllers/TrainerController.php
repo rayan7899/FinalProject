@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Program;
+use App\Models\Semester;
 use App\Models\Trainer;
+use App\Models\TrainerCoursesOrders;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +64,17 @@ class TrainerController extends Controller
         //
     }
 
+    public function isDivisionAvailable(Request $request)
+    {
+        try {
+            $isDivisionAvailable = TrainerCoursesOrders::whereIn('division_number', $request->division_numbers)->exists();
+            return response(['message' => $isDivisionAvailable], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -71,22 +84,23 @@ class TrainerController extends Controller
     public function store(Request $request)
     {
         $requestData = $this->validate($request, [
-            "orders"               => "required|array|min:1",
-            "orders.*.course_id"             => "required|numeric|distinct|exists:courses,id",
-            "orders.*.count_of_students"     => "required|numeric|min:1",
-            "orders.*.count_of_divisions"    => "required|numeric|min:1",
+            "orders"                      => "required|array|min:1",
+            "orders.*.course_id"          => "required|numeric|exists:courses,id",
+            "orders.*.count_of_students"  => "required|numeric|min:1",
+            "orders.*.division_number"    => "required|numeric|min:1",
+            "orders.*.course_type"        => "required|string|in:عملي,نظري",
         ]);
         try {
             $user = Auth::user();
-
+            $semester = Semester::latest()->first();
             DB::beginTransaction();
             foreach ($requestData['orders'] as $order) {
                 $order = $user->trainer->coursesOrders()->create([
-                    'course_id'     =>  $order['course_id'],
-                    'is_theoretical'     =>  true,
-                    'is_practical'     =>  true,
-                    'count_of_students'     =>  $order['count_of_students'],
-                    'count_of_divisions'     =>  $order['count_of_divisions'],
+                    'course_id'           =>  $order['course_id'],
+                    'course_type'         =>  $order['course_type'],
+                    'count_of_students'   =>  $order['count_of_students'],
+                    'division_number'     =>  $order['division_number'],
+                    'semester_id'         =>  $semester->id,
                 ]);
             }
             DB::commit();

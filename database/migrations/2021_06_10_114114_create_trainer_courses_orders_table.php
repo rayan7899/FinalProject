@@ -17,16 +17,17 @@ class CreateTrainerCoursesOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('trainer_id');
-            $table->boolean('is_theoretical')->default(false);
-            $table->boolean('is_practical')->default(false);
+            $table->unsignedBigInteger('semester_id');
+            $table->string('course_type');
             $table->integer('count_of_students')->default(0);
-            $table->integer('count_of_divisions')->default(0);
+            $table->integer('division_number')->default(0);
             $table->boolean("accepted_by_dept_boss")->nullable();
             $table->boolean("accepted_by_community")->nullable();
             $table->boolean("accepted_by_dean")->nullable();
             $table->timestamps();
             $table->foreign('course_id')->references('id')->on('courses');
             $table->foreign('trainer_id')->references('id')->on('trainers');
+            $table->foreign('semester_id')->references('id')->on('semesters');
         });
     }
 

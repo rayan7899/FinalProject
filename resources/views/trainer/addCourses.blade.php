@@ -42,15 +42,18 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="pl-1"> رقم الحاسب </label>
-                                <input disabled type="text" class="form-control" value="{{ $user->trainer->computer_number ?? 'Error' }}">
+                                <input disabled type="text" class="form-control"
+                                    value="{{ $user->trainer->computer_number ?? 'Error' }}">
                             </div>
                             <div class="col-md-3">
                                 <label class="pl-1"> القسم </label>
-                                <input disabled type="text" class="form-control" value="{{ $user->trainer->department->name ?? 'Error' }}">
+                                <input disabled type="text" class="form-control"
+                                    value="{{ $user->trainer->department->name ?? 'Error' }}">
                             </div>
                             <div class="col-md-2">
                                 <label class="pl-1"> التخصص </label>
-                                <input disabled type="text" class="form-control" value="{{ $user->trainer->major->name ?? 'Error' }}">
+                                <input disabled type="text" class="form-control"
+                                    value="{{ $user->trainer->major->name ?? 'Error' }}">
                             </div>
                             <div class="col-md-2">
                                 <label class="pl-1"> عدد الاسابيع الفصلية المتوقعة </label>
@@ -121,9 +124,10 @@
                                             <th class="text-center">رمز المقرر</th>
                                             <th class="text-center">اسم المقرر</th>
                                             <th class="text-center">المستوى</th>
+                                            <th class="text-center">نوع المقرر</th>
                                             <th class="text-center">الساعات المعتمدة</th>
                                             <th class="text-center">ساعات الإتصال</th>
-                                            <th class="text-center">عدد الشعب</th>
+                                            <th class="text-center">رقم الشعبة</th>
                                             <th class="text-center">عدد المتدربين</th>
                                         </tr>
                                     </thead>
@@ -187,9 +191,10 @@
                                             <th class="text-center">رمز المقرر</th>
                                             <th class="text-center">اسم المقرر</th>
                                             <th class="text-center">المستوى</th>
+                                            <th class="text-center">نوع المقرر</th>
                                             <th class="text-center">الساعات المعتمدة</th>
                                             <th class="text-center">ساعات الإتصال</th>
-                                            <th class="text-center">عدد الشعب</th>
+                                            <th class="text-center">رقم الشعبة</th>
                                             <th class="text-center">عدد المتدربين</th>
                                             <th class="text-center"></th>
                                         </tr>
@@ -245,12 +250,14 @@
                     let code = row.insertCell(0);
                     let name = row.insertCell(1);
                     let level = row.insertCell(2);
-                    let credit_hours = row.insertCell(3);
-                    let contact_hours = row.insertCell(4);
-                    let division = row.insertCell(5);
-                    let students = row.insertCell(6);
+                    let type = row.insertCell(3);
+                    let credit_hours = row.insertCell(4);
+                    let contact_hours = row.insertCell(5);
+                    let division = row.insertCell(6);
+                    let students = row.insertCell(7);
                     code.className = "text-center";
                     name.className = "text-center";
+                    type.className = "text-center";
                     credit_hours.className = "text-center";
                     contact_hours.className = "text-center";
                     division.className = "text-center";
@@ -258,11 +265,47 @@
                     code.innerHTML = courses[i].code;
                     name.innerHTML = courses[i].name;
                     level.innerHTML = getStringLevel(courses[i].level);
+                    type.innerHTML = 'عملي';
                     credit_hours.innerHTML = courses[i].credit_hours;
-                    contact_hours.innerHTML = courses[i].contact_hours;
+                    contact_hours.innerHTML = Math.floor(courses[i].contact_hours / 2);
                     division.innerHTML =
-                        '<input type="number" class="form-control self-align-top" placeholder="عدد الشعب" value="1"/>';
+                        '<input type="number" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
                     students.innerHTML =
+                        '<input type="number" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
+                    tblIndex++;
+
+
+                    let row2 = tblCourses.insertRow(tblIndex);
+                    row2.setAttribute("data-id", courses[i].id);
+                    row2.setAttribute("data-level", courses[i].level);
+                    row2.setAttribute("data-selected", false);
+                    row2.addEventListener("click", (event) =>
+                        onCourseClicked(event)
+                    );
+                    let code2 = row2.insertCell(0);
+                    let name2 = row2.insertCell(1);
+                    let level2 = row2.insertCell(2);
+                    let type2 = row2.insertCell(3);
+                    let credit_hours2 = row2.insertCell(4);
+                    let contact_hours2 = row2.insertCell(5);
+                    let division2 = row2.insertCell(6);
+                    let students2 = row2.insertCell(7);
+                    code2.className = "text-center";
+                    name2.className = "text-center";
+                    type2.className = "text-center";
+                    credit_hours2.className = "text-center";
+                    contact_hours2.className = "text-center";
+                    division2.className = "text-center";
+                    students2.className = "text-center";
+                    code2.innerHTML = courses[i].code;
+                    name2.innerHTML = courses[i].name;
+                    level2.innerHTML = getStringLevel(courses[i].level);
+                    type2.innerHTML = 'نظري';
+                    credit_hours2.innerHTML = courses[i].credit_hours;
+                    contact_hours2.innerHTML = Math.ceil(courses[i].contact_hours / 2);
+                    division2.innerHTML =
+                        '<input type="number" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
+                    students2.innerHTML =
                         '<input type="number" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
                     tblIndex++;
                 }
@@ -272,17 +315,7 @@
 
         function addSelectedCourses(event) {
             event.preventDefault();
-            // Swal.fire({
-            //     html: "<h4>جاري تحديث البيانات</h4>",
-            //     timerProgressBar: true,
-            //     didOpen: () => {
-            //         Swal.showLoading();
-            //     },
-            // });
 
-            let coursesData = {
-                courses: [],
-            };
             let tblCourses = document.getElementById("courses");
             let selectedCourses = tblCourses.querySelectorAll("[data-selected='true']");
 
@@ -295,14 +328,23 @@
                     showConfirmButton: true,
                 });
                 return;
+            }else{
+                Swal.fire({
+                    html: "<h4>جاري تحديث البيانات</h4>",
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
             }
 
             var isThereEmptyField = false;
+            var division_numbers = [];
             selectedCourses.forEach((row) => {
-                if (row.children[6].firstChild.value == null || row.children[6].firstChild.value == '') {
-
+                if (row.children[7].firstChild.value == null || row.children[7].firstChild.value == '') {
                     isThereEmptyField = true;
                 }
+                division_numbers.push(row.children[6].firstChild.value);
             });
             if (isThereEmptyField) {
                 Swal.fire({
@@ -314,20 +356,55 @@
                 return;
             }
 
-            selectedCourses.forEach((row) => {
-                row = row.cloneNode(true);
-                coursesData.courses.push(row.dataset.id);
-                row.setAttribute("data-selected", false);
-                row.classList.add("bg-light");
-                row.classList.add("text-dark");
-                row.classList.remove("bg-info");
-                row.classList.remove("text-white");
-                row.children[5].innerHTML = row.children[5].firstChild.value;
-                row.children[6].innerHTML = row.children[6].firstChild.value;
-                let icon = row.insertCell(7);
-                icon.innerHTML = '<i class="fa fa-trash fa-lg btn text-danger" aria-hidden="true" onclick="console.log(this.parentNode.parentNode.remove())"></i>';
-                trainerTableBody.appendChild(row);
-            });
+            axios.post(`/api/trainer/check-division-number`, {
+                    division_numbers: division_numbers
+                })
+                .then((response) => {
+                    console.log(response);
+                    if (response.data.message) {
+                        Swal.fire({
+                            position: "center",
+                            html: "<h4>رقم الشعبة المدخل مستخدم من قبل</h4>",
+                            icon: "warning",
+                            showConfirmButton: true,
+                        });
+                        return;
+                    } else {
+                        Swal.fire({
+                            position: "center",
+                            // html: "<h4>"+response.data.message+"</h4>",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1000,
+                        });
+                        selectedCourses.forEach((row) => {
+                            var newRow = row.cloneNode(true);
+                            row.setAttribute("data-selected", false);
+                            newRow.classList.remove("bg-info");
+                            newRow.classList.remove("text-white");
+                            newRow.children[6].innerHTML = row.children[6].firstChild.value;
+                            newRow.children[7].innerHTML = row.children[7].firstChild.value;
+                            let icon = newRow.insertCell(8);
+                            icon.innerHTML = '<i class="fa fa-trash fa-lg btn text-danger" aria-hidden="true" onclick="console.log(this.parentNode.parentNode.remove())"></i>';
+                            trainerTableBody.appendChild(newRow);
+
+                            row.children[6].firstChild.value = '';
+                            row.children[7].firstChild.value = '';
+                            row.classList.remove("bg-info");
+                            row.classList.remove("text-white");
+                            row.setAttribute("data-selected", false);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + error.response.data.message + "</h4>",
+                        icon: "error",
+                        showConfirmButton: true,
+                    });
+                });
+
 
 
             // Swal.fire({
@@ -338,32 +415,13 @@
             //     timer: 1000,
             // });
 
-            // axios.post(window.updateCoursesLevelUrl, coursesData)
-            //     .then((response) => {
-            //         Swal.fire({
-            //             position: "center",
-            //             // html: "<h4>"+response.data.message+"</h4>",
-            //             icon: "success",
-            //             showConfirmButton: false,
-            //             timer: 1000,
-            //         });
-            //         window.programs = JSON.parse(response.data.programs);
-            //     })
-            //     .catch((error) => {
-            //         Swal.fire({
-            //             position: "center",
-            //             html: "<h4>" + error.response.data.message + "</h4>",
-            //             icon: "error",
-            //             showConfirmButton: true,
-            //         });
-            //     });
         }
 
 
         function onCourseClicked(event) {
             let courseRow = event.currentTarget;
-            if (courseRow.dataset.selected == "true" && (courseRow.children[5].firstChild !== document.activeElement &&
-                    courseRow.children[6].firstChild !== document.activeElement)) {
+            if (courseRow.dataset.selected == "true" && (courseRow.children[6].firstChild !== document.activeElement &&
+                    courseRow.children[7].firstChild !== document.activeElement)) {
                 courseRow.setAttribute("data-selected", false);
                 courseRow.classList.add("bg-light");
                 courseRow.classList.add("text-dark");
@@ -380,30 +438,47 @@
 
         function save() {
 
-            var orders= [];
+            var orders = [];
 
             Array.from(trainerTableBody.children).forEach(row => {
                 orders.push({
                     course_id: row.dataset.id,
-                    count_of_students: row.children[6].firstChild.data,
-                    count_of_divisions: row.children[5].firstChild.data,
+                    count_of_students: row.children[7].firstChild.data,
+                    division_number: row.children[6].firstChild.data,
+                    course_type: row.children[3].firstChild.data,
                 });
             });
-
-            console.log(orders);
-            axios.post('{{route('addCoursesToTrainerStore') }}', {orders: orders})
+            if(orders.length == 0){
+                Swal.fire({
+                    position: "center",
+                    html: "<h4>يجب اضافة مقرر واحد على الاقل</h4>",
+                    icon: "warning",
+                    showConfirmButton: true,
+                });
+                return;
+            }else{
+                Swal.fire({
+                    html: "<h4>جاري ارسال الطلب</h4>",
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+            }
+            axios.post('{{ route('addCoursesToTrainerStore') }}', {
+                    orders: orders
+                })
                 .then((response) => {
-                    console.log(response.data);
+                    window.location.reload();
                     Swal.fire({
                         position: "center",
-                        html: "<h4>"+response.data.message+"</h4>",
+                        html: "<h4>" + response.data.message + "</h4>",
                         icon: "success",
                         showConfirmButton: false,
                         timer: 1000,
                     });
                 })
                 .catch((error) => {
-                    console.log(error.response);
                     Swal.fire({
                         position: "center",
                         html: "<h4>" + error.response.data.message + "</h4>",

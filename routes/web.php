@@ -90,6 +90,7 @@ Route::middleware(['auth', 'role:مدرب'])->group(function () {
     Route::get('/trainer', [TrainerController::class, 'dashboard'])->name('trainerDashboard');
     Route::get('/trainer/add-courses', [TrainerController::class, 'addCoursesToTrainerView'])->name('addCoursesToTrainerView');
     Route::post('/trainer/add-courses', [TrainerController::class, 'store'])->name('addCoursesToTrainerStore');
+    Route::post('/api/trainer/check-division-number', [TrainerController::class, 'isDivisionAvailable'])->name('isDivisionAvailable');
 });
 
 // خدمة المجتمع
