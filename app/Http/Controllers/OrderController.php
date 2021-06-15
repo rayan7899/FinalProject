@@ -121,16 +121,22 @@ class OrderController extends Controller
       try {
          $user = Auth::user();
          $semester = Semester::latest()->first();
-         $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
-         $waitingOrdersCount = $user->student->orders()
-            ->where("transaction_id", null)
-            ->where("private_doc_verified", true)
-            ->orWhere("private_doc_verified",'=', null)->count();
+         // $waitingPaymentssCount = $user->student->payments()->where("accepted", null)->count();
+         // $waitingOrdersCount = $user->student->orders()
+         //    ->where("transaction_id", null)
+         //    ->where("private_doc_verified", true)
+         //    ->orWhere("private_doc_verified",'=', null)->count();
 
          // if ($waitingPaymentssCount > 0 || $waitingOrdersCount > 0) {
          //    return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
          //    // return redirect(route("home"))->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات او شحن رصيد تحت المراجعة");
          // }
+
+         for($i = 0; $i < count($user->student->orders); $i++){
+            if($user->student->orders[$i]->transaction_id === null && $user->student->orders[$i]->private_doc_verified !== 0){
+               return view('error')->with("error", "تعذر ارسال الطلب يوجد طلب اضافة مقررات تحت المراجعة");
+            }
+         }
 
          try {
             switch ($requestData["traineeState"]) {
