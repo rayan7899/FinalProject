@@ -130,10 +130,10 @@ class CommunityController extends Controller
             //     "name" => "اضافة الفائض/العجز للمستمرين",
             //     "url" => route("UpdateStudentsWalletForm")
             // ],
-            // (object) [
-            //     "name" => "تحديث الساعات المعتمدة",
-            //     "url" => route("UpdateCreditHoursForm")
-            // ],
+            (object) [
+                "name" => "تحديث الساعات المعتمدة",
+                "url" => route("UpdateCreditHoursForm")
+            ],
             // (object) [
             //     "name" => "المتدربين المدققة ايصالاتهم",
             //     "url" => route("CheckedStudents")
