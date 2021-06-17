@@ -52,7 +52,7 @@ class RestoreHours implements FromArray, ShouldAutoSize, WithHeadings, WithTitle
 
     public function title(): string
     {
-        return 'اسنرداد';
+        return 'استرداد';
     }
 
 
