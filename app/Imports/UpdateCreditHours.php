@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Exports\UpdatedHoursExport;
 use App\Models\Order;
 use App\Models\Semester;
 use App\Models\Student;
@@ -12,8 +13,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Facades\Excel;
 
 define('NATIONAL_ID', 8);
 define('NAME', 12);
@@ -30,15 +33,35 @@ class UpdateCreditHours implements ToCollection
         if ($semester == null) {
             return back()->with('error', ' يرجى انشاء فصل تدريبي');
         }
+
+        //delete waiting orders
+        try {
+            $deletedWaitingCount = 0;
+            $privateOrders = Order::where("private_doc_file_id", "!=", null)->where("private_doc_verified", null)->where("transaction_id", null)->get();
+            foreach ($privateOrders as $order) {
+                if ($order->private_doc_file_id != null && $order->private_doc_verified === null) {
+                    Storage::disk('studentDocuments')->deleteDirectory('/' . $order->student->user->national_id . '/privateStateDocs/' . $order->private_doc_file_id);
+                }
+                $order->delete();
+                $deletedWaitingCount++;
+            }
+            $deletedWaitingCount += Order::query()->where("transaction_id", null)->where("private_doc_verified", true)->delete();
+        } catch (Exception $e) {
+            return redirect(route('UpdateCreditHoursForm'))->with('error', 'حدث خطأ غير معروف تعذر حذف الطلبات المعلقة');
+        }
+
         $rows = $rows->slice(1);
 
         $errorsArr = [];
         $restoreInfo = [];
         $addInfo = [];
+        // $waitingInfo = [];
         $updatedCount = 0;
+        // $waitingCount = 0;
         $restoreCount = 0;
         $addCount = 0;
         $notRegesterd = 0;
+        $updatedBefore = 0;
         $equal        = 0;
 
         $countOfStudents = count($rows);
@@ -73,27 +96,31 @@ class UpdateCreditHours implements ToCollection
                     if ($user == null) {
                         array_push($errorsArr, ['message' => 'لا يوجد متدرب حسب البيانات المدخلة', 'userinfo' => $replaceKeys]);
                         continue;
-                    } elseif ($user->student->credit_hours > 0) {
-                        array_push($errorsArr, ['message' => 'تم تحديث الساعات المعتمدة مسبقاً', 'userinfo' => $replaceKeys]);
-                        continue;
-                    } else {
-                        $updatedCount++;
                     }
+                    $updatedCount++;
 
-                    if ($user->student->orders()->where("semester_id", $semester->id)->count() == 0 && $row[CREDIT_HOURS] == 0) {
-                        $notRegesterd++;
-                        continue;
-                    } elseif ($user->student->available_hours == $row[CREDIT_HOURS]) {
+                    if ($user->student->available_hours == $row[CREDIT_HOURS] && $row[CREDIT_HOURS] != 0) {
                         $user->student->credit_hours = $row[CREDIT_HOURS];
                         $user->student->available_hours = 0;
                         $user->student->save();
                         $equal++;
                         continue;
+                    } elseif ($user->student->orders()->where("semester_id", $semester->id)->where("transaction_id", "!=", null)->count() == 0 && $row[CREDIT_HOURS] == 0) {
+                        $notRegesterd++;
+                        continue;
+                    } elseif ($user->student->credit_hours == $row[CREDIT_HOURS] && $user->student->available_hours == 0) {
+                        $updatedBefore++;
+                        continue;
                     }
 
-                    $resoteHours = $user->student->available_hours - $row[CREDIT_HOURS];
+                    if ($user->student->available_hours != 0 || $user->student->credit_hours == 0) {
+                        $restoreHours = $user->student->available_hours  - $row[CREDIT_HOURS];
+                    } else {
+                        $restoreHours = $user->student->credit_hours - $row[CREDIT_HOURS];
+                    }
+
                     if (
-                        $resoteHours > $user->student->orders()
+                        $restoreHours > $user->student->orders()
                         ->where("transaction_id", '!=', null)
                         ->where("semester_id", $semester->id)
                         ->sum("requested_hours")
@@ -106,56 +133,76 @@ class UpdateCreditHours implements ToCollection
                     array_push($errorsArr, ['message' => 'خطأ غير معروف', 'userinfo' => $replaceKeys]);
                     continue;
                 }
+
+
                 DB::beginTransaction();
+                $clearHours = $restoreHours;
+                // dd($restoreHours);
+                if ($user->student->available_hours != 0 || $user->student->credit_hours == 0) {
+                    $credit_hours = $row[CREDIT_HOURS];
+                } else {
+                    $credit_hours = $user->student->credit_hours + ($clearHours * -1);
+                }
                 $updateInfo = [
                     "national_id"  => $user->national_id,
                     "name"         => $user->name,
-                    "hours"        => $resoteHours > 0 ? $resoteHours : abs($resoteHours),
+                    "hours"        => abs($restoreHours),
                     "amount"       => 0,
                     "traineeState" => 'لا يوجد',
-                    "creditHours"  => $row[CREDIT_HOURS],
+                    "creditHours"  =>  abs($credit_hours)
                 ];
-                if ($resoteHours > 0) {
+                if ($restoreHours > 0) {
                     $decreaseHours = 0;
-                    while ($resoteHours != 0) {
+                    while ($restoreHours != 0) {
                         $order = $user->student->orders()
                             ->where("transaction_id", '!=', null)
                             ->where("semester_id", $semester->id)
-                            ->where("requested_hours", ">=", $resoteHours - $decreaseHours)->latest()->first();
+                            ->where("requested_hours", ">=", $restoreHours - $decreaseHours)->latest()->first();
                         if ($order == null) {
                             $decreaseHours++;
                         } else {
                             $data = self::editOrder([
                                 'order' => $order,
-                                'newHours' => $order->requested_hours - ($resoteHours - $decreaseHours),
+                                'newHours' => $order->requested_hours - ($restoreHours - $decreaseHours),
                                 'note'     => "اعادة احتساب المبلغ حسب الساعات المعتمدة"
                             ]);
+
                             if ($data == false) {
                                 array_push($errorsArr, ['message' => 'خطأ غير معروف', 'userinfo' => $replaceKeys]);
                                 DB::rollBack();
                                 break;
                             }
-                            $resoteHours = $decreaseHours;
+                            $restoreHours = $decreaseHours;
                             $decreaseHours = 0;
                             $updateInfo['amount'] += $data['amount'];
+                            // $updateInfo['creditHours'] -= $data['hours'];
                             $updateInfo['traineeState']  = $data['traineeState'];
                         }
                     }
                     array_push($restoreInfo, $updateInfo);
                     $restoreCount++;
-                } elseif ($resoteHours < 0) {
-                    $data = self::createOrder($user, abs($resoteHours));
+                } elseif ($restoreHours < 0) {
+                    $data = self::createOrder($user, abs($restoreHours));
                     if ($data == false) {
                         array_push($errorsArr, ['message' => 'خطأ غير معروف', 'userinfo' => $replaceKeys]);
                         DB::rollBack();
                         continue;
                     }
                     $updateInfo['amount'] += $data['amount'];
+                    // $updateInfo['creditHours'] += $data['hours'];
                     $updateInfo['traineeState']  = $data['traineeState'];
                     array_push($addInfo, $updateInfo);
                     $addCount++;
+                } else {
+                    $updatedBefore++;
+                    DB::commit();
+                    continue;
                 }
-                $user->student->credit_hours = $row[CREDIT_HOURS];
+                if ($user->student->available_hours != 0 || $user->student->credit_hours == 0) {
+                    $user->student->credit_hours = $row[CREDIT_HOURS];
+                } else {
+                    $user->student->credit_hours = $user->student->credit_hours + ($clearHours * -1);
+                }
                 $user->student->available_hours = 0;
                 $user->student->save();
                 DB::commit();
@@ -166,17 +213,33 @@ class UpdateCreditHours implements ToCollection
             }
         }
 
+        try {
+            if (count($restoreInfo) > 0 || count($addInfo) > 0) {
+                Excel::store(new UpdatedHoursExport($restoreInfo, $addInfo), 'updatedHoursReport.xlsx', 'excelFiles');
+                $hasReport = true;
+            } else {
+                $hasReport = false;
+            }
+        } catch (Exception $e) {
+            //error :(
+        }
 
         return redirect(route('UpdateCreditHoursForm'))->with([
             'errorsArr' => count($errorsArr) > 0 ? $errorsArr : null,
             'restoreInfo' => count($restoreInfo) > 0 ? $restoreInfo : null,
             'addInfo' => count($addInfo) > 0 ? $addInfo : null,
+            // 'waitingInfo' => count($waitingInfo) > 0 ? $waitingInfo : null,
             'addCount' => $addCount,
             'restoreCount' => $restoreCount,
             'equal' => $equal,
             'notRegesterd' => $notRegesterd,
+            'updatedBefore' => $updatedBefore,
+            'deletedWaitingCount' => $deletedWaitingCount,
+            // 'waitingCount' => $waitingCount,
             'countOfStudents' => $countOfStudents,
             'updatedCount' => $updatedCount,
+            'reportExcelFileName' => 'updatedHoursReport.xlsx',
+            'hasReport'           => $hasReport
         ]);
 
 
@@ -242,9 +305,9 @@ class UpdateCreditHours implements ToCollection
                 "note"              => "تم تغيير عدد الساعات من " . $order->requested_hours . " إلى " . $orderData['newHours'],
             ]);
             DB::commit();
-            return ['type' => $type, 'amount' => $diffCost, 'traineeState' => $traineeState];
+            return ['type' => $type, 'hours' => $orderData['newHours'], 'amount' => $diffCost, 'traineeState' => $traineeState];
         } catch (Exception $e) {
-           
+
             DB::rollBack();
             return false;
         }
@@ -265,16 +328,16 @@ class UpdateCreditHours implements ToCollection
             } else {
                 if ($order->amount / $order->requested_hours == 0) { //private state
                     $hourCost = 0;
-                $traineeState = "ظروف خاصة";
+                    $traineeState = "ظروف خاصة";
                 } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
                     $hourCost = $order->student->program->hourPrice;
-                $traineeState = "متدرب";
+                    $traineeState = "متدرب";
                 } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
                     $hourCost = $order->student->program->hourPrice * 0.5;
-                $traineeState = "ابن منسوب";
+                    $traineeState = "ابن منسوب";
                 } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
                     $hourCost = $order->student->program->hourPrice * 0.25;
-                $traineeState = "منسوب";
+                    $traineeState = "منسوب";
                 } else {
                     return false;
                 }
@@ -282,7 +345,7 @@ class UpdateCreditHours implements ToCollection
             $amount = $hours * $hourCost;
             $discountAmount = $hours * $user->student->program->hourPrice - $hours * $hourCost;
         } catch (Exception $e) {
-           
+
             return false;
         }
         try {
@@ -293,6 +356,7 @@ class UpdateCreditHours implements ToCollection
                 "requested_hours"       => $hours,
                 "private_doc_verified"  => true,
                 "semester_id"           => $semester->id,
+                "note"                  => " تم اضافة ".$hours." ساعات حسب الساعات المعتمدة في رايات "
             ]);
 
             $transaction = $user->student->transactions()->create([
@@ -308,9 +372,9 @@ class UpdateCreditHours implements ToCollection
             $user->student->wallet -= $amount;
             $user->student->save();
             DB::commit();
-            return ['amount' => $amount, 'traineeState' => $traineeState];
+            return ['amount' => $amount, 'hours' => $hours, 'traineeState' => $traineeState];
         } catch (Exception $e) {
-           
+
             DB::rollBack();
             return false;
         }
