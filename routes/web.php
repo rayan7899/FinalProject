@@ -19,8 +19,6 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentCheckerController;
 use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\RefundOrderController;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,6 +163,9 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
 
     //backup
     Route::get('/community/backup/download', [FileController::class, 'downloadBackup'])->name('downloadBackup');
+    //excel reports download
+    Route::get('/community/excel/report/{filename}', [FileController::class, 'excelReport'])->name('excelReport');
+
 
     //manage semesters
     Route::get('/community/semester', [CommunityController::class, 'semesterDashboard'])->name('communitySemesterDashboard');

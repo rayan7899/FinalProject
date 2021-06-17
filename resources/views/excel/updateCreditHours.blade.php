@@ -12,17 +12,21 @@
             </div>
         @endif
         @if (session()->has('updatedCount'))
-        
-        
+            @if (session()->get('hasReport'))
+                <a class="btn btn-primary my-2" href="{{ route('excelReport',['filename' => session()->get('reportExcelFileName')]) }}" role="button"> تنزيل التقرير (excel) </a>
+            @endif
         <div class="alert alert-success">
             <strong>
                 تم معالجة بيانات {{ session()->get('updatedCount') }} من
                 {{ session()->get('countOfStudents') }} متدرب
             </strong>
-
                 <p class="p-1 m-1">
                     <b>{{ session()->get('notRegesterd') }} </b> متدرب/متدربين 
                      لا يوجد لديهم ساعات لهذا الفصل التدريبي
+                </p>
+                <p class="p-1 m-1">
+                    <b>{{ session()->get('updatedBefore') }} </b> متدرب/متدربين 
+                     تم تحديث الساعات المعتمدة مسبقاً
                 </p>
 
                 <p class="p-1 m-1">
@@ -41,8 +45,17 @@
                     الساعات المعتمدة اكثر من الساعات المضافة
                     (خصم المبلغ من المحفظة)
                 </p>
+                
 
             </div>
+        @endif
+        @if(session()->has('deletedWaitingCount'))
+            @if( session()->get('deletedWaitingCount') > 0)
+            <div class="alert alert-info" role="alert">
+                تم حذف <b>{{ session()->get('deletedWaitingCount') }} </b>  
+                طلب معلق
+            </div>
+            @endif
         @endif
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -82,6 +95,34 @@
                 </tbody>
             </table>
         @endif
+
+    {{-- @if (session()->has('waitingInfo'))
+            <div class="alert alert-warning" role="alert">
+                <b>{{ session()->get('waitingCount') }} </b>
+                متدرب/متدربين لديهم طلبات اضافة مقررات قيد المراجعة
+            </div>
+            <table class="table table-sm table-hover bg-white">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">الاسم</th>
+                    <th scope="col">رقم الهوية</th>
+                    <th scope="col">الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse (session()->get('waitingInfo') as $error)
+                    <tr>
+                        <td scope="row">{{ $loop->index + 1 }}</td>
+                        <td>{{ $error['userinfo']['name'] ?? 'null' }}</td>
+                        <td>{{ $error['userinfo']['national_id'] ?? 'null' }}</td>
+                        <td class="text-danger"> {{ $error['message'] ?? 'null' }} </td>
+                    </tr>
+                @empty
+                @endforelse
+            </tbody>
+            </table>
+    @endif --}}
         @if (session()->has('restoreInfo'))
             <div class="alert alert-info" role="alert">
                 <strong> استرداد الى المحفظة: </strong>
@@ -131,7 +172,7 @@
                         <th class="text-center" scope="col">الاسم</th>
                         <th class="text-center" scope="col">رقم الهوية</th>
                         <th class="text-center" scope="col">الحالة</th>
-                        <th class="text-center" scope="col">الساعات </th>
+                        <th class="text-center" scope="col">الساعات المضافة </th>
                         <th class="text-center" scope="col">المبلغ المخصوم </th>
                         <th class="text-center" scope="col">الساعات المعتمدة</th>
                     </tr>
