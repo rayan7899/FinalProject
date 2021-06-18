@@ -1,19 +1,28 @@
-
 window.user = null;
-function fillReportTable (user) {
+
+function fillReportTable(user) {
     let national_id = user.national_id;
     let singlePaymentsReportTbl = $('#singlePaymentsReportTbl').DataTable({
         // ajax: window.paymentsReviewJson,
         // dataSrc: "data",
-        data:user.student.payments,
+        data: user.student.payments,
         columnDefs: [{
             searchable: false,
             orderable: false,
             targets: 0
+        }, {
+            targets: 3,
+            createdCell: function (td, cellData, rowData, row, col) {
+                if (cellData == 'مرفوض') {
+                    $(td).addClass('text-danger');
+                } else {
+                    $(td).addClass('text-success');
+                }
+            }
         }],
         columns: [{
                 data: null,
-                className:"text-center",
+                className: "text-center",
             },
             {
                 data: "id",
@@ -22,9 +31,16 @@ function fillReportTable (user) {
             {
                 data: function (data) {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        if (data.amount != data.transaction.amount) {
-                            return `<del class="text-muted">${data.amount}</del>
-                            ${data.transaction.amount}`;
+                        var totalAmount = 0;
+                        data.transactions.forEach(transaction => {
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
+                                totalAmount += transaction.amount;
+                            } else {
+                                totalAmount -= transaction.amount;
+                            }
+                        });
+                        if (data.amount != totalAmount) {
+                            return `<del class="text-muted">${data.amount}</del> ${totalAmount}`;
                         } else {
                             return data.amount;
                         }
@@ -36,23 +52,17 @@ function fillReportTable (user) {
             },
 
             {
-                data: "accepted",
-                className: "text-center",
-                render: function (data, type, row) {
-                    let className = "";
-                    let txt = "";
-                    if(data == '1'){
-                        className = "text-success";
-                        txt = "مقبول";
-                    }else if(data == '0'){
-                        className = "text-danger";
-                        txt = "مرفوض";
-                    }else{
-                        className = "";
-                        txt = "قيد المراجعة";
+                data: function (data) {
+                    if ((data.accepted == 1 || data.accepted == true) && (data.management_decision == 1 || data.management_decision == true)) {
+                        return 'مقبول نهائي';
+
+                    } else if (data.accepted == 1 || data.accepted == true) {
+                        return 'مقبول مبدئي';
+                    } else {
+                        return 'مرفوض';
                     }
-                    return `<span class="${className}">${txt}</span>`
-                }
+                },
+                className: 'text-center'
             },
             {
                 data: "created_at",
@@ -223,6 +233,15 @@ function fillReportTable (user) {
         });
     }).draw();
 
+
+    $('#singlePaymentsReportTbl tbody').on('dblclick', 'tr', function () {
+        var row = singlePaymentsReportTbl.row(this).data();
+
+        if (this.querySelector('a') == null && this.querySelector('button') == null) {
+            window.open(`/community/students/report/${row.student.user.id}`, '_self');
+        }
+    });
+
 }
 
 
@@ -282,12 +301,12 @@ function fillUsetInfo(user) {
     $("#paymentsReportCard").show();
 }
 
-window.receiptToggle = function(action){
-    if(action == 'show'){
+window.receiptToggle = function (action) {
+    if (action == 'show') {
         $('#receipt').show();
         $('#receiptImg').removeAttr('disabled');
         $('#receiptImg').attr('required', true);
-    }else{
+    } else {
         $('#receipt').hide();
         $('#receiptImg').attr('disabled', true);
         $('#receiptImg').removeAttr('required');

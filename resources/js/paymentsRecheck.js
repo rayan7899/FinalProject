@@ -357,7 +357,13 @@ jQuery(function () {
         });
     }).draw();
 
-
+    $('#paymentsRecheckTbl tbody').on('dblclick', 'tr', function () {
+        var row = paymentsRecheckTbl.row(this).data();
+        
+            if (this.querySelector('a') == null && this.querySelector('button') == null) {
+                window.open(`/community/students/report/${row.student.user.id}`, '_self');
+            }
+    });
 
 });
 

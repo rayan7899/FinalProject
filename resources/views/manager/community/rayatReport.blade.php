@@ -105,11 +105,13 @@
                         <th class="text-center">البرنامج</th>
                         <th class="text-center">القسم</th>
                         <th class="text-center">التخصص</th>
-                        <th class="text-center">عدد الساعات</th>
+                        <th class="text-center"> الساعات المتاحة</th>
+                        <th class="text-center"> الساعات المعتمدة</th>
                         <th class="text-center">حالة التسجيل</th>
                         <th class="text-center"></th>
                     </tr>
                     <tr>
+                        <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
                         <th class="filterhead"></th>
@@ -134,7 +136,7 @@
                                 <td>{{ $user->student->program->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->student->major->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->student->credit_hours ?? 0 }}</td>
+                                <td>{{ $user->student->available_hours ?? 0 }}</td>
                                 <td class="text-success">مسجل في رايات</td>
                             </tr>
                         @empty

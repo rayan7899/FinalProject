@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     use HasFactory;
-    
+
     protected $guarded = [];
 
 
@@ -67,5 +67,25 @@ class Student extends Model
     public function departmentRoleId()
     {
         return $this->department->role_id;
+    }
+
+    public function getHourCost($traineeState)
+    {
+        switch ($traineeState) {
+            case "trainee":
+                return $this->program->hourPrice;
+                break;
+            case "privateState":
+                return 0;
+                break;
+            case "employeeSon":
+                return $this->program->hourPrice * 0.50;
+                break;
+            case "employee":
+                return $this->program->hourPrice * 0.25;
+                break;
+            default:
+                return false;
+        }
     }
 }

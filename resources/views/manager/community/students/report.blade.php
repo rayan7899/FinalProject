@@ -81,7 +81,7 @@
                             <th class="text-center" scope="col">رقم الطلب (شحن / اضافة مقررات)</th>
                             <th class="text-center" scope="col">المبلغ</th>
                             <th class="text-center" scope="col">التاريخ</th>
-                            <th class="text-center" scope="col">الملاحظات</th>
+                            {{-- <th class="text-center" scope="col">الملاحظات</th> --}}
                             <th class="text-center" scope="col">ايصال السداد</th>
                         </tr>
 
@@ -95,11 +95,18 @@
                             <tr class="text-center">
                                 <td>{{ $transaction->id ?? 'Error' }}</td>
                                 @if ($transaction->type == 'deduction')
-                                    @php
+                                    {{-- @php
                                         if (isset($transaction->order)) {
-                                            $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                            $hoursNote = 'مقابل اضافة ساعات';
+                                        
+                                            // if(count($transaction->order->transactions) == 1){
+                                            //     $hoursNote = '( مقابل اضافة ' . $transaction->order->requested_hours . ' ساعة / ساعات )';
+                                            // }else {
+                                            //     $lastTrans = $transaction->order->transactions()->latest()->first();
+                                            //     $hoursNote = 'تم تغيير المبلغ بالعملية رقم ' . $lastTrans->id;
+                                            // }
                                         }
-                                    @endphp
+                                    @endphp --}}
                                     <td class="text-danger"> خصم (اضافة مقررات)</td>
                                     <td>{{ $transaction->order->id ?? 'Error' }}</td>
                                 @elseif ($transaction->type == 'recharge')
@@ -117,15 +124,27 @@
                                 @elseif ($transaction->type == 'manager_deduction')
                                     <td class="text-danger"> خصم (من الادارة) </td>
                                     <td>لا يوجد</td>
+                                @elseif ($transaction->type == 'editPayment-deduction')
+                                    <td class="text-danger"> خصم (اعادة تدقيق ايصال) </td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
+                                @elseif ($transaction->type == 'editPayment-charge')
+                                    <td class="text-success"> اضافة (اعادة تدقيق ايصال) </td>
+                                    <td>{{ $transaction->payment->id ?? 'لا يوجد' }}</td>
+                                @elseif ($transaction->type == 'editOrder-charge')
+                                    <td class="text-success"> اضافة (تعديل ساعات) </td>
+                                    <td>{{ $transaction->order->id ?? 'لا يوجد' }}</td>
+                                @elseif ($transaction->type == 'editOrder-deduction')
+                                    <td class="text-danger"> خصم (تعديل ساعات) </td>
+                                    <td>{{ $transaction->order->id ?? 'لا يوجد' }}</td>
                                 @else
                                     <td>لا يوجد</td>
-                                    <td>{{ $transaction->refund_order_id ?? 'Error' }}</td>
+                                    <td>Error</td>
                                 @endif
                                 <td style="min-width: 100px">{{ $transaction->amount ?? 'Error' }}</td>
                                 <td style="min-width: 100px">{{ $transaction->created_at->toDateString() ?? 'Error' }}
                                 </td>
 
-                                <td class="text-right">
+                                {{-- <td class="text-right">
                                     @if ($transaction->type == 'deduction')
                                         {{ $hoursNote ?? '' }}
                                         <br>
@@ -133,7 +152,7 @@
                                     @else
                                         {{ $transaction->note ?? 'لا يوجد' }}
                                     @endif
-                                </td>
+                                </td> --}}
                                 @if (in_array($transaction->type, ['recharge', 'manager_recharge']))
                                     @if ($transaction->payment != null)
                                         <td>
@@ -214,9 +233,13 @@
                                     <td>قيد المراجعة</td>
                                 @else
                                     @if ($payment->accepted == true || $payment->accepted == 1)
-                                        <td class="text-success">مقبول</td>
+                                        @if ($payment->checker_decision == 1 && $payment->management_decision == 1)
+                                            <td class="text-success">مقبول نهائي</td>
+                                        @else
+                                            <td class="text-success">مقبول مبدئي</td>
+                                        @endif
                                     @else
-                                        <td class="text-danger">مرفوض</td>
+                                    <td class="text-danger">مرفوض</td>
                                     @endif
                                 @endif
                                 <td style="min-width: 100px">{{ $payment->created_at->toDateString() ?? 'Error' }}</td>
