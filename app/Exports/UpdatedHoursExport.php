@@ -2,12 +2,10 @@
 
 namespace App\Exports;
 
-use App\User;
-use Maatwebsite\Excel\Concerns\FromArray;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use App\Exports\RestoreHours;
+use App\Exports\AddHours;
 
 class UpdatedHoursExport implements WithMultipleSheets
 {
@@ -25,7 +23,7 @@ class UpdatedHoursExport implements WithMultipleSheets
     {
         $sheets = [
             new RestoreHours($this->restoreInfo),
-            new addHours($this->addInfo),
+            new AddHours($this->addInfo),
         ];
 
         return $sheets;
