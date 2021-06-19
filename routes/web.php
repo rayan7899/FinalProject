@@ -19,6 +19,10 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentCheckerController;
 use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\RefundOrderController;
+use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\TransactionController;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,6 +78,15 @@ Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
     Route::get('/api/payments-checker/student/payments/{type}', [PaymentCheckerController::class, 'checkerPaymentsReviewJson'])->name('checkerPaymentsReviewJson');
     Route::post('/payments-checker/student/payments/verified-update', [PaymentCheckerController::class, 'checkerPaymentsReviewUpdate'])->name('checkerPaymentsReviewUpdate');
     Route::get('/payments-checker/student/payments/report', [PaymentCheckerController::class, 'checkerPaymentsReport'])->name('checkerPaymentsReport');
+});
+
+
+// المدربين
+Route::middleware(['auth', 'role:مدرب'])->group(function () {
+    Route::get('/trainer', [TrainerController::class, 'dashboard'])->name('trainerDashboard');
+    Route::get('/trainer/add-courses', [TrainerController::class, 'addCoursesToTrainerView'])->name('addCoursesToTrainerView');
+    Route::post('/trainer/add-courses', [TrainerController::class, 'store'])->name('addCoursesToTrainerStore');
+    Route::post('/api/trainer/check-division-number', [TrainerController::class, 'isDivisionAvailable'])->name('isDivisionAvailable');
 });
 
 // خدمة المجتمع
@@ -259,6 +272,13 @@ Route::middleware(['auth'])->group(function () {
     /// rayat
     Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
     Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
+
+
+    /// review trainers orders 
+    Route::get('/department-boss/trainers-info', [DepartmentBossController::class, 'trainersInfoView'])->name('trainersInfoView');
+    Route::get('/api/department-boss/get-courses/{trainer}', [DepartmentBossController::class, 'getCoursesByTrainer'])->name('getCoursesByTrainer');
+    Route::post('/api/department-boss/accept', [DepartmentBossController::class, 'acceptTrainerCourseOrder'])->name('acceptTrainerCourseOrder');
+
 });
 
 // المتدربين

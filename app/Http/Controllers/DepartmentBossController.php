@@ -6,6 +6,9 @@ use App\Models\Course;
 use App\Models\Major;
 use Illuminate\Http\Request;
 use App\Models\Program;
+use App\Models\Semester;
+use App\Models\Trainer;
+use App\Models\TrainerCoursesOrders;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -37,8 +40,8 @@ class DepartmentBossController extends Controller
                 return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage().' '.$e);
             return view("error")->with("error", "حدث خطأ غير معروف");
-           Log::error($e->getMessage().' '.$e);
         }
     }
 
@@ -65,6 +68,10 @@ class DepartmentBossController extends Controller
             (object) [
                 "name" => "تقرير رايات",
                 "url" => route("rayatReportFormCommunity", ["type" => "departmentBoss"])
+            ],
+            (object) [
+                "name" => "بيانات المدربين",
+                "url" => route("trainersInfoView")
             ],
         ];
         return view("manager.departmentBoss.dashboard")->with(compact("links","title"));
@@ -240,5 +247,78 @@ class DepartmentBossController extends Controller
             Log::error($e->getMessage() . ' ' . $e);
             return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
         }
+    }
+
+    public function trainersInfoView()
+    {
+        try {
+            $myDepartmentsIDs = [];
+            foreach (Auth::user()->manager->getMyDepartment() as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($myDepartmentsIDs, $department->id);
+                }
+            }
+            $semester = Semester::latest()->first();
+            $users = User::with('trainer')->whereHas('trainer.coursesOrders.course.major.department', function ($res) use ($myDepartmentsIDs, $semester) {
+                $res->where('accepted_by_dept_boss', null)
+                    ->where('accepted_by_community', null)
+                    ->where('accepted_by_dean', null)
+                    ->where('semester_id', $semester->id)
+                    ->whereIn('departments.id', $myDepartmentsIDs);
+            })->get();
+            return view('manager.departmentBoss.trainersInfo')->with(compact('users'));
+        } catch (Exception $e) {
+            return back()->with('error', $e);
+        }
+    }
+
+    public function getCoursesByTrainer(Trainer $trainer)
+    {
+        try {
+            $myDepartmentsIDs = [];
+            foreach (Auth::user()->manager->getMyDepartment() as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($myDepartmentsIDs, $department->id);
+                }
+            }
+            $orders = $trainer->coursesOrders()->with('course')
+            ->whereHas('course.major.department', function ($res) use ($myDepartmentsIDs) {
+                $res->whereIn('departments.id', $myDepartmentsIDs);
+            })->get();
+            return response(['message' => 'تم جلب البيانات بنجاح', 'orders' => $orders], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+    }
+    
+    public function acceptTrainerCourseOrder(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "orders"                      => "required|array|min:1",
+            "orders.*.order_id"           => "required|numeric|exists:trainer_courses_orders,id",
+            "orders.*.count_of_students"  => "required|numeric|min:1",
+            "orders.*.division_number"    => "required|numeric|min:1",
+        ]);
+        try {
+            DB::beginTransaction();
+            foreach ($requestData['orders'] as $order) {
+                $courseOrder = TrainerCoursesOrders::find($order['order_id']);
+                if($courseOrder->accepted_by_dept_boss != true){
+                    $courseOrder->update([
+                        'accepted_by_dept_boss' =>  true,
+                        'count_of_students'     =>  $order['count_of_students'],
+                        'division_number'       =>  $order['division_number'],
+                    ]);
+                }
+            }
+            DB::commit();
+            return response(['message' => 'تم قبول الطلب بنجاح'], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+        
     }
 }

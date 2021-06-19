@@ -48,6 +48,8 @@ class HomeController extends Controller
                 return redirect(route('deptBossDashboard'));
             }
             return view("error")->with("error", "لا يوجد لديك اي صلاحيات");
+        } elseif ($user->trainer !== null){
+            return redirect(route('trainerDashboard'));
         } else {
             // $user = User::with("student")->find(Auth::user()->id);
             $user = Auth::user();

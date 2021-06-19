@@ -21,12 +21,19 @@ class EnsureHasRole
         try {
             $manager = $request->user()->manager;
             $student = $request->user()->student;
+            $trainer = $request->user()->trainer;
             switch ($role) {
                 case "خدمة المجتمع":
                     if ($manager === null) {
                         return redirect(route('home'));
                     }
                     if (!$manager->hasRole($role)) {
+                        return redirect(route('home'));
+                    }
+                    break;
+
+                case "مدرب":
+                    if ($trainer === null) {
                         return redirect(route('home'));
                     }
                     break;
