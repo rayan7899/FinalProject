@@ -182,6 +182,10 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     //Update Cedit hours
     Route::get('/excel/hours/update', [ExcelController::class, 'updateCreditHoursForm'])->name('UpdateCreditHoursForm');
     Route::post('/excel/hours/update', [ExcelController::class, 'updateCreditHoursStore'])->name('UpdateCreditHoursStore');
+
+    Route::get('/excel/trainer/import', [ExcelController::class, 'trainerImportForm'])->name('trainerImportForm');
+    Route::post('/excel/trainer/import', [ExcelController::class, 'trainerImportStore'])->name('trainerImportStore');
+    
 });
 
 

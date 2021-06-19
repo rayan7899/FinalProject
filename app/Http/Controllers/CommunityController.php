@@ -122,6 +122,10 @@ class CommunityController extends Controller
                 "name" => "تقرير طلبات الاسترداد",
                 "url" => route("refundOrdersReport")
             ],
+            (object) [
+                "name" => "اضافة اكسل مدربين",
+                "url" => route("trainerImportForm")
+            ],
             // (object) [
             //     "name" => "اضافة اكسل مستمرين",
             //     "url" => route("OldForm")
