@@ -148,6 +148,11 @@ class CommunityController extends Controller
             //     "url" => route("studentsStates")
             // ],
 
+            (object) [
+                "name" => "المدربين",
+                "url" => route("trainersDashboard")
+            ],
+
 
 
 
@@ -1908,6 +1913,32 @@ class CommunityController extends Controller
             Log::error($e);
             DB::rollBack();
             return response(['message' => $e], 422);
+        }
+    }
+
+    public function trainersDashboard()
+    {
+        return view("manager.community.trainers.dashboard");
+    }
+
+    public function reviewCoursesOrdersView()
+    {
+        try {
+            $semester = Semester::latest()->first();
+            $users = User::with('trainer.coursesOrders')->has('trainer.coursesOrders')
+                    ->wheredoesntHave('trainer.coursesOrders', function($res){
+                        $res->where('accepted_by_dept_boss', null);
+                    })
+                    ->get();
+            // $users = User::with('trainer')->wheredoesntHave('trainer.coursesOrders', function($res){
+            //                     $res->whereHas('trainer.coursesOrders', function ($res) {})
+            //                         ->where('accepted_by_dept_boss', null);
+            //                 })->get();
+                        
+            return view('manager.community.trainers.reviewCoursesOrders')->with(compact('users'));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', $e);
         }
     }
 }
