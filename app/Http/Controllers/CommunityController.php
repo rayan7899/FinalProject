@@ -1823,6 +1823,7 @@ class CommunityController extends Controller
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
+            $orders = $refund->student->orders()->where('semester_id', $semester->id)->where('requested_hours', '>', 0)->get();
             if ($refund === null) {
                 return response(['message' => "خطأ في بيانات الطلب"], 422);
             } else if ($refund->accepted !== null) {
@@ -1852,6 +1853,10 @@ class CommunityController extends Controller
 
             DB::beginTransaction();
             if ($requestData['accepted']) {
+                if ($refund->student->credit_hours <= 0){
+                    return response(['message' => "لا يوجد ساعات معتمدة لدى المتدرب"], 422);
+                }
+
                 switch ($requestData['range']) {
                     case 'before-training':
                         $amount = $refund->amount - 300;
@@ -1896,6 +1901,15 @@ class CommunityController extends Controller
                     'accepted'          => true,
 
                 ]);
+
+                foreach ($orders as $order) {
+                    $order->update([
+                        'requested_hours' => 0,
+                        'amount' => 0,
+                        'discount' => 0,
+                        'note' => 'تم استرداد مبلغ الساعات لهذا الطلب',
+                    ]);
+                }
             } else {
                 $refund->update([
                     'manager_note'      => $requestData['note'],
