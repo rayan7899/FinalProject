@@ -19,6 +19,7 @@ class RefundOrderController extends Controller
 
     public function form()
     {
+        return back()->with(['error' => 'سيكون طلب الاسترداد متاح عندما يتم اعتماد الساعات']);
         $user = Auth::user();
         if ($user->student->credit_hours <= 0 && $user->student->wallet <= 0) {
             return back()->with(['error' => 'لا يوجد ساعات معتمدة ولا رصيد لاسترداده']);

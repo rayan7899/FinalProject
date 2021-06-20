@@ -333,6 +333,15 @@ jQuery(function () {
     }).draw();
 
 
+    $('#checkerPaymentsReviewTbl tbody').on('dblclick', 'tr', function () {
+        var row = checkerPaymentsReviewTbl.row(this).data();
+        
+            if (this.querySelector('a') == null && this.querySelector('button') == null) {
+                window.open(`/community/students/report/${row.student.user.id}`, '_self');
+            }
+    });
+
+
 
 });
 

@@ -166,11 +166,11 @@
                     }
                 @endphp
 
-                {{-- credit_hours --}}
+                {{-- available_hours --}}
                 <div class="row p-0 m-0">
                     <div dir="ltr" class="input-group mb-1">
                         <input readonly type="text" class="form-control text-right bg-white"
-                            value="{{ $user->student->credit_hours ?? 0 }}">
+                            value="{{ $user->student->available_hours ?? 0 }}">
                         <div class="input-group-append">
                             <span class="input-group-text text-center" style="width: 120px;">
                                 <span class=" d-inline text-center m-0 p-0 w-100">
@@ -187,7 +187,8 @@
                 {{-- rayat hours --}}
                 <div class="row p-0 m-0">
                     <div dir="ltr" class="input-group mb-1">
-                        <input readonly type="text" class="form-control text-right bg-white" value="0">
+                        <input readonly type="text" class="form-control text-right bg-white" 
+                        value="{{ $user->student->credit_hours ?? 0 }}">
                         <div class="input-group-append">
                             <span class="input-group-text text-center" style="width: 120px;">
                                 <a role="button" class="mx-1" data-toggle="popover" title="الساعات المعتمدة"
@@ -206,7 +207,7 @@
                     @php
                         $acceptMessage = 'مقبول مبدئي'; // default message
                         if ($user->student->final_accepted == true || $user->student->final_accepted == 1) {
-                            if ($user->student->credit_hours == 0) {
+                            if ($user->student->available_hours == 0) {
                                 $acceptMessage = 'مقبول نهائي - بانتظار إتاحة الساعات في رايات';
                             } else {
                                 $acceptMessage = 'مقبول نهائي - تم إتاحة الساعات في رايات يتوجب عليك الدخول الى رايات وتسجيل المقررات';

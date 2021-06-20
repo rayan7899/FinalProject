@@ -292,7 +292,10 @@ jQuery(function () {
         });
     }).draw();
 
-
+    $('#paymentsReviewTbl tbody').on('dblclick', 'tr', function () {
+        var row = paymentsReviewTbl.row(this).data();
+        window.open(`/community/students/report/${row.student.user.id}`, '_self');
+    });
 
 
 
@@ -398,9 +401,9 @@ jQuery(function () {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
                         var totalAmount = 0;
                         data.transactions.forEach(transaction => {
-                            if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
                                 totalAmount += transaction.amount;
-                            }else{
+                            } else {
                                 totalAmount -= transaction.amount;
                             }
                         });
@@ -419,8 +422,11 @@ jQuery(function () {
 
             {
                 data: function (data) {
-                    if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
-                        return 'مقبول';
+                    if ((data.accepted == 1 || data.accepted == true) && (data.management_decision == 1 || data.management_decision == true)) {
+                        return 'مقبول نهائي';
+
+                    } else if (data.accepted == 1 || data.accepted == true) {
+                        return 'مقبول مبدئي';
                     } else {
                         return 'مرفوض';
                     }
@@ -436,15 +442,15 @@ jQuery(function () {
                 data: function (data, type, row) {
                     var totalAmount = 0;
                     data.transactions.forEach(transaction => {
-                        if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                        if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
                             totalAmount += transaction.amount;
-                        }else{
+                        } else {
                             totalAmount -= transaction.amount;
                         }
                     });
-                    if(data.accepted == 1){
+                    if (data.accepted == 1) {
                         return `<a data-toggle="modal" data-target="#editModal" href="#" onclick="window.oldAmount.value = ${totalAmount}; window.payment_id = ${data.id}; window.originalAmount = ${data.amount}"><i class="fa btn fa-lg fa-edit text-primary"></i></a>`;
-                    }else{
+                    } else {
                         return '-';
                     }
                 }
@@ -633,6 +639,14 @@ jQuery(function () {
         });
     }).draw();
 
+    $('#paymentsReportTbl tbody').on('click', 'td', function () {
+        var row = paymentsReportTbl.row(this).data();
+
+        if (this.querySelector('a') == null && this.querySelector('button') == null) {
+            window.open(`/community/students/report/${row.student.user.id}`, '_self');
+        }
+    });
+
 
 
 
@@ -642,13 +656,11 @@ jQuery(function () {
         dataSrc: "data",
         rowId: 'id',
         columnDefs: [{
-                searchable: false,
-                orderable: false,
-                targets: 0
-            },
-        ],
-        columns: [
-            {
+            searchable: false,
+            orderable: false,
+            targets: 0
+        }, ],
+        columns: [{
                 data: null,
                 className: "text-center",
             },
@@ -712,9 +724,9 @@ jQuery(function () {
                     if (data.accepted == 1 || data.accepted == '1' || data.accepted == true) {
                         var totalAmount = 0;
                         data.transactions.forEach(transaction => {
-                            if(transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge'){
+                            if (transaction.type == 'editPayment-charge' || transaction.type == 'recharge' || transaction.type == 'manager_recharge') {
                                 totalAmount += transaction.amount;
-                            }else{
+                            } else {
                                 totalAmount -= transaction.amount;
                             }
                         });
@@ -922,16 +934,16 @@ jQuery(function () {
     }).draw();
 });
 
-window.editAmount = function() {
+window.editAmount = function () {
     var row = document.getElementById(window.payment_id);
-    if(window.newAmount.value == null || window.newAmount.value == ''){
+    if (window.newAmount.value == null || window.newAmount.value == '') {
         Swal.fire({
             position: "center",
             html: "<h4>لا يمكن ترك حقل المبلغ الجديد فارغ</h4>",
             icon: "error",
             showConfirmButton: true,
         });
-    }else{
+    } else {
         let form = {
             payment_id: window.payment_id,
             amount: window.newAmount.value,
@@ -959,13 +971,12 @@ window.editAmount = function() {
                     icon: "error",
                     showConfirmButton: true,
                 });
-            }
-        );
+            });
     }
 }
 
 
-window.deletePayment = function(payment_id) {
+window.deletePayment = function (payment_id) {
     Swal.fire({
         title: ' هل انت متأكد ؟',
         text: " لا يمكن التراجع عن هذا الاجراء",
@@ -977,8 +988,10 @@ window.deletePayment = function(payment_id) {
         cancelButtonText: 'الغاء',
     }).then((result) => {
         if (result.isConfirmed) {
-            axios.post('/student/payment/delete', {payment_id: payment_id})
-            .then((response) => {
+            axios.post('/student/payment/delete', {
+                    payment_id: payment_id
+                })
+                .then((response) => {
                     document.getElementById(payment_id).remove();
                     Swal.fire({
                         position: "center",

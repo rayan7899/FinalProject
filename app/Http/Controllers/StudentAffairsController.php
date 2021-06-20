@@ -52,14 +52,7 @@ class StudentAffairsController extends Controller
                 "name" => "اضافة اكسل مستجدين",
                 "url" => route("AddExcelForm")
             ],
-            (object) [
-                "name" => "اضافة اكسل مستمرين",
-                "url" => route("OldForm")
-            ],
-            (object) [
-                "name" => "اضافة الفائض/العجز للمستمرين",
-                "url" => route("UpdateStudentsWalletForm")
-            ],
+
             (object) [
                 "name" => "اضافة الرقم التدريبي للمستجدين",
                 "url" => route("addRayatIdForm")
@@ -133,7 +126,7 @@ class StudentAffairsController extends Controller
     public function finalAcceptedJson()
     {
         try {
-            $users = User::with(['student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
+            $users = User::with(['student.user','student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
                 $result->where('level', 1)
                     ->where('data_updated', true)
                     ->whereHas('orders', function ($res) {
@@ -217,7 +210,7 @@ class StudentAffairsController extends Controller
     public function finalAcceptedReportJson()
     {
         try {
-            $users = User::with(['student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
+            $users = User::with(['student.user','student', 'student.program', 'student.department', 'student.major'])->whereHas('student', function ($result) {
                 $result->where('final_accepted', true)
                     ->where('student_docs_verified', true)
                     ->where("level", 1);

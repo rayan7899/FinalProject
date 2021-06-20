@@ -87,7 +87,6 @@
                                 </ul>
                                 @auth
 
-
                                     {{-- --------- department boss ----------- --}}
 
                                     @if (Auth::user()->isDepartmentManager())
@@ -114,9 +113,9 @@
                                                         رايات</a>
                                                 </div>
                                             </li>
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     @endif
 
@@ -169,9 +168,9 @@
                                                         تدريبي جديد</a>
                                                 </div>
                                             </li>
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     @endif
 
@@ -205,11 +204,11 @@
                                                     <a class="dropdown-item" href="{{ route('AddExcelForm') }}">اضافة
                                                         اكسل
                                                         مستجدين</a>
-                                                    <a class="dropdown-item" href="{{ route('OldForm') }}">
+                                                    {{-- <a class="dropdown-item" href="{{ route('OldForm') }}">
                                                         اضافة اكسل مستمرين </a>
                                                     <a class="dropdown-item"
                                                         href="{{ route('UpdateStudentsWalletForm') }}">
-                                                        اضافة الفائض / العجز للمستمرين </a>
+                                                        اضافة الفائض / العجز للمستمرين </a> --}}
                                                     {{-- <a class="dropdown-item" href="{{ route('chargeForm') }}">شحن محفظة متدرب</a> --}}
                                                     <a class="dropdown-item" href="{{ route('addRayatIdForm') }}">اضافة
                                                         الرقم التدريبي للمستجدين</a>
@@ -219,9 +218,9 @@
 
                                                 </div>
                                             </li>
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                            </li>
+                                            </li> --}}
 
                                         </ul>
                                     @endif
@@ -246,9 +245,9 @@
                                                         المدققة</a>
                                                 </div>
                                             </li>
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     @endif
 
@@ -258,9 +257,9 @@
                                             {{-- <li class="nav-item">
                                             <a class="nav-link" target="_blank" href="{{asset('help.pdf')}}">تعليمات الاستخدام</a>
                                         </li> --}}
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     @endif
 
@@ -278,9 +277,9 @@
                                                         الايصالات</a>
                                                 </div>
                                             </li>
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     @endif
 
@@ -298,12 +297,14 @@
                                                         الايصالات</a>
                                                 </div>
                                             </li>
-                                            <li class="nav-item">
+                                            {{-- <li class="nav-item">
                                                 <a class="nav-link" href="{{ route('home') }}">{{ __('Go Home') }}</a>
-                                            </li>
+                                            </li> --}}
                                         </ul>
                                     @endif
-
+                                    <li class="navbar-nav">
+                                        <a class="nav-link" href="{{ route('home') }}">الرئيسية</a>
+                                    </li>
                                 @endauth
                             </div>
                             <a class="navbar-brand py-0 pl-3" href="{{ route('home') }}">

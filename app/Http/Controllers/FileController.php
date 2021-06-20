@@ -48,7 +48,7 @@ class FileController extends Controller
             $user = User::where('national_id', $national_id)->first();
             $payments = $user->student->payments()->where('accepted', '=', 1)->get();
             $imgs = [];
-            $paths = Storage::disk('studentDocuments')->allFiles('/'.$national_id.'/receipts/');
+            $paths = Storage::disk('studentDocuments')->allFiles('/' . $national_id . '/receipts/');
             foreach ($payments as $payment) {
                 array_push($imgs, $payment->receipt_file_id);
             };
@@ -57,5 +57,11 @@ class FileController extends Controller
             Log::error($e->getMessage() . ' ' . $e);
             return response(['message' => $e], 422);
         }
+    }
+
+    public function excelReport($filename)
+    {
+        $file = Storage::disk('excelFiles')->path($filename);
+        return response()->download($file);
     }
 }

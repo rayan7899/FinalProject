@@ -29,7 +29,7 @@
                 <td style="text-align: center; font-size: 10px;">{{ $user->student->department->name ?? 'لا يوجد' }} </td>
                 <td style="text-align: center; font-size: 10px;">{{ $user->student->major->name ?? 'لا يوجد' }} </td>
                 <td style="text-align: center; font-size: 10px;">{{ __($user->student->traineeState) ?? 'لا يوجد' }} </td>
-                <td style="text-align: center; font-size: 10px;">{{ $user->student->credit_hours ?? 'لا يوجد' }} </td>
+                <td style="text-align: center; font-size: 10px;">{{ $user->student->available_hours ?? 'لا يوجد' }} </td>
                 <td style="text-align: center; font-size: 10px;">{{ $user->student->wallet ?? 'لا يوجد' }} </td>
             </tr>
         @endforeach
