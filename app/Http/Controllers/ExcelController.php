@@ -152,8 +152,9 @@ class ExcelController extends Controller
 
     function trainerImportStore(Request $request)
     {
+        // dd($request->input('type'));
         try{
-            Excel::import(new TrainerImport(),  $request->file('excel_file'));
+            Excel::import(new TrainerImport($request->input('type')),  $request->file('excel_file'));
         }catch(Exception $e){
             Log::error($e->getMessage().' '.$e);
             return back()->with('error',"حدث خطأ غير معروف");

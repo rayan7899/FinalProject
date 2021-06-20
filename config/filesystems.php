@@ -40,6 +40,11 @@ return [
             'root' => storage_path('app/studentDocuments'),
         ],
 
+        'trainerDocuments' => [
+            'driver' => 'local',
+            'root' => storage_path('app/trainerDocuments'),
+        ],
+
         'backups' => [
             'driver' => 'local',
             'root' => storage_path('app/backups'),

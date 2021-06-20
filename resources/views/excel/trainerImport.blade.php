@@ -9,7 +9,7 @@
         @endif
         @if (session()->has('addedCount'))
             <div class="alert alert-info">
-                تم اضافة {{ session()->get('addedCount') }} من {{ session()->get('countOfUsers') }} متدرب
+                تم اضافة {{ session()->get('addedCount') }} من {{ session()->get('countOfUsers') }} مستخدم
             </div>
         @endif
 
@@ -33,15 +33,15 @@
         @endif
         @if (session()->has('errorsArr'))
             <div class="alert alert-danger" role="alert">
-                لم يتم اضافة المتدربين في الجدول ادناه بسبب وجود اخطاء في بياناتهم
+                لم يتم اضافة المستخدمين في الجدول ادناه بسبب وجود اخطاء في بياناتهم
             </div>
             <table class="table table-sm table-hover bg-white">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">الاسم</th>
-                        <th scope="col">رقم الهوية</th>
-                        <th scope="col">الحاله </th>
+                        <th scope="col">الرقم الوظيفي</th>
+                        <th scope="col">الحالة </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,7 +51,7 @@
                             <td scope="row">{{ $loop->index + 1 }}</td>
                             <td>{{ $error['userinfo']['name'] ?? 'null' }}</td>
                             <td>{{ $error['userinfo']['national_id'] ?? 'null' }}</td>
-                            <td class="text-danger">خطأ غير معروف رقم: {{ $error['code'] ?? 'null' }} </td>
+                            <td class="text-danger">{{ $error['userinfo']['messages'] ?? 'null' }} </td>
                         </tr>
                     @empty
                     @endforelse
@@ -60,14 +60,14 @@
         @endif
         @if (session()->has('duplicate'))
             <div class="alert alert-warning" role="alert">
-                المتدربين التالية بياناتهم تم اضافتهم مسبقاَ
+                المستخدمين التالية بياناتهم تم اضافتهم مسبقاَ
             </div>
             <table class="table table-sm table-hover bg-white">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">الاسم</th>
-                        <th scope="col">رقم الهوية</th>
+                        <th scope="col">الرقم الوظيفي</th>
                         <th scope="col">الحاله </th>
                     </tr>
                 </thead>
@@ -88,17 +88,31 @@
 
         <div class="card">
             <div class="card-header">
-                <h6>اضافة المتدربين مستجدين من ملف Excel</h6>
+                <h6>اضافة المستخدمين من ملف Excel</h6>
             </div>
             <div class="card-body">
                 <form id="excel_form" class="form" method="POST" action="{{ route('trainerImportStore') }}"
                     enctype="multipart/form-data">
                     @csrf
-     
+                    
                     <div class="form-group">
                         <label for="excel_file">أختر الملف</label>
                         <input required type="file" accept=".xls,.xlsx,.ods" class="form-control-file" id="excel_file"
                             name="excel_file">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" name="type" id="type" value="trainer">
+                            <label class="form-check-label px-4">
+                            مدربين
+                          </label>
+                        </div>
+                        <div class="form-check">
+                            <input  type="radio" class="form-check-input" name="type" id="type" value="employee">
+                            <label class="form-check-label px-4">
+                            اداريين
+                          </label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <button type="button" name="excel_submit" id="excel_submit" 

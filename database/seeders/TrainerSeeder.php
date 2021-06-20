@@ -24,7 +24,7 @@ class TrainerSeeder extends Seeder
         ]);
 
         $user->trainer()->create([
-            'computer_number'  => '002344',
+            'bct_id'  => '002344',
             'qualification'    => 'ماجستير',
             'program_id'       => 1,
             'department_id'    => 1,

@@ -84,9 +84,18 @@ Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
 // المدربين
 Route::middleware(['auth', 'role:مدرب'])->group(function () {
     Route::get('/trainer', [TrainerController::class, 'dashboard'])->name('trainerDashboard');
+    Route::get('/trainer/info', [TrainerController::class, 'info'])->name('trainerInfo');
+
+    //Update trainer data
+    Route::get('/trainer/update/new', [TrainerController::class, 'updateNewForm'])->name('updateNewTrainerForm');
+    Route::post('/trainer/update/new', [TrainerController::class, 'updateNewStore'])->name('updateNewTrainerStore');
+
     Route::get('/trainer/add-courses', [TrainerController::class, 'addCoursesToTrainerView'])->name('addCoursesToTrainerView');
     Route::post('/trainer/add-courses', [TrainerController::class, 'store'])->name('addCoursesToTrainerStore');
     Route::post('/api/trainer/check-division-number', [TrainerController::class, 'isDivisionAvailable'])->name('isDivisionAvailable');
+    // file contraoller (trainer routes)
+    Route::get('trainer/documents/{national_id}/{filename}', [FileController::class, 'get_trainer_document'])->name('getTrainerDocument');
+    Route::get('trainer/documents/extension/{national_id}/{filename}', [FileController::class, 'get_trainer_file_extension'])->name('getTrainerFileExtention');
 });
 
 // خدمة المجتمع
@@ -289,7 +298,7 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     //Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
     Route::get('/student/edit', [StudentController::class, 'edit'])->name('EditOneStudent');
     Route::post('/student/update', [StudentController::class, 'update'])->name('UpdateOneStudent');
-    Route::get('/student/delete', [StudentController::class, 'destroy'])->name('DeleteOneStudent');
+    // Route::get('/student/delete', [StudentController::class, 'destroy'])->name('DeleteOneStudent');
     Route::post('/student/level', [StudentController::class, 'getStudentOnLevel'])->name('getStudentOnLevel');
     Route::post('/student/update-state/', [StudentController::class, 'updateStudentState'])->name('updateStudentState');
 

@@ -63,11 +63,7 @@ class User extends Authenticatable
         return $this->hasOne(Employee::class);
     }
 
-    public function trainer()
-    {
-        return $this->hasOne(Trainer::class);
-    }
-
+    
     public function hasRole($role)
     {
         $user = $this;

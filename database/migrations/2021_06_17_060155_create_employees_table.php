@@ -17,6 +17,9 @@ class CreateEmployeesTable extends Migration
             $table->id();
             $table->string('bct_id')->unique();
             $table->unsignedBigInteger('user_id');
+            $table->string('employer');
+            $table->boolean('data_updated')->default(false);
+            $table->boolean('data_verified')->default(false);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
         });

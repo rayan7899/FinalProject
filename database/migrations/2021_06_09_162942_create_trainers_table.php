@@ -16,15 +16,15 @@ class CreateTrainersTable extends Migration
         Schema::create('trainers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('computer_number')->unique();
-            $table->string('qualification');
-            $table->unsignedBigInteger('program_id');
-            $table->unsignedBigInteger('department_id');
-            $table->unsignedBigInteger('major_id');
+            $table->string('bct_id')->unique();
+            $table->string('qualification')->nullable();
+            $table->string('employer');
+            $table->boolean('data_updated')->default(false);
+            $table->boolean('data_verified')->default(false);
+            $table->unsignedBigInteger('department_id')->nullable();
             $table->timestamps();
-            $table->foreign('program_id')->references('id')->on('programs');
+
             $table->foreign('department_id')->references('id')->on('departments');
-            $table->foreign('major_id')->references('id')->on('majors');
             $table->foreign('user_id')->references('id')->on('users')->onDelete("cascade");
         });
     }

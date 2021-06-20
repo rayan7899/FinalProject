@@ -23,6 +23,19 @@ class FileController extends Controller
         );
     }
 
+    public function get_trainer_document($national_id, $filename)
+    {
+        $files = Storage::disk('trainerDocuments')->files($national_id);
+        return response()->file(Storage::disk('trainerDocuments')->path($files[array_key_first(preg_grep('/' . $filename . '/', $files))]));
+    }
+    public function get_trainer_file_extension($national_id, $filename)
+    {
+        $files = Storage::disk('trainerDocuments')->files($national_id);
+        $filePath = $files[array_key_first(preg_grep('/' . $filename . '/', $files))];
+        $ext = explode('.',$filePath);
+        return end($ext);
+    }
+
     public function get_student_document($path)
     {
         return response()->file(Storage::disk('studentDocuments')->path($path));

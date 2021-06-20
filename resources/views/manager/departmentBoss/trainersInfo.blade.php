@@ -121,7 +121,7 @@
                                 <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->trainer->computer_number ?? 'لا يوجد' }} </td>
+                                <td>{{ $user->trainer->bct_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->department->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->qualification ?? 'لا يوجد' }} </td>
                                 <td><i class="fa fa-edit fa-lg text-primary btn"
