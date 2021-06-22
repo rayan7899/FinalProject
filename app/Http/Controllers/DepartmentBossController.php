@@ -73,6 +73,10 @@ class DepartmentBossController extends Controller
                 "name" => "بيانات المدربين",
                 "url" => route("trainersInfoView")
             ],
+            (object) [
+                "name" => "الطلبات المعادة",
+                "url" => route("rejectedTrainerCoursesOrdersView")
+            ],
         ];
         return view("manager.departmentBoss.dashboard")->with(compact("links","title"));
     }
@@ -282,6 +286,7 @@ class DepartmentBossController extends Controller
                 }
             }
             $orders = $trainer->coursesOrders()->with('course')
+            ->where('accepted_by_dept_boss', null)
             ->whereHas('course.major.department', function ($res) use ($myDepartmentsIDs) {
                 $res->whereIn('departments.id', $myDepartmentsIDs);
             })->get();
@@ -320,5 +325,47 @@ class DepartmentBossController extends Controller
             return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
         }
         
+    }
+
+    public function rejectTrainerCourseOrder(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "order_id"           => "required|numeric|exists:trainer_courses_orders,id",
+        ]);
+        try {
+            DB::beginTransaction();
+            TrainerCoursesOrders::find($requestData['order_id'])->update([
+                'accepted_by_dept_boss' => false,
+            ]);
+            DB::commit();
+            return response(['message' => 'تم رفض الطلب بنجاح'], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . $e);
+            return response(['message' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+    }
+
+    public function rejectedTrainerCoursesOrdersView()
+    {
+        try {
+            $myDepartmentsIDs = [];
+            foreach (Auth::user()->manager->getMyDepartment() as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($myDepartmentsIDs, $department->id);
+                }
+            }
+            $semester = Semester::latest()->first();
+            $users = User::with('trainer')->whereHas('trainer.coursesOrders.course.major.department', function ($res) use ($myDepartmentsIDs, $semester) {
+                $res->where('accepted_by_dept_boss', null)
+                    ->where('accepted_by_community', null)
+                    ->where('accepted_by_dean', null)
+                    ->where('semester_id', $semester->id)
+                    ->whereIn('departments.id', $myDepartmentsIDs);
+            })->get();
+            return view('manager.departmentBoss.trainersInfo')->with(compact('users'));
+        } catch (Exception $e) {
+            return back()->with('error', $e);
+        }
     }
 }

@@ -13,6 +13,7 @@ use App\Models\RefundOrder;
 use App\Models\Role;
 use App\Models\Semester;
 use App\Models\Student;
+use App\Models\Trainer;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -1939,6 +1940,19 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             Log::error($e);
             return back()->with('error', $e);
+        }
+    }
+
+    public function getCoursesByTrainer(Trainer $trainer)
+    {
+        try {
+            $orders = $trainer->coursesOrders()->with('course')
+            ->where('accepted_by_dept_boss', 1)
+            ->get();
+            return response(['message' => 'تم جلب البيانات بنجاح', 'orders' => $orders], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
         }
     }
 }

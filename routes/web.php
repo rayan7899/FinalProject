@@ -200,6 +200,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     /// review trainers orders 
     Route::get('/community/trainers', [CommunityController::class, 'trainersDashboard'])->name('trainersDashboard');
     Route::get('/community/review-trainers-courses-orders', [CommunityController::class, 'reviewCoursesOrdersView'])->name('reviewCoursesOrdersView');
+    Route::get('/api/community/get-courses/{trainer}', [CommunityController::class, 'getCoursesByTrainer'])->name('getCoursesByTrainer');
 });
 
 
@@ -279,6 +280,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/department-boss/trainers-info', [DepartmentBossController::class, 'trainersInfoView'])->name('trainersInfoView');
     Route::get('/api/department-boss/get-courses/{trainer}', [DepartmentBossController::class, 'getCoursesByTrainer'])->name('getCoursesByTrainer');
     Route::post('/api/department-boss/accept', [DepartmentBossController::class, 'acceptTrainerCourseOrder'])->name('acceptTrainerCourseOrder');
+    Route::post('/api/department-boss/reject', [DepartmentBossController::class, 'rejectTrainerCourseOrder'])->name('rejectTrainerCourseOrder');
 
 });
 

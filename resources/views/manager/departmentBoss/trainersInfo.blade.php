@@ -427,7 +427,7 @@
 
                         var reject = row.insertCell(9);
                         reject.innerHTML =
-                            `<p data-target="#editModal" data-toggle="modal" class="btn btn-outline-danger btn-sm" onclick="">رفض</p>`;
+                            `<p class="btn btn-outline-danger btn-sm" onclick="rejectTrainerCourseOrder(${order.id})">رفض</p>`;
                     });
                     $('#ordersModal').modal();
                 })
@@ -474,6 +474,41 @@
                         showConfirmButton: true,
                     });
                 });
+        }
+
+        function rejectTrainerCourseOrder(order_id) {
+            Swal.fire({
+                title: ' هل انت متأكد ؟',
+                // text: " لا يمكن التراجع عن هذا الاجراء",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'نعم',
+                cancelButtonText: 'الغاء',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('{{ route('rejectTrainerCourseOrder') }}', {order_id:order_id})
+                        .then((response) => {
+                            document.getElementById(order_id).remove();
+                            Swal.fire({
+                                position: "center",
+                                html: "<h4>" + response.data.message + "</h4>",
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                position: "center",
+                                html: "<h4>" + error.response.data.message + "</h4>",
+                                icon: "error",
+                                showConfirmButton: true,
+                            });
+                        });
+                }
+            });
         }
 
         function editTrainerCourseOrder() {
