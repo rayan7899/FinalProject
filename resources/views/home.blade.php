@@ -463,7 +463,7 @@
 
         <script>
             var deleteOrder = "{{ route('deleteOrder') }}";
-            var deleteOrder = "{{ route('deletePayment') }}";
+            var deletepayment = "{{ route('deletePayment') }}";
 
             function tabClicked(id, event) {
                 event.preventDefault();
