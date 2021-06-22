@@ -21,7 +21,7 @@ class EnsureHasRole
         try {
             $manager = $request->user()->manager;
             $student = $request->user()->student;
-            $trainer = $request->user()->trainer;
+            // $trainer = $request->user()->trainer;
             switch ($role) {
                 case "خدمة المجتمع":
                     if ($manager === null) {
@@ -32,11 +32,11 @@ class EnsureHasRole
                     }
                     break;
 
-                case "مدرب":
-                    if ($trainer === null) {
-                        return redirect(route('home'));
-                    }
-                    break;
+                // case "مدرب":
+                //     if ($trainer === null) {
+                //         return redirect(route('home'));
+                //     }
+                //     break;
 
                 case "شؤون المتدربين":
                     if ($manager === null) {
