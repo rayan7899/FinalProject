@@ -1850,6 +1850,21 @@ class CommunityController extends Controller
                     $reason = 'لا يوجد';
             }
 
+            $creditHoursCost = 0;
+            foreach ($orders as $order) {
+                if ($order->amount / $order->requested_hours == 0) { //private state
+                    $creditHourCost = 0;
+                } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+                    $creditHourCost = $order->student->program->hourPrice;
+                } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+                    $creditHourCost = $order->student->program->hourPrice * 0.5;
+                } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+                    $creditHourCost = $order->student->program->hourPrice * 0.25;
+                } else {
+                    return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+                }
+                $creditHoursCost += $creditHourCost*$order->requested_hours;
+            }
 
             DB::beginTransaction();
             if ($requestData['accepted']) {
@@ -1862,7 +1877,7 @@ class CommunityController extends Controller
                         $amount = $refund->amount - 300;
                         break;
                     case 'before-4th-week':
-                        $amount = $refund->amount * 0.6;
+                        $amount = ($creditHoursCost * 0.6) + ($refund->amount - $creditHoursCost);
                         break;
                     case 'refund-all-amount':
                         $amount = $refund->amount;
