@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <div dir="ltr" class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div dir="ltr" class="modal fade" id="rejectModal" data-backdrop="true" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div dir="rtl" class="modal-header">
@@ -73,21 +73,16 @@
                     </div>
                     <div dir="rtl" class="modal-body">
                         <div class="row">
-                            <div class="form-group col-md-6" style="display:block">
-                                <label for="countOfStudents">عدد المتدربين</label>
-                                <input type="number" class="form-control" id="countOfStudents"
-                                    aria-describedby="countOfStudents">
-                            </div>
-                            <div class="form-group col-md-6" style="display:block">
-                                <label for="divisionNumber">رقم الشعبة</label>
-                                <input required type="number" class="form-control" id="divisionNumber"
-                                    aria-describedby="divisionNumber">
+                            <div class="form-group col-md-12">
+                                <label for="divisionNumber">سبب الرفض</label>
+                                <textarea required type="number" class="form-control" id="rejectReason"
+                                    aria-describedby="rejectReason"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button onclick="editTrainerCourseOrder()" class="btn btn-primary btn-md">حفظ</button>
+                        <button onclick="rejectTrainerCourseOrder()" class="btn btn-danger btn-md">رفض</button>
                     </div>
                 </div>
             </div>
@@ -443,8 +438,10 @@
                         exam_hours.innerHTML = 4;
 
                         var reject = row.insertCell(index++);
+                        // reject.innerHTML =
+                        //     `<p data-target="#rejectModal" data-toggle="modal" class="btn btn-outline-danger btn-sm" onclick="">رفض</p>`;
                         reject.innerHTML =
-                            `<p data-target="#editModal" data-toggle="modal" class="btn btn-outline-danger btn-sm" onclick="">رفض</p>`;
+                            `<p class="btn btn-outline-danger btn-sm" onclick="rejectTrainerCourseOrder(${order.id})">رفض</p>`;
                     });
                     $('#ordersModal').modal();
                 })
@@ -493,21 +490,39 @@
                 });
         }
 
-        function editTrainerCourseOrder() {
-            
+        function rejectTrainerCourseOrder(order_id) {
             Swal.fire({
-                position: "center",
-                html: "<h4>تم تعديل الطلب</h4>",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 500,
+                title: ' هل انت متأكد ؟',
+                // text: " لا يمكن التراجع عن هذا الاجراء",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'نعم',
+                cancelButtonText: 'الغاء',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('{{ route('communityRejectTrainerCourseOrder') }}', {order_id:order_id})
+                        .then((response) => {
+                            document.getElementById(order_id).remove();
+                            Swal.fire({
+                                position: "center",
+                                html: "<h4>" + response.data.message + "</h4>",
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                position: "center",
+                                html: "<h4>" + error.response.data.message + "</h4>",
+                                icon: "error",
+                                showConfirmButton: true,
+                            });
+                        });
+                }
             });
-            var row = document.getElementById(order_id);
-            count_of_students = row.children[4];
-            division_number = row.children[5];
-            count_of_students.innerHTML = countOfStudents.value;
-            division_number.innerHTML = divisionNumber.value;
-            $('#editModal').modal('hide');
         }
 
     </script>

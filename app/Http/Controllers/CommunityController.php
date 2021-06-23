@@ -14,6 +14,7 @@ use App\Models\Role;
 use App\Models\Semester;
 use App\Models\Student;
 use App\Models\Trainer;
+use App\Models\TrainerCoursesOrders;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -1953,6 +1954,25 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             Log::error($e->getMessage() . $e);
             return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+    }
+
+    public function rejectTrainerCourseOrder(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "order_id"           => "required|numeric|exists:trainer_courses_orders,id",
+        ]);
+        try {
+            DB::beginTransaction();
+            TrainerCoursesOrders::find($requestData['order_id'])->update([
+                'accepted_by_community' => false,
+            ]);
+            DB::commit();
+            return response(['message' => 'تم رفض الطلب بنجاح'], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . $e);
+            return response(['message' => ' حدث خطأ غير معروف ' . $e], 422);
         }
     }
 }
