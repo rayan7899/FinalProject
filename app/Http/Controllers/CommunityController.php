@@ -33,8 +33,8 @@ class CommunityController extends Controller
         
         try {
             DB::beginTransaction();
-            if (Role::where("name", "=", "الدراسات العامة - بكالوريوس")->doesntExist()) {
-                $role = Role::create(['name' => 'الدراسات العامة - بكالوريوس']);
+            if (Role::where("name", "=", "الدراسات العامة - بكالوريوس ")->doesntExist()) {
+                $role = Role::create(['name' => 'الدراسات العامة - بكالوريوس ']);
 
                 $dept = Department::create([
                     'name'       => 'الدراسات العامة',
@@ -65,8 +65,8 @@ class CommunityController extends Controller
             }
             
             
-            if (Role::where("name", "=", "الدراسات العامة - دبلوم")->doesntExist()) {
-                $role = Role::create(['name' => 'الدراسات العامة - دبلوم']);
+            if (Role::where("name", "=", "الدراسات العامة - دبلوم ")->doesntExist()) {
+                $role = Role::create(['name' => 'الدراسات العامة - دبلوم ']);
 
                 $dept = Department::create([
                     'name'       => 'الدراسات العامة',
