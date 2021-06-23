@@ -174,6 +174,7 @@ class DepartmentBossController extends Controller
     {
         try {
             if (Auth::user()->hasRole("خدمة المجتمع")) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
                 return view("manager.community.courses.edit")->with(compact('programs','course'));
             } else if (Auth::user()->isDepartmentManager()) {
                 $programs =  json_encode(Auth::user()->manager->getMyDepartment());
