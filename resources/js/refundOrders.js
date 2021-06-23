@@ -112,6 +112,8 @@ window.changeAmount = function () {
 
 
 window.fillModal = function (national_id, order_id, name, amount, reason) {
+    $('#before-training').removeAttr('disabled');
+    $('#before-4th-week').removeAttr('disabled');
     // $('#rangeSection').show();
     window.national_id.value = national_id;
     window.requestDate.value = document.getElementById(national_id).cells[9].innerHTML;
@@ -120,7 +122,9 @@ window.fillModal = function (national_id, order_id, name, amount, reason) {
     if (window.amount !== null) {
         window.amount.value = amount;
     }
-    // if(reason == 'get-wallet-amount' || reason == 'graduate'){
-    //     $('#rangeSection').hide();
-    // }
+    if(reason == 'get-wallet-amount' || reason == 'graduate'){
+        // $('#rangeSection').hide();
+        $('#before-training').attr('disabled', true);
+        $('#before-4th-week').attr('disabled', true);
+    }
 };
