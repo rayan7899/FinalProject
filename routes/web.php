@@ -78,9 +78,9 @@ Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
 
 
 // المدربين
-Route::middleware(['auth', 'role:مدرب'])->group(function () {
-    Route::get('/trainer', [TrainerController::class, 'dashboard'])->name('trainerDashboard');
-});
+// Route::middleware(['auth', 'role:مدرب'])->group(function () {
+//     Route::get('/trainer', [TrainerController::class, 'dashboard'])->name('trainerDashboard');
+// });
 
 // خدمة المجتمع
 Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
