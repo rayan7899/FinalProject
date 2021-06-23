@@ -1368,23 +1368,31 @@ class CommunityController extends Controller
     public function createCourse(Request $request)
     {
         $requestData = $this->validate($request, [
-            "major"         => "required|numeric|exists:majors,id",
-            "name"          => "required|string|min:3|max:100",
-            "code"          => "required|string|min:3|max:15",
-            "level"         => "required|numeric|min:1|max:5",
-            "credit_hours"  => "required|numeric|min:1|max:20",
-            "contact_hours" => "required|numeric|min:1|max:20",
+            "major"                  => "required|numeric|exists:majors,id",
+            "name"                   => "required|string|min:3|max:100",
+            "code"                   => "required|string|min:3|max:15",
+            "level"                  => "required|numeric|min:1|max:5",
+            "credit_hours"           => "required|numeric|min:1|max:20",
+            "contact_hours"          => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:1|max:20",
         ]);
         $major = Major::findOrFail($requestData["major"]);
 
         try {
             $major->courses()->create([
-                'name' => $requestData["name"],
-                'code' => $requestData["code"],
-                'level' => $requestData["level"],
-                'suggested_level' => 0,
-                'credit_hours' => $requestData["credit_hours"],
-                'contact_hours' => $requestData["contact_hours"],
+                'name'                   => $requestData["name"],
+                'code'                   => $requestData["code"],
+                'level'                  => $requestData["level"],
+                'suggested_level'        => 0,
+                'credit_hours'           => $requestData["credit_hours"],
+                'contact_hours'          => $requestData["contact_hours"],
+                'theoretical_hours'      => $requestData["theoretical_hours"],
+                'practical_hours'        => $requestData["practical_hours"],
+                'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
+                'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
             return redirect(route("coursesIndex"))->with("success", "تم انشاء المقرر بنجاح");
         } catch (Exception $e) {
@@ -1417,22 +1425,32 @@ class CommunityController extends Controller
     public function editCourse(Request $request)
     {
         $requestData = $this->validate($request, [
-            "id"         => "required|numeric|exists:courses,id",
-            "name"          => "required|string|min:3|max:100",
-            "code"          => "required|string|min:3|max:15",
-            "level"         => "required|numeric|min:1|max:5",
-            "credit_hours"  => "required|numeric|min:1|max:20",
-            "contact_hours" => "required|numeric|min:1|max:20",
+            "id"                     => "required|numeric|exists:courses,id",
+            "major"                  => "nullable|numeric|exists:majors,id",
+            "name"                   => "required|string|min:3|max:100",
+            "code"                   => "required|string|min:3|max:15",
+            "level"                  => "required|numeric|min:1|max:5",
+            "credit_hours"           => "required|numeric|min:1|max:20",
+            "contact_hours"          => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:1|max:20",
         ]);
-
         $course = Course::findOrFail($requestData["id"]);
+        $major = Major::find($requestData["major"] ?? null);
         try {
             $course->update([
-                'name' => $requestData["name"],
-                'code' => $requestData["code"],
-                'level' => $requestData["level"],
-                'credit_hours' => $requestData["credit_hours"],
-                'contact_hours' => $requestData["contact_hours"],
+                'name'                   => $requestData["name"],
+                'code'                   => $requestData["code"],
+                'level'                  => $requestData["level"],
+                'major_id'               => $major != null ? $requestData["major"] : $course->major_id,
+                'credit_hours'           => $requestData["credit_hours"],
+                'contact_hours'          => $requestData["contact_hours"],
+                'theoretical_hours'      => $requestData["theoretical_hours"],
+                'practical_hours'        => $requestData["practical_hours"],
+                'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
+                'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
             return redirect(route("coursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
         } catch (Exception $e) {
@@ -1853,7 +1871,7 @@ class CommunityController extends Controller
 
             DB::beginTransaction();
             if ($requestData['accepted']) {
-                if ($refund->student->credit_hours <= 0){
+                if ($refund->student->credit_hours <= 0) {
                     return response(['message' => "لا يوجد ساعات معتمدة لدى المتدرب"], 422);
                 }
 

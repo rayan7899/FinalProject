@@ -30,13 +30,21 @@ window.fillManageCoursesTbl = function (courses) {
             let level = row.insertCell(2);
             let CreditHours = row.insertCell(3);
             let ContactHours = row.insertCell(4);
-            let editBtn = row.insertCell(5);
-            let deleteBtn = row.insertCell(6);
+            let tHours = row.insertCell(5);
+            let examTHours = row.insertCell(6);
+            let pHours = row.insertCell(7);
+            let examPHours = row.insertCell(8);
+            let editBtn = row.insertCell(9);
+            let deleteBtn = row.insertCell(10);
             code.className = "text-center";
             name.className = "text-center";
             level.className = "text-center";
             CreditHours.className = "text-center";
             ContactHours.className = "text-center";
+            tHours.className = "text-center";
+            examTHours.className = "text-center";
+            pHours.className = "text-center";
+            examPHours.className = "text-center";
             deleteBtn.className = "text-center";
             editBtn.className = "text-center";
             code.innerHTML = course.code;
@@ -44,6 +52,10 @@ window.fillManageCoursesTbl = function (courses) {
             level.innerHTML = window.getStringLevel(course.level);
             CreditHours.innerHTML = course.credit_hours;
             ContactHours.innerHTML = course.contact_hours;
+            tHours.innerHTML = course.theoretical_hours;
+            examTHours.innerHTML = course.exam_theoretical_hours;
+            pHours.innerHTML = course.practical_hours;
+            examPHours.innerHTML = course.exam_practical_hours;
             deleteBtn.innerHTML = '<a href="#" onclick="window.deleteCourse(event,' + course.id + ')">' +
                 '<i class="fa fa-trash fa-lg text-danger" aria-hidden="true"></i></a>';
             editBtn.innerHTML = '<a href="/department-boss/courses/edit/' + course.id + '">' +
@@ -86,7 +98,7 @@ function deleteRequest(row, id) {
     axios.get('/department-boss/courses/delete/' + id)
         .then((response) => {
             row.remove();
-            location.reload();
+            // location.reload();
             Swal.fire({
                 position: "center",
                 html: "<h4>" + response.data.message + "</h4>",
@@ -106,5 +118,3 @@ function deleteRequest(row, id) {
 
     Swal.close();
 }
-
-

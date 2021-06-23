@@ -244,7 +244,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/department-boss/courses', [DepartmentBossController::class, 'coursesIndex'])->name('deptCoursesIndex');
     Route::get('/department-boss/courses/create', [DepartmentBossController::class, 'createCourseForm'])->name('deptCreateCourseForm');
     Route::post('/department-boss/courses/store', [DepartmentBossController::class, 'createCourse'])->name('deptCreateCourse');
-    Route::get('/department-boss/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
+    Route::get('/department-boss/courses/edit/{course}', [DepartmentBossController::class, 'editCourseForm'])->name('editCourseForm');
     Route::post('/department-boss/courses/update', [DepartmentBossController::class, 'editCourse'])->name('deptEditCourse');
     Route::get('/department-boss/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
 

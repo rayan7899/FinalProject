@@ -21,14 +21,14 @@
             </div>
         @endif
         <div class="justify-content-center">
-            <div class="card w-75 m-auto">
+            <div class="card  m-auto">
                 <div class="card-header">
                     <div class="d-flex flex-row justify-content-between">
                         <h5>ادارة المقررات</h5>
                         @php
-                            if(Auth::user()->hasRole('خدمة المجتمع')){
+                            if (Auth::user()->hasRole('خدمة المجتمع')) {
                                 $route = route('createCourseForm');
-                            }else if (Auth::user()->isDepartmentManager()) {
+                            } elseif (Auth::user()->isDepartmentManager()) {
                                 $route = route('deptCreateCourseForm');
                             }
                         @endphp
@@ -59,7 +59,6 @@
                                         </span>
                                     @enderror
                                 </div>
-
                                 <div class="col-sm-4 ">
                                     <label for="department" class="pl-1"> القسم </label>
                                     <select required name="department" id="department" class="form-control w-100 "
@@ -109,9 +108,12 @@
                                                 <th class="text-center">المستوى</th>
                                                 <th class="text-center">الساعات المعتمدة</th>
                                                 <th class="text-center">ساعات الإتصال</th>
+                                                <th class="text-center">عدد الساعات - نظري</th>
+                                                <th class="text-center">ساعات الاختبار - نظري</th>
+                                                <th class="text-center">عدد الساعات - عملي</th>
+                                                <th class="text-center">ساعات الاختبار - عملي</th>
                                                 <th class="text-center"></th>
                                                 <th class="text-center"></th>
-
                                             </tr>
                                         </thead>
                                         <tbody id="courses">
