@@ -357,13 +357,13 @@ class DepartmentBossController extends Controller
             }
             $semester = Semester::latest()->first();
             $users = User::with('trainer')->whereHas('trainer.coursesOrders.course.major.department', function ($res) use ($myDepartmentsIDs, $semester) {
-                $res->where('accepted_by_dept_boss', null)
-                    ->where('accepted_by_community', null)
+                $res->where('accepted_by_dept_boss', true)
+                    ->where('accepted_by_community', false)
                     ->where('accepted_by_dean', null)
                     ->where('semester_id', $semester->id)
                     ->whereIn('departments.id', $myDepartmentsIDs);
             })->get();
-            return view('manager.departmentBoss.trainersInfo')->with(compact('users'));
+            return view('manager.departmentBoss.rejectedTrainerCoursesOrders')->with(compact('users'));
         } catch (Exception $e) {
             return back()->with('error', $e);
         }
