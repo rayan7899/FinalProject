@@ -30,12 +30,141 @@ class CommunityController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        if (Role::where("name", "=", "الإدارة العامة")->doesntExist()) {
-            Role::create(['name' => 'الإدارة العامة']);
-        }
+        
+        try {
+            DB::beginTransaction();
+            if (Role::where("name", "=", "الدراسات العامة - بكالوريوس")->doesntExist()) {
+                $role = Role::create(['name' => 'الدراسات العامة - بكالوريوس']);
 
-        if (Role::where("name", "=", "مدقق ايصالات")->doesntExist()) {
-            Role::create(['name' => 'مدقق ايصالات']);
+                $dept = Department::create([
+                    'name'       => 'الدراسات العامة',
+                    'program_id' => 1,
+                    'role_id'    => $role->id
+                ]);
+
+                $major = Major::create([
+                    'name'          => 'مواد عامة',
+                    'department_id' => $dept->id,
+                ]);
+
+                $courses = Course::whereIn('code', ['رياض303', 'فيزي301', 'عامة401', 'عامة402', 'احصا303', 'رياض302'])->get();
+                foreach ($courses as $course) {
+                    if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+                        Course::create([
+                            'name' => $course->name,
+                            'code' => $course->code,
+                            'level' => $course->level,
+                            'credit_hours' => $course->credit_hours,
+                            'contact_hours' => $course->contact_hours,
+                            'suggested_level' => 0,
+                            'major_id' => $major->id,
+                        ]);
+                    }
+                    $course->delete();
+                }
+            }
+            
+            
+            if (Role::where("name", "=", "الدراسات العامة - دبلوم")->doesntExist()) {
+                $role = Role::create(['name' => 'الدراسات العامة - دبلوم']);
+
+                $dept = Department::create([
+                    'name'       => 'الدراسات العامة',
+                    'program_id' => 2,
+                    'role_id'    => $role->id
+                ]);
+
+                $major = Major::create([
+                    'name'          => 'مواد عامة',
+                    'department_id' => $dept->id,
+                ]);
+
+                $courses = Course::whereIn('code', ['ماهر101', 'عربي101'])->get();
+                foreach ($courses as $course) {
+                    if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+                        Course::create([
+                            'name' => $course->name,
+                            'code' => $course->code,
+                            'level' => $course->level,
+                            'credit_hours' => $course->credit_hours,
+                            'contact_hours' => $course->contact_hours,
+                            'suggested_level' => 0,
+                            'major_id' => $major->id,
+                        ]);
+                    }
+                    $course->delete();
+                }
+            }
+
+
+
+
+            if (Role::where("name", "=", "اللغة الإنجليزية - بكالوريوس")->doesntExist()) {
+                $role = Role::create(['name' => 'اللغة الإنجليزية - بكالوريوس']);
+
+                $dept = Department::create([
+                    'name'       => 'اللغة الإنجليزية',
+                    'program_id' => 1,
+                    'role_id'    => $role->id
+                ]);
+
+                $major = Major::create([
+                    'name'          => 'مواد عامة',
+                    'department_id' => $dept->id,
+                ]);
+
+                $courses = Course::whereIn('code', ['انجل302'])->get();
+                foreach ($courses as $course) {
+                    if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+                        Course::create([
+                            'name' => $course->name,
+                            'code' => $course->code,
+                            'level' => $course->level,
+                            'credit_hours' => $course->credit_hours,
+                            'contact_hours' => $course->contact_hours,
+                            'suggested_level' => 0,
+                            'major_id' => $major->id,
+                        ]);
+                    }
+                    $course->delete();
+                }
+            }
+            
+            
+            if (Role::where("name", "=", "اللغة الإنجليزية - دبلوم")->doesntExist()) {
+                $role = Role::create(['name' => 'اللغة الإنجليزية - دبلوم']);
+
+                $dept = Department::create([
+                    'name'       => 'اللغة الإنجليزية',
+                    'program_id' => 2,
+                    'role_id'    => $role->id
+                ]);
+
+                $major = Major::create([
+                    'name'          => 'مواد عامة',
+                    'department_id' => $dept->id,
+                ]);
+
+                $courses = Course::whereIn('code', ['انجل103'])->get();
+                foreach ($courses as $course) {
+                    if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+                        Course::create([
+                            'name' => $course->name,
+                            'code' => $course->code,
+                            'level' => $course->level,
+                            'credit_hours' => $course->credit_hours,
+                            'contact_hours' => $course->contact_hours,
+                            'suggested_level' => 0,
+                            'major_id' => $major->id,
+                        ]);
+                    }
+                    $course->delete();
+                }
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            Log::error($e);
+            DB::rollBack();
         }
     }
 
@@ -1868,6 +1997,21 @@ class CommunityController extends Controller
                     $reason = 'لا يوجد';
             }
 
+            $creditHoursCost = 0;
+            foreach ($orders as $order) {
+                if ($order->amount / $order->requested_hours == 0) { //private state
+                    $creditHourCost = 0;
+                } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+                    $creditHourCost = $order->student->program->hourPrice;
+                } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+                    $creditHourCost = $order->student->program->hourPrice * 0.5;
+                } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+                    $creditHourCost = $order->student->program->hourPrice * 0.25;
+                } else {
+                    return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+                }
+                $creditHoursCost += $creditHourCost*$order->requested_hours;
+            }
 
             DB::beginTransaction();
             if ($requestData['accepted']) {
@@ -1880,7 +2024,7 @@ class CommunityController extends Controller
                         $amount = $refund->amount - 300;
                         break;
                     case 'before-4th-week':
-                        $amount = $refund->amount * 0.6;
+                        $amount = ($creditHoursCost * 0.6) + ($refund->amount - $creditHoursCost);
                         break;
                     case 'refund-all-amount':
                         $amount = $refund->amount;
