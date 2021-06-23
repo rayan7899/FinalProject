@@ -25,7 +25,7 @@ class CreateTrainerCoursesOrdersTable extends Migration
             $table->boolean("accepted_by_community")->nullable();
             $table->boolean("accepted_by_dean")->nullable();
             $table->timestamps();
-            $table->foreign('course_id')->references('id')->on('courses');
+            $table->foreign('course_id')->references('id')->on('courses')->ondelete('no action');
             $table->foreign('trainer_id')->references('id')->on('trainers');
             $table->foreign('semester_id')->references('id')->on('semesters');
         });
