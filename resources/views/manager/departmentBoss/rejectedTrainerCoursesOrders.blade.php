@@ -390,7 +390,7 @@
             // $('#ordersModal').modal();
             
             tblOrders.innerHTML = '';
-            axios.get(`/api/department-boss/get-courses/${trainer_id}`)
+            axios.get(`/api/department-boss/get-rejected-courses/${trainer_id}`)
                 .then((response) => {
                     Swal.close();
                     response.data.orders.forEach(order => {

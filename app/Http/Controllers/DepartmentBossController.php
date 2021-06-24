@@ -415,4 +415,26 @@ class DepartmentBossController extends Controller
             return back()->with('error', $e);
         }
     }
+
+    public function getRejectedCoursesByTrainer(Trainer $trainer)
+    {
+        try {
+            $myDepartmentsIDs = [];
+            foreach (Auth::user()->manager->getMyDepartment() as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($myDepartmentsIDs, $department->id);
+                }
+            }
+            $orders = $trainer->coursesOrders()->with('course')
+            ->where('accepted_by_dept_boss', true)
+            ->where('accepted_by_community', false)
+            ->whereHas('course.major.department', function ($res) use ($myDepartmentsIDs) {
+                $res->whereIn('departments.id', $myDepartmentsIDs);
+            })->get();
+            return response(['message' => 'تم جلب البيانات بنجاح', 'orders' => $orders], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+    }
 }

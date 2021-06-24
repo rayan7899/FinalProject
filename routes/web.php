@@ -282,6 +282,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/department-boss/accept', [DepartmentBossController::class, 'acceptTrainerCourseOrder'])->name('acceptTrainerCourseOrder');
     Route::post('/api/department-boss/reject', [DepartmentBossController::class, 'rejectTrainerCourseOrder'])->name('rejectTrainerCourseOrder');
     Route::get('/department-boss/rejected-orders', [DepartmentBossController::class, 'rejectedTrainerCoursesOrdersView'])->name('rejectedTrainerCoursesOrdersView');
+    Route::get('/api/department-boss/get-rejected-courses/{trainer}', [DepartmentBossController::class, 'getRejectedCoursesByTrainer'])->name('getRejectedCoursesByTrainer');
 
 });
 
