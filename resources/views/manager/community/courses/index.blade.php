@@ -132,11 +132,6 @@
         {{-- @php dd(json_decode($programs)); @endphp --}}
         <script>
             var programs = @php echo $programs; @endphp;
-            var updateCoursesLevelUrl = "{{ route('apiUpdateCoursesLevel') }}";
-            var getStudentOnLevelUrl = "{{ route('getStudentOnLevel') }}";
-            var getCoursesUrl = "{{ route('apiGetCourses') }}";
-            var updateStudentState = "{{ route('updateStudentState') }}";
-
         </script>
     </div>
 @stop

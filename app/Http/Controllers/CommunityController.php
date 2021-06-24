@@ -1468,8 +1468,8 @@ class CommunityController extends Controller
                 return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
             }
         } catch (Exception $e) {
-            return view("error")->with("error", "حدث خطأ غير معروف");
             Log::error($e->getMessage() . ' ' . $e);
+            return view("error")->with("error", "حدث خطأ غير معروف");
         }
     }
 
@@ -1486,8 +1486,8 @@ class CommunityController extends Controller
                 return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
             }
         } catch (Exception $e) {
-            return view("error")->with("error", "حدث خطأ غير معروف");
             Log::error($e->getMessage() . ' ' . $e);
+            return view("error")->with("error", "حدث خطأ غير معروف");
         }
     }
 

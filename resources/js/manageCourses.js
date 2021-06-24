@@ -1,16 +1,28 @@
-window.fillManageCoursesTbl = function (courses) {
+const {
+    default: axios
+} = require("axios");
+
+window.fillManageCoursesTbl = async function (courses) {
 
     if (courses == undefined || courses == null) {
         let major = document.getElementById("major").value;
         if (major !== "") {
-            var courses = findCourses(major);
-            if (courses == undefined || courses == null) {
-                return;
-            }
+            await axios.get('/api/major/courses/' + major)
+                .then((response) => {
+                    courses = response.data;
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + error.response.data.message + "</h4>",
+                        icon: "error",
+                        showConfirmButton: true,
+                    });
+                });
         }
     }
 
-
+   
     var tblAllCourses = document.getElementById('courses');
     var level = document.getElementById('level');
 

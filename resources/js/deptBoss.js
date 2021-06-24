@@ -67,7 +67,7 @@ window.fillCourses = function () {
     let major = document.getElementById("major").value;
     if (major !== "") {
         var courses = findCourses(major);
-        if(courses == undefined || courses == null){
+        if (courses == undefined || courses == null) {
             return;
         }
     } else {
@@ -116,7 +116,7 @@ window.fillSuggestedCourses = function (shouldUpdateData = true) {
     }
 
     var suggestedLevelBody = document.getElementById("suggestedLevelBody");
-    if(suggestedLevelBody == undefined || suggestedLevelBody == null){
+    if (suggestedLevelBody == undefined || suggestedLevelBody == null) {
         return;
     }
     suggestedLevelBody.innerHTML = null;
@@ -152,7 +152,7 @@ window.fillSuggestedCourses = function (shouldUpdateData = true) {
             let credit_hours = suggLevelRow.insertCell(3);
             credit_hours.className = "text-center";
             credit_hours.innerHTML = courses[i].credit_hours;
-            
+
             let contact_hours = suggLevelRow.insertCell(4);
             contact_hours.className = "text-center";
             contact_hours.innerHTML = courses[i].contact_hours;
@@ -323,8 +323,7 @@ async function getStudentOnLevel() {
     let program = document.getElementById("program");
     let department = document.getElementById("department");
     let major = document.getElementById("major");
-    if(program.value == "0")
-    {
+    if (program.value == "0") {
         Swal.fire({
             position: "center",
             html: "<h4>يرجى اختيار البرنامج</h4>",
@@ -333,8 +332,7 @@ async function getStudentOnLevel() {
         });
         return;
     }
-    if(department.value == "0")
-    {
+    if (department.value == "0") {
         Swal.fire({
             position: "center",
             html: "<h4>يرجى اختيار القسم</h4>",
@@ -343,8 +341,7 @@ async function getStudentOnLevel() {
         });
         return;
     }
-    if(major.value == "0")
-    {
+    if (major.value == "0") {
         Swal.fire({
             position: "center",
             html: "<h4>يرجى اختيار التخصص</h4>",
@@ -354,10 +351,10 @@ async function getStudentOnLevel() {
         return;
     }
     let formData = {
-        'level':suggLevel.value,
-        'program':program.value,
-        'department':department.value,
-        'major':major.value
+        'level': suggLevel.value,
+        'program': program.value,
+        'department': department.value,
+        'major': major.value
     }
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
@@ -372,7 +369,7 @@ async function getStudentOnLevel() {
         },
     });
     await axios
-        .post(window.getStudentOnLevelUrl,formData)
+        .post(window.getStudentOnLevelUrl, formData)
         .then((response) => {
             studentsData = response.data.students;
             Swal.close();
@@ -424,7 +421,7 @@ window.showStudent = async function () {
         checkBoxCell.className = "text-center";
         let checkBox = document.createElement("input");
         checkBox.setAttribute("type", "checkbox");
-        if(studentsData[i].student.studentState == 1){
+        if (studentsData[i].student.studentState == 1) {
             checkBox.setAttribute("checked", "true");
         }
         checkBox.setAttribute("value", "1");
@@ -440,9 +437,9 @@ window.showStudent = async function () {
 window.studentCheckBoxChanged = function (event) {
     let student = event.target;
     let formData = {
-      'national_id':  student.dataset.national_id,
-      'studentState': student.checked,
-    }; 
+        'national_id': student.dataset.national_id,
+        'studentState': student.checked,
+    };
     Swal.fire({
         html: "<h4>جاري تحديث البيانات</h4>",
         timerProgressBar: true,
@@ -455,8 +452,8 @@ window.studentCheckBoxChanged = function (event) {
             Swal.hideLoading();
         },
     });
-     axios
-        .post(window.updateStudentState,formData)
+    axios
+        .post(window.updateStudentState, formData)
         .then((response) => {
             Swal.fire({
                 position: "center",
@@ -469,7 +466,7 @@ window.studentCheckBoxChanged = function (event) {
         .catch((error) => {
             Swal.fire({
                 position: "center",
-                html: "<h4>" +error.response.data.message+ "</h4>",
+                html: "<h4>" + error.response.data.message + "</h4>",
                 icon: "error",
                 showConfirmButton: true,
             });

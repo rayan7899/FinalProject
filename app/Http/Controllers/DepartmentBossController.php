@@ -87,6 +87,16 @@ class DepartmentBossController extends Controller
         }
     }
 
+    public function apiGetMajorCourses(Major $major)
+    {
+        try {
+            return json_encode($major->courses->toArray());
+        } catch (QueryException $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
+        }
+    }
+
     public function updateCoursesLevel(Request $request)
     {
         $coursesData = $this->validate($request, [

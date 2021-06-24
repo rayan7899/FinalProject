@@ -43,7 +43,7 @@
                             <div class="form-row">
                                 <div class="col-10">
                                     <label for="program"> البرنامج </label>
-                                    <input type="text" class="form-control"
+                                    <input dir="rtl" type="text" class="form-control"
                                         value="{{ $course->major->department->program->name ?? 'error' }}" disabled>
                                 </div>
                                 <div class="col-2">

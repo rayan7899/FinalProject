@@ -87,6 +87,7 @@ class Manager extends Model
             return $programs;
         } catch (Exception $e) {
            Log::error($e->getMessage().' '.$e);
+           return [];
         }
     }
 }

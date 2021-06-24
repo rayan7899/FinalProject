@@ -229,6 +229,8 @@ Route::middleware(['auth'])->group(function () {
     //departmentBoss
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
     Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
+    Route::get('/api/major/courses/{major}', [DepartmentBossController::class, 'apiGetMajorCourses'])->name('apiGetMajorCourses');
+
     Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
 
     Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
