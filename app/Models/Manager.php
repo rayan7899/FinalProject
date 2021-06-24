@@ -48,7 +48,13 @@ class Manager extends Model
             $baccPattern = ' - بكالوريوس ';
             $name = $permission->role->name;
             $hasRole = (str_ends_with($name, $diplomPattern) || str_ends_with($name, $baccPattern));
+            // if(!$hasRole){
+            //     dump( $name);
+            // }else{
+            //     dump( $name);
+            // }
         }
+    //    exit;
         return $hasRole;
     }
 
@@ -81,6 +87,7 @@ class Manager extends Model
             return $programs;
         } catch (Exception $e) {
            Log::error($e->getMessage().' '.$e);
+           return [];
         }
     }
 }

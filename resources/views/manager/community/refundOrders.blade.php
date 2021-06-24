@@ -51,8 +51,8 @@
                             <label for="range">فترة الطلب</label>
                             <select required class="form-control" name="range" id="range">
                             <option value="" disabled>حدد الفترة</option>
-                            <option value="before-training">قبل بداية التدريب</option>
-                            <option value="before-4th-week">قبل الاسبوع الرابع</option>
+                            <option value="before-training" id="before-training">قبل بداية التدريب</option>
+                            <option value="before-4th-week" id="before-4th-week">قبل الاسبوع الرابع</option>
                             <option value="refund-all-amount">استرداد كامل المبلغ</option>
                             </select>
                         </div>

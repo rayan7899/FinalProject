@@ -40,7 +40,7 @@ class DepartmentBossController extends Controller
                 return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
             }
         } catch (Exception $e) {
-            Log::error($e->getMessage().' '.$e);
+            Log::error($e->getMessage() . ' ' . $e);
             return view("error")->with("error", "حدث خطأ غير معروف");
         }
     }
@@ -78,7 +78,7 @@ class DepartmentBossController extends Controller
                 "url" => route("rejectedTrainerCoursesOrdersView")
             ],
         ];
-        return view("manager.departmentBoss.dashboard")->with(compact("links","title"));
+        return view("manager.departmentBoss.dashboard")->with(compact("links", "title"));
     }
 
     //todo response level 2 and upper for dept boss and level 1 only for student affairs
@@ -93,7 +93,17 @@ class DepartmentBossController extends Controller
                 return response($programs, 200);
             }
         } catch (QueryException $e) {
-           Log::error($e->getMessage().' '.$e);
+            Log::error($e->getMessage() . ' ' . $e);
+            return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
+        }
+    }
+
+    public function apiGetMajorCourses(Major $major)
+    {
+        try {
+            return json_encode($major->courses->toArray());
+        } catch (QueryException $e) {
+            Log::error($e->getMessage() . ' ' . $e);
             return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
         }
     }
@@ -109,7 +119,7 @@ class DepartmentBossController extends Controller
             $programs =  json_encode(Program::with('departments.majors.courses')->orderBy('name', 'asc')->get());
             return response(['message' => 'تم تحديث الجدول المقترح بنجاح', 'programs' => $programs], 200);
         } catch (QueryException $e) {
-           Log::error($e->getMessage().' '.$e);
+            Log::error($e->getMessage() . ' ' . $e);
             return response(['message' => 'حدث خطأ غير معروف اثناء تحديث الجدول المقترح'], 422);
         }
     }
@@ -128,7 +138,7 @@ class DepartmentBossController extends Controller
             Log::error($e->getMessage() . ' ' . $e);
         }
     }
-    
+
     public function createCourseForm()
     {
 
@@ -148,23 +158,31 @@ class DepartmentBossController extends Controller
     public function createCourse(Request $request)
     {
         $requestData = $this->validate($request, [
-            "major"         => "required|numeric|exists:majors,id",
-            "name"          => "required|string|min:3|max:100",
-            "code"          => "required|string|min:3|max:15",
-            "level"         => "required|numeric|min:1|max:5",
-            "credit_hours"  => "required|numeric|min:1|max:20",
-            "contact_hours" => "required|numeric|min:1|max:20",
+            "major"                  => "required|numeric|exists:majors,id",
+            "name"                   => "required|string|min:3|max:100",
+            "code"                   => "required|string|min:3|max:15",
+            "level"                  => "required|numeric|min:1|max:5",
+            "credit_hours"           => "required|numeric|min:1|max:20",
+            "contact_hours"          => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:1|max:20",
         ]);
         $major = Major::findOrFail($requestData["major"]);
 
         try {
             $major->courses()->create([
-                'name' => $requestData["name"],
-                'code' => $requestData["code"],
-                'level' => $requestData["level"],
-                'suggested_level' => 0,
-                'credit_hours' => $requestData["credit_hours"],
-                'contact_hours' => $requestData["contact_hours"],
+                'name'                   => $requestData["name"],
+                'code'                   => $requestData["code"],
+                'level'                  => $requestData["level"],
+                'suggested_level'        => 0,
+                'credit_hours'           => $requestData["credit_hours"],
+                'contact_hours'          => $requestData["contact_hours"],
+                'theoretical_hours'      => $requestData["theoretical_hours"],
+                'practical_hours'        => $requestData["practical_hours"],
+                'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
+                'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
             return redirect(route("deptCoursesIndex"))->with("success", "تم انشاء المقرر بنجاح");
         } catch (Exception $e) {
@@ -173,25 +191,54 @@ class DepartmentBossController extends Controller
         }
     }
 
+    public function editCourseForm(Course $course)
+    {
+        try {
+            if (Auth::user()->hasRole("خدمة المجتمع")) {
+                $programs = json_encode(Program::with("departments.majors.courses")->get());
+                return view("manager.community.courses.edit")->with(compact('programs','course'));
+            } else if (Auth::user()->isDepartmentManager()) {
+                $programs =  json_encode(Auth::user()->manager->getMyDepartment());
+                return view('manager.community.courses.edit')->with(compact('programs', 'course'));
+            } else {
+                return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
+            }
+        } catch (Exception $e) {
+            return view("error")->with("error", "حدث خطأ غير معروف");
+            Log::error($e->getMessage() . ' ' . $e);
+        }
+    }
+
     public function editCourse(Request $request)
     {
         $requestData = $this->validate($request, [
-            "id"         => "required|numeric|exists:courses,id",
-            "name"          => "required|string|min:3|max:100",
-            "code"          => "required|string|min:3|max:15",
-            "level"         => "required|numeric|min:1|max:5",
-            "credit_hours"  => "required|numeric|min:1|max:20",
-            "contact_hours" => "required|numeric|min:1|max:20",
+            "id"                     => "required|numeric|exists:courses,id",
+            "major"                  => "nullable|numeric|exists:majors,id",
+            "name"                   => "required|string|min:3|max:100",
+            "code"                   => "required|string|min:3|max:15",
+            "level"                  => "required|numeric|min:1|max:5",
+            "credit_hours"           => "required|numeric|min:1|max:20",
+            "contact_hours"          => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:1|max:20",
         ]);
-
         $course = Course::findOrFail($requestData["id"]);
+        $major = Major::find($requestData["major"] ?? null);
+
         try {
             $course->update([
-                'name' => $requestData["name"],
-                'code' => $requestData["code"],
-                'level' => $requestData["level"],
-                'credit_hours' => $requestData["credit_hours"],
-                'contact_hours' => $requestData["contact_hours"],
+                'name'                   => $requestData["name"],
+                'code'                   => $requestData["code"],
+                'level'                  => $requestData["level"],
+                'major_id'               => $major != null ? $requestData["major"] : $course->major_id,
+                'credit_hours'           => $requestData["credit_hours"],
+                'contact_hours'          => $requestData["contact_hours"],
+                'theoretical_hours'      => $requestData["theoretical_hours"],
+                'practical_hours'        => $requestData["practical_hours"],
+                'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
+                'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
             return redirect(route("deptCoursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
         } catch (Exception $e) {
@@ -205,7 +252,7 @@ class DepartmentBossController extends Controller
         $programs =  json_encode(Auth::user()->manager->getMyDepartment());
         return view("manager.community.students.create")->with(compact('programs'));
     }
-    
+
     public function createStudentStore(Request $request)
     {
         $requestData = $this->validate($request, [

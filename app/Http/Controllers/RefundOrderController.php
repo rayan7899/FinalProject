@@ -19,7 +19,7 @@ class RefundOrderController extends Controller
 
     public function form()
     {
-        return back()->with(['error' => 'سيكون طلب الاسترداد متاح عندما يتم اعتماد الساعات']);
+        // return back()->with(['error' => 'سيكون طلب الاسترداد متاح عندما يتم اعتماد الساعات']);
         $user = Auth::user();
         if ($user->student->credit_hours <= 0 && $user->student->wallet <= 0) {
             return back()->with(['error' => 'لا يوجد ساعات معتمدة ولا رصيد لاسترداده']);
@@ -34,7 +34,9 @@ class RefundOrderController extends Controller
         } else if ($isHasActiveOrder) {
             return back()->with(['error' => 'لا يمكن طلب استرداد مع وجود طلب اضافة مقررات قيد المراجعة']);
         } else {
-            return view('student/refund_order')->with(compact('user'));
+            $semester = Semester::latest()->first();
+            $orders = $user->student->orders()->where('semester_id', $semester->id)->where('requested_hours', '>', 0)->get();
+            return view('student/refund_order')->with(compact('user', 'orders'));
         }
     }
 
@@ -61,6 +63,8 @@ class RefundOrderController extends Controller
 
         try {
             $user = Auth::user();
+            $semester = Semester::latest()->first();
+            $orders = $user->student->orders()->where('semester_id', $semester->id)->where('requested_hours', '>', 0)->get();
             if ($user->student->wallet <= 0 && $requestData['reason'] == 'graduate') {
                 return back()->with(['error' => 'خطآ غير معروف']);
             }
@@ -70,24 +74,43 @@ class RefundOrderController extends Controller
                 return redirect(route('home'))->with(['error' => 'خطآ غير معروف']);
             }
 
-            switch ($user->student->traineeState) {
-                case 'privateState':
-                    $discount = 0; // = %100 discount
-                    break;
-                case 'employee':
-                    $discount = 0.25; // = %75 discount
-                    break;
-                case 'employeeSon':
-                    $discount = 0.5; // = %50 discount
-                    break;
-                default:
-                    $discount = 1; // = %0 discount
+            // switch ($user->student->traineeState) {
+            //     case 'privateState':
+            //         $discount = 0; // = %100 discount
+            //         break;
+            //     case 'employee':
+            //         $discount = 0.25; // = %75 discount
+            //         break;
+            //     case 'employeeSon':
+            //         $discount = 0.5; // = %50 discount
+            //         break;
+            //     default:
+            //         $discount = 1; // = %0 discount
+            // }
+
+            $creditHoursCost = 0;
+            foreach ($orders as $order) {
+                if ($order->amount / $order->requested_hours == 0) { //private state
+                    $creditHourCost = 0;
+                } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+                    $creditHourCost = $order->student->program->hourPrice;
+                } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+                    $creditHourCost = $order->student->program->hourPrice * 0.5;
+                } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+                    $creditHourCost = $order->student->program->hourPrice * 0.25;
+                } else {
+                    return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+                }
+                $creditHoursCost += $creditHourCost*$order->requested_hours;
             }
 
-            $creditHoursCost = $user->student->credit_hours * $user->student->program->hourPrice * $discount;
+            // $creditHoursCost = $user->student->credit_hours * $user->student->program->hourPrice * $discount;
 
             $amount = 0;
             if (in_array($requestData['reason'], ['drop-out', 'not-opened-class', 'exception'])) {
+                if ($user->student->credit_hours <= 0) {
+                    return back()->with(['error' => 'لا يوجد ساعات معتمدة لاسترداد مبلغها']);
+                }
                 $amount = $requestData['refund_to'] == 'bank'
                     ? $creditHoursCost + $user->student->wallet
                     : $creditHoursCost;

@@ -198,8 +198,13 @@ return [
         "rayat"                 => "رايات",
         "start_date"            => "تاريخ البداية",
         "end_date"              => "تاريخ النهاية",
-        "privatestate"           => "ظروف خاصة",
-        "promise"              => "التعهد",
+        "privatestate"          => "ظروف خاصة",
+        "promise"               => "التعهد",
+        "theoretical_hours"     => "عدد الساعات - نظري",
+        "practical_hours"       => "عدد الساعات - عملي",
+        "exam_theoretical_hours" => "عدد ساعات الاختبار - نطري",
+        "exam_practical_hours"  => "عدد ساعات الاختبار - عملي",
+
 
 
     ],

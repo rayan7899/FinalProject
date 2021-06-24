@@ -32,13 +32,142 @@ class CommunityController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        if (Role::where("name", "=", "الإدارة العامة")->doesntExist()) {
-            Role::create(['name' => 'الإدارة العامة']);
-        }
+        
+        // try {
+        //     DB::beginTransaction();
+        //     if (Role::where("name", "=", "الدراسات العامة - بكالوريوس ")->doesntExist()) {
+        //         $role = Role::create(['name' => 'الدراسات العامة - بكالوريوس ']);
 
-        if (Role::where("name", "=", "مدقق ايصالات")->doesntExist()) {
-            Role::create(['name' => 'مدقق ايصالات']);
-        }
+        //         $dept = Department::create([
+        //             'name'       => 'الدراسات العامة',
+        //             'program_id' => 1,
+        //             'role_id'    => $role->id
+        //         ]);
+
+        //         $major = Major::create([
+        //             'name'          => 'مواد عامة',
+        //             'department_id' => $dept->id,
+        //         ]);
+
+        //         $courses = Course::whereIn('code', ['رياض303', 'فيزي301', 'عامة401', 'عامة402', 'احصا303', 'رياض302'])->get();
+        //         foreach ($courses as $course) {
+        //             if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+        //                 Course::create([
+        //                     'name' => $course->name,
+        //                     'code' => $course->code,
+        //                     'level' => $course->level,
+        //                     'credit_hours' => $course->credit_hours,
+        //                     'contact_hours' => $course->contact_hours,
+        //                     'suggested_level' => 0,
+        //                     'major_id' => $major->id,
+        //                 ]);
+        //             }
+        //             $course->delete();
+        //         }
+        //     }
+            
+            
+        //     if (Role::where("name", "=", "الدراسات العامة - دبلوم ")->doesntExist()) {
+        //         $role = Role::create(['name' => 'الدراسات العامة - دبلوم ']);
+
+        //         $dept = Department::create([
+        //             'name'       => 'الدراسات العامة',
+        //             'program_id' => 2,
+        //             'role_id'    => $role->id
+        //         ]);
+
+        //         $major = Major::create([
+        //             'name'          => 'مواد عامة',
+        //             'department_id' => $dept->id,
+        //         ]);
+
+        //         $courses = Course::whereIn('code', ['ماهر101', 'عربي101'])->get();
+        //         foreach ($courses as $course) {
+        //             if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+        //                 Course::create([
+        //                     'name' => $course->name,
+        //                     'code' => $course->code,
+        //                     'level' => $course->level,
+        //                     'credit_hours' => $course->credit_hours,
+        //                     'contact_hours' => $course->contact_hours,
+        //                     'suggested_level' => 0,
+        //                     'major_id' => $major->id,
+        //                 ]);
+        //             }
+        //             $course->delete();
+        //         }
+        //     }
+
+
+
+
+        //     if (Role::where("name", "=", "اللغة الإنجليزية - بكالوريوس")->doesntExist()) {
+        //         $role = Role::create(['name' => 'اللغة الإنجليزية - بكالوريوس']);
+
+        //         $dept = Department::create([
+        //             'name'       => 'اللغة الإنجليزية',
+        //             'program_id' => 1,
+        //             'role_id'    => $role->id
+        //         ]);
+
+        //         $major = Major::create([
+        //             'name'          => 'مواد عامة',
+        //             'department_id' => $dept->id,
+        //         ]);
+
+        //         $courses = Course::whereIn('code', ['انجل302'])->get();
+        //         foreach ($courses as $course) {
+        //             if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+        //                 Course::create([
+        //                     'name' => $course->name,
+        //                     'code' => $course->code,
+        //                     'level' => $course->level,
+        //                     'credit_hours' => $course->credit_hours,
+        //                     'contact_hours' => $course->contact_hours,
+        //                     'suggested_level' => 0,
+        //                     'major_id' => $major->id,
+        //                 ]);
+        //             }
+        //             $course->delete();
+        //         }
+        //     }
+            
+            
+        //     if (Role::where("name", "=", "اللغة الإنجليزية - دبلوم")->doesntExist()) {
+        //         $role = Role::create(['name' => 'اللغة الإنجليزية - دبلوم']);
+
+        //         $dept = Department::create([
+        //             'name'       => 'اللغة الإنجليزية',
+        //             'program_id' => 2,
+        //             'role_id'    => $role->id
+        //         ]);
+
+        //         $major = Major::create([
+        //             'name'          => 'مواد عامة',
+        //             'department_id' => $dept->id,
+        //         ]);
+
+        //         $courses = Course::whereIn('code', ['انجل103'])->get();
+        //         foreach ($courses as $course) {
+        //             if(Course::where("code", $course->code)->where('major_id', $major->id)->doesntExist()){
+        //                 Course::create([
+        //                     'name' => $course->name,
+        //                     'code' => $course->code,
+        //                     'level' => $course->level,
+        //                     'credit_hours' => $course->credit_hours,
+        //                     'contact_hours' => $course->contact_hours,
+        //                     'suggested_level' => 0,
+        //                     'major_id' => $major->id,
+        //                 ]);
+        //             }
+        //             $course->delete();
+        //         }
+        //     }
+        //     DB::commit();
+        // } catch (Exception $e) {
+        //     Log::error($e);
+        //     DB::rollBack();
+        // }
     }
 
     public function dashboard()
@@ -1346,8 +1475,8 @@ class CommunityController extends Controller
                 return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
             }
         } catch (Exception $e) {
-            return view("error")->with("error", "حدث خطأ غير معروف");
             Log::error($e->getMessage() . ' ' . $e);
+            return view("error")->with("error", "حدث خطأ غير معروف");
         }
     }
 
@@ -1364,8 +1493,8 @@ class CommunityController extends Controller
                 return view("error")->with("error", "لا تملك الصلاحيات لدخول لهذه الصفحة");
             }
         } catch (Exception $e) {
-            return view("error")->with("error", "حدث خطأ غير معروف");
             Log::error($e->getMessage() . ' ' . $e);
+            return view("error")->with("error", "حدث خطأ غير معروف");
         }
     }
 
@@ -1375,23 +1504,31 @@ class CommunityController extends Controller
     public function createCourse(Request $request)
     {
         $requestData = $this->validate($request, [
-            "major"         => "required|numeric|exists:majors,id",
-            "name"          => "required|string|min:3|max:100",
-            "code"          => "required|string|min:3|max:15",
-            "level"         => "required|numeric|min:1|max:5",
-            "credit_hours"  => "required|numeric|min:1|max:20",
-            "contact_hours" => "required|numeric|min:1|max:20",
+            "major"                  => "required|numeric|exists:majors,id",
+            "name"                   => "required|string|min:3|max:100",
+            "code"                   => "required|string|min:3|max:15",
+            "level"                  => "required|numeric|min:1|max:5",
+            "credit_hours"           => "required|numeric|min:1|max:20",
+            "contact_hours"          => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:1|max:20",
         ]);
         $major = Major::findOrFail($requestData["major"]);
 
         try {
             $major->courses()->create([
-                'name' => $requestData["name"],
-                'code' => $requestData["code"],
-                'level' => $requestData["level"],
-                'suggested_level' => 0,
-                'credit_hours' => $requestData["credit_hours"],
-                'contact_hours' => $requestData["contact_hours"],
+                'name'                   => $requestData["name"],
+                'code'                   => $requestData["code"],
+                'level'                  => $requestData["level"],
+                'suggested_level'        => 0,
+                'credit_hours'           => $requestData["credit_hours"],
+                'contact_hours'          => $requestData["contact_hours"],
+                'theoretical_hours'      => $requestData["theoretical_hours"],
+                'practical_hours'        => $requestData["practical_hours"],
+                'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
+                'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
             return redirect(route("coursesIndex"))->with("success", "تم انشاء المقرر بنجاح");
         } catch (Exception $e) {
@@ -1424,22 +1561,32 @@ class CommunityController extends Controller
     public function editCourse(Request $request)
     {
         $requestData = $this->validate($request, [
-            "id"         => "required|numeric|exists:courses,id",
-            "name"          => "required|string|min:3|max:100",
-            "code"          => "required|string|min:3|max:15",
-            "level"         => "required|numeric|min:1|max:5",
-            "credit_hours"  => "required|numeric|min:1|max:20",
-            "contact_hours" => "required|numeric|min:1|max:20",
+            "id"                     => "required|numeric|exists:courses,id",
+            "major"                  => "nullable|numeric|exists:majors,id",
+            "name"                   => "required|string|min:3|max:100",
+            "code"                   => "required|string|min:3|max:15",
+            "level"                  => "required|numeric|min:1|max:5",
+            "credit_hours"           => "required|numeric|min:1|max:20",
+            "contact_hours"          => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:1|max:20",
         ]);
-
         $course = Course::findOrFail($requestData["id"]);
+        $major = Major::find($requestData["major"] ?? null);
         try {
             $course->update([
-                'name' => $requestData["name"],
-                'code' => $requestData["code"],
-                'level' => $requestData["level"],
-                'credit_hours' => $requestData["credit_hours"],
-                'contact_hours' => $requestData["contact_hours"],
+                'name'                   => $requestData["name"],
+                'code'                   => $requestData["code"],
+                'level'                  => $requestData["level"],
+                'major_id'               => $major != null ? $requestData["major"] : $course->major_id,
+                'credit_hours'           => $requestData["credit_hours"],
+                'contact_hours'          => $requestData["contact_hours"],
+                'theoretical_hours'      => $requestData["theoretical_hours"],
+                'practical_hours'        => $requestData["practical_hours"],
+                'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
+                'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
             return redirect(route("coursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
         } catch (Exception $e) {
@@ -1830,6 +1977,7 @@ class CommunityController extends Controller
 
         try {
             $refund = RefundOrder::where('id', $requestData['refund_id'])->first();
+            $orders = $refund->student->orders()->where('semester_id', $semester->id)->where('requested_hours', '>', 0)->get();
             if ($refund === null) {
                 return response(['message' => "خطأ في بيانات الطلب"], 422);
             } else if ($refund->accepted !== null) {
@@ -1856,15 +2004,34 @@ class CommunityController extends Controller
                     $reason = 'لا يوجد';
             }
 
+            $creditHoursCost = 0;
+            foreach ($orders as $order) {
+                if ($order->amount / $order->requested_hours == 0) { //private state
+                    $creditHourCost = 0;
+                } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+                    $creditHourCost = $order->student->program->hourPrice;
+                } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+                    $creditHourCost = $order->student->program->hourPrice * 0.5;
+                } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+                    $creditHourCost = $order->student->program->hourPrice * 0.25;
+                } else {
+                    return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+                }
+                $creditHoursCost += $creditHourCost*$order->requested_hours;
+            }
 
             DB::beginTransaction();
             if ($requestData['accepted']) {
+                if ($refund->student->credit_hours <= 0) {
+                    return response(['message' => "لا يوجد ساعات معتمدة لدى المتدرب"], 422);
+                }
+
                 switch ($requestData['range']) {
                     case 'before-training':
                         $amount = $refund->amount - 300;
                         break;
                     case 'before-4th-week':
-                        $amount = $refund->amount * 0.6;
+                        $amount = ($creditHoursCost * 0.6) + ($refund->amount - $creditHoursCost);
                         break;
                     case 'refund-all-amount':
                         $amount = $refund->amount;
@@ -1903,6 +2070,15 @@ class CommunityController extends Controller
                     'accepted'          => true,
 
                 ]);
+
+                foreach ($orders as $order) {
+                    $order->update([
+                        'requested_hours' => 0,
+                        'amount' => 0,
+                        'discount' => 0,
+                        'note' => 'تم استرداد مبلغ الساعات لهذا الطلب',
+                    ]);
+                }
             } else {
                 $refund->update([
                     'manager_note'      => $requestData['note'],

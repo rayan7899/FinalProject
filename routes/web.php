@@ -20,9 +20,6 @@ use App\Http\Controllers\PaymentCheckerController;
 use App\Http\Controllers\PrivateStateController;
 use App\Http\Controllers\RefundOrderController;
 use App\Http\Controllers\TrainerController;
-use App\Http\Controllers\TransactionController;
-use App\Models\User;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -243,6 +240,8 @@ Route::middleware(['auth'])->group(function () {
     //departmentBoss
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
     Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
+    Route::get('/api/major/courses/{major}', [DepartmentBossController::class, 'apiGetMajorCourses'])->name('apiGetMajorCourses');
+
     Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
 
     Route::get('/student/courses', [falteringStudentsController::class, 'index'])->name('studentCourses');
@@ -258,7 +257,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/department-boss/courses', [DepartmentBossController::class, 'coursesIndex'])->name('deptCoursesIndex');
     Route::get('/department-boss/courses/create', [DepartmentBossController::class, 'createCourseForm'])->name('deptCreateCourseForm');
     Route::post('/department-boss/courses/store', [DepartmentBossController::class, 'createCourse'])->name('deptCreateCourse');
-    Route::get('/department-boss/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
+    Route::get('/department-boss/courses/edit/{course}', [DepartmentBossController::class, 'editCourseForm'])->name('editCourseForm');
     Route::post('/department-boss/courses/update', [DepartmentBossController::class, 'editCourse'])->name('deptEditCourse');
     Route::get('/department-boss/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
 

@@ -24,21 +24,37 @@
                 <div class="row">
                     <!-- amount -->
                     @php
-                        switch ($user->student->traineeState) {
-                            case 'privateState':
-                                $discount = 0; // = %100 discount
-                                break;
-                            case 'employee':
-                                $discount = 0.25; // = %75 discount
-                                break;
-                            case 'employeeSon':
-                                $discount = 0.5; // = %50 discount
-                                break;
-                            default:
-                                $discount = 1; // = %0 discount
-                        }
+                        // switch ($user->student->traineeState) {
+                        //     case 'privateState':
+                        //         $discount = 0; // = %100 discount
+                        //         break;
+                        //     case 'employee':
+                        //         $discount = 0.25; // = %75 discount
+                        //         break;
+                        //     case 'employeeSon':
+                        //         $discount = 0.5; // = %50 discount
+                        //         break;
+                        //     default:
+                        //         $discount = 1; // = %0 discount
+                        // }
                         
-                        $creditHoursCost = $user->student->available_hours*$user->student->program->hourPrice*$discount;
+                        // $creditHoursCost = $user->student->credit_hours*$user->student->program->hourPrice*$discount;
+
+                        $creditHoursCost = 0;
+                        foreach ($orders as $order) {
+                            if ($order->amount / $order->requested_hours == 0) { //private state
+                                $creditHourCost = 0;
+                            } elseif (in_array($order->amount / $order->requested_hours, [550, 400])) { //defualt state
+                                $creditHourCost = $order->student->program->hourPrice;
+                            } elseif (in_array($order->amount / $order->requested_hours, [275, 200])) { //employee's son state
+                                $creditHourCost = $order->student->program->hourPrice * 0.5;
+                            } elseif (in_array($order->amount / $order->requested_hours, [137.5, 100])) { //employee state
+                                $creditHourCost = $order->student->program->hourPrice * 0.25;
+                            } else {
+                                return response(json_encode(['message' => 'خطأ غير معروف']), 422);
+                            }
+                            $creditHoursCost += $creditHourCost*$order->requested_hours;
+                        }
                     @endphp
                     <div class="form-group col-lg-6">
                         <label for="amount">المبلغ المتوقع استرداده</label>
@@ -52,11 +68,11 @@
                         <label for="reason">السبب</label>
                         <select required class="form-control" name="reason" id="reason" onchange="changeAmount()">
                             <option value="" disabled>حدد سبب الاسترداد</option>
-                            <option value="drop-out" @if ($user->student->available_hours == 0) disabled @endif>انسحاب</option>
+                            <option value="drop-out" @if ($user->student->credit_hours == 0) disabled @endif>انسحاب</option>
                             @if($user->student->level == 1) 
-                                <option value="not-opened-class" @if ($user->student->available_hours == 0) disabled @endif>لم تتاح الشعبة</option> 
+                                <option value="not-opened-class" @if ($user->student->credit_hours == 0) disabled @endif>لم تتاح الشعبة</option> 
                             @endif
-                            <option value="exception" @if ($user->student->available_hours == 0) disabled @endif>استثناء</option>
+                            <option value="exception" @if ($user->student->credit_hours == 0) disabled @endif>استثناء</option>
                             <option value="graduate" @if ($user->student->level < 5) disabled @endif>خريج</option>
                             <option value="get-wallet-amount" @if ($user->student->wallet == 0) disabled @endif>استرداد مبلغ المحفظة</option>
                         </select>
@@ -68,7 +84,7 @@
                           <input type="radio" value="bank" name="refund_to" id="radioBank" onclick="changeAmount()"> استرداد المبلغ الى البنك
                         </label>
                         <label class="btn btn-outline-primary">
-                          <input required type="radio" value="wallet" name="refund_to" id="radioWallet" onclick="changeAmount()" @if ($user->student->available_hours == 0) disabled @endif> استرداد المبلغ الى المحفظة
+                          <input required type="radio" value="wallet" name="refund_to" id="radioWallet" onclick="changeAmount()" @if ($user->student->credit_hours == 0) disabled @endif> استرداد المبلغ الى المحفظة
                         </label>
                     </div>
 

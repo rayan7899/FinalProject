@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('backup:clean')->daily()->at('23:38')
+        $schedule->command('backup:clean')->daily()->at('05:00')
             ->then(function () {
                 $client = new Google_Client();
                 $client->setClientId(env('GOOGLE_DRIVE_CLIENT_ID'));
