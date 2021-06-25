@@ -2104,14 +2104,16 @@ class CommunityController extends Controller
         try {
             $semester = Semester::latest()->first();
             $users = User::with('trainer.coursesOrders')->has('trainer.coursesOrders')
-                    ->wheredoesntHave('trainer.coursesOrders', function($res){
-                        $res->where('accepted_by_dept_boss', null)
-                            ->orWhere('accepted_by_community', false)
-                            // ->orWhere(function($result){
-                            //     $result->where('accepted_by_dept_boss', true)
-                            //         ->where('accepted_by_community', false);
-                            // })
-                            ;
+                    ->whereHas('trainer.coursesOrders', function($res){
+                        $res->where(function($res){
+                            $res->where('accepted_by_dept_boss', true)
+                                ->Where('accepted_by_community', null);
+                        })
+                        // ->orWhere(function($res){
+                        //     $res->where('accepted_by_dept_boss', false)
+                        //         ->orWhere('accepted_by_community', null);
+                        // })
+                        ;
                     })
                     ->get();
             // $users = User::with('trainer')->wheredoesntHave('trainer.coursesOrders', function($res){
