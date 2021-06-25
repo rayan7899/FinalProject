@@ -420,7 +420,7 @@
                         credit_hours.innerHTML = order.course.credit_hours;
 
                         var contact_hours = row.insertCell(index++);
-                        contact_hours.innerHTML = order.course_type == 'نظري' ? Math.ceil(order.course.contact_hours/2) : Math.floor(order.course.contact_hours/2);
+                        contact_hours.innerHTML = order.course_type == 'نظري' ? order.course.theoretical_hours : order.course.practical_hours;
 
                         var count_of_weeks = row.insertCell(index++);
                         count_of_weeks.innerHTML = 14;
@@ -429,13 +429,13 @@
                         count_of_semester_weeks.innerHTML = contact_hours.innerHTML*14;
 
                         var hour_cost = row.insertCell(index++);
-                        hour_cost.innerHTML = 200;
+                        hour_cost.innerHTML = order.trainer.qualification == 'دكتوراه' ? 200 : 150;
 
                         var deserved_amount = row.insertCell(index++);
-                        deserved_amount.innerHTML = count_of_weeks.innerHTML*hour_cost.innerHTML;
+                        deserved_amount.innerHTML = count_of_semester_weeks.innerHTML*hour_cost.innerHTML;
 
                         var exam_hours = row.insertCell(index++);
-                        exam_hours.innerHTML = 4;
+                        exam_hours.innerHTML = order.course_type == 'نظري' ? order.course.exam_theoretical_hours : order.course.exam_practical_hours;
 
                         var reject = row.insertCell(index++);
                         // reject.innerHTML =
@@ -463,12 +463,12 @@
             Array.from(tblOrders.children).forEach(row => {
                 orders.push({
                     order_id: row.id,
-                    count_of_students: row.children[4].firstChild.data,
-                    division_number: row.children[5].firstChild.data,
+                    // count_of_students: row.children[4].firstChild.data,
+                    // division_number: row.children[5].firstChild.data,
                 });
             });
             
-            axios.post('{{ route('acceptTrainerCourseOrder') }}', {orders:orders})
+            axios.post('{{ route('communityAcceptTrainerCourseOrder') }}', {orders:orders})
                 .then((response) => {
                     Swal.fire({
                         position: "center",

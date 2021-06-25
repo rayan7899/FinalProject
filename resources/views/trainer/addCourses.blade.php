@@ -240,39 +240,41 @@
                     courses[i].suggested_level == 0 &&
                     courses[i].level == parseInt(originalLevel.value)
                 ) {
-                    let row = tblCourses.insertRow(tblIndex);
-                    row.setAttribute("data-id", courses[i].id);
-                    row.setAttribute("data-level", courses[i].level);
-                    row.setAttribute("data-selected", false);
-                    row.addEventListener("click", (event) =>
-                        onCourseClicked(event)
-                    );
-                    let code = row.insertCell(0);
-                    let name = row.insertCell(1);
-                    let level = row.insertCell(2);
-                    let type = row.insertCell(3);
-                    let credit_hours = row.insertCell(4);
-                    let contact_hours = row.insertCell(5);
-                    let division = row.insertCell(6);
-                    let students = row.insertCell(7);
-                    code.className = "text-center";
-                    name.className = "text-center";
-                    type.className = "text-center";
-                    credit_hours.className = "text-center";
-                    contact_hours.className = "text-center";
-                    division.className = "text-center";
-                    students.className = "text-center";
-                    code.innerHTML = courses[i].code;
-                    name.innerHTML = courses[i].name;
-                    level.innerHTML = getStringLevel(courses[i].level);
-                    type.innerHTML = 'عملي';
-                    credit_hours.innerHTML = courses[i].credit_hours;
-                    contact_hours.innerHTML = Math.floor(courses[i].contact_hours / 2);
-                    division.innerHTML =
-                        '<input type="number" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
-                    students.innerHTML =
-                        '<input type="number" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
-                    tblIndex++;
+                    if(courses[i].practical_hours > 0){
+                        let row = tblCourses.insertRow(tblIndex);
+                        row.setAttribute("data-id", courses[i].id);
+                        row.setAttribute("data-level", courses[i].level);
+                        row.setAttribute("data-selected", false);
+                        row.addEventListener("click", (event) =>
+                            onCourseClicked(event)
+                        );
+                        let code = row.insertCell(0);
+                        let name = row.insertCell(1);
+                        let level = row.insertCell(2);
+                        let type = row.insertCell(3);
+                        let credit_hours = row.insertCell(4);
+                        let contact_hours = row.insertCell(5);
+                        let division = row.insertCell(6);
+                        let students = row.insertCell(7);
+                        code.className = "text-center";
+                        name.className = "text-center";
+                        type.className = "text-center";
+                        credit_hours.className = "text-center";
+                        contact_hours.className = "text-center";
+                        division.className = "text-center";
+                        students.className = "text-center";
+                        code.innerHTML = courses[i].code;
+                        name.innerHTML = courses[i].name;
+                        level.innerHTML = getStringLevel(courses[i].level);
+                        type.innerHTML = 'عملي';
+                        credit_hours.innerHTML = courses[i].credit_hours;
+                        contact_hours.innerHTML = courses[i].practical_hours;
+                        division.innerHTML =
+                            '<input type="number" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
+                        students.innerHTML =
+                            '<input type="number" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
+                        tblIndex++;
+                    }
 
 
                     let row2 = tblCourses.insertRow(tblIndex);
@@ -302,7 +304,7 @@
                     level2.innerHTML = getStringLevel(courses[i].level);
                     type2.innerHTML = 'نظري';
                     credit_hours2.innerHTML = courses[i].credit_hours;
-                    contact_hours2.innerHTML = Math.ceil(courses[i].contact_hours / 2);
+                    contact_hours2.innerHTML = courses[i].theoretical_hours;
                     division2.innerHTML =
                         '<input type="number" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
                     students2.innerHTML =

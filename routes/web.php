@@ -198,6 +198,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/trainers', [CommunityController::class, 'trainersDashboard'])->name('trainersDashboard');
     Route::get('/community/review-trainers-courses-orders', [CommunityController::class, 'reviewCoursesOrdersView'])->name('reviewCoursesOrdersView');
     Route::get('/api/community/get-courses/{trainer}', [CommunityController::class, 'getCoursesByTrainer'])->name('getCoursesByTrainer');
+    Route::post('/api/community/accept', [CommunityController::class, 'acceptTrainerCourseOrder'])->name('communityAcceptTrainerCourseOrder');
     Route::post('/api/community/reject', [CommunityController::class, 'rejectTrainerCourseOrder'])->name('communityRejectTrainerCourseOrder');
 });
 
@@ -283,6 +284,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/department-boss/reject', [DepartmentBossController::class, 'rejectTrainerCourseOrder'])->name('rejectTrainerCourseOrder');
     Route::get('/department-boss/rejected-orders', [DepartmentBossController::class, 'rejectedTrainerCoursesOrdersView'])->name('rejectedTrainerCoursesOrdersView');
     Route::get('/api/department-boss/get-rejected-courses/{trainer}', [DepartmentBossController::class, 'getRejectedCoursesByTrainer'])->name('getRejectedCoursesByTrainer');
+    Route::post('/api/department-boss/accept-rejected-order', [DepartmentBossController::class, 'acceptRejectedTrainerCourseOrder'])->name('acceptRejectedTrainerCourseOrder');
 
 });
 

@@ -50,7 +50,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button type="button" class="btn btn-success" onclick="acceptTrainerCourseOrder()">قبول</button>
+                        <button type="button" class="btn btn-success" onclick="acceptRejectedTrainerCourseOrder()">قبول</button>
                     </div>
                 </div>
             </div>
@@ -442,7 +442,7 @@
                 });
         }
 
-        function acceptTrainerCourseOrder() {
+        function acceptRejectedTrainerCourseOrder() {
 
             var orders = [];
 
@@ -454,7 +454,7 @@
                 });
             });
             
-            axios.post('{{ route('acceptTrainerCourseOrder') }}', {orders:orders})
+            axios.post('{{ route('acceptRejectedTrainerCourseOrder') }}', {orders:orders})
                 .then((response) => {
                     Swal.fire({
                         position: "center",

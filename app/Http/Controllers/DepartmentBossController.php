@@ -437,4 +437,34 @@ class DepartmentBossController extends Controller
             return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
         }
     }
+    
+    public function acceptRejectedTrainerCourseOrder(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "orders"                      => "required|array|min:1",
+            "orders.*.order_id"           => "required|numeric|exists:trainer_courses_orders,id",
+            "orders.*.count_of_students"  => "required|numeric|min:1",
+            "orders.*.division_number"    => "required|numeric|min:1",
+        ]);
+        try {
+            DB::beginTransaction();
+            foreach ($requestData['orders'] as $order) {
+                $courseOrder = TrainerCoursesOrders::find($order['order_id']);
+                if($courseOrder->accepted_by_dept_boss == true){
+                    $courseOrder->update([
+                        'accepted_by_community' =>  null,
+                        'count_of_students'     =>  $order['count_of_students'],
+                        'division_number'       =>  $order['division_number'],
+                    ]);
+                }
+            }
+            DB::commit();
+            return response(['message' => 'تم قبول الطلب بنجاح'], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+        
+    }
 }

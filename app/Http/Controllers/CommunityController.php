@@ -2105,7 +2105,13 @@ class CommunityController extends Controller
             $semester = Semester::latest()->first();
             $users = User::with('trainer.coursesOrders')->has('trainer.coursesOrders')
                     ->wheredoesntHave('trainer.coursesOrders', function($res){
-                        $res->where('accepted_by_dept_boss', null);
+                        $res->where('accepted_by_dept_boss', null)
+                            ->orWhere('accepted_by_community', false)
+                            // ->orWhere(function($result){
+                            //     $result->where('accepted_by_dept_boss', true)
+                            //         ->where('accepted_by_community', false);
+                            // })
+                            ;
                     })
                     ->get();
             // $users = User::with('trainer')->wheredoesntHave('trainer.coursesOrders', function($res){
@@ -2123,8 +2129,9 @@ class CommunityController extends Controller
     public function getCoursesByTrainer(Trainer $trainer)
     {
         try {
-            $orders = $trainer->coursesOrders()->with('course')
+            $orders = $trainer->coursesOrders()->with('course', 'trainer', 'semester')
             ->where('accepted_by_dept_boss', 1)
+            ->where('accepted_by_community', null)
             ->get();
             return response(['message' => 'تم جلب البيانات بنجاح', 'orders' => $orders], 200);
         } catch (Exception $e) {
@@ -2150,5 +2157,35 @@ class CommunityController extends Controller
             Log::error($e->getMessage() . $e);
             return response(['message' => ' حدث خطأ غير معروف ' . $e], 422);
         }
+    }
+    
+    public function acceptTrainerCourseOrder(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "orders"                      => "required|array|min:1",
+            "orders.*.order_id"           => "required|numeric|exists:trainer_courses_orders,id",
+            // "orders.*.count_of_students"  => "required|numeric|min:1",
+            // "orders.*.division_number"    => "required|numeric|min:1",
+        ]);
+        try {
+            DB::beginTransaction();
+            foreach ($requestData['orders'] as $order) {
+                $courseOrder = TrainerCoursesOrders::find($order['order_id']);
+                if($courseOrder->accepted_by_community != true){
+                    $courseOrder->update([
+                        'accepted_by_community' =>  true,
+                        // 'count_of_students'     =>  $order['count_of_students'],
+                        // 'division_number'       =>  $order['division_number'],
+                    ]);
+                }
+            }
+            DB::commit();
+            return response(['message' => 'تم قبول الطلب بنجاح'], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+        
     }
 }
