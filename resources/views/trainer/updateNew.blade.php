@@ -15,11 +15,19 @@
                 {{ session()->get('error') }}
             </div>
         @endif
-        <div class="alert alert-info">
+        @if ($user->trainer->data_verify_note != null && !$errors->any() && !session()->has('error'))
+            <div class="alert alert-warning">
+                  يرجى اعادة تعبئة النموذج بسبب وجود الملاحظات التالية 
+                ( 
+                {{ $user->trainer->data_verify_note }}
+                )
+            </div>
+        @endif
+        {{-- <div class="alert alert-info">
             <b>ملاحظة:</b>
             يمكن ارسال هذا النموذج مرة واحدة و
             اذا كان هناك أي تحديث او تعديل يرجى التواصل مع مركز خدمة المجتمع والتدريب المستمر بالكلية
-        </div>
+        </div> --}}
         <div class="card m-auto">
             <div class="card-header h5">{{ __('استكمال متطلبات التسجيل') }}</div>
             <div class="card-body p-3 px-5">
@@ -48,7 +56,7 @@
                                 value="{{ $user->phone }} ">
                         </div>
                     @endif
-                    <!-- phone number -->
+                    <!-- email  -->
                     <div class="form-group">
                         <label for="email">البريد الالكتروني</label>
                         <input required disabled="true" type="email" class="form-control p-1 m-1" id="email" name="email"
@@ -59,7 +67,13 @@
                     <div class="form-group">
                         <label for="national_id">رقم الهوية</label>
                         <input required minlength="10" maxlength="10" type="text" class="form-control p-1 m-1 "
-                            id="national_id" name="national_id" value="{{ old('national_id') }}">
+                            id="national_id" name="national_id"
+                            value="{{ strlen($user->national_id) == 10 ? $user->national_id : old('national_id') }}">
+                            <small class="alert-info p-1 my-1 d-block rounded">
+
+                                <b>ملاحظة:</b>
+                                سوف يتم استخدام رقم الهوية لتسجيل الدخول بعد تحديث البيانات    
+                            </small>
                         @error('national_id')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -84,23 +98,26 @@
                     @endif
 
                     {{-- password update --}}
-                    <div class="form-group">
-                        <label for="password">{{ __('كلمة المرور الجديدة') }}</label>
-                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                            name="password" required autocomplete="new-password">
+                    @if (Hash::check('bct12345', $user->password))
+                        <div class="form-group">
+                            <label for="password">{{ __('كلمة المرور الجديدة') }}</label>
+                            <input id="password" type="password"
+                                class="form-control @error('password') is-invalid @enderror" name="password" required
+                                autocomplete="new-password">
 
-                        @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
 
-                    <div class="form-group">
-                        <label for="password-confirm">{{ __('تأكيد كلمة المرور') }}</label>
-                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
-                            required autocomplete="new-password">
-                    </div>
+                        <div class="form-group">
+                            <label for="password-confirm">{{ __('تأكيد كلمة المرور') }}</label>
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
+                                required autocomplete="new-password">
+                        </div>
+                    @endif
 
                     {{-- department --}}
                     <div class="form-group">
@@ -109,7 +126,7 @@
                             <option value="" disabled {{ old('department') == null ? 'selected' : '' }}>أختر</option>
                             @forelse (json_decode($departments) as $department)
                                 <option value="{{ $department->id }}"
-                                    {{ old('department') == $department->id ? 'selected' : '' }}>
+                                    {{ old('department') == $department->id || $user->trainer->department_id == $department->id ? 'selected' : '' }}>
                                     {{ $department->name }}</option>
                             @empty
                                 <option value="" disabled selected>لا يوجد اقسام</option>
@@ -136,11 +153,14 @@
                         <label for="qualification"> المؤهل </label>
                         <select required name="qualification" id="qualification" class="form-control">
                             <option value="" disabled {{ old('qualification') == null ? 'selected' : '' }}>أختر</option>
-                            <option value="bachelor" {{ old('qualification') == 'bachelor' ? 'selected' : '' }}>
+                            <option value="bachelor"
+                                {{ old('qualification') == 'bachelor' || $user->trainer->qualification == 'bachelor' ? 'selected' : '' }}>
                                 {{ __('bachelor') }}</option>
-                            <option value="master" {{ old('qualification') == 'master' ? 'selected' : '' }}>
+                            <option value="master"
+                                {{ old('qualification') == 'master' || $user->trainer->qualification == 'master' ? 'selected' : '' }}>
                                 {{ __('master') }}</option>
-                            <option value="doctoral" {{ old('qualification') == 'doctoral' ? 'selected' : '' }}>
+                            <option value="doctoral"
+                                {{ old('qualification') == 'doctoral' || $user->trainer->qualification == 'doctoral' ? 'selected' : '' }}>
                                 {{ __('doctoral') }}</option>
 
                         </select>
@@ -154,12 +174,12 @@
                     <!-- certificate image -->
                     <div class="form-group">
                         <label for="">صورة من المؤهل </label>
-                        <input type="file" accept=".pdf,.png,.jpg,.jpeg" name="degree" class="form-control" value="">
+                        <input required type="file" accept=".pdf,.png,.jpg,.jpeg" name="degree" class="form-control" value="">
                         <small class="alert-info p-1 my-1 d-block rounded">
 
                             <b>ملاحظة:</b>
-                            إذا المؤهل من جامعة غير سعودية يرجى إرفاق ملف pdf
-                            يحتوي على المؤهل بالإضافة الى ما يثبت إعتماد المؤهل من وزارة التعليم
+                            إذا كان المؤهل من جامعة غير سعودية يرجى إرفاق ملف pdf واحد
+                             يحتوي على المؤهل بالإضافة الى ما يثبت معادلة المؤهل من وزارة التعليم (التعليم العالي سابقاً)
 
                         </small>
                     </div>

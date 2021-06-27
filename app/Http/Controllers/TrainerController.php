@@ -27,9 +27,6 @@ class TrainerController extends Controller
 
     public function dashboard()
     {
-        if (Auth::user()->trainer->data_updated == false) {
-            return redirect(route("updateNewTrainerForm"));
-        }
         $title = "مدرب";
         $links = [
             (object) [
@@ -73,18 +70,22 @@ class TrainerController extends Controller
             'employer'      =>   'required|string|max:100|min:3',
             //"identity"      => "required|mimes:pdf,png,jpg,jpeg|max:4000",
             "degree"        => 'required|mimes:pdf,png,jpg,jpeg|max:4000',
-            'password'      => 'required|string|min:8|confirmed',
+            'password'      => 'string|min:8|confirmed',
 
         ]);
-        if ($requestData['password'] == "bct12345") {
-            return back()->with('error', 'خطأ يجب تغيير كلمة المرور الافتراضية')->withInput();
+        if (isset($requestData['password'])) {
+            if ($requestData['password'] == "bct12345") {
+                return back()->with('error', 'خطأ يجب تغيير كلمة المرور الافتراضية')->withInput();
+            }
         }
         try {
             DB::beginTransaction();
             $user = Auth::user();
 
             $user->national_id = $requestData['national_id'];
-            $user->password = Hash::make($requestData['password']);
+            if (isset($requestData['password'])) {
+                $user->password = Hash::make($requestData['password']);
+            }
             if (isset($requestData['phone'])) {
                 $user->phone = $requestData['phone'];
             }

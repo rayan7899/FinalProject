@@ -44,11 +44,7 @@ class HomeController extends Controller
             }
             return view("error")->with("error", "لا يوجد لديك اي صلاحيات");
         } elseif ($user->trainer !== null) {
-            if (Hash::check("bct12345", $user->password)) {
-                return redirect(route('updateNewTrainerForm'));
-            } else {
-                return redirect(route('trainerDashboard'));
-            }
+            return redirect(route('trainerDashboard'));
         } elseif ($user->student !== null) {
             $semester = Semester::latest()->first();
             return view('home')->with(compact('user', 'semester'));

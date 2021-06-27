@@ -187,7 +187,7 @@ return [
         'excel_file'            => 'ملف excel',
         'trainee'               => 'متدرب',
         "courses"               => 'المقررات',
-        "national_id"           => 'اسم المستخدم ( رقم الهوية )',
+        "national_id"           => 'رقم الهوية',
         "roles"                 => "الصلاحيات",
         "role"                  => "الصلاحية",
         "code"                  => "الرمز",
@@ -201,6 +201,8 @@ return [
         "privatestate"          => "ظروف خاصة",
         "promise"               => "التعهد",
         "bct_id"                => "الرقم الوظيفي",
+        "employer"              => "جهة العمل",
+        "qualification"         => "المؤهل"
 
 
 

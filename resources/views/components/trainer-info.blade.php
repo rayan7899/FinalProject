@@ -102,7 +102,8 @@
                 <div class="row p-0 m-0">
                     <div class="col-11 p-0 m-0">
                         <div dir="ltr" class="input-group mb-1">
-                            <input readonly type="text" class="form-control text-right bg-white" style="border-left-width: 0.5px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
+                            <input readonly type="text" class="form-control text-right bg-white"
+                                style="border-left-width: 0.5px; border-top-left-radius: 0; border-bottom-left-radius: 0;"
                                 value="{{ __($user->trainer->qualification) ?? 'لا يوجد' }}">
                             <div class="input-group-append">
                                 <span class="input-group-text text-center" style="width: 120px;"><label
@@ -113,19 +114,23 @@
                     </div>
                     <div class="col-1 p-0 m-0">
                         @php
-                            $url = route('getTrainerDocument', ['national_id' => $user->national_id, 'filename' => 'degree']);
+                            $url = route('trainerGetDocument', ['national_id' => $user->national_id, 'filename' => 'degree']);
                             $files = Storage::disk('trainerDocuments')->files($user->national_id);
                             $filePath = $files[array_key_first(preg_grep('/degree/', $files))];
                             $ext = explode('.', $filePath);
                             $fileExtantion = end($ext);
                         @endphp
                         @if ($fileExtantion == 'pdf' || $fileExtantion == 'PDF')
-                            <a class="form-control" style="border-right-width: 0.5px; border-top-right-radius: 0; border-bottom-right-radius: 0;" data-toggle="modal" data-target="#pdfModal" href="#"
+                            <a class="form-control"
+                                style="border-right-width: 0.5px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+                                data-toggle="modal" data-target="#pdfModal" href="#"
                                 onclick="showPdf('{{ $url }}','pdf')">
                                 <img style="width: 20px" src="{{ asset('/images/pdf.png') }}" />
                             </a>
                         @else
-                            <a data-toggle="modal" data-target="#pdfModal" href="#"
+                            <a class="form-control"
+                                style="border-right-width: 0.5px; border-top-right-radius: 0; border-bottom-right-radius: 0;"
+                                data-toggle="modal" data-target="#pdfModal" href="#"
                                 onclick="showPdf('{{ $url }}','img')">
                                 <img src=" {{ asset('/images/camera_img_icon.png') }}" style="width:25px;"
                                     alt="Image File">

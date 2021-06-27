@@ -21,6 +21,7 @@ class CreateTrainersTable extends Migration
             $table->string('employer');
             $table->boolean('data_updated')->default(false);
             $table->boolean('data_verified')->default(false);
+            $table->text('data_verify_note')->nullable();
             $table->unsignedBigInteger('department_id')->nullable();
             $table->timestamps();
 

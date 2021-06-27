@@ -20,6 +20,8 @@ class CreateEmployeesTable extends Migration
             $table->string('employer');
             $table->boolean('data_updated')->default(false);
             $table->boolean('data_verified')->default(false);
+            $table->text('data_verify_note')->nullable();
+
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
         });
