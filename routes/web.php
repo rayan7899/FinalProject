@@ -144,7 +144,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/courses/create', [CommunityController::class, 'createCourseForm'])->name('createCourseForm');
     Route::post('/community/courses/store', [CommunityController::class, 'createCourse'])->name('createCourse');
     ////// -------- I comment edit and delete becouse i'm using them in dept boss section
-    // Route::get('/community/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
+    Route::get('/community/courses/edit/{course}', [CommunityController::class, 'editCourseForm'])->name('editCourseForm');
     Route::post('/community/courses/update', [CommunityController::class, 'editCourse'])->name('editCourse');
     // Route::get('/community/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
 

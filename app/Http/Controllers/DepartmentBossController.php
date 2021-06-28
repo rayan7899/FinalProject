@@ -185,7 +185,7 @@ class DepartmentBossController extends Controller
         try {
             if (Auth::user()->hasRole("خدمة المجتمع")) {
                 $programs = json_encode(Program::with("departments.majors.courses")->get());
-                return view("manager.community.courses.edit")->with(compact('programs','course'));
+                return view("manager.community.courses.edit")->with(compact('programs', 'course'));
             } else if (Auth::user()->isDepartmentManager()) {
                 $programs =  json_encode(Auth::user()->manager->getMyDepartment());
                 return view('manager.community.courses.edit')->with(compact('programs', 'course'));
@@ -213,8 +213,8 @@ class DepartmentBossController extends Controller
             "exam_theoretical_hours" => "required|numeric|min:1|max:20",
             "exam_practical_hours"   => "required|numeric|min:0|max:20",
         ]);
-        $course = Course::findOrFail($requestData["id"]);
-        $major = Major::find($requestData["major"] ?? null);
+        $course = Course::with('major.department.program')->findOrFail($requestData["id"]);
+        $major = Major::with('courses')->find($requestData["major"] ?? null);
 
         try {
             $course->update([
@@ -229,7 +229,13 @@ class DepartmentBossController extends Controller
                 'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
                 'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
-            return redirect(route("deptCoursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
+            // return redirect(route("deptCoursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
+            $courses = $course->major->courses;
+            return redirect(route("deptCoursesIndex"))->with([
+                'success' => 'تم تعديل المقرر بنجاح',
+                'courses' => json_encode($courses),
+                'course' => json_encode($course)
+            ]);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
