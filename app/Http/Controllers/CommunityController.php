@@ -2115,6 +2115,17 @@ class CommunityController extends Controller
                         // })
                         ;
                     })
+                    ->whereDoesntHave('trainer.coursesOrders', function($res){
+                        $res->where(function($res){
+                            $res->where('accepted_by_dept_boss', null)
+                                ->Where('accepted_by_community', null);
+                        })
+                        ->orWhere(function($res){
+                            $res->where('accepted_by_dept_boss', true)
+                                ->Where('accepted_by_community', false);
+                        })
+                        ;
+                    })
                     ->get();
             // $users = User::with('trainer')->wheredoesntHave('trainer.coursesOrders', function($res){
             //                     $res->whereHas('trainer.coursesOrders', function ($res) {})
@@ -2146,11 +2157,14 @@ class CommunityController extends Controller
     {
         $requestData = $this->validate($request, [
             "order_id"           => "required|numeric|exists:trainer_courses_orders,id",
+            "note"           => "string|nullable",
         ]);
         try {
+            // return response(['message' => $requestData['note']], 422);
             DB::beginTransaction();
             TrainerCoursesOrders::find($requestData['order_id'])->update([
                 'accepted_by_community' => false,
+                'community_note'        => $requestData['note'],
             ]);
             DB::commit();
             return response(['message' => 'تم رفض الطلب بنجاح'], 200);
@@ -2189,5 +2203,105 @@ class CommunityController extends Controller
             return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
         }
         
+    }
+
+    public function coursesOrdersReportView()
+    {
+        try {
+            $semester = Semester::latest()->first();
+            $users = User::with('trainer.coursesOrders')->has('trainer.coursesOrders')
+                    ->wheredoesntHave('trainer.coursesOrders', function($res){
+                        $res->where(function($res){
+                                $res->where('accepted_by_dept_boss', true)
+                                    ->Where('accepted_by_community', false);
+                            })
+                            ->orWhere(function($res){
+                                $res->where('accepted_by_dept_boss', true)
+                                    ->where('accepted_by_community', null);
+                            })
+                            ->orWhere(function($res){
+                                $res->where('accepted_by_dept_boss', null)
+                                    ->where('accepted_by_community', null);
+                            })
+                            ;
+                    })
+                    // ->whereHas('trainer.coursesOrders', function($res){
+                    //     $res->where('accepted_by_dept_boss', true)
+                    //         ->where('accepted_by_community', true);
+                    // })
+                    ->get();
+            return view('manager.community.trainers.coursesOrdersReport')->with(compact('users'));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', $e);
+        }
+    }
+
+    public function getAcceptedCoursesOrders(Trainer $trainer)
+    {
+        try {
+            $orders = $trainer->coursesOrders()->with('course', 'trainer', 'semester')
+            ->where('accepted_by_dept_boss', 1)
+            ->where('accepted_by_community', 1)
+            ->get();
+            return response(['message' => 'تم جلب البيانات بنجاح', 'orders' => $orders], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . $e);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+    }
+
+    public function contractForm(Trainer $trainer)
+    {
+        try {
+            $semester = Semester::latest()->first();
+            // $users = User::with('trainer.coursesOrders')->has('trainer.coursesOrders')
+            //         ->wheredoesntHave('trainer.coursesOrders', function($res){
+            //             $res->where(function($res){
+            //                     $res->where('accepted_by_dept_boss', true)
+            //                         ->Where('accepted_by_community', false);
+            //                 })
+            //                 ->orWhere(function($res){
+            //                     $res->where('accepted_by_dept_boss', true)
+            //                         ->where('accepted_by_community', null);
+            //                 })
+            //                 ->orWhere(function($res){
+            //                     $res->where('accepted_by_dept_boss', null)
+            //                         ->where('accepted_by_community', null);
+            //                 })
+            //                 ;
+            //         })
+            //         // ->whereHas('trainer.coursesOrders', function($res){
+            //         //     $res->where('accepted_by_dept_boss', true)
+            //         //         ->where('accepted_by_community', true);
+            //         // })
+            //         ->get();
+            $contractData = $trainer->coursesOrders()->with('trainer')
+                ->where('accepted_by_dept_boss', true)
+                ->where('semester_id', $semester->id)
+                ->where('accepted_by_community', true)->get();
+            return view('manager.community.trainers.contractForm')->with(compact('contractData'));
+            // return view('manager.community.trainers.contractFrom')->with(compact('users'));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', $e);
+        }
+    }
+
+    public function contractFormPrint(Trainer $trainer)
+    {
+        try {
+            $print = true;
+            $semester = Semester::latest()->first();
+            $contractData = $trainer->coursesOrders()->with('trainer')
+                ->where('accepted_by_dept_boss', true)
+                ->where('semester_id', $semester->id)
+                ->where('accepted_by_community', true)->get();
+            return view('manager.community.trainers.contractForm')->with(compact('contractData', 'print'));
+            // return view('manager.community.trainers.contractFrom')->with(compact('users'));
+        } catch (Exception $e) {
+            Log::error($e);
+            return back()->with('error', $e);
+        }
     }
 }

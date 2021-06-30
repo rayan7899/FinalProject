@@ -341,7 +341,7 @@
                     </div>
 
                     <div class="col-xs-4">
-                        <h4>المطورين</h4>
+                        <h4>المطورون</h4>
                         <hr>
                         <ul class="list-unstyled text-black-50 pr-3">
                             <li>م. عبدالله النغيمشي</li>

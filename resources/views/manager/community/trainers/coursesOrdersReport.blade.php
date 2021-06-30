@@ -45,8 +45,6 @@
                                     <th>اجمالي الساعات الفصلية</th>
                                     <th>أجر الساعة</th>
                                     <th>المبلغ المستحق</th>
-                                    <th></th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody id="tblOrders">
@@ -56,14 +54,15 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button type="button" class="btn btn-success" onclick="acceptTrainerCourseOrder()">قبول</button>
+                        <button class="btn btn-primary" onclick="showContract()">عرض العقد</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div dir="ltr" class="modal fade" id="rejectModal" data-backdrop="true" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-md" role="document">
+        <div dir="ltr" class="modal fade" id="contractModal" data-backdrop="true" tabindex="-1" role="dialog"
+            aria-labelledby="contractModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div dir="rtl" class="modal-header">
                         <h5 class="modal-title" id="editModalLabel">تعديل</h5>
@@ -72,18 +71,13 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div dir="rtl" class="modal-body">
-                        <div class="row">
-                            <div class="form-group col-md-12">
-                                <label for="divisionNumber">سبب الرفض</label>
-                                <textarea required type="number" class="form-control" id="rejectReason"
-                                    aria-describedby="rejectReason"></textarea>
-                            </div>
-                        </div>
+                    <div dir="rtl" class="modal-body p-0">
+                        <iframe id="contractFram" src="" frameborder="0" class="w-100 p-0 m-0"
+                            style="min-height: 65vh"></iframe>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button onclick="rejectTrainerCourseOrder()" class="btn btn-danger btn-md">رفض</button>
+                        <button onclick="print()" class="btn btn-primary btn-md">طباعة</button>
                     </div>
                 </div>
             </div>
@@ -93,6 +87,10 @@
             <table id="trainersInfo" class="table nowrap display cell-border">
                 <thead>
                     <tr>
+                        <p class="text-center">
+                            تقرير رايات
+                        </p>
+
                         <th class="text-center">#</th>
                         <th class="text-center">رقم الهوية</th>
                         <th>اسم المدرب </th>
@@ -114,7 +112,7 @@
                 <tbody>
                     @if (isset($users))
                         @forelse ($users as $user)
-                            <tr id="{{$user->trainer->id}}">
+                            <tr>
                                 <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
@@ -125,6 +123,7 @@
                                         onclick="showTrainerOrders({{ $user->trainer->id }})"></i></td>
                             </tr>
                         @empty
+                            لايوجد
                         @endforelse
                     @endif
                 </tbody>
@@ -365,9 +364,6 @@
                 }).draw();
             }
 
-            $('#rejectModal').on('hidden.bs.modal', function(){
-                window.rejectReason.value = '';
-            });
         });
 
         function showTrainerOrders(trainer_id) {
@@ -386,17 +382,18 @@
                     Swal.showLoading();
                 },
             });
-            
+            window.trainer_id = trainer_id;
+            // $('#ordersModal').modal();
+
             tblOrders.innerHTML = '';
-            axios.get(`/api/community/get-courses/${trainer_id}`)
+            axios.get(`/api/community/get-accepted-courses/${trainer_id}`)
                 .then((response) => {
-                    window.trainer_id = trainer_id;
                     Swal.close();
                     response.data.orders.forEach(order => {
                         var row = tblOrders.insertRow(0);
                         row.id = order.id;
 
-                        var index=0;
+                        var index = 0;
                         var orderId = row.insertCell(index++);
                         orderId.innerHTML = order.id;
 
@@ -419,36 +416,39 @@
                         credit_hours.innerHTML = order.course.credit_hours;
 
                         var contact_hours = row.insertCell(index++);
-                        contact_hours.innerHTML = order.course_type == 'نظري' ? order.course.theoretical_hours : order.course.practical_hours;
+                        contact_hours.innerHTML = order.course_type == 'نظري' ? order.course.theoretical_hours :
+                            order.course.practical_hours;
 
                         var count_of_weeks = row.insertCell(index++);
-                        count_of_weeks.innerHTML = 14;
+                        count_of_weeks.innerHTML = order.semester.count_of_weeks;
 
                         var exam_hours = row.insertCell(index++);
-                        exam_hours.innerHTML = order.course_type == 'نظري' ? order.course.exam_theoretical_hours : order.course.exam_practical_hours;
+                        exam_hours.innerHTML = order.course_type == 'نظري' ? order.course
+                            .exam_theoretical_hours : order.course.exam_practical_hours;
 
                         var count_of_hours_weeks = row.insertCell(index++);
-                        count_of_hours_weeks.innerHTML = contact_hours.innerHTML*14;
+                        count_of_hours_weeks.innerHTML = contact_hours.innerHTML * order.semester
+                            .count_of_weeks;
 
                         var total_hours = row.insertCell(index++);
-                        total_hours.innerHTML = parseInt(count_of_hours_weeks.innerHTML)+parseInt(exam_hours.innerHTML);
+                        total_hours.innerHTML = parseInt(count_of_hours_weeks.innerHTML) + parseInt(exam_hours
+                            .innerHTML);
 
                         var hour_cost = row.insertCell(index++);
                         hour_cost.innerHTML = order.trainer.qualification == 'دكتوراه' ? 200 : 150;
 
                         var deserved_amount = row.insertCell(index++);
-                        deserved_amount.innerHTML = total_hours.innerHTML*hour_cost.innerHTML;
+                        deserved_amount.innerHTML = total_hours.innerHTML * hour_cost.innerHTML;
 
-                        var reject = row.insertCell(index++);
-                        reject.innerHTML =
-                            `<p data-target="#rejectModal" data-toggle="modal" class="btn btn-outline-danger btn-sm" onclick="window.order_id = ${order.id}">رفض</p>`;
+                        // var reject = row.insertCell(index++);
+                        // reject.innerHTML =
+                        //     `<p data-target="#rejectModal" data-toggle="modal" class="btn btn-outline-danger btn-sm" onclick="">رفض</p>`;
                         // reject.innerHTML =
                         //     `<p class="btn btn-outline-danger btn-sm" onclick="rejectTrainerCourseOrder(${order.id})">رفض</p>`;
                     });
                     $('#ordersModal').modal();
                 })
                 .catch((error) => {
-                    console.log(error);
                     Swal.fire({
                         position: "center",
                         html: "<h4>" + error.response + "</h4>",
@@ -469,8 +469,10 @@
                     // division_number: row.children[5].firstChild.data,
                 });
             });
-            
-            axios.post('{{ route('communityAcceptTrainerCourseOrder') }}', {orders:orders})
+
+            axios.post('{{ route('communityAcceptTrainerCourseOrder') }}', {
+                    orders: orders
+                })
                 .then((response) => {
                     Swal.fire({
                         position: "center",
@@ -479,7 +481,6 @@
                         showConfirmButton: false,
                         timer: 500,
                     });
-                    document.getElementById(window.trainer_id).remove();
                     $('#ordersModal').modal('hide');
                 })
                 .catch((error) => {
@@ -493,8 +494,7 @@
                 });
         }
 
-        function rejectTrainerCourseOrder() {
-            var order_id = window.order_id;
+        function rejectTrainerCourseOrder(order_id) {
             Swal.fire({
                 title: ' هل انت متأكد ؟',
                 // text: " لا يمكن التراجع عن هذا الاجراء",
@@ -507,8 +507,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     axios.post('{{ route('communityRejectTrainerCourseOrder') }}', {
-                            order_id: order_id,
-                            note: window.rejectReason.value
+                            order_id: order_id
                         })
                         .then((response) => {
                             document.getElementById(order_id).remove();
@@ -519,7 +518,6 @@
                                 showConfirmButton: false,
                                 timer: 1000,
                             });
-                            $('#rejectModal').modal('hide');
                         })
                         .catch((error) => {
                             Swal.fire({
@@ -533,5 +531,32 @@
             });
         }
 
+        function showContract() {
+            $('#contractFram').attr('src', `/community/contract-form/${window.trainer_id}`)
+            $('#contractModal').modal();
+        }
+
+        function print() {
+            axios.get(`/community/contract-form/${window.trainer_id}/print`)
+                .then((response)=>{
+                    var win = window.open();
+                    win.document.write(response.data);
+                    win.document.close();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    Swal.fire({
+                        position: "center",
+                        html: "<h4>" + error.response + "</h4>",
+                        icon: "error",
+                        showConfirmButton: true,
+                    });
+                });
+
+            // $("<iframe>")                             
+            //     .hide()                               
+            //     .attr("src", `/community/contract-form/${window.trainer_id}/print`) 
+            //     .appendTo("body");  
+        }
     </script>
 @stop

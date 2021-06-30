@@ -25,7 +25,9 @@
             <div class="card-body p-0 px-5">
                 <div class="p-2">
                     <a href="{{ route('reviewCoursesOrdersView') }}" class="btn btn-outline-primary p-3 m-2"
-                        style="font-size: 16px; width: 220px;">طلبات المدربين</a>
+                        style="font-size: 16px; width: 220px;">تدقيق عقود التدريب</a>
+                    <a href="{{ route('communityCoursesOrdersReportView') }}" class="btn btn-outline-primary p-3 m-2"
+                        style="font-size: 16px; width: 220px;">تقرير عقود التدريب</a>
                 </div>
             </div>
 
