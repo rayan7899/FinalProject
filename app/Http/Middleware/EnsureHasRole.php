@@ -76,6 +76,15 @@ class EnsureHasRole
                     return redirect(route('home'));
                     break;
 
+                case "المشرف العام":
+                    if ($manager === null) {
+                        return redirect(route('home'));
+                    }
+                    if (!$manager->hasRole($role)) {
+                        return redirect(route('home'));
+                    }
+                    break;
+
                 case "متدرب":
                     if ($student === null) {
                         return redirect(route('home'));

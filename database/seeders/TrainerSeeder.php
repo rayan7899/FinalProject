@@ -30,5 +30,22 @@ class TrainerSeeder extends Seeder
             'department_id'    => 1,
             'major_id'         => 1,
         ]);
+        
+
+        $user = User::create([
+            'national_id' => "2000000000",
+            'name'          => "مدرب 2",
+            'email'         => NULL,
+            'phone'         => "0511541171",
+            'password' => Hash::make("123123123")
+        ]);
+
+        $user->trainer()->create([
+            'computer_number'  => '002644',
+            'qualification'    => 'دكتوراه',
+            'program_id'       => 1,
+            'department_id'    => 1,
+            'major_id'         => 1,
+        ]);
     }
 }
