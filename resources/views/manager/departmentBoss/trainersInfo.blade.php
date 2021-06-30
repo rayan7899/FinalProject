@@ -37,8 +37,9 @@
                                     <th>نوع المقرر</th>
                                     <th>عدد المتدربين</th>
                                     <th>رقم الشعبة</th>
-                                    <th>ساعات الاتصال</th>
                                     <th>الساعات المعتمدة</th>
+                                    <th>ساعات الاتصال</th>
+                                    <th>ساعات الإختبار</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
@@ -70,12 +71,12 @@
                         <div class="row">
                             <div class="form-group col-md-6" style="display:block">
                                 <label for="countOfStudents">عدد المتدربين</label>
-                                <input type="number" class="form-control" id="countOfStudents"
+                                <input type="text" class="form-control" id="countOfStudents"
                                     aria-describedby="countOfStudents">
                             </div>
                             <div class="form-group col-md-6" style="display:block">
                                 <label for="divisionNumber">رقم الشعبة</label>
-                                <input required type="number" class="form-control" id="divisionNumber"
+                                <input required type="text" class="form-control" id="divisionNumber"
                                     aria-describedby="divisionNumber">
                             </div>
                         </div>
@@ -88,14 +89,69 @@
             </div>
         </div>
 
+        <div dir="ltr" class="modal fade" id="editExamHoursModal" tabindex="-1" role="dialog" aria-labelledby="editExamHoursModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div dir="rtl" class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">تعديل ساعات الاختبار</h5>
+                        <button style="margin:0px; padding: 0px;" type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div dir="rtl" class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-md-6" style="display:block">
+                                <label for="oldExamHours">ساعات الاختبار الحالية</label>
+                                <input disabled type="text" class="form-control" id="oldExamHours"
+                                    aria-describedby="oldExamHours">
+                            </div>
+                            <div class="form-group col-md-6" style="display:block">
+                                <label for="newExamHours">ساعات الاختبار الجديدة</label>
+                                <input required type="text" class="form-control" id="newExamHours"
+                                    aria-describedby="newExamHours">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
+                        <button onclick="editExamHours()" class="btn btn-primary btn-md">حفظ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div dir="ltr" class="modal fade" id="rejectModal" data-backdrop="true" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div dir="rtl" class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">تعديل</h5>
+                        <button style="margin:0px; padding: 0px;" type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div dir="rtl" class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="divisionNumber">سبب الرفض</label>
+                                <textarea required type="text" class="form-control" id="rejectReason"
+                                    aria-describedby="rejectReason"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
+                        <button onclick="rejectTrainerCourseOrder()" class="btn btn-danger btn-md">رفض</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="table-responsive p-0 bg-white rounded border">
             <table id="trainersInfo" class="table nowrap display cell-border">
                 <thead>
                     <tr>
-                        <p class="text-center">
-                            تقرير رايات
-                        </p>
-
                         <th class="text-center">#</th>
                         <th class="text-center">رقم الهوية</th>
                         <th>اسم المدرب </th>
@@ -117,18 +173,17 @@
                 <tbody>
                     @if (isset($users))
                         @forelse ($users as $user)
-                            <tr>
+                            <tr id="{{$user->trainer->id}}">
                                 <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->computer_number ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->department->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->qualification ?? 'لا يوجد' }} </td>
-                                <td><i class="fa fa-edit fa-lg text-primary btn"
+                                <td><i class="fa fa-list fa-lg text-primary btn"
                                         onclick="showTrainerOrders({{ $user->trainer->id }})"></i></td>
                             </tr>
                         @empty
-                            لايوجد
                         @endforelse
                     @endif
                 </tbody>
@@ -368,6 +423,11 @@
                     });
                 }).draw();
             }
+
+            $('#editExamHoursModal').on('hidden.bs.modal', function(){
+                window.newExamHours.value = '';
+                window.oldExamHours.value = '';
+            });
         });
 
         function showTrainerOrders(trainer_id) {
@@ -386,48 +446,52 @@
                     Swal.showLoading();
                 },
             });
-
-            // $('#ordersModal').modal();
             
             tblOrders.innerHTML = '';
             axios.get(`/api/department-boss/get-courses/${trainer_id}`)
                 .then((response) => {
                     Swal.close();
+                    window.trainer_id = trainer_id;
                     response.data.orders.forEach(order => {
                         var row = tblOrders.insertRow(0);
                         row.id = order.id;
 
-                        var orderId = row.insertCell(0);
+                        var index = 0;
+                        var orderId = row.insertCell(index++);
                         orderId.innerHTML = order.id;
 
-                        var courseName = row.insertCell(1);
+                        var courseName = row.insertCell(index++);
                         courseName.innerHTML = order.course.name;
 
-                        var courseCode = row.insertCell(2);
+                        var courseCode = row.insertCell(index++);
                         courseCode.innerHTML = order.course.code;
 
-                        var courseType = row.insertCell(3);
+                        var courseType = row.insertCell(index++);
                         courseType.innerHTML = order.course_type;
 
-                        var count_of_students = row.insertCell(4);
+                        var count_of_students = row.insertCell(index++);
                         count_of_students.innerHTML = order.count_of_students;
 
-                        var division_number = row.insertCell(5);
+                        var division_number = row.insertCell(index++);
                         division_number.innerHTML = order.division_number;
 
-                        var contact_hours = row.insertCell(6);
-                        contact_hours.innerHTML = order.course_type == 'نظري' ? Math.ceil(order.course.contact_hours/2) : Math.floor(order.course.contact_hours/2);
-
-                        var credit_hours = row.insertCell(7);
+                        var credit_hours = row.insertCell(index++);
                         credit_hours.innerHTML = order.course.credit_hours;
 
-                        var accept = row.insertCell(8);
+                        var contact_hours = row.insertCell(index++);
+                        contact_hours.innerHTML = order.course_type == 'نظري' ? order.course.theoretical_hours : order.course.practical_hours;
+
+                        var exam_hours = row.insertCell(index++);
+                        exam_hours.innerHTML = '<span>'+(order.course_type == 'نظري' ? order.course.exam_theoretical_hours : order.course.exam_practical_hours) + '</span>'
+                            + `<i class="fa fa-edit fa-sm text-primary btn" onclick="showEditExamHoursModal(event, ${order.course.id}, '${order.course_type}', '${order.course.code}')"></i>`;
+
+                        var accept = row.insertCell(index++);
                         accept.innerHTML =
                             `<p data-target="#editModal" data-toggle="modal" class="btn btn-primary btn-sm" onclick="countOfStudents.value=${order.count_of_students}; divisionNumber.value=${order.division_number}; order_id=${order.id}">تعديل</p>`;
 
-                        var reject = row.insertCell(9);
+                        var reject = row.insertCell(index++);
                         reject.innerHTML =
-                            `<p class="btn btn-outline-danger btn-sm" onclick="rejectTrainerCourseOrder(${order.id})">رفض</p>`;
+                            `<p data-target="#rejectModal" data-toggle="modal" class="btn btn-outline-danger btn-sm" onclick="window.order_id = ${order.id}">رفض</p>`;
                     });
                     $('#ordersModal').modal();
                 })
@@ -464,6 +528,7 @@
                         timer: 500,
                     });
                     $('#ordersModal').modal('hide');
+                    document.getElementById(window.trainer_id).remove();
                 })
                 .catch((error) => {
                     console.log(error.response);
@@ -476,7 +541,8 @@
                 });
         }
 
-        function rejectTrainerCourseOrder(order_id) {
+        function rejectTrainerCourseOrder() {
+            var order_id = window.order_id;
             Swal.fire({
                 title: ' هل انت متأكد ؟',
                 // text: " لا يمكن التراجع عن هذا الاجراء",
@@ -488,7 +554,7 @@
                 cancelButtonText: 'الغاء',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.post('{{ route('rejectTrainerCourseOrder') }}', {order_id:order_id})
+                    axios.post('{{ route('rejectTrainerCourseOrder') }}', {order_id:order_id, note: window.rejectReason.value})
                         .then((response) => {
                             document.getElementById(order_id).remove();
                             Swal.fire({
@@ -498,6 +564,7 @@
                                 showConfirmButton: false,
                                 timer: 1000,
                             });
+                            $('#rejectModal').modal('hide');
                         })
                         .catch((error) => {
                             Swal.fire({
@@ -528,5 +595,59 @@
             $('#editModal').modal('hide');
         }
 
+        function showEditExamHoursModal(event, course_id, course_type, course_code) {
+            window.oldExamHours.value = event.target.parentNode.firstChild.innerHTML;
+            window.course_id = course_id;
+            window.course_type = course_type;
+            window.course_code = course_code;
+            console.log();
+            $('#editExamHoursModal').modal();
+        }
+
+        function editExamHours() {
+            Swal.fire({
+                title: ' هل انت متأكد ؟',
+                text: " سيتم تطبيق التغيرر على هذا المقرر في جميع الطلبات",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'نعم',
+                cancelButtonText: 'الغاء',
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    axios.post('{{ route('deptBossEditExamHours') }}', {
+                            id:window.course_id,
+                            course_type: window.course_type,
+                            exam_hours: window.newExamHours.value,
+                        })
+                        .then((response) => {
+                            //FIXME: edit course in other orders hours by javascript
+                            Array.from(tblOrders.children).forEach(row => {
+                                if(row.children[2].innerHTML == window.course_code){
+                                    row.children[8].firstChild.innerHTML = newExamHours.value;
+                                }
+                            });
+                            Swal.fire({
+                                position: "center",
+                                html: "<h4>" + response.data.message + "</h4>",
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1000,
+                            });
+                            $('#editExamHoursModal').modal('hide');
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                position: "center",
+                                html: "<h4>" + error.response.data.message + "</h4>",
+                                icon: "error",
+                                showConfirmButton: true,
+                            });
+                        });
+                }
+            });
+        }
     </script>
 @stop

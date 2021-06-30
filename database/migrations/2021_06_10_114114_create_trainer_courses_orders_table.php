@@ -22,8 +22,10 @@ class CreateTrainerCoursesOrdersTable extends Migration
             $table->integer('count_of_students')->default(0);
             $table->integer('division_number')->default(0);
             $table->boolean("accepted_by_dept_boss")->nullable();
+            $table->text("dept_boss_note")->nullable();
             $table->boolean("accepted_by_community")->nullable();
-            $table->boolean("accepted_by_dean")->nullable();
+            $table->text("community_note")->nullable();
+            $table->boolean("verified")->default(false);
             $table->timestamps();
             $table->foreign('course_id')->references('id')->on('courses')->ondelete('no action');
             $table->foreign('trainer_id')->references('id')->on('trainers');

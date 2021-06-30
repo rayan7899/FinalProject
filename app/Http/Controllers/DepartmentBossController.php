@@ -313,7 +313,6 @@ class DepartmentBossController extends Controller
             $users = User::with('trainer')->whereHas('trainer.coursesOrders.course.major.department', function ($res) use ($myDepartmentsIDs, $semester) {
                 $res->where('accepted_by_dept_boss', null)
                     ->where('accepted_by_community', null)
-                    ->where('accepted_by_dean', null)
                     ->where('semester_id', $semester->id)
                     ->whereIn('departments.id', $myDepartmentsIDs);
             })->get();
@@ -332,8 +331,10 @@ class DepartmentBossController extends Controller
                     array_push($myDepartmentsIDs, $department->id);
                 }
             }
+            $semester = Semester::latest()->first();
             $orders = $trainer->coursesOrders()->with('course')
             ->where('accepted_by_dept_boss', null)
+            ->where('semester_id', $semester->id)
             ->whereHas('course.major.department', function ($res) use ($myDepartmentsIDs) {
                 $res->whereIn('departments.id', $myDepartmentsIDs);
             })->get();
@@ -378,11 +379,13 @@ class DepartmentBossController extends Controller
     {
         $requestData = $this->validate($request, [
             "order_id"           => "required|numeric|exists:trainer_courses_orders,id",
+            "note"               => "string|nullable"
         ]);
         try {
             DB::beginTransaction();
             TrainerCoursesOrders::find($requestData['order_id'])->update([
                 'accepted_by_dept_boss' => false,
+                'dept_boss_note'        => $requestData['note'],
             ]);
             DB::commit();
             return response(['message' => 'تم رفض الطلب بنجاح'], 200);
@@ -390,6 +393,39 @@ class DepartmentBossController extends Controller
             DB::rollBack();
             Log::error($e->getMessage() . $e);
             return response(['message' => ' حدث خطأ غير معروف ' . $e], 422);
+        }
+    }
+
+    public function editExamHours(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "id"                     => "required|numeric|exists:courses,id",
+            "course_type"            => "required|in:عملي,نظري",
+            "exam_hours"             => "required|numeric|min:0|max:20",
+        ]);
+        $course = Course::findOrFail($requestData["id"]);
+        try {
+            if($requestData["course_type"] == 'نظري'){
+                if($requestData["exam_hours"] == $course->exam_theoretical_hours){
+                    return response(['message' => 'عدد ساعات الاختبار مطابق لعدد ساعات الاختبار السابق'], 422);
+                }else{
+                    $course->update([
+                        'exam_theoretical_hours' => $requestData["exam_hours"],
+                    ]);
+                }
+            }else{
+                if($requestData["exam_hours"] == $course->exam_practical_hours){
+                    return response(['message' => 'عدد ساعات الاختبار مطابق لعدد ساعات الاختبار السابق'], 422);
+                }else{
+                    $course->update([
+                        'exam_practical_hours'   => $requestData["exam_hours"],
+                    ]);
+                }
+            }
+            return response(['message' => "تم تعديل ساعات الاختبار بنجاح"], 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return response(['message' => $e->getMessage()], 422);
         }
     }
 
@@ -406,7 +442,6 @@ class DepartmentBossController extends Controller
             $users = User::with('trainer')->whereHas('trainer.coursesOrders.course.major.department', function ($res) use ($myDepartmentsIDs, $semester) {
                 $res->where('accepted_by_dept_boss', true)
                     ->where('accepted_by_community', false)
-                    ->where('accepted_by_dean', null)
                     ->where('semester_id', $semester->id)
                     ->whereIn('departments.id', $myDepartmentsIDs);
             })->get();
@@ -425,9 +460,11 @@ class DepartmentBossController extends Controller
                     array_push($myDepartmentsIDs, $department->id);
                 }
             }
+            $semester = Semester::latest()->first();
             $orders = $trainer->coursesOrders()->with('course')
             ->where('accepted_by_dept_boss', true)
             ->where('accepted_by_community', false)
+            ->where('semester_id', $semester->id)
             ->whereHas('course.major.department', function ($res) use ($myDepartmentsIDs) {
                 $res->whereIn('departments.id', $myDepartmentsIDs);
             })->get();
