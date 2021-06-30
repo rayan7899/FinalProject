@@ -43,7 +43,7 @@
                             <div class="col-md-3">
                                 <label class="pl-1"> رقم الحاسب </label>
                                 <input disabled type="text" class="form-control"
-                                    value="{{ $user->trainer->computer_number ?? 'Error' }}">
+                                    value="{{ $user->trainer->bct_id ?? 'Error' }}">
                             </div>
                             <div class="col-md-3">
                                 <label class="pl-1"> القسم </label>

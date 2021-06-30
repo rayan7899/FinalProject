@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Major;
 use Illuminate\Http\Request;
 use App\Models\Program;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class DepartmentBossController extends Controller
 {
@@ -50,6 +53,10 @@ class DepartmentBossController extends Controller
         $title = "رئيس القسم";
         $links = [
             (object) [
+                "name" => "ادارة المدربين",
+                "url" => route("manageTrainersForm")
+            ],
+            (object) [
                 "name" => "المتدربين المتعثرين",
                 "url" => route("studentCourses")
             ],
@@ -70,15 +77,45 @@ class DepartmentBossController extends Controller
                 "url" => route("rayatReportFormCommunity", ["type" => "departmentBoss"])
             ],
             (object) [
-                "name" => "بيانات المدربين",
+                "name" => "طلبات المقررات مدربين",
                 "url" => route("trainersInfoView")
             ],
             (object) [
                 "name" => "الطلبات المعادة",
                 "url" => route("rejectedTrainerCoursesOrdersView")
             ],
+            (object) [
+                "name" => "مراجعة بيانات المدربين",
+                "url" => route("trainersReview")
+            ],
+
+            (object) [
+                "name" => "تقرير بيانات المدربين",
+                "url" => route("trainerReport")
+            ],
         ];
         return view("manager.departmentBoss.dashboard")->with(compact("links", "title"));
+    }
+
+    public function trainerReport()
+    {
+        try {
+            if (!Auth::user()->isDepartmentManager()) {
+                return view("error")->with('error', 'ليس لديك صلاحيات لدخول الى هذه الصفحة');
+            }
+            $myDepartmentsIDs = [];
+            foreach (Auth::user()->manager->getMyDepartment() as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($myDepartmentsIDs, $department->id);
+                }
+            }
+            $users = User::with('trainer')->whereHas("trainer", function ($res) use ($myDepartmentsIDs) {
+                $res->where("data_updated", true)->where("data_verified", true)->whereIn("department_id", $myDepartmentsIDs);
+            })->get();
+            return view('manager.departmentBoss.trainersReport')->with(compact('users'));
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     //todo response level 2 and upper for dept boss and level 1 only for student affairs
@@ -92,16 +129,6 @@ class DepartmentBossController extends Controller
                 $programs = json_encode(Program::with("departments.majors.courses")->get());
                 return response($programs, 200);
             }
-        } catch (QueryException $e) {
-            Log::error($e->getMessage() . ' ' . $e);
-            return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
-        }
-    }
-
-    public function apiGetMajorCourses(Major $major)
-    {
-        try {
-            return json_encode($major->courses->toArray());
         } catch (QueryException $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
@@ -300,6 +327,275 @@ class DepartmentBossController extends Controller
         }
     }
 
+    public function trainersReview()
+    {
+        try {
+            if (!Auth::user()->isDepartmentManager()) {
+                return view("error")->with('error', 'ليس لديك صلاحيات لدخول الى هذه الصفحة');
+            }
+            $myDepartmentsIDs = [];
+            foreach (Auth::user()->manager->getMyDepartment() as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($myDepartmentsIDs, $department->id);
+                }
+            }
+            $users = User::with('trainer')->whereHas("trainer", function ($res) use ($myDepartmentsIDs) {
+                $res->where("data_updated", true)->where("data_verified", false)->whereIn("department_id", $myDepartmentsIDs);
+            })->get();
+            return view('manager.departmentBoss.trainersReview')->with(compact('users'));
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function trainersReviewStore(Request $request)
+    {
+        $requestData = $request->validate([
+            "national_id"   =>  'required|digits:10',
+            'employer'      =>  'required|string|max:100|min:3',
+            'qualification' =>  'required|in:bachelor,master,doctoral',
+            'decision'      =>  'required|in:accept,reject,edit',
+            'note'          =>  'nullable|string',
+
+
+        ]);
+        try {
+            $myDepartmentsIDs = [];
+            foreach (Auth::user()->manager->getMyDepartment() as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($myDepartmentsIDs, $department->id);
+                }
+            }
+            $user = User::with('trainer')->whereHas("trainer", function ($res) use ($myDepartmentsIDs) {
+                $res->where("data_verified", false)->whereIn("department_id", $myDepartmentsIDs);
+            })->where("national_id", $requestData['national_id'])->first() ?? null;
+            if ($user == null) {
+                return response()->json(['message' => 'خطأ غير معروف'], 422);
+            }
+            switch ($requestData['decision']) {
+                case 'accept':
+                    $user->trainer->data_verified = true;
+                    $user->trainer->data_verify_note = null;
+                    break;
+                case 'edit':
+                    $user->trainer->employer = $requestData['employer'];
+                    $user->trainer->qualification = $requestData['qualification'];
+                    $user->trainer->data_verified = true;
+                    $user->trainer->data_verify_note = null;
+                    break;
+                case 'reject':
+                    $user->trainer->data_updated = false;
+                    $user->trainer->data_verified = false;
+                    $user->trainer->data_verify_note = $requestData['note'];
+                    break;
+                default:
+                    return response()->json(['message' => 'خطأ غير معروف'], 422);
+            }
+            $user->trainer->save();
+            return response()->json(['message' => 'تم معالجة الطلب بنجاح'], 200);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+    }
+
+    // public function getTrainer($national_id)
+    // {
+    //     try {
+
+    //         $user = User::with('trainer')->where("national_id", $national_id)->whereHas("trainer")->first();
+    //         if ($user == null) {
+    //             return back()->with("error", "لا يوجد مدرب بهذا الرقم");
+    //         }
+    //         return view('manager.departmentBoss.trainers.editTrainerForm')->with(compact('user'));
+    //     } catch (Exception $e) {
+    //         Log::error($e->getMessage() . ' ' . $e);
+    //         return view('error')->with("error", "حدث خطا غير معروف");
+    //     }
+    // }
+
+
+    public function getTrainerInfo($id)
+    {
+        try {
+            $deptIds = [];
+            $programs = Auth::user()->manager->getMyDepartment();
+            foreach ($programs as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($deptIds, $department->id);
+                }
+            }
+            $user = User::with('trainer.department')->where("national_id", $id)->whereHas("trainer", function ($res) use ($deptIds) {
+                $res->whereIn('department_id', $deptIds);
+            })->first();
+            if ($user == null) {
+                $user = User::with('trainer.department')->whereHas("trainer", function ($res) use ($id, $deptIds) {
+                    $res->whereIn('department_id', $deptIds)->where("bct_id", $id);
+                })->first();
+                if ($user == null) {
+                    return response()->json(['message' => 'لا يوجد مدرب بهذا الرقم'], 422);
+                }
+            }
+            return response()->json($user, 200);
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return response()->json(["message" => "خطأ غير معروف"]);
+        }
+    }
+
+    public function manageTrainersForm()
+    {
+        try {
+            return view("manager.departmentBoss.trainers.manage");
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+    public function createTrainerForm()
+    {
+        try {
+            $deptIds = [];
+            $programs = Auth::user()->manager->getMyDepartment();
+            foreach ($programs as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($deptIds, $department->id);
+                }
+            }
+            $departments = Department::whereIn('id', $deptIds)->get()->unique('name');
+            return view("manager.departmentBoss.trainers.create")->with(compact('departments'));
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', 'خطأ غير معرف');
+        }
+    }
+
+
+    public function createTrainerStore(Request $request)
+    {
+        $requestData = $this->validate($request, [
+            "national_id"   => 'required|digits:10',
+            'bct_id'        => 'required|digits_between:3,20|unique:trainers,bct_id',
+            'name'          => 'required|string|min:3|max:100',
+            "phone"         => 'nullable|digits_between:9,14',
+            "email"             => "required|email|unique:users,email",
+            'employer'      => 'required|string|max:100|min:3',
+            "department"    => "required|numeric|exists:departments,id",
+            // 'qualification' => 'required|in:bachelor,master,doctoral',
+            // "degree"        => 'required|mimes:pdf,png,jpg,jpeg|max:4000',
+
+
+        ]);
+
+        try {
+            DB::beginTransaction();
+            $user = User::create([
+
+                'national_id' => $requestData['national_id'],
+                'name'        => $requestData['name'],
+                'phone'       => $requestData['phone'],
+                'email'        => $requestData['email'],
+                'password'    => Hash::make("bct12345"),
+            ]);
+
+            $user->trainer()->create([
+                "bct_id"     => $requestData['bct_id'],
+                "department_id" => $requestData['department'],
+                "employer"   => $requestData['employer'],
+
+            ]);
+            // $user->trainer->department_id = $requestData['department'];
+            // $user->trainer->qualification = $requestData['qualification'];
+            // $user->trainer->employer      = $requestData['employer'];
+
+            // $doc_name = 'degree.' . $requestData['degree']->getClientOriginalExtension();
+            // Storage::disk('trainerDocuments')->put('/' . $user->national_id . '/' . $doc_name, File::get($requestData['degree']));
+
+            DB::commit();
+            return redirect(route("createTrainerForm"))->with('success', 'تم اضافة المتدرب بنجاح');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+    public function editTrainerForm()
+    {
+        try {
+            $deptIds = [];
+            $programs = Auth::user()->manager->getMyDepartment();
+            foreach ($programs as $program) {
+                foreach ($program->departments as $department) {
+                    array_push($deptIds, $department->id);
+                }
+            }
+            $departments = Department::whereIn('id', $deptIds)->get()->unique('name');
+            return view("manager.departmentBoss.trainers.edit")->with(compact('departments'));
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with("error", "تعذر ارسال الطلب حدث خطا غير معروف");
+        }
+    }
+    public function editTrainerUpdate(Request $request, User $user)
+    {
+
+        $requestData = $this->validate($request, [
+            "national_id"   => 'required|digits:10',
+            'bct_id'        => 'required|digits_between:3,20|unique:trainers,bct_id,' . $user->trainer->id,
+            'name'          => 'required|string|min:3|max:100',
+            "email"         => "required|email|unique:users,email," . $user->id,
+            "phone"         => 'nullable|digits_between:9,14',
+            "department"    => "required|numeric|exists:departments,id",
+            'qualification' => 'required|in:bachelor,master,doctoral',
+            'employer'      => 'required|string|max:100|min:3',
+            // "degree"        => 'required|mimes:pdf,png,jpg,jpeg|max:4000',
+
+
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $user->national_id = $requestData['national_id'];
+            $user->name = $requestData['name'];
+            $user->phone = $requestData['phone'];
+            $user->email = $requestData['email'];
+            $user->save();
+
+            $user->trainer->bct_id = $requestData['bct_id'];
+            $user->trainer->qualification = $requestData['qualification'];
+            $user->trainer->employer      = $requestData['employer'];
+            if ($user->trainer->department_id != $requestData['department']) {
+                $deptIds = [];
+                $programs = Auth::user()->manager->getMyDepartment();
+                foreach ($programs as $program) {
+                    foreach ($program->departments as $department) {
+                        array_push($deptIds, $department->id);
+                    }
+                }
+                if (!in_array($user->trainer->department_id, $deptIds)) {
+                    $user->trainer->department_id = $requestData['department'];
+                } else {
+                    return back()->with('error', 'لا تملك صلاحية لهذا القسم');
+                }
+            }
+            $user->trainer->save();
+
+            // if (isset($requestData['degree'])) {
+            //     $doc_name = 'degree.' . $requestData['degree']->getClientOriginalExtension();
+            //     Storage::disk('trainerDocuments')->put('/' . $user->national_id . '/' . $doc_name, File::get($requestData['degree']));
+            // }
+
+            DB::commit();
+            return redirect(route("editTrainerForm"))->with('success', 'تم التعديل المتدرب بنجاح');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', ' حدث خطأ غير معروف ' . $e->getCode());
+        }
+    }
+
+
     public function trainersInfoView()
     {
         try {
@@ -344,7 +640,7 @@ class DepartmentBossController extends Controller
             return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
         }
     }
-    
+
     public function acceptTrainerCourseOrder(Request $request)
     {
         $requestData = $this->validate($request, [
@@ -357,7 +653,7 @@ class DepartmentBossController extends Controller
             DB::beginTransaction();
             foreach ($requestData['orders'] as $order) {
                 $courseOrder = TrainerCoursesOrders::find($order['order_id']);
-                if($courseOrder->accepted_by_dept_boss != true){
+                if ($courseOrder->accepted_by_dept_boss != true) {
                     $courseOrder->update([
                         'accepted_by_dept_boss' =>  true,
                         'count_of_students'     =>  $order['count_of_students'],
@@ -372,7 +668,6 @@ class DepartmentBossController extends Controller
             Log::error($e->getMessage() . $e);
             return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
         }
-        
     }
 
     public function rejectTrainerCourseOrder(Request $request)

@@ -82,12 +82,24 @@ Route::middleware(['auth', 'role:مدقق ايصالات'])->group(function () {
 });
 
 
+
 // المدربين
 Route::middleware(['auth', 'role:مدرب'])->group(function () {
+    //Update trainer data
+    Route::get('/trainer/update/new', [TrainerController::class, 'updateNewForm'])->name('updateNewTrainerForm');
+    Route::post('/trainer/update/new', [TrainerController::class, 'updateNewStore'])->name('updateNewTrainerStore');
+});
+
+Route::middleware(['auth', 'role:مدرب', 'trainerUpdated'],)->group(function () {
     Route::get('/trainer', [TrainerController::class, 'dashboard'])->name('trainerDashboard');
+    Route::get('/trainer/info', [TrainerController::class, 'info'])->name('trainerInfo');
+
     Route::get('/trainer/add-courses', [TrainerController::class, 'addCoursesToTrainerView'])->name('addCoursesToTrainerView');
     Route::post('/trainer/add-courses', [TrainerController::class, 'store'])->name('addCoursesToTrainerStore');
     Route::post('/api/trainer/check-division-number', [TrainerController::class, 'isDivisionAvailable'])->name('isDivisionAvailable');
+    // file contraoller (trainer routes)
+    Route::get('trainer/documents/{national_id}/{filename}', [FileController::class, 'get_trainer_document'])->name('trainerGetDocument');
+    // Route::get('trainer/documents/extension/{national_id}/{filename}', [FileController::class, 'get_trainer_file_extension'])->name('getTrainerFileExtention');
 });
 
 // خدمة المجتمع
@@ -206,6 +218,12 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::post('/api/community/reject', [CommunityController::class, 'rejectTrainerCourseOrder'])->name('communityRejectTrainerCourseOrder');
     Route::get('/community/trainers-courses-orders/report', [CommunityController::class, 'coursesOrdersReportView'])->name('communityCoursesOrdersReportView');
     Route::get('/api/community/get-accepted-courses/{trainer}', [CommunityController::class, 'getAcceptedCoursesOrders'])->name('getAcceptedCoursesOrders');
+
+
+    //trainer
+    Route::get('/excel/trainer/import', [ExcelController::class, 'trainerImportForm'])->name('trainerImportForm');
+    Route::post('/excel/trainer/import', [ExcelController::class, 'trainerImportStore'])->name('trainerImportStore');
+    Route::get('community/trainer/documents/{national_id}/{filename}', [FileController::class, 'get_trainer_document'])->name('getTrainerDocument');
 });
 
 
@@ -245,6 +263,8 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
 // روأسا الأقسام
 Route::middleware(['auth'])->group(function () {
     //departmentBoss
+    Route::get('/trainers/report', [DepartmentBossController::class, 'trainerReport'])->name('trainerReport');
+
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
     Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
     Route::get('/api/major/courses/{major}', [DepartmentBossController::class, 'apiGetMajorCourses'])->name('apiGetMajorCourses');
@@ -278,13 +298,17 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/community/students/delete/{user}', [CommunityController::class, 'deleteUser'])->name('deleteUser');
 
 
-    /// rayat
+    // rayat
     Route::get('/community/rayat-report/{type}', [CommunityController::class, 'rayatReportForm'])->name('rayatReportFormCommunity');
     Route::get('api/community/rayat-report/{type}', [CommunityController::class, 'rayatReportApi'])->name('rayatReportCommunityApi');
 
 
-    /// review trainers orders 
+    // review trainers orders 
     Route::get('/department-boss/trainers-info', [DepartmentBossController::class, 'trainersInfoView'])->name('trainersInfoView');
+    Route::get('/department-boss/trainers-review', [DepartmentBossController::class, 'trainersReview'])->name('trainersReview');
+    Route::post('api/department-boss/trainers-review', [DepartmentBossController::class, 'trainersReviewStore'])->name('trainersReviewStore');
+
+    // trainers orders
     Route::get('/api/department-boss/get-courses/{trainer}', [DepartmentBossController::class, 'getCoursesByTrainer'])->name('getCoursesByTrainer');
     Route::post('/api/department-boss/accept', [DepartmentBossController::class, 'acceptTrainerCourseOrder'])->name('acceptTrainerCourseOrder');
     Route::post('/api/department-boss/reject', [DepartmentBossController::class, 'rejectTrainerCourseOrder'])->name('rejectTrainerCourseOrder');
@@ -293,6 +317,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/api/department-boss/accept-rejected-order', [DepartmentBossController::class, 'acceptRejectedTrainerCourseOrder'])->name('acceptRejectedTrainerCourseOrder');
     Route::post('/api/department-boss/edit-exam-hours', [DepartmentBossController::class, 'editExamHours'])->name('deptBossEditExamHours');
 
+    // trainers manage
+    Route::get('/department-boss/trainers/manage', [DepartmentBossController::class, 'manageTrainersForm'])->name('manageTrainersForm');
+    Route::get('/department-boss/trainers/get-trainer', [DepartmentBossController::class, 'getTrainerForm'])->name('getTrainerForm');
+    Route::get('/api/department-boss/trainers/get-trainer/{id}', [DepartmentBossController::class, 'getTrainerInfo'])->name('getTrainerInfo');
+    Route::get('/department-boss/trainers/create', [DepartmentBossController::class, 'createTrainerForm'])->name('createTrainerForm');
+    Route::post('/department-boss/trainers/store', [DepartmentBossController::class, 'createTrainerStore'])->name('createTrainerStore');
+    Route::get('/department-boss/trainers/edit/', [DepartmentBossController::class, 'editTrainerForm'])->name('editTrainerForm');
+    Route::post('/department-boss/trainers/update/{user}', [DepartmentBossController::class, 'editTrainerUpdate'])->name('editTrainerUpdate');
 });
 
 // المتدربين
@@ -303,7 +335,7 @@ Route::middleware(['auth', 'agreement'])->group(function () {
     //Route::get('/students',[StudentController::class,'index'])->name('ShowAllUsers');
     Route::get('/student/edit', [StudentController::class, 'edit'])->name('EditOneStudent');
     Route::post('/student/update', [StudentController::class, 'update'])->name('UpdateOneStudent');
-    Route::get('/student/delete', [StudentController::class, 'destroy'])->name('DeleteOneStudent');
+    // Route::get('/student/delete', [StudentController::class, 'destroy'])->name('DeleteOneStudent');
     Route::post('/student/level', [StudentController::class, 'getStudentOnLevel'])->name('getStudentOnLevel');
     Route::post('/student/update-state/', [StudentController::class, 'updateStudentState'])->name('updateStudentState');
 

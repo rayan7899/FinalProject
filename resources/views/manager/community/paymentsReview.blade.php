@@ -55,9 +55,13 @@
                             <div class="form-group">
                                 <label for="note" class="col-form-label">ملاحظات المدقق</label>
                                 <div id="rejectMsgs">
-                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل.'">الايصال غير معمتد</span>
-                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'الايصال غير واضح.'">الايصال غير واضح</span>
-                                    <span class="btn badge badge-pill badge-info" onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">الايصال مستخدم</span>
+                                    <span class="btn badge badge-pill badge-info"
+                                        onclick="window.note.value = 'ايصال السداد غير معتمد. يجب رفع كشف مختوم من البنك بعملية الايداع أو التحويل.'">الايصال
+                                        غير معمتد</span>
+                                    <span class="btn badge badge-pill badge-info"
+                                        onclick="window.note.value = 'الايصال غير واضح.'">الايصال غير واضح</span>
+                                    <span class="btn badge badge-pill badge-info"
+                                        onclick="window.note.value = 'تم استخدام الايصال مسبقًا.'">الايصال مستخدم</span>
                                 </div>
                                 <div id="acceptMsgs">
                                     <span class="btn badge badge-pill badge-info"
@@ -80,7 +84,7 @@
         </div>
 
         <div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable" style="max-width: 75%" role="document">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="pdfName"></h5>
@@ -97,13 +101,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <iframe id="pdfIfreme" src="#" width="100%" height="600px"></iframe>
-                        <iframe style="display: none; position: fixed;" id="imgIframe"  width="100%" height="100%"></iframe>
-                        <div class="text-center" id="modalImageDev">
+                        <iframe id="pdfIfreme" src="" width="100%" height="600px"></iframe>
+                        <div class="text-center">
                             <img id="modalImage" src="" alt="image" class="img-fluid" />
-                            <h3 class="w-100 bg-secondary my-3 py-3">الايصالات السابقة</h3>
                         </div>
-                        <div class="text-center" id="oldReceipts"></div>
                     </div>
                 </div>
             </div>

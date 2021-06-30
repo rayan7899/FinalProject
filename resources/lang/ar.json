@@ -176,6 +176,9 @@
     "trainee":"متدرب" ,
     "privateState":"ظروف خاصة" ,
     "employeeSon":"ابن منسوب المؤسسة" ,
-    "employee":"منسوب المؤسسة" 
+    "employee":"منسوب المؤسسة",
+    "bachelor":"بكالوريوس" ,
+    "master":"ماجستير" ,
+    "doctoral":"دكتوراه"
 
 }

@@ -65,5 +65,7 @@ class Kernel extends HttpKernel
         'agreement' => \App\Http\Middleware\Agreement::class,
         'role' => \App\Http\Middleware\EnsureHasRole::class,
         'errors'    => \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        'trainerUpdated' => \App\Http\Middleware\TrainerUpdated::class,
+
     ];
 }

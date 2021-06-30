@@ -187,7 +187,7 @@ return [
         'excel_file'            => 'ملف excel',
         'trainee'               => 'متدرب',
         "courses"               => 'المقررات',
-        "national_id"           => 'اسم المستخدم ( رقم الهوية )',
+        "national_id"           => 'رقم الهوية',
         "roles"                 => "الصلاحيات",
         "role"                  => "الصلاحية",
         "code"                  => "الرمز",
@@ -204,6 +204,9 @@ return [
         "practical_hours"       => "عدد الساعات - عملي",
         "exam_theoretical_hours" => "عدد ساعات الاختبار - نطري",
         "exam_practical_hours"  => "عدد ساعات الاختبار - عملي",
+        "bct_id"                => "الرقم الوظيفي",
+        "employer"              => "جهة العمل",
+        "qualification"         => "المؤهل"
 
 
 

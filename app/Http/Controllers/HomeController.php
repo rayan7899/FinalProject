@@ -31,42 +31,26 @@ class HomeController extends Controller
         if ($user->manager !== null) {
             if ($user->manager->hasRole("شؤون المتدربين")) {
                 return redirect(route('affairsDashboard'));
-            }
-            if ($user->manager->hasRole("خدمة المجتمع")) {
+            } elseif ($user->manager->hasRole("خدمة المجتمع")) {
                 return redirect(route('communityDashboard'));
-            }
-            if ($user->manager->hasRole("الإرشاد")) {
+            } elseif ($user->manager->hasRole("الإرشاد")) {
                 return redirect(route('privateDashboard'));
-            }
-            if ($user->manager->hasRole("الإدارة العامة")) {
+            } elseif ($user->manager->hasRole("الإدارة العامة")) {
                 return redirect(route('managementDashboard'));
-            }
-            if ($user->manager->hasRole("مدقق ايصالات")) {
+            } elseif ($user->manager->hasRole("مدقق ايصالات")) {
                 return redirect(route('paymentCheckerDashboard'));
-            }
-            if ($user->manager->hasRole("المشرف العام")) {
+            } elseif ($user->manager->hasRole("المشرف العام")) {
                 return redirect(route('deanDashboard'));
-            }
-            if ($user->isDepartmentManager()) {
+            } elseif ($user->isDepartmentManager()) {
                 return redirect(route('deptBossDashboard'));
             }
             return view("error")->with("error", "لا يوجد لديك اي صلاحيات");
-        } 
-        elseif ($user->trainer !== null){
+        } elseif ($user->trainer !== null) {
             return redirect(route('trainerDashboard'));
-        } 
-        else {
-            // $user = User::with("student")->find(Auth::user()->id);
-            $user = Auth::user();
-            if (Hash::check("bct12345", $user->password)) {
-                return view('student.form')->with(compact('user'));
-            }
-            // if (count($user->student->orders) < 1) {
-            //     return redirect(route('orderForm'));
-            // }
-
+        } elseif ($user->student !== null) {
             $semester = Semester::latest()->first();
             return view('home')->with(compact('user', 'semester'));
         }
+        return view("error")->with("error", "لا يوجد لديك اي صلاحيات");
     }
 }
