@@ -40,7 +40,7 @@
                                 <label class="pl-1"> الاسم </label>
                                 <input disabled type="text" class="form-control" value="{{ $user->name ?? 'Error' }}">
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="pl-1"> رقم الحاسب </label>
                                 <input disabled type="text" class="form-control"
                                     value="{{ $user->trainer->computer_number ?? 'Error' }}">
@@ -50,12 +50,7 @@
                                 <input disabled type="text" class="form-control"
                                     value="{{ $user->trainer->department->name ?? 'Error' }}">
                             </div>
-                            <div class="col-md-2">
-                                <label class="pl-1"> التخصص </label>
-                                <input disabled type="text" class="form-control"
-                                    value="{{ $user->trainer->major->name ?? 'Error' }}">
-                            </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="pl-1"> عدد الاسابيع الفصلية المتوقعة </label>
                                 <input disabled type="text" class="form-control" value="12">
                             </div>
@@ -118,7 +113,7 @@
                                 </select>
                             </div>
                             <div class="card-body p-0">
-                                <table id="originalCoursesTbl" class="table text-nowrap table-hover table-responsive mb-0">
+                                <table id="originalCoursesTbl" class="table table-sm text-nowrap table-hover table-responsive mb-0">
                                     <thead>
                                         <tr>
                                             <th class="text-center">رمز المقرر</th>
@@ -138,41 +133,9 @@
                         </div>
                     </div>
 
-                    <div class="col-1 d-none d-md-block p-0">
+                    <div class="col-1 d-lg-block p-0">
                         <div class="row justify-content-center mt-2">
-                            <a href="#" onclick="addSelectedCourses(event)"
-                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
-                                style="padding-bottom: 2px">
-                                <img style="width: 16px; height: 14px;  margin-bottom: 3px;"
-                                    src="{{ asset('images/left-arrow.png') }}" alt="left-arrow-icon">
-                            </a>
-                        </div>
-                        <div class="row justify-content-center">
-                            <a href="#" onclick="window.removeCourses(event)"
-                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
-                                style="padding-bottom: 2px">
-                                <img style="width: 16px; height: 14px; margin-bottom: 3px;"
-                                    src="{{ asset('images/right-arrow.png') }}" alt="left-arrow-icon">
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="row d-flex justify-content-center justify-items-center d-sm-none p-3">
-                        <div class="col justify-content-center">
-                            <a href="#" onclick="addSelectedCourses(event)"
-                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
-                                style="padding-bottom: 2px">
-                                <img style="width: 16px; height: 14px; transform: rotate(-90deg);"
-                                    src="{{ asset('images/left-arrow.png') }}" alt="left-arrow-icon">
-                            </a>
-                        </div>
-                        <div class="col justify-content-center">
-                            <a href="#" onclick="window.removeCourses(event)"
-                                class="border border-dark rounded w-25 text-center btn btn-light px-2 my-2"
-                                style="padding-bottom: 2px">
-                                <img style="width: 16px; height: 14px; transform: rotate(-90deg);"
-                                    src="{{ asset('images/right-arrow.png') }}" alt="left-arrow-icon">
-                            </a>
+                            <i class="btn btn-outline-secondary fa fa-plus mb-3" onclick="addSelectedCourses(event)"></i>
                         </div>
                     </div>
 
@@ -185,7 +148,7 @@
                                 </div>
                             </div>
                             <div class="card-body p-0">
-                                <table id="trainerTable" class="table mb-0 table-responsive">
+                                <table id="trainerTable" class="table table-sm mb-0 table-responsive">
                                     <thead>
                                         <tr>
                                             <th class="text-center">رمز المقرر</th>
@@ -270,46 +233,48 @@
                         credit_hours.innerHTML = courses[i].credit_hours;
                         contact_hours.innerHTML = courses[i].practical_hours;
                         division.innerHTML =
-                            '<input type="number" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
+                            '<input type="text" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
                         students.innerHTML =
-                            '<input type="number" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
+                            '<input type="text" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
                         tblIndex++;
                     }
 
 
-                    let row2 = tblCourses.insertRow(tblIndex);
-                    row2.setAttribute("data-id", courses[i].id);
-                    row2.setAttribute("data-level", courses[i].level);
-                    row2.setAttribute("data-selected", false);
-                    row2.addEventListener("click", (event) =>
-                        onCourseClicked(event)
-                    );
-                    let code2 = row2.insertCell(0);
-                    let name2 = row2.insertCell(1);
-                    let level2 = row2.insertCell(2);
-                    let type2 = row2.insertCell(3);
-                    let credit_hours2 = row2.insertCell(4);
-                    let contact_hours2 = row2.insertCell(5);
-                    let division2 = row2.insertCell(6);
-                    let students2 = row2.insertCell(7);
-                    code2.className = "text-center";
-                    name2.className = "text-center";
-                    type2.className = "text-center";
-                    credit_hours2.className = "text-center";
-                    contact_hours2.className = "text-center";
-                    division2.className = "text-center";
-                    students2.className = "text-center";
-                    code2.innerHTML = courses[i].code;
-                    name2.innerHTML = courses[i].name;
-                    level2.innerHTML = getStringLevel(courses[i].level);
-                    type2.innerHTML = 'نظري';
-                    credit_hours2.innerHTML = courses[i].credit_hours;
-                    contact_hours2.innerHTML = courses[i].theoretical_hours;
-                    division2.innerHTML =
-                        '<input type="number" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
-                    students2.innerHTML =
-                        '<input type="number" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
-                    tblIndex++;
+                    if(courses[i].theoretical_hours > 0){
+                        let row2 = tblCourses.insertRow(tblIndex);
+                        row2.setAttribute("data-id", courses[i].id);
+                        row2.setAttribute("data-level", courses[i].level);
+                        row2.setAttribute("data-selected", false);
+                        row2.addEventListener("click", (event) =>
+                            onCourseClicked(event)
+                        );
+                        let code2 = row2.insertCell(0);
+                        let name2 = row2.insertCell(1);
+                        let level2 = row2.insertCell(2);
+                        let type2 = row2.insertCell(3);
+                        let credit_hours2 = row2.insertCell(4);
+                        let contact_hours2 = row2.insertCell(5);
+                        let division2 = row2.insertCell(6);
+                        let students2 = row2.insertCell(7);
+                        code2.className = "text-center";
+                        name2.className = "text-center";
+                        type2.className = "text-center";
+                        credit_hours2.className = "text-center";
+                        contact_hours2.className = "text-center";
+                        division2.className = "text-center";
+                        students2.className = "text-center";
+                        code2.innerHTML = courses[i].code;
+                        name2.innerHTML = courses[i].name;
+                        level2.innerHTML = getStringLevel(courses[i].level);
+                        type2.innerHTML = 'نظري';
+                        credit_hours2.innerHTML = courses[i].credit_hours;
+                        contact_hours2.innerHTML = courses[i].theoretical_hours;
+                        division2.innerHTML =
+                            '<input type="text" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
+                        students2.innerHTML =
+                            '<input type="text" class="form-control self-align-top" placeholder="عدد المتدربين"/>';
+                        tblIndex++;
+                    }
                 }
             }
         }

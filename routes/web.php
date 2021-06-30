@@ -4,6 +4,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DeanController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,9 @@ Route::middleware('auth')->group(function () {
     // TODO: disable this in release
     //Logs Viewer
     Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
+    Route::get('/community/contract-form/{trainer}', [CommunityController::class, 'contractForm'])->name('contractForm');
+    Route::get('/community/contract-form/{trainer}/print', [CommunityController::class, 'contractFormPrint'])->name('contractFormPrint');
 });
 
 //الإدارة العامة
@@ -200,6 +204,8 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/api/community/get-courses/{trainer}', [CommunityController::class, 'getCoursesByTrainer'])->name('getCoursesByTrainer');
     Route::post('/api/community/accept', [CommunityController::class, 'acceptTrainerCourseOrder'])->name('communityAcceptTrainerCourseOrder');
     Route::post('/api/community/reject', [CommunityController::class, 'rejectTrainerCourseOrder'])->name('communityRejectTrainerCourseOrder');
+    Route::get('/community/trainers-courses-orders/report', [CommunityController::class, 'coursesOrdersReportView'])->name('communityCoursesOrdersReportView');
+    Route::get('/api/community/get-accepted-courses/{trainer}', [CommunityController::class, 'getAcceptedCoursesOrders'])->name('getAcceptedCoursesOrders');
 });
 
 
@@ -285,6 +291,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/department-boss/rejected-orders', [DepartmentBossController::class, 'rejectedTrainerCoursesOrdersView'])->name('rejectedTrainerCoursesOrdersView');
     Route::get('/api/department-boss/get-rejected-courses/{trainer}', [DepartmentBossController::class, 'getRejectedCoursesByTrainer'])->name('getRejectedCoursesByTrainer');
     Route::post('/api/department-boss/accept-rejected-order', [DepartmentBossController::class, 'acceptRejectedTrainerCourseOrder'])->name('acceptRejectedTrainerCourseOrder');
+    Route::post('/api/department-boss/edit-exam-hours', [DepartmentBossController::class, 'editExamHours'])->name('deptBossEditExamHours');
 
 });
 
@@ -336,6 +343,12 @@ Route::middleware(['auth', 'role:الإرشاد'])->group(function () {
     //Rayan ???????
     // Route::get('/community/students-states', [CommunityController::class, 'studentsStates'])->name('studentsStates');
 
+});
+
+//العميد
+Route::middleware(['auth', 'role:المشرف العام'])->group(function () {
+    Route::get('/dean', [DeanController::class, 'dashboard'])->name('deanDashboard');
+    Route::get('/dean/trainers-contracts/report', [DeanController::class, 'coursesOrdersReportView'])->name('deanCoursesOrdersReportView');
 });
 
 //StudentController - Agreement

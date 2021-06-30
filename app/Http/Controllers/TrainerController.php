@@ -25,7 +25,7 @@ class TrainerController extends Controller
         $title = "مدرب";
         $links = [
             (object) [
-                "name" => "اضافة المقررات",
+                "name" => "إنشاء عقد تدريبي",
                 "url" => route("addCoursesToTrainerView")
             ],
         ];
