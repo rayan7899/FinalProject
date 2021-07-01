@@ -107,7 +107,7 @@ window.getCourses = function (isManageCourses = false) {
         dataType: "json",
         success: function (response) {
             if(isManageCourses){
-                fillManageCoursesTbl(response.courses);
+                fillCoursesTable(response.courses);
             }else{
                 fillAllCoursesTable(response.courses);
             }

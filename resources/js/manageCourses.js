@@ -2,14 +2,14 @@ const {
     default: axios
 } = require("axios");
 
-window.fillManageCoursesTbl = async function (courses) {
+window.getCourses = async function () {
 
-    if (courses == undefined || courses == null) {
+    if (window.courses == undefined || window.courses == null) {
         let major = document.getElementById("major").value;
         if (major !== "") {
             await axios.get('/api/major/courses/' + major)
                 .then((response) => {
-                    courses = response.data;
+                    window.courses = response.data;
                 })
                 .catch((error) => {
                     Swal.fire({
@@ -22,13 +22,16 @@ window.fillManageCoursesTbl = async function (courses) {
         }
     }
 
-   
-    var tblAllCourses = document.getElementById('courses');
     var level = document.getElementById('level');
+    window.fillCoursesTable(window.courses,level.value);
 
+};
+
+window.fillCoursesTable = function (courses,level) {
+    var tblAllCourses = document.getElementById('courses');
     tblAllCourses.innerHTML = '';
     courses.forEach(course => {
-        if (course.level == level.value) {
+        if (course.level == level) {
 
             var row = tblAllCourses.insertRow(0);
             row.setAttribute("data-id", course.id);
@@ -68,14 +71,14 @@ window.fillManageCoursesTbl = async function (courses) {
             examTHours.innerHTML = course.exam_theoretical_hours;
             pHours.innerHTML = course.practical_hours;
             examPHours.innerHTML = course.exam_practical_hours;
-            deleteBtn.innerHTML = '<a href="#" onclick="window.deleteCourse(event,' + course.id + ')">' +
-                '<i class="fa fa-trash fa-lg text-danger" aria-hidden="true"></i></a>';
-            editBtn.innerHTML = '<a href="/department-boss/courses/edit/' + course.id + '">' +
-                '<i class="fa fa-edit fa-lg text-primary" aria-hidden="true"></i></a>';
+            deleteBtn.innerHTML = `<a href="#" onclick="window.deleteCourse(event,'${ course.id }')">
+                <i class="fa fa-trash fa-lg text-danger" aria-hidden="true"></i></a>`;
+            editBtn.innerHTML = `<a href="/${window.type}/courses/edit/${course.id}"> 
+                <i class="fa fa-edit fa-lg text-primary" aria-hidden="true"></i></a>`;
 
         }
     });
-};
+}
 
 window.deleteCourse = function (event, id) {
     if (event !== null) {

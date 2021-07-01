@@ -32,12 +32,6 @@ class CommunityController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        // Semester::latest()->first()->update([
-        //     'count_of_weeks' => 12,
-        //     'name'          => '1442/1443',
-        //     'contract_date' => '1442/11/1'
-        // ]);
-        // dd(Semester::all());
         // try {
         //     DB::beginTransaction();
         //     if (Role::where("name", "=", "الدراسات العامة - بكالوريوس ")->doesntExist()) {
@@ -70,8 +64,8 @@ class CommunityController extends Controller
         //             $course->delete();
         //         }
         //     }
-            
-            
+
+
         //     if (Role::where("name", "=", "الدراسات العامة - دبلوم ")->doesntExist()) {
         //         $role = Role::create(['name' => 'الدراسات العامة - دبلوم ']);
 
@@ -136,8 +130,8 @@ class CommunityController extends Controller
         //             $course->delete();
         //         }
         //     }
-            
-            
+
+
         //     if (Role::where("name", "=", "اللغة الإنجليزية - دبلوم")->doesntExist()) {
         //         $role = Role::create(['name' => 'اللغة الإنجليزية - دبلوم']);
 
@@ -1520,9 +1514,9 @@ class CommunityController extends Controller
             "credit_hours"           => "required|numeric|min:1|max:20",
             "contact_hours"          => "required|numeric|min:1|max:20",
             "theoretical_hours"      => "required|numeric|min:1|max:20",
-            "practical_hours"        => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:0|max:20",
             "exam_theoretical_hours" => "required|numeric|min:1|max:20",
-            "exam_practical_hours"   => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:0|max:20",
         ]);
         $major = Major::findOrFail($requestData["major"]);
 
@@ -1562,7 +1556,8 @@ class CommunityController extends Controller
 
     public function editCourseForm(Course $course)
     {
-        return view("manager.community.courses.edit")->with(compact('course'));
+        $programs = json_encode(Program::with("departments.majors.courses")->get());
+        return view("manager.community.courses.edit")->with(compact('programs', 'course'));
     }
 
 
@@ -1578,12 +1573,12 @@ class CommunityController extends Controller
             "credit_hours"           => "required|numeric|min:1|max:20",
             "contact_hours"          => "required|numeric|min:1|max:20",
             "theoretical_hours"      => "required|numeric|min:1|max:20",
-            "practical_hours"        => "required|numeric|min:1|max:20",
+            "practical_hours"        => "required|numeric|min:0|max:20",
             "exam_theoretical_hours" => "required|numeric|min:1|max:20",
-            "exam_practical_hours"   => "required|numeric|min:1|max:20",
+            "exam_practical_hours"   => "required|numeric|min:0|max:20",
         ]);
-        $course = Course::findOrFail($requestData["id"]);
-        $major = Major::find($requestData["major"] ?? null);
+        $course = Course::with('major.department.program')->findOrFail($requestData["id"]);
+        $major = Major::with('courses')->find($requestData["major"] ?? null);
         try {
             $course->update([
                 'name'                   => $requestData["name"],
@@ -1597,7 +1592,13 @@ class CommunityController extends Controller
                 'exam_theoretical_hours' => $requestData["exam_theoretical_hours"],
                 'exam_practical_hours'   => $requestData["exam_practical_hours"],
             ]);
-            return redirect(route("coursesIndex"))->with("success", "تم تعديل المقرر بنجاح");
+            $courses = $course->major->courses;
+
+            return redirect(route("coursesIndex"))->with([
+                'success' => 'تم تعديل المقرر بنجاح',
+                'courses' => json_encode($courses),
+                'course' => json_encode($course)
+            ]);
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return back()->with("error", "حدث خطأ غير معروف تعذر تعديل المقرر");
@@ -2026,7 +2027,7 @@ class CommunityController extends Controller
                 } else {
                     return response(json_encode(['message' => 'خطأ غير معروف']), 422);
                 }
-                $creditHoursCost += $creditHourCost*$order->requested_hours;
+                $creditHoursCost += $creditHourCost * $order->requested_hours;
             }
 
             DB::beginTransaction();
