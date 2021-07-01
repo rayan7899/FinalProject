@@ -26,6 +26,8 @@
                 <div class="p-2">
                     <a href="{{ route('newSemester') }}" class="btn btn-outline-primary p-3 m-2"
                         style="font-size: 16px; width: 220px;">فصل تدريبي جديد</a>
+                    <a href="{{ route('editSemesterView') }}" class="btn btn-outline-primary p-3 m-2"
+                        style="font-size: 16px; width: 220px;">تعديل الفصل الحالي</a>
                     <a href="#" class="btn btn-outline-primary p-3 m-2" onclick="openModal()"
                         style="font-size: 16px; width: 220px;">اتاحة\ايقاف اضافة مقررات</a>
                 </div>

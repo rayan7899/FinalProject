@@ -198,6 +198,8 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/new-semester', [CommunityController::class, 'newSemesterForm'])->name('newSemesterForm');
     Route::post('/community/new-semester', [CommunityController::class, 'newSemester'])->name('newSemester');
     Route::post('/community/toggle-allow-add-hours', [CommunityController::class, 'toggleAllowAddHours'])->name('toggleAllowAddHours');
+    Route::get('/community/edit-semester', [CommunityController::class, 'editSemesterView'])->name('editSemesterView');
+    Route::post('/community/edit-semester', [CommunityController::class, 'editSemester'])->name('editSemester');
 
     // Old users
     // Route::get('/excel/old/add', [ExcelController::class, 'importOldForm'])->name('OldForm');

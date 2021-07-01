@@ -1025,6 +1025,17 @@ class CommunityController extends Controller
     }
 
 
+    public function editSemesterView()
+    {
+        try {
+            $semester = Semester::latest()->first();
+            return view("manager.community.semesters.editSemester")->with(compact('semester'));
+        } catch (Exception $e) {
+            return back()->with('error', $e);
+        }
+    }
+
+
 
     public function semesterDashBoard()
     {
@@ -1033,6 +1044,46 @@ class CommunityController extends Controller
             return view("manager.community.semesters.manage")->with(compact('semester'));
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
+            return back()->with('error', 'حدث خطأ غير معروف');
+        }
+    }
+
+    public function editSemester(Request $request)
+    {
+
+        $requestData = $this->validate($request, [
+            "national_id"     => "required|digits:10",
+            'password'        => 'required|string|min:8',
+            'start_date'      => 'required|date_format:Y-m-d',
+            'end_date'        => 'required|date_format:Y-m-d',
+            'contract_date'   => 'required|date_format:Y-m-d',
+            'semester_name'            => 'required|string',
+            "count_of_weeks"  => "required|numeric",
+
+        ]);
+        try {
+            $user = Auth::user();
+            if (!$user->hasRole("خدمة المجتمع")) {
+                return back()->with("error", "ليس لديك صلاحيات لتنفيذ هذا الامر");
+            }
+
+            if (!Hash::check($requestData["password"], Auth::user()->password) || $requestData["national_id"] != Auth::user()->national_id) {
+                return  back()->with('error', 'اسم المستخدم او كلمة المرور غير صحيحة');
+            }
+
+            DB::beginTransaction();
+                Semester::latest()->first()->update([
+                    "start_date"      => $requestData["start_date"],
+                    "end_date"        => $requestData["end_date"],
+                    "name"            => $requestData["semester_name"],
+                    "contract_date"   => $requestData["contract_date"],
+                    "count_of_weeks"  => $requestData["count_of_weeks"],
+                ]);
+            DB::commit();
+            return back()->with("success", "تم معالجة الطلب بنجاح");
+        } catch (Exception $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            DB::rollBack();
             return back()->with('error', 'حدث خطأ غير معروف');
         }
     }
