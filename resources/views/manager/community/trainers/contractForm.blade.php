@@ -52,9 +52,9 @@
             <tr>
                 <td>{{$contractData[0]->trainer->user->name ?? 'لا يوجد'}}</td>
                 <td>{{$contractData[0]->trainer->user->national_id ?? 'لا يوجد'}}</td>
-                <td>{{$contractData[0]->trainer->computer_number ?? 'لا يوجد'}}</td>
+                <td>{{$contractData[0]->trainer->bct_id ?? 'لا يوجد'}}</td>
                 <td>{{$contractData[0]->trainer->department->name ?? 'لا يوجد'}}</td>
-                <td>{{$contractData[0]->trainer->qualification ?? 'لا يوجد'}}</td>
+                <td>{{__($contractData[0]->trainer->qualification) ?? 'لا يوجد'}}</td>
             </tr>
         </tbody>
     </table>
@@ -85,7 +85,7 @@
                     @forelse ($contractData as $courseOrder)
                         @php
                             $count_of_weeks = $courseOrder->semester->count_of_weeks;
-                            $hour_cost = $courseOrder->trainer->qualification == 'دكتوراه' ? 200 : 150;
+                            $hour_cost = $courseOrder->trainer->qualification == 'doctoral' ? 200 : 150;
                             $contact_hours = $courseOrder->course_type == 'نظري' ? $courseOrder->course->theoretical_hours : $courseOrder->course->practical_hours;
                             $exam_hours = $courseOrder->course_type == 'نظري' ? $courseOrder->course->exam_theoretical_hours : $courseOrder->course->exam_practical_hours;
                             $deserved_amount = ($count_of_weeks*$contact_hours+$exam_hours)*$hour_cost;

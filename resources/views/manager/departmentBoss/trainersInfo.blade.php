@@ -179,7 +179,7 @@
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->bct_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->department->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->trainer->qualification ?? 'لا يوجد' }} </td>
+                                <td>{{ __($user->trainer->qualification) ?? 'لا يوجد' }} </td>
                                 <td><i class="fa fa-list fa-lg text-primary btn"
                                         onclick="showTrainerOrders({{ $user->trainer->id }})"></i></td>
                             </tr>
@@ -623,9 +623,8 @@
                             exam_hours: window.newExamHours.value,
                         })
                         .then((response) => {
-                            //FIXME: edit course in other orders hours by javascript
                             Array.from(tblOrders.children).forEach(row => {
-                                if(row.children[2].innerHTML == window.course_code){
+                                if(row.children[2].innerHTML == window.course_code && row.children[3].innerHTML == window.course_type){
                                     row.children[8].firstChild.innerHTML = newExamHours.value;
                                 }
                             });

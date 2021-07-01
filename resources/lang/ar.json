@@ -179,6 +179,8 @@
     "employee":"منسوب المؤسسة",
     "bachelor":"بكالوريوس" ,
     "master":"ماجستير" ,
-    "doctoral":"دكتوراه"
+    "doctoral":"دكتوراه",
+    "theoretical":"نظري",
+    "practical":"عملي"
 
 }

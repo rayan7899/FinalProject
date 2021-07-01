@@ -419,7 +419,7 @@
                 case "accept":
                     Swal.fire({
                         title: ' هل انت متأكد ؟',
-                        text: "سيم حذف المقر ، لا يمكن التراجع عن هذا الاجراء",
+                        // text: "سيم حذف المقر ، لا يمكن التراجع عن هذا الاجراء",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',

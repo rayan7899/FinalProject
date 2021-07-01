@@ -32,7 +32,12 @@ class CommunityController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        
+        // Semester::latest()->first()->update([
+        //     'count_of_weeks' => 12,
+        //     'name'          => '1442/1443',
+        //     'contract_date' => '1442/11/1'
+        // ]);
+        // dd(Semester::all());
         // try {
         //     DB::beginTransaction();
         //     if (Role::where("name", "=", "الدراسات العامة - بكالوريوس ")->doesntExist()) {

@@ -118,9 +118,9 @@
                                 <th scope="row">{{ $loop->index + 1 ?? '' }}</th>
                                 <td>{{ $user->national_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->trainer->computer_number ?? 'لا يوجد' }} </td>
+                                <td>{{ $user->trainer->bct_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->department->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->trainer->qualification ?? 'لا يوجد' }} </td>
+                                <td>{{ __($user->trainer->qualification) ?? 'لا يوجد' }} </td>
                                 <td><i class="fa fa-list fa-lg text-primary btn"
                                         onclick="showTrainerOrders({{ $user->trainer->id }})"></i></td>
                             </tr>
@@ -422,19 +422,19 @@
                         contact_hours.innerHTML = order.course_type == 'نظري' ? order.course.theoretical_hours : order.course.practical_hours;
 
                         var count_of_weeks = row.insertCell(index++);
-                        count_of_weeks.innerHTML = 14;
+                        count_of_weeks.innerHTML = order.semester.count_of_weeks;
 
                         var exam_hours = row.insertCell(index++);
                         exam_hours.innerHTML = order.course_type == 'نظري' ? order.course.exam_theoretical_hours : order.course.exam_practical_hours;
 
                         var count_of_hours_weeks = row.insertCell(index++);
-                        count_of_hours_weeks.innerHTML = contact_hours.innerHTML*14;
+                        count_of_hours_weeks.innerHTML = contact_hours.innerHTML*order.semester.count_of_weeks;
 
                         var total_hours = row.insertCell(index++);
                         total_hours.innerHTML = parseInt(count_of_hours_weeks.innerHTML)+parseInt(exam_hours.innerHTML);
 
                         var hour_cost = row.insertCell(index++);
-                        hour_cost.innerHTML = order.trainer.qualification == 'دكتوراه' ? 200 : 150;
+                        hour_cost.innerHTML = order.trainer.qualification == 'doctoral' ? 200 : 150;
 
                         var deserved_amount = row.insertCell(index++);
                         deserved_amount.innerHTML = total_hours.innerHTML*hour_cost.innerHTML;

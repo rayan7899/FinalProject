@@ -77,7 +77,7 @@ class DepartmentBossController extends Controller
                 "url" => route("rayatReportFormCommunity", ["type" => "departmentBoss"])
             ],
             (object) [
-                "name" => "طلبات المقررات مدربين",
+                "name" => "تدقيق عقود التدريب",
                 "url" => route("trainersInfoView")
             ],
             (object) [
