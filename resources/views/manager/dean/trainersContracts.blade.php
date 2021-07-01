@@ -117,7 +117,7 @@
                                 <td>{{ $user->name ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->bct_id ?? 'لا يوجد' }} </td>
                                 <td>{{ $user->trainer->department->name ?? 'لا يوجد' }} </td>
-                                <td>{{ $user->trainer->qualification ?? 'لا يوجد' }} </td>
+                                <td>{{ __($user->trainer->qualification) ?? 'لا يوجد' }} </td>
                                 <td><i class="fa fa-edit fa-lg text-primary btn"
                                         onclick="showContract({{ $user->trainer->id }})"></i></td>
                             </tr>

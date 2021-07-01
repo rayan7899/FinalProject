@@ -302,6 +302,22 @@
                                             </li> --}}
                                         </ul>
                                     @endif
+
+                                    <!-- dean -->
+                                    @if (Auth::user()->hasRole('المشرف العام'))
+                                        <ul class="navbar-nav">
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>المشرف العام</li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('deanDashboard') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('deanCoursesOrdersReportView') }}">تقرير عقود التدريب</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    @endif
                                     <li class="navbar-nav">
                                         <a class="nav-link" href="{{ route('home') }}">الرئيسية</a>
                                     </li>
