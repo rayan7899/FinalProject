@@ -87,10 +87,6 @@
             <table id="trainersInfo" class="table nowrap display cell-border">
                 <thead>
                     <tr>
-                        <p class="text-center">
-                            تقرير رايات
-                        </p>
-
                         <th class="text-center">#</th>
                         <th class="text-center">رقم الهوية</th>
                         <th>اسم المدرب </th>
