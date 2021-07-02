@@ -76,7 +76,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">الغاء</button>
-                        <button onclick="" class="btn btn-primary btn-md">طباعة</button>
+                        {{-- <button onclick="print()" class="btn btn-primary btn-md">طباعة</button> --}}
                     </div>
                 </div>
             </div>
@@ -520,9 +520,35 @@
         }
 
         function showContract(trainer_id) {
+            window.trainer_id = trainer_id;
             $('#contractFram').attr('src', `/community/contract-form/${trainer_id}`)
             $('#contractModal').modal();
         }
+
+        // async function print() {
+        //     // axios.get(`/community/contract-form/${window.trainer_id}/print`)
+        //     //     .then((response)=>{
+        //     //         var win = window.open(`/community/contract-form/${window.trainer_id}/print`, '_blank', '', 'false');
+        //     //         win.document.write(response.data);
+        //     //         win.document.close();
+        //     //     })
+        //     //     .catch((error) => {
+        //     //         console.log(error);
+        //     //         Swal.fire({
+        //     //             position: "center",
+        //     //             html: "<h4>" + error.response + "</h4>",
+        //     //             icon: "error",
+        //     //             showConfirmButton: true,
+        //     //         });
+        //     //     });
+        //     $("<iframe>")                             
+        //         .hide()                               
+        //         .attr("src", `/community/contract-form/${window.trainer_id}/print`) 
+        //         .appendTo("body");  
+        //     await new Promise(resolve => setTimeout(resolve, 3000));
+        //     document.getElementsByTagName('body')[0].lastElementChild.remove();
+            
+        // }
 
     </script>
 @stop
