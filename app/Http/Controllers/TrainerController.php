@@ -146,23 +146,27 @@ class TrainerController extends Controller
     {
         try {
             $isDivisionAvailable = TrainerCoursesOrders::whereIn('division_number', $request->division_numbers)
-            ->where(function($res){
-                $res->where('accepted_by_dept_boss', true)
-                    ->where('accepted_by_community', true);
-            })
-            ->orWhere(function($res){
-                $res->where('accepted_by_dept_boss', null)
-                    ->where('accepted_by_community', null);
-            })
-            ->orWhere(function($res){
-                $res->where('accepted_by_dept_boss', true)
-                    ->where('accepted_by_community', null);
-            })
-            ->orWhere(function($res){
-                $res->where('accepted_by_dept_boss', true)
-                    ->where('accepted_by_community', false);
-            })
-            ->exists();
+                ->where(function($res){
+                    $res->where('accepted_by_dept_boss', true)
+                        ->orWhere('accepted_by_dept_boss', null);
+                })
+                // ->where(function($res){
+                //     $res->where('accepted_by_dept_boss', true)
+                //         ->where('accepted_by_community', true);
+                // })
+                // ->orWhere(function($res){
+                //     $res->where('accepted_by_dept_boss', null)
+                //         ->where('accepted_by_community', null);
+                // })
+                // ->orWhere(function($res){
+                //     $res->where('accepted_by_dept_boss', true)
+                //         ->where('accepted_by_community', null);
+                // })
+                // ->orWhere(function($res){
+                //     $res->where('accepted_by_dept_boss', true)
+                //         ->where('accepted_by_community', false);
+                // })
+                ->exists();
             return response(['message' => $isDivisionAvailable], 200);
         } catch (Exception $e) {
             Log::error($e->getMessage() . $e);
