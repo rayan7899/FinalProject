@@ -454,41 +454,41 @@
                 });
         }
 
-        function acceptTrainerCourseOrder() {
+        // function acceptTrainerCourseOrder() {
 
-            var orders = [];
+        //     var orders = [];
 
-            Array.from(tblOrders.children).forEach(row => {
-                orders.push({
-                    order_id: row.id,
-                    // count_of_students: row.children[4].firstChild.data,
-                    // division_number: row.children[5].firstChild.data,
-                });
-            });
+        //     Array.from(tblOrders.children).forEach(row => {
+        //         orders.push({
+        //             order_id: row.id,
+        //             // count_of_students: row.children[4].firstChild.data,
+        //             // division_number: row.children[5].firstChild.data,
+        //         });
+        //     });
 
-            axios.post('{{ route('communityAcceptTrainerCourseOrder') }}', {
-                    orders: orders
-                })
-                .then((response) => {
-                    Swal.fire({
-                        position: "center",
-                        html: "<h4>" + response.data.message + "</h4>",
-                        icon: "success",
-                        showConfirmButton: false,
-                        timer: 500,
-                    });
-                    $('#ordersModal').modal('hide');
-                })
-                .catch((error) => {
-                    console.log(error.response);
-                    Swal.fire({
-                        position: "center",
-                        html: "<h4>" + error.response.data + "</h4>",
-                        icon: "error",
-                        showConfirmButton: true,
-                    });
-                });
-        }
+        //     axios.post('{{ route('communityAcceptTrainerCourseOrder') }}', {
+        //             orders: orders
+        //         })
+        //         .then((response) => {
+        //             Swal.fire({
+        //                 position: "center",
+        //                 html: "<h4>" + response.data.message + "</h4>",
+        //                 icon: "success",
+        //                 showConfirmButton: false,
+        //                 timer: 500,
+        //             });
+        //             $('#ordersModal').modal('hide');
+        //         })
+        //         .catch((error) => {
+        //             console.log(error.response);
+        //             Swal.fire({
+        //                 position: "center",
+        //                 html: "<h4>" + error.response.data + "</h4>",
+        //                 icon: "error",
+        //                 showConfirmButton: true,
+        //             });
+        //         });
+        // }
 
         function rejectTrainerCourseOrder(order_id) {
             Swal.fire({
@@ -532,27 +532,29 @@
             $('#contractModal').modal();
         }
 
-        function print() {
-            axios.get(`/community/contract-form/${window.trainer_id}/print`)
-                .then((response)=>{
-                    var win = window.open();
-                    win.document.write(response.data);
-                    win.document.close();
-                })
-                .catch((error) => {
-                    console.log(error);
-                    Swal.fire({
-                        position: "center",
-                        html: "<h4>" + error.response + "</h4>",
-                        icon: "error",
-                        showConfirmButton: true,
-                    });
-                });
-
-            // $("<iframe>")                             
-            //     .hide()                               
-            //     .attr("src", `/community/contract-form/${window.trainer_id}/print`) 
-            //     .appendTo("body");  
+        async function print() {
+            // axios.get(`/community/contract-form/${window.trainer_id}/print`)
+            //     .then((response)=>{
+            //         var win = window.open(`/community/contract-form/${window.trainer_id}/print`, '_blank', '', 'false');
+            //         win.document.write(response.data);
+            //         win.document.close();
+            //     })
+            //     .catch((error) => {
+            //         console.log(error);
+            //         Swal.fire({
+            //             position: "center",
+            //             html: "<h4>" + error.response + "</h4>",
+            //             icon: "error",
+            //             showConfirmButton: true,
+            //         });
+            //     });
+            $("<iframe>")                             
+                .hide()                               
+                .attr("src", `/community/contract-form/${window.trainer_id}/print`) 
+                .appendTo("body");  
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            document.getElementsByTagName('body')[0].lastElementChild.remove();
+            
         }
     </script>
 @stop

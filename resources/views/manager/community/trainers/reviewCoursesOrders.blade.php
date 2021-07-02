@@ -486,7 +486,7 @@
                     console.log(error.response);
                     Swal.fire({
                         position: "center",
-                        html: "<h4>" + error.response.data + "</h4>",
+                        html: "<h4>" + error.response.data.error + "</h4>",
                         icon: "error",
                         showConfirmButton: true,
                     });
