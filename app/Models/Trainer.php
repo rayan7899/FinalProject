@@ -33,4 +33,14 @@ class Trainer extends Model
     {
         return $this->hasMany(TrainerCoursesOrders::class);
     }
+
+    public function hasRejectedOrder()
+    {
+        return $this->coursesOrders()
+            ->Where(function($res){
+                $res->where('accepted_by_dept_boss', true)
+                    ->Where('accepted_by_community', false);
+            })
+            ->exists();
+    }
 }

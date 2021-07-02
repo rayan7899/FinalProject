@@ -2117,6 +2117,10 @@ class CommunityController extends Controller
             DB::beginTransaction();
             foreach ($requestData['orders'] as $order) {
                 $courseOrder = TrainerCoursesOrders::find($order['order_id']);
+                if($courseOrder->trainer->hasRejectedOrder()){
+                    return response(['error' => 'لا يمكن قبول الطلب يوجد طلبات قيد التدقيق لدى هذا المدرب'], 422);
+                }
+                
                 if($courseOrder->accepted_by_community != true){
                     $courseOrder->update([
                         'accepted_by_community' =>  true,
@@ -2130,7 +2134,7 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage() . $e);
-            return response(['error' => ' حدث خطأ غير معروف ' . $e], 422);
+            return response(['error' => ' حدث خطأ غير معروف ' . $e->getMessage()], 422);
         }
         
     }
