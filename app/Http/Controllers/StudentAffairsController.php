@@ -135,18 +135,18 @@ class StudentAffairsController extends Controller
                     });
             })->get();
 
-            $usersCount = count($users);
-            for ($i = 0; $i < $usersCount; $i++) {
-                for ($j = 0; $j < count($users[$i]->student->orders); $j++) {
-                    if ($users[$i]->student->traineeState != "privateState") {
-                        $order = $users[$i]->student->orders[$j];
-                        if ($order->transaction_id == null && $users[$i]->student->wallet < $order->amount) {
-                            unset($users[$i]);
-                            break;
-                        }
-                    }
-                }
-            }
+            // $usersCount = count($users);
+            // for ($i = 0; $i < $usersCount; $i++) {
+            //     for ($j = 0; $j < count($users[$i]->student->orders); $j++) {
+            //         if ($users[$i]->student->traineeState != "privateState") {
+            //             $order = $users[$i]->student->orders[$j];
+            //             if ($order->transaction_id == null && $users[$i]->student->wallet < $order->amount) {
+            //                 unset($users[$i]);
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
 
             $fetch_errors = [];
             for ($i = 0; $i < count($users); $i++) {
