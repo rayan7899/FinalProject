@@ -72,7 +72,7 @@
                             @if($user->student->level == 1) 
                                 <option value="not-opened-class" @if ($user->student->credit_hours == 0) disabled @endif>لم تتاح الشعبة</option> 
                             @endif
-                            <option value="exception" @if ($user->student->credit_hours == 0) disabled @endif>استثناء</option>
+                            {{-- <option value="exception" @if ($user->student->credit_hours == 0) disabled @endif>استثناء</option> --}}
                             <option value="graduate" @if ($user->student->level < 5) disabled @endif>خريج</option>
                             <option value="get-wallet-amount" @if ($user->student->wallet == 0) disabled @endif>استرداد مبلغ المحفظة</option>
                         </select>
