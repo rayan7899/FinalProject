@@ -43,7 +43,6 @@ Route::middleware('auth')->group(function () {
     // });
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
-    Route::get('/deptBoss', [DepartmentBossController::class, 'dashboard'])->name('deptBossDashboard');
 
     // FIXME: this route is not used anywhere, shall we remove it?
     Route::get('/documents/{national_id}', [FileController::class, 'student_documents'])->name('GetStudentDocuments');
@@ -263,8 +262,9 @@ Route::middleware(['auth', 'role:شؤون المتدربين'])->group(function 
 });
 
 // روأسا الأقسام
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
     //departmentBoss
+    Route::get('/deptBoss', [DepartmentBossController::class, 'dashboard'])->name('deptBossDashboard');
     Route::get('/trainers/report', [DepartmentBossController::class, 'trainerReport'])->name('trainerReport');
 
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');

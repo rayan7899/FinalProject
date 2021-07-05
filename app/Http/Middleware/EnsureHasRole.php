@@ -69,11 +69,9 @@ class EnsureHasRole
                     if ($manager === null) {
                         return redirect(route('home'));
                     }
-                    if (!$manager->isDepartmentManager($role)) {
+                    if (!$manager->isDepartmentManager()) {
                         return redirect(route('home'));
                     }
-                    // FIXME: impelement this role
-                    return redirect(route('home'));
                     break;
 
                 case "المشرف العام":

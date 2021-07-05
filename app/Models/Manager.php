@@ -53,6 +53,9 @@ class Manager extends Model
             // }else{
             //     dump( $name);
             // }
+            if($hasRole){
+                return true;
+            }
         }
     //    exit;
         return $hasRole;
