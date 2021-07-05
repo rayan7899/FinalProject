@@ -330,6 +330,7 @@ class DepartmentBossController extends Controller
                     "has_imported_docs" => false,
                     "major_id" => $requestData['major'],
                     "level"    => $requestData['level'],
+                    "final_accepted"    => true,
                 ]);
                 DB::commit();
                 return redirect(route("deptCreateStudentForm"))->with('success', 'تم اضافة المتدرب بنجاح');

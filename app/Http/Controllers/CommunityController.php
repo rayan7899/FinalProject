@@ -269,6 +269,7 @@ class CommunityController extends Controller
                     "has_imported_docs" => false,
                     "major_id" => $requestData['major'],
                     "level"    => $requestData['level'],
+                    "final_accepted"    => true,
                 ]);
                 DB::commit();
                 return redirect(route("createStudentForm"))->with('success', 'تم اضافة المتدرب بنجاح');
