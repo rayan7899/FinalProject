@@ -369,7 +369,7 @@ class DepartmentBossController extends Controller
         $requestData = $request->validate([
             "national_id"   =>  'required|digits:10',
             'employer'      =>  'required|string|max:100|min:3',
-            'qualification' =>  'required|in:bachelor,master,doctoral',
+            'qualification' =>  'required|in:bachelor,master,doctoral,higher_diploma',
             'decision'      =>  'required|in:accept,reject,edit',
             'note'          =>  'nullable|string',
 
@@ -497,7 +497,7 @@ class DepartmentBossController extends Controller
             "email"             => "required|email|unique:users,email",
             'employer'      => 'required|string|max:100|min:3',
             "department"    => "required|numeric|exists:departments,id",
-            // 'qualification' => 'required|in:bachelor,master,doctoral',
+            // 'qualification' => 'required|in:bachelor,master,doctoral,higher_diploma',
             // "degree"        => 'required|mimes:pdf,png,jpg,jpeg|max:4000',
 
 
@@ -562,7 +562,7 @@ class DepartmentBossController extends Controller
             "email"         => "required|email|unique:users,email," . $user->id,
             "phone"         => 'nullable|digits_between:9,14',
             "department"    => "required|numeric|exists:departments,id",
-            'qualification' => 'required|in:bachelor,master,doctoral',
+            'qualification' => 'required|in:bachelor,master,higher_diploma',
             'employer'      => 'required|string|max:100|min:3',
             // "degree"        => 'required|mimes:pdf,png,jpg,jpeg|max:4000',
 

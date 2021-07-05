@@ -98,6 +98,8 @@
                                         {{ __('master') }}</option>
                                     <option value="doctoral" {{ old('qualification') == 'doctoral' ? 'selected' : '' }}>
                                         {{ __('doctoral') }}</option>
+                                    <option value="higher_diploma" {{ old('qualification') == 'higher_diploma' ? 'selected' : '' }}>
+                                        {{ __('higher_diploma') }}</option>
                                 </select>
                                 @error('qualification')
                                     <span class="invalid-feedback" role="alert">

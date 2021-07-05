@@ -79,6 +79,7 @@
                                         <option value="bachelor">{{ __('bachelor') }}</option>
                                         <option value="master">{{ __('master') }}</option>
                                         <option value="doctoral">{{ __('doctoral') }}</option>
+                                        <option value="higher_diploma">{{ __('higher_diploma') }}</option>
                                     </select>
                                 </div>
                             </div>
