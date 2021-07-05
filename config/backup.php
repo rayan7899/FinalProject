@@ -168,7 +168,7 @@ return [
         'mail' => [
             'to' => [
                 'tvtc.bct@gmail.com',
-                'abdullah.clg@hotmail.com'
+                'rayan_7899@hotmail.com'
             ],
 
             'from' => [
