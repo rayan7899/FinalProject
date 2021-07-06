@@ -21,7 +21,7 @@
             </div>
         @endif
         <div class="card">
-            <div class="card-header h5">{{ __('ادارة المتدربين') }}</div>
+            <div class="card-header h5">{{ __('المدربين') }}</div>
             <div class="card-body p-0 px-5">
                 <div class="p-2">
                     <a href="{{ route('reviewCoursesOrdersView') }}" class="btn btn-outline-primary p-3 m-2"
