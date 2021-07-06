@@ -1958,7 +1958,7 @@ class CommunityController extends Controller
 
             DB::beginTransaction();
             if ($requestData['accepted']) {
-                if ($refund->student->credit_hours <= 0) {
+                if ($refund->student->credit_hours <= 0 && in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
                     return response(['message' => "لا يوجد ساعات معتمدة لدى المتدرب"], 422);
                 }
 
@@ -1974,6 +1974,7 @@ class CommunityController extends Controller
                         break;
 
                     default:
+                        return response(['message' => "خطأ في بيانات الطلب"], 422);
                         break;
                 }
 
@@ -1990,7 +1991,7 @@ class CommunityController extends Controller
                 if ($refund->refund_to == 'wallet') {
                     $refund->student->wallet += $amount;
                 } else {
-                    $refund->student->wallet -= $amount;
+                    $refund->student->wallet = 0;
                 }
 
                 if (in_array($refund->reason, ['drop-out', 'exception', 'not-opened-class'])) {
