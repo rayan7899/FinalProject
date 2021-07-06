@@ -63,6 +63,8 @@ window.changeAmount = function () {
     $('#radioWallet').parent().removeClass('btn-outline-secondary');
     $('#radioWallet').parent().addClass('btn-outline-primary');
     $('#radioWallet').removeAttr('disabled');
+    $('#divPledge').css('visibility', 'visible');
+    $('#chkboxPledge').removeAttr('disabled');
     $('#discountMsg').hide();
 
     switch (window.reason.value) {
@@ -86,6 +88,8 @@ window.changeAmount = function () {
             $('#radioWallet').parent().removeClass('btn-outline-primary');
             $('#radioWallet').parent().addClass('btn-outline-secondary');
             $('#radioWallet').attr('disabled', true);
+            $('#divPledge').css('visibility', 'hidden');
+            $('#chkboxPledge').attr('disabled', true);
 
             $('#radioBank').prop('checked', true);
             $('#radioBank').parent().addClass('active');
@@ -98,6 +102,8 @@ window.changeAmount = function () {
             $('#radioWallet').parent().removeClass('btn-outline-primary');
             $('#radioWallet').parent().addClass('btn-outline-secondary');
             $('#radioWallet').attr('disabled', true);
+            $('#divPledge').css('visibility', 'hidden');
+            $('#chkboxPledge').attr('disabled', true);
 
             $('#radioBank').prop('checked', true);
             $('#radioBank').parent().addClass('active');
@@ -114,6 +120,7 @@ window.changeAmount = function () {
 window.fillModal = function (national_id, order_id, name, amount, reason) {
     $('#before-training').removeAttr('disabled');
     $('#before-4th-week').removeAttr('disabled');
+    $('#range').val("");
     // $('#rangeSection').show();
     window.national_id.value = national_id;
     window.requestDate.value = document.getElementById(national_id).cells[9].innerHTML;

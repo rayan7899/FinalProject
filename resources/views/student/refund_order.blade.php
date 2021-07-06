@@ -89,13 +89,13 @@
                     </div>
 
                     {{-- checkbox --}}
-                    <div class="input-group mb-3 col-lg-6" dir="ltr">
+                    <div id="divPledge" class="input-group mb-3 col-lg-6" dir="ltr">
                         <label class="form-control" aria-label="Text input with checkbox">
                             اتعهد بتقديم الطلب عبر موقع رايات
                         </label>
                         <div class="input-group-append">
                           <div class="input-group-text">
-                            <input required type="checkbox" aria-label="Checkbox for following text input">
+                            <input required id="chkboxPledge" type="checkbox" aria-label="Checkbox for following text input">
                           </div>
                         </div>
                     </div>
