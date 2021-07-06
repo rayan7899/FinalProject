@@ -84,24 +84,45 @@
                         <p class="p-0 m-0">تقوم هذه العملية بنقل جميع المتدربين الى المستوى التالي
                             وتهيئة الساعات المعتمدة للفصل الجديد.</p>
                     </div>
-                    <form method="POST" action="{{ route('newSemester') }}">
+                    <form method="POST" action="{{ route('newSemester') }}" class="row">
                         @csrf
 
                         {{-- start date --}}
-                        <div class="form-group">
+                        <div class="form-group col-md-6">
                             <label for="start_date">تاريخ بداية الفصل</label>
                             <input onchange="changeEndMinDate()" required type="date" name="start_date" id="start_date" class="form-control"
                                 aria-describedby="start_date" placeholder="yyyy-mm-dd">
                         </div>
 
                         {{-- end date --}}
-                        <div class="form-group">
+                        <div class="form-group col-md-6">
                             <label for="end_date">تاريخ نهاية الفصل</label>
                             <input required type="date" name="end_date" id="end_date" class="form-control"
                                 aria-describedby="end_date"  placeholder="yyyy-mm-dd">
                         </div>
 
-                        <div class="input-group mt-4 mb-3" dir="ltr">
+                        {{-- contract date --}}
+                        <div class="form-group col-md-4">
+                            <label for="end_date">تاريخ تحرير العقود</label>
+                            <input required type="date" name="contract_date" id="contract_date" class="form-control"
+                                aria-describedby="contract_date">
+                        </div>
+
+                        <!-- semester name -->
+                        <div class="form-group col-md-4">
+                            <label for="end_date">الفصل التدريبي</label>
+                            <input required type="text" name="semester_name" id="semester_name" class="form-control"
+                                aria-describedby="semester_name">
+                        </div>
+
+                        <!-- count of weeks -->
+                        <div class="form-group col-md-4">
+                            <label for="end_date">عدد الاسابيع</label>
+                            <input required type="text" name="count_of_weeks" id="count_of_weeks" class="form-control"
+                                aria-describedby="count_of_weeks">
+                        </div>
+
+                        {{-- <div class="input-group mt-4 mb-3 col-lg-6" dir="ltr">
                             <label class="form-control">
                                 فصل صيفي |
                                 <small> لن يتم نقل المتدربين الى المستوى التالي </small>
@@ -111,39 +132,64 @@
                                     <input type="checkbox" name="isSummerSemester" id="isSummerSemester" value="1">
                                 </div>
                             </div>
+                        </div> --}}
+
+                        <!-- which semester -->
+                        <div class="form-group col-lg-12 m-0 p-0 row">
+                            <label class="mr-3">حدد الفصل</label>
+                            <div class="btn-group btn-group-toggle col-lg-12 my-auto" data-toggle="buttons" dir="ltr">
+                                
+                                <label class="btn btn-outline-primary">
+                                <input required type="radio" value="summer" name="whichSemester" id="whichSemester" onclick="">
+                                فصل صيفي |
+                                <small> لن يتم نقل المتدربين الى المستوى التالي </small>
+                                </label>
+                                
+                                <label class="btn btn-outline-primary">
+                                <input required type="radio" value="2" name="whichSemester" id="whichSemester" onclick=""> الفصل الثاني
+                                </label>
+    
+                                <label class="btn btn-outline-primary">
+                                <input required type="radio" value="1" name="whichSemester" id="whichSemester" onclick=""> الفصل الاول
+                                </label>
+                            </div>
                         </div>
 
-                        {{-- username (national_id) --}}
-                        <div class="form-group">
-                            <label for="national_id"> رقم الهوية</label>
-                            <input id="national_id" minlength="10" maxlength="10" type="text"
-                                class="form-control @error('national_id') is-invalid @enderror" name="national_id"
-                                value="{{ old('national_id') ?? '' }}" required>
-                            {{-- <small id="helpId" class="text-muted">مطلوب رقم الهوية وكلمة المرور لتأكيد الاجراء</small> --}}
-                            @error('national_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                        
 
-                        {{-- password --}}
-
-                        <div class="form-group">
-                            <label for="password">كلمة المرور </label>
-                            <input id="password" type="password"
-                                class="form-control @error('password') is-invalid @enderror" name="password" required
-                                autocomplete="password">
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary px-5">
-                                {{ __('ارسال') }}
-                            </button>
+                        <div class="col-lg-12 row m-0 p-0 mt-3">
+                            {{-- username (national_id) --}}
+                            <div class="form-group col-md-6">
+                                <label for="national_id"> رقم الهوية</label>
+                                <input id="national_id" minlength="10" maxlength="10" type="text"
+                                    class="form-control @error('national_id') is-invalid @enderror" name="national_id"
+                                    value="{{ old('national_id') ?? '' }}" required>
+                                {{-- <small id="helpId" class="text-muted">مطلوب رقم الهوية وكلمة المرور لتأكيد الاجراء</small> --}}
+                                @error('national_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+    
+                            {{-- password --}}
+    
+                            <div class="form-group col-md-6">
+                                <label for="password">كلمة المرور </label>
+                                <input id="password" type="password"
+                                    class="form-control @error('password') is-invalid @enderror" name="password" required
+                                    autocomplete="password">
+                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group mx-auto">
+                                <button type="submit" class="btn btn-primary px-5">
+                                    {{ __('ارسال') }}
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>

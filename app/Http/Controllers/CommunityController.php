@@ -932,7 +932,7 @@ class CommunityController extends Controller
             'start_date'      => 'required|date_format:Y-m-d',
             'end_date'        => 'required|date_format:Y-m-d',
             'contract_date'   => 'required|date_format:Y-m-d',
-            'semester_name'            => 'required|string',
+            'semester_name'   => 'required|string',
             "count_of_weeks"  => "required|numeric",
 
         ]);
@@ -967,12 +967,14 @@ class CommunityController extends Controller
     {
 
         $requestData = $this->validate($request, [
-            "national_id"        => "required|digits:10",
-            'password' => 'required|string|min:8',
-            'start_date' => 'required|date_format:Y-m-d|after:yesterday',
-            'end_date' => 'required|date_format:Y-m-d|after:today',
-            'isSummerSemester' => "boolean"
-
+            "national_id"       => "required|digits:10",
+            'password'          => 'required|string|min:8',
+            'start_date'        => 'required|date_format:Y-m-d|after:yesterday',
+            'end_date'          => 'required|date_format:Y-m-d|after:today',
+            'whichSemester'     => "required|in:summer,1,2",
+            'contract_date'     => 'required|date_format:Y-m-d',
+            'semester_name'     => 'required|string',
+            "count_of_weeks"    => "required|numeric",
         ]);
         try {
             $user = Auth::user();
@@ -986,23 +988,24 @@ class CommunityController extends Controller
 
             DB::beginTransaction();
             Semester::create([
-                "start_date" => $requestData["start_date"],
-                "end_date" => $requestData["end_date"],
-                "isSummer"  => $requestData["isSummerSemester"],
+                "start_date"        => $requestData["start_date"],
+                "end_date"          => $requestData["end_date"],
+                "contract_date"     => $requestData["contract_date"],
+                "name"              => $requestData["semester_name"],
+                "count_of_weeks"    => $requestData["count_of_weeks"],
+                "isSummer"          => $requestData['whichSemester'] == 'summer' ? true : false,
+                "which_semester"     => $requestData['whichSemester'] == 'summer' ? 0 : $requestData['whichSemester'],
             ]);
 
-            DB::table('students')
-                ->update([
-                    'available_hours' => 0,
-                    'credit_hours' => 0,
+            DB::table('students')->update([
+                'available_hours' => 0,
+                'credit_hours' => 0,
+            ]);
 
+            if ($requestData['whichSemester'] != 'summer') {
+                DB::table('students')->where('level', "<", 5)->update([
+                    'level' => DB::raw('level + 1'),
                 ]);
-            if (isset($requestData['isSummerSemester']) &&  $requestData['isSummerSemester'] == false) {
-                DB::table('students')
-                    ->where('level', "<", 5)
-                    ->update([
-                        'level' => DB::raw('level + 1'),
-                    ]);
             }
 
 
