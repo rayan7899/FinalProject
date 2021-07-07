@@ -59,6 +59,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/community/contract-form/{trainer}', [CommunityController::class, 'contractForm'])->name('contractForm');
     Route::get('/community/contract-form/{trainer}/print', [CommunityController::class, 'contractFormPrint'])->name('contractFormPrint');
+
+    //Manage Courses
+    Route::get('/api/major/courses/{major}', [MajorController::class, 'apiGetMajorCourses'])->name('apiGetMajorCourses');
 });
 
 //الإدارة العامة
@@ -269,7 +272,7 @@ Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
 
     Route::get('/courses/per-level', [DepartmentBossController::class, 'index'])->name('coursesPerLevel');
     Route::get('/api/courses', [DepartmentBossController::class, 'apiGetCourses'])->name('apiGetCourses');
-    Route::get('/api/major/courses/{major}', [DepartmentBossController::class, 'apiGetMajorCourses'])->name('apiGetMajorCourses');
+    // Route::get('/api/major/courses/{major}', [DepartmentBossController::class, 'apiGetMajorCourses'])->name('apiGetMajorCourses');
 
     Route::post('/api/courses/update-level', [DepartmentBossController::class, 'updateCoursesLevel'])->name('apiUpdateCoursesLevel');
 

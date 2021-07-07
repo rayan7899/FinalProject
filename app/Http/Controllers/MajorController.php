@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\Major;
 use App\Models\Program;
+use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MajorController extends Controller
 {
@@ -98,6 +100,16 @@ class MajorController extends Controller
             }
         }
         return response(['majors' => $majors], 200);
+    }
+
+    public function apiGetMajorCourses(Major $major)
+    {
+        try {
+            return json_encode($major->courses->toArray());
+        } catch (QueryException $e) {
+            Log::error($e->getMessage() . ' ' . $e);
+            return response(['message' => 'حدث خطأ غير معروف تعذر جلب البيانات'], 500);
+        }
     }
 
 }
