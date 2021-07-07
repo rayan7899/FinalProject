@@ -184,7 +184,6 @@
         var updateStudentState = "{{ route('updateStudentState') }}";
 
         function fillAllCourses() {
-
             var tblCourses = document.getElementById("courses");
             let originalLevel = document.getElementById("originalLevel");
             tblCourses.innerHTML = "";
@@ -231,7 +230,7 @@
                         level.innerHTML = getStringLevel(courses[i].level);
                         type.innerHTML = 'عملي';
                         credit_hours.innerHTML = courses[i].credit_hours;
-                        contact_hours.innerHTML = courses[i].practical_hours;
+                        contact_hours.innerHTML = '{{ $semester->isSummer }}' == true ? courses[i].practical_hours * 2 : courses[i].practical_hours;
                         division.innerHTML =
                             '<input type="text" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
                         students.innerHTML =
@@ -268,7 +267,7 @@
                         level2.innerHTML = getStringLevel(courses[i].level);
                         type2.innerHTML = 'نظري';
                         credit_hours2.innerHTML = courses[i].credit_hours;
-                        contact_hours2.innerHTML = courses[i].theoretical_hours;
+                        contact_hours2.innerHTML = '{{ $semester->isSummer }}' == true ? (courses[i].theoretical_hours*2) : courses[i].theoretical_hours;
                         division2.innerHTML =
                             '<input type="text" class="form-control self-align-top" placeholder="رقم الشعبة"/>';
                         students2.innerHTML =

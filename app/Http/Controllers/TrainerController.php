@@ -115,7 +115,8 @@ class TrainerController extends Controller
         try {
             $programs = Program::with("departments.majors.courses")->get();
             $user = Auth::user();
-            return view('trainer.addCourses')->with(compact('programs', 'user'));
+            $semester = Semester::latest()->first();
+            return view('trainer.addCourses')->with(compact('programs', 'user', 'semester'));
         } catch (Exception $e) {
             Log::error($e->getMessage() . ' ' . $e);
             return view("error")->with("error", "حدث خطأ غير معروف" . $e);
