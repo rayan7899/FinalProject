@@ -52,7 +52,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="pl-1"> عدد الاسابيع الفصلية المتوقعة </label>
-                                <input disabled type="text" class="form-control" value="12">
+                                <input disabled type="text" class="form-control" value="{{ $semester->count_of_weeks ?? 'لا يوجد' }}">
                             </div>
                             <div class="col-md-4">
                                 <label for="program" class="pl-1"> البرنامج </label>
