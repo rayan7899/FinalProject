@@ -86,7 +86,8 @@
                         @php
                             $count_of_weeks = $courseOrder->semester->count_of_weeks;
                             $hour_cost = $courseOrder->trainer->qualification == 'doctoral' ? 200 : 150;
-                            $contact_hours = $courseOrder->course_type == 'نظري' ? $courseOrder->course->theoretical_hours : $courseOrder->course->practical_hours;
+                            $cth = $courseOrder->course_type == 'نظري' ? $courseOrder->course->theoretical_hours : $courseOrder->course->practical_hours;
+                            $contact_hours = $courseOrder->semester->isSummer == true ? $cth*2 : $cth;
                             $exam_hours = $courseOrder->course_type == 'نظري' ? $courseOrder->course->exam_theoretical_hours : $courseOrder->course->exam_practical_hours;
                             $deserved_amount = ($count_of_weeks*$contact_hours+$exam_hours)*$hour_cost;
                             $total += $deserved_amount;

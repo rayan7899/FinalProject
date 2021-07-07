@@ -478,8 +478,9 @@
                         var credit_hours = row.insertCell(index++);
                         credit_hours.innerHTML = order.course.credit_hours;
 
+                        var cth = order.course_type == 'نظري' ? order.course.theoretical_hours : order.course.practical_hours;
                         var contact_hours = row.insertCell(index++);
-                        contact_hours.innerHTML = order.course_type == 'نظري' ? order.course.theoretical_hours : order.course.practical_hours;
+                        contact_hours.innerHTML = order.semester.isSummer == true ? cth*2 : cth;
 
                         var exam_hours = row.insertCell(index++);
                         exam_hours.innerHTML = '<span>'+(order.course_type == 'نظري' ? order.course.exam_theoretical_hours : order.course.exam_practical_hours) + '</span>'

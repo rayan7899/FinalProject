@@ -2198,7 +2198,6 @@ class CommunityController extends Controller
     public function contractForm(Trainer $trainer)
     {
         try {
-            $semester = Semester::latest()->first();
             // $users = User::with('trainer.coursesOrders')->has('trainer.coursesOrders')
             //         ->wheredoesntHave('trainer.coursesOrders', function($res){
             //             $res->where(function($res){
@@ -2222,7 +2221,6 @@ class CommunityController extends Controller
             //         ->get();
             $contractData = $trainer->coursesOrders()->with('trainer')
                 ->where('accepted_by_dept_boss', true)
-                ->where('semester_id', $semester->id)
                 ->where('accepted_by_community', true)->get();
             return view('manager.community.trainers.contractForm')->with(compact('contractData'));
             // return view('manager.community.trainers.contractFrom')->with(compact('users'));
@@ -2236,10 +2234,8 @@ class CommunityController extends Controller
     {
         try {
             $print = true;
-            $semester = Semester::latest()->first();
             $contractData = $trainer->coursesOrders()->with('trainer')
                 ->where('accepted_by_dept_boss', true)
-                ->where('semester_id', $semester->id)
                 ->where('accepted_by_community', true)->get();
             return view('manager.community.trainers.contractForm')->with(compact('contractData', 'print'));
             // return view('manager.community.trainers.contractFrom')->with(compact('users'));

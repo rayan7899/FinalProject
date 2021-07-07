@@ -411,9 +411,9 @@
                         var credit_hours = row.insertCell(index++);
                         credit_hours.innerHTML = order.course.credit_hours;
 
+                        var cth = order.course_type == 'نظري' ? order.course.theoretical_hours : order.course.practical_hours;
                         var contact_hours = row.insertCell(index++);
-                        contact_hours.innerHTML = order.course_type == 'نظري' ? order.course.theoretical_hours :
-                            order.course.practical_hours;
+                        contact_hours.innerHTML = order.semester.isSummer == true ? cth*2 : cth;
 
                         var count_of_weeks = row.insertCell(index++);
                         count_of_weeks.innerHTML = order.semester.count_of_weeks;

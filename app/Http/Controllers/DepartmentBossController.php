@@ -645,9 +645,8 @@ class DepartmentBossController extends Controller
                 }
             }
             $semester = Semester::latest()->first();
-            $orders = $trainer->coursesOrders()->with('course')
+            $orders = $trainer->coursesOrders()->with(['course', 'semester'])
             ->where('accepted_by_dept_boss', null)
-            ->where('semester_id', $semester->id)
             ->whereHas('course.major.department', function ($res) use ($myDepartmentsIDs) {
                 $res->whereIn('departments.id', $myDepartmentsIDs);
             })->get();

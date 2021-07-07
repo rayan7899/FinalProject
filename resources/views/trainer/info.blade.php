@@ -30,6 +30,8 @@
                         @endphp
                         @forelse ($user->trainer->coursesOrders as $order)
                             @php
+                                $contact_hours = $order->course_type == 'عملي' ? $order->course->practical_hours : $order->course->theoretical_hours;
+                                $exam_hours = $order->course_type == 'عملي' ? $order->course->exam_practical_hours : $order->course->exam_theoretical_hours;
                             @endphp
                             <tr class="text-center" id="{{ $order->id }}">
                                 <td>{{ $order->id ?? 'لا يوجد' }}</td>
@@ -37,8 +39,8 @@
                                 <td>{{ $order->course->code ?? 'لا يوجد' }}</td>
                                 <td>{{ $order->course_type ?? 'لا يوجد' }}</td>
                                 <td>{{ $order->division_number ?? 'لا يوجد' }}</td>
-                                <td>{{ $order->course_type == 'عملي' ? $order->course->practical_hours : $order->course->theoretical_hours ?? 'لا يوجد' }}</td>
-                                <td>{{ $order->course_type == 'عملي' ? $order->course->exam_practical_hours : $order->course->exam_theoretical_hours ?? 'لا يوجد' }}</td>
+                                <td>{{ $order->semester->isSummer == true ? $contact_hours*2 : $contact_hours ?? 'لا يوجد' }}</td>
+                                <td>{{ $exam_hours ?? 'لا يوجد' }}</td>
                                 <td>
                                     @if ($order->accepted_by_dept_boss === null && $order->accepted_by_community === null)   
                                         <span>قيد المراجعة</span>
