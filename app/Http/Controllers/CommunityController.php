@@ -87,7 +87,7 @@ class CommunityController extends Controller
             ],
             (object) [
                 "name" => "ادارة المتدربين",
-                "url" => route("manageStudentsForm")
+                "url" => route("communityManageStudentsForm")
             ],
             // (object) [
             //     "name" => "اضافة متدرب",

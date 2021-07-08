@@ -144,7 +144,7 @@
                                                     <a class="dropdown-item" href="{{ route('manageUsersForm') }}">ادارة
                                                         المستخدمين</a>
                                                     <a class="dropdown-item"
-                                                        href="{{ route('manageStudentsForm') }}">ادارة
+                                                        href="{{ route('communityManageStudentsForm') }}">ادارة
                                                         المتدربين</a>
                                                     <a class="dropdown-item" href="{{ route('coursesIndex') }}">ادارة
                                                         المقررات</a>

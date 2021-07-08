@@ -145,7 +145,7 @@ Route::middleware(['auth', 'role:خدمة المجتمع'])->group(function () {
     Route::get('/community/users/permission/delete/{permission}', [CommunityController::class, 'deleteUserPermission'])->name('deleteUserPermission');
 
     // Students manage create,edit,delete
-    Route::get('/community/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
+    Route::get('/community/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('communityManageStudentsForm');
     Route::get('/community/students/get-student', [CommunityController::class, 'getStudentForm'])->name('getStudentForm');
     Route::get('/api/community/student-report/{id}', [CommunityController::class, 'getStudentForReport'])->name('apiCommunityStudentData');
     Route::get('/community/students/report/{user}', [CommunityController::class, 'studentReport'])->name('studentReport');
@@ -294,7 +294,7 @@ Route::middleware(['auth', 'role:رئيس قسم'])->group(function () {
     Route::get('/department-boss/courses/delete/{course}', [CommunityController::class, 'deleteCourse'])->name('deleteCourse');
 
     // Users manage create,edit,delete
-    Route::get('/department-boss/students/manage', [CommunityController::class, 'manageStudentsForm'])->name('manageStudentsForm');
+    // Route::get('/department-boss/students/manage', [DepartmentBossController::class, 'manageStudentsForm'])->name('manageStudentsForm');
     Route::get('/department-boss/students/create', [DepartmentBossController::class, 'createStudentForm'])->name('deptCreateStudentForm');
     Route::post('/department-boss/students/store', [DepartmentBossController::class, 'createStudentStore'])->name('deptCreateStudentStore');
     // Route::get('/department-boss/students/edit/', [CommunityController::class, 'editStudentForm'])->name('editStudentForm');
