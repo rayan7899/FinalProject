@@ -1443,9 +1443,9 @@ class CommunityController extends Controller
             "level"                  => "required|numeric|min:1|max:5",
             "credit_hours"           => "required|numeric|min:1|max:20",
             "contact_hours"          => "required|numeric|min:1|max:20",
-            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:0|max:20",
             "practical_hours"        => "required|numeric|min:0|max:20",
-            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:0|max:20",
             "exam_practical_hours"   => "required|numeric|min:0|max:20",
         ]);
         $major = Major::findOrFail($requestData["major"]);
@@ -1502,9 +1502,9 @@ class CommunityController extends Controller
             "level"                  => "required|numeric|min:1|max:5",
             "credit_hours"           => "required|numeric|min:1|max:20",
             "contact_hours"          => "required|numeric|min:1|max:20",
-            "theoretical_hours"      => "required|numeric|min:1|max:20",
+            "theoretical_hours"      => "required|numeric|min:0|max:20",
             "practical_hours"        => "required|numeric|min:0|max:20",
-            "exam_theoretical_hours" => "required|numeric|min:1|max:20",
+            "exam_theoretical_hours" => "required|numeric|min:0|max:20",
             "exam_practical_hours"   => "required|numeric|min:0|max:20",
         ]);
         $course = Course::with('major.department.program')->findOrFail($requestData["id"]);

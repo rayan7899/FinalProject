@@ -202,7 +202,7 @@ return [
         "promise"               => "التعهد",
         "theoretical_hours"     => "عدد الساعات - نظري",
         "practical_hours"       => "عدد الساعات - عملي",
-        "exam_theoretical_hours" => "عدد ساعات الاختبار - نطري",
+        "exam_theoretical_hours" => "عدد ساعات الاختبار - نظري",
         "exam_practical_hours"  => "عدد ساعات الاختبار - عملي",
         "bct_id"                => "الرقم الوظيفي",
         "employer"              => "جهة العمل",
