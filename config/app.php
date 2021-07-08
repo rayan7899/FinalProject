@@ -168,6 +168,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Alkoumi\LaravelHijriDate\LaravelHijriDateServiceProvider::class,
 
         /*
          * Application Service Providers...

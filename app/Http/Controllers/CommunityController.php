@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Alkoumi\LaravelHijriDate\Hijri;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Major;

@@ -155,7 +155,7 @@
         <li>مالم يُنص عليه في هذا العقد، فإنه يخضع لأنظمة ولوائح مركز خدمة المجتمع والتدريب المستمر.</li>
     </ol>
     <h5>خامساً: نسخ العقد</h5>
-    <p>حرر هذا العقد من نسختين بتاريخ {{$contractData[0]->semester->contract_date}} هـ واستلم الطرف الثاني نسخة منها.</p>
+    <p>حرر هذا العقد من نسختين بتاريخ {{Alkoumi\LaravelHijriDate\Hijri::Date('Y/m/d', $contractData[0]->semester->contract_date)}}هـ واستلم الطرف الثاني نسخة منها.</p>
     <div class="row">
         <div class="col-6">
             <p class="text-center">الطرف الأول</p>
