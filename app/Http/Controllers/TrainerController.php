@@ -9,6 +9,7 @@ use App\Models\Program;
 use App\Models\Semester;
 use App\Models\Trainer;
 use App\Models\TrainerCoursesOrders;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -80,16 +81,32 @@ class TrainerController extends Controller
         }
         try {
             DB::beginTransaction();
-            $user = Auth::user();
+            $user = User::where('national_id', $requestData['national_id'])->first();
+            if($user == null){
+                $user = Auth::user();
 
-            $user->national_id = $requestData['national_id'];
-            if (isset($requestData['password'])) {
-                $user->password = Hash::make($requestData['password']);
+                $user->national_id = $requestData['national_id'];
+                if (isset($requestData['password'])) {
+                    $user->password = Hash::make($requestData['password']);
+                }
+                if (isset($requestData['phone'])) {
+                    $user->phone = $requestData['phone'];
+                }
+                $user->save();
+            }else{
+                $oldUser = Auth::user();
+                if($oldUser->trainer != null){
+                    $oldUser->trainer()->update([
+                        'user_id' => $user->id,
+                    ]);
+                }
+                Auth::logout();
+                Auth::login($user);
+                Auth::user()->update([
+                    'name'  =>  $oldUser->name,
+                ]);
+                $oldUser->delete();
             }
-            if (isset($requestData['phone'])) {
-                $user->phone = $requestData['phone'];
-            }
-            $user->save();
 
             $user->trainer->department_id = $requestData['department'];
             $user->trainer->qualification = $requestData['qualification'];

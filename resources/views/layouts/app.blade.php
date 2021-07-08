@@ -95,7 +95,7 @@
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>رئيس
                                                 القسم</li>
                                             <li class="nav-item dropdown">
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-right text-right">
                                                     <a class="dropdown-item"
                                                         href="{{ route('deptBossDashboard') }}">{{ __('Go Home') }}</a>
                                                     <a class="dropdown-item"
@@ -126,7 +126,7 @@
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>خدمة
                                                 المجتمع</li>
                                             <li class="nav-item dropdown">
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-right text-right">
                                                     <a class="dropdown-item"
                                                         href="{{ route('communityDashboard') }}">{{ __('Go Home') }}</a>
 
@@ -182,7 +182,7 @@
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                                 شؤون المتدربين</li>
                                             <li class="nav-item dropdown">
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-right text-right">
 
                                                     <a class="dropdown-item"
                                                         href="{{ route('affairsDashboard') }}">{{ __('Go Home') }}</a>
@@ -233,7 +233,7 @@
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                                 الارشاد</li>
                                             <li class="nav-item dropdown">
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-right text-right">
 
                                                     <a class="dropdown-item"
                                                         href="{{ route('privateDashboard') }}">{{ __('Go Home') }}</a>
@@ -269,7 +269,7 @@
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                                 مدقق ايصالات</li>
                                             <li class="nav-item dropdown">
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-right text-right">
                                                     <a class="nav-link"
                                                         href="{{ route('paymentCheckerDashboard') }}">الرئيسية</a>
                                                     <a class="nav-link"
@@ -289,7 +289,7 @@
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                                 الإدارة العامة</li>
                                             <li class="nav-item dropdown">
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-right text-right">
                                                     <a class="nav-link"
                                                         href="{{ route('managementDashboard') }}">الرئيسية</a>
                                                     <a class="nav-link"
@@ -309,7 +309,7 @@
                                             <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>المشرف العام</li>
                                             <li class="nav-item dropdown">
-                                                <div class="dropdown-menu dropdown-menu-right">
+                                                <div class="dropdown-menu dropdown-menu-right text-right">
                                                     <a class="dropdown-item"
                                                         href="{{ route('deanDashboard') }}">{{ __('Go Home') }}</a>
                                                     <a class="dropdown-item"
@@ -318,6 +318,25 @@
                                             </li>
                                         </ul>
                                     @endif
+
+                                    <!-- trainer -->
+                                    @if (Auth::user()->trainer != null)
+                                        <ul class="navbar-nav">
+                                            <li id="navbarDropdown" class="nav-link dropdown-toggle" role="button"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre> مدرب </li>
+                                            <li class="nav-item dropdown">
+                                                <div class="dropdown-menu dropdown-menu-right text-right text-right">
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('trainerDashboard') }}">{{ __('Go Home') }}</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('trainerInfo') }}">المعلومات الشخصية</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('addCoursesToTrainerView') }}">إنشاء عقد تدريبي</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    @endif
+
                                     <li class="navbar-nav">
                                         <a class="nav-link" href="{{ route('home') }}">الرئيسية</a>
                                     </li>

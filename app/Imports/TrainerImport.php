@@ -38,9 +38,9 @@ class TrainerImport implements ToCollection
         $addedCount = 0;
 
         if (!isset($rows[1][BCT_ID]) || !isset($rows[1][NAME])) {
-            return redirect(route('trainerImportForm'))->with('error', 'تعذر الحصول على الاسم او رقم الهوية يرجى التآكد من صحة الملف');
+            return redirect(route('trainerImportForm'))->with('error', 'تعذر الحصول على الاسم او الرقم الوظيفي يرجى التآكد من صحة الملف');
         } elseif (strlen((string) $rows[1][BCT_ID]) < 3  || !is_numeric($rows[1][BCT_ID]) || strlen((string) $rows[1][NAME]) < 10) {
-            return redirect(route('trainerImportForm'))->with('error', ' تعذر الحصول على الاسم او رقم الهوية يرجى التآكد من صحة الملف');
+            return redirect(route('trainerImportForm'))->with('error', ' تعذر الحصول على الاسم او الرقم الوظيفي يرجى التآكد من صحة الملف');
         }
 
         // Validator::make($rows->toArray(), [
